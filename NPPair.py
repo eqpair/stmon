@@ -9,14 +9,14 @@ import time
 import datetime
 
 class NPPair:
-    def __init__(self, code1, code2, avg_period):
+    def __init__(self, code1, code2, sl_in, sl_out, ls_in, ls_out, avg_period):
         self.avg_period = avg_period
         self.A_code = code1
         self.B_code = code2
-        self.SL_in_val = 2
-        self.SL_out_val = 1
-        self.LS_in_val = -2
-        self.LS_out_val = -1.5
+        self.SL_in_val = sl_in
+        self.SL_out_val = sl_out
+        self.LS_in_val = ls_in
+        self.LS_out_val = ls_out
         
         self.dateList = []
         self.A_closeList = []
@@ -28,6 +28,13 @@ class NPPair:
         self.LS_in = False
         self.SL_out = False
         self.LS_out = False
+
+        self.last_sl_r = False
+        self.last_ls_r = False
+        self.last_sl_in = False
+        self.last_ls_in = False
+        self.last_sl_out = False
+        self.last_ls_out = False
 
         yesterday = datetime.date.today() - datetime.timedelta(1)
         
@@ -85,8 +92,8 @@ class NPPair:
         self.last_std = self.data.loc[self.data.index[len(self.data.index)-1]][4]
         self.last_sz  = self.data.loc[self.data.index[len(self.data.index)-1]][5]
         print('%s vs %s'%(self.A_name, self.B_name))
-        print(self.data.tail(30))
-        print("LAST avg = %f, std = %f, sz = %f"%(self.last_avg, self.last_std, self.last_sz))
+        print(self.data.tail(10))
+        print("LAST avg = %f, std = %f, sz = %f\n"%(self.last_avg, self.last_std, self.last_sz))
         
 
     def GetSignalNow(self):
@@ -120,7 +127,28 @@ class NPPair:
         if (self.last_sz >= self.LS_out_val): self.LS_out = True
         else: self.LS_out = False
 
-        print("Current Price : %d, %d (%f,%f)"%(self.A_price, self.B_price, dr, sz))
-        print("  ShortLong : R=%s, IN=%s, OUT=%s"%(self.SL_r, self.SL_in, self.SL_out))
-        print("  LongShort : R=%s, IN=%s, OUT=%s"%(self.SL_r, self.SL_in, self.SL_out))
-
+        print("%s : SL %c%c%c | LS %c%c%c | %d, %d (%f,%f)"%
+            (self.A_name,
+             'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_',
+             'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_',
+             self.A_price, self.B_price, dr, sz))
+        
+        # 변화 check
+        if self.SL_r != self.last_sl_r or \
+           self.SL_in != self.last_sl_in or \
+           self.SL_out != self.last_sl_out or \
+           self.LS_r != self.last_ls_r or \
+           self.LS_in != self.last_ls_in or \
+           self.LS_out != self.last_ls_out :
+            
+            print("CHANGE (%s)\n  %s : %d, %d (%f,%f) | SL %c%c%c | LS %c%c%c"%
+                (datetime.datetime.now(), self.A_name, self.A_price, self.B_price, dr, sz,
+                'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_',
+                'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_'))
+        
+        self.last_sl_r = self.SL_r  
+        self.last_sl_in = self.SL_in 
+        self.last_sl_out = self.SL_out
+        self.last_ls_r = self.LS_r  
+        self.last_ls_in = self.LS_in 
+        self.last_ls_out = self.LS_out

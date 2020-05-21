@@ -9,15 +9,23 @@ import time
 import datetime
 from NPPair import NPPair
 
+# 보통주, 우선주, SL_IN, SL_OUT, LS_IN, LS_OUT
+tick_pair = [
+    ('003490', '003495', 2, 1, -2, -1.5),
+    ('005930', '005935', 2, 1, -2, -1.5)]
+
 def showSignal(val):
     print(val)
 
 if __name__ == "__main__":
-    #pair1 = NPPair('005930', '005935')
-    # TODO: 종목을 설정으로 받자.
-    pair1 = NPPair('003490', '003495', 250)
+    pairs = []
+
+    for pair in tick_pair:
+        np = NPPair(pair[0], pair[1], pair[2], pair[3], pair[4], pair[5], 250)
+        pairs.append(np)
 
     while 1:
-        pair1.GetSignalNow()
-
+        print("> %s"%datetime.datetime.now())
+        for np in pairs:
+            np.GetSignalNow()
         time.sleep(60)
