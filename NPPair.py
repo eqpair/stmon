@@ -7,6 +7,29 @@ from bs4 import BeautifulSoup
 #from datetime import date, time, datetime, timedelta
 import time
 import datetime
+import telepot
+import unicodedata
+
+def preformat_cjk (string, width, align='<', fill=' '):
+    count = (width - sum(1 + (unicodedata.east_asian_width(c) in "WF")
+                         for c in string))
+    return {
+        '>': lambda s: fill * count + s,
+        '<': lambda s: s + fill * count,
+        '^': lambda s: fill * (count / 2)
+                       + s
+                       + fill * (count / 2 + count % 2)
+        }[align](string)
+
+def SendToTelegram(msg) :
+    # token : 1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE
+    # https://api.telegram.org/bot1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE/getUpdates
+    # myid : 153839694
+    token = "1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE"
+    ji = "153839694"
+    bot = telepot.Bot(token)
+    bot.sendMessage(ji, msg)
+
 
 class NPPair:
     def __init__(self, code1, code2, sl_in, sl_out, ls_in, ls_out, avg_period):
@@ -95,8 +118,9 @@ class NPPair:
         print(self.data.tail(10))
         print("LAST avg = %f, std = %f, sz = %f\n"%(self.last_avg, self.last_std, self.last_sz))
         
+        self.GetSignalNow(True)
 
-    def GetSignalNow(self):
+    def GetSignalNow(self, isFirst):
         # 현재가격을 가져온다.
         url = 'https://polling.finance.naver.com/api/realtime.nhn?query=SERVICE_ITEM:%s'%self.A_code
         soup = BeautifulSoup(requests.get(url).text, 'html.parser')
@@ -127,8 +151,8 @@ class NPPair:
         if (self.last_sz >= self.LS_out_val): self.LS_out = True
         else: self.LS_out = False
 
-        print("%s : SL %c%c%c | LS %c%c%c | %d, %d (%f,%f)"%
-            (self.A_name,
+        print("%s : SL %c%c%c | LS %c%c%c | %8d, %8d (%7.3f,%7.3f)"%
+            ( preformat_cjk(self.A_name, 10), # self.A_name.ljust(10),
              'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_',
              'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_',
              self.A_price, self.B_price, dr, sz))
@@ -141,10 +165,17 @@ class NPPair:
            self.LS_in != self.last_ls_in or \
            self.LS_out != self.last_ls_out :
             
-            print("CHANGE (%s)\n  %s : %d, %d (%f,%f) | SL %c%c%c | LS %c%c%c"%
-                (datetime.datetime.now(), self.A_name, self.A_price, self.B_price, dr, sz,
-                'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_',
-                'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_'))
+            msg = ""
+            if isFirst:
+                msg = "Start "
+            else :
+                msg = "Change "
+            msg = msg + "(%s)\n  %s : %d, %d (%f,%f) | SL %c%c%c | LS %c%c%c"% \
+                (datetime.datetime.now(), self.A_name, self.A_price, self.B_price, dr, sz, \
+                'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_', \
+                'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_')
+            print(msg)
+            #SendToTelegram(msg)
         
         self.last_sl_r = self.SL_r  
         self.last_sl_in = self.SL_in 
