@@ -175,7 +175,7 @@ class NPPair:
                 'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_', \
                 'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_')
             print(msg)
-            #SendToTelegram(msg)
+            SendToTelegram(msg)
         
         self.last_sl_r = self.SL_r  
         self.last_sl_in = self.SL_in 

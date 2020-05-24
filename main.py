@@ -37,7 +37,7 @@ if __name__ == "__main__":
         pairs.append(np)
 
     while 1:
-        time.sleep(5)
+        time.sleep(60)
         print("> %s"%datetime.datetime.now())
         for np in pairs:
             np.GetSignalNow(False)
