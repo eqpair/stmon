@@ -30,7 +30,10 @@ def SendToTelegram(msg) :
     token = "1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE"
     ji = "153839694"
     bot = telepot.Bot(token)
-    bot.sendMessage(ji, msg)
+    #bot.sendMessage(ji, msg)
+    #res = bot.sendMessage('@S3PairTN', msg)
+    res = bot.sendMessage(-1001234806937, msg)
+    #print(res)
 
 
 class NPPair:
@@ -184,7 +187,7 @@ class NPPair:
                 msg = "Start "
             else :
                 msg = "Change "
-            msg = msg + "(%s)\n  %s : %d, %d (%f,%f) | SL %c%c%c | LS %c%c%c"% \
+            msg = msg + "(%s)\n  %s : %d, %d (%f,%f) , SL %c%c%c , LS %c%c%c"% \
                 (datetime.datetime.now(), self.A_name, self.A_price, self.B_price, dr, sz, \
                 'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_', \
                 'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_')
