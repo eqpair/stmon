@@ -1,3 +1,5 @@
+# coding=utf8
+
 import requests
 import sqlite3
 import json
@@ -140,16 +142,28 @@ class NPPair:
         else: self.LS_r = False
         
         # Short_Long Check
-        if (self.SL_r and sz < self.last_sz and dr > self.last_avg + (self.last_std * self.SL_in_val)): self.SL_in = True
-        else: self.SL_in = False
         if (self.last_sz <= self.SL_out_val): self.SL_out = True
         else: self.SL_out = False
+        if (self.SL_out):
+          self.SL_in = False
+        elif(self.SL_in):
+          self.SL_in = True
+        else: 
+          if (self.SL_r and sz < self.last_sz and dr > self.last_avg + (self.last_std * self.SL_in_val)): 
+            self.SL_in = True
+          else: 
+            self.SL_in = False
 
         # Long_Short Check
-        if (self.LS_r and sz > self.last_sz and dr < self.last_avg + (self.last_std * self.LS_in_val)): self.LS_in = True
-        else: self.LS_in = False
         if (self.last_sz >= self.LS_out_val): self.LS_out = True
         else: self.LS_out = False
+        if (self.LS_out):
+          self.LS_in = False
+        elif(self.SL_in):
+          self.LS_in = True
+        else: 
+          if (self.LS_r and sz > self.last_sz and dr < self.last_avg + (self.last_std * self.LS_in_val)): self.LS_in = True
+          else: self.LS_in = False
 
         print("%s : SL %c%c%c | LS %c%c%c | %8d, %8d (%7.3f,%7.3f)"%
             ( preformat_cjk(self.A_name, 10), # self.A_name.ljust(10),
