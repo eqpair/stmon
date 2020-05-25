@@ -159,7 +159,7 @@ class NPPair:
         else: self.LS_out = False
         if (self.LS_out):
           self.LS_in = False
-        elif(self.SL_in):
+        elif(self.LS_in):
           self.LS_in = True
         else: 
           if (self.LS_r and sz > self.last_sz and dr < self.last_avg + (self.last_std * self.LS_in_val)): self.LS_in = True
