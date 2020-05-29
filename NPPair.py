@@ -184,13 +184,19 @@ class NPPair:
             
             msg = ""
             if isFirst:
-                msg = "Start "
+                # msg = "Start "
+                msg = "S "
             else :
-                msg = "Change "
-            msg = msg + "(%s)\n  %s : %d, %d (%f,%f) , SL %c%c%c , LS %c%c%c"% \
-                (datetime.datetime.now(), self.A_name, self.A_price, self.B_price, dr, sz, \
-                'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_', \
-                'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_')
+                # msg = "Change "
+                msg = "C "
+#            msg = msg + "(%s)\n  %s : %d, %d (%f,%f) , SL %c%c%c , LS %c%c%c"% \
+#                (datetime.datetime.now(), self.A_name, self.A_price, self.B_price, dr, sz, \
+#                'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_', \
+#                'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_')
+            msg = msg + " SL %c%c%c , LS %c%c%c %s : %d, %d (%f,%f)"% \
+                ('R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_', \
+                'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_', \
+                self.A_name, self.A_price, self.B_price, dr, sz)
             print(msg)
             SendToTelegram(msg)
         
