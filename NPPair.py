@@ -37,7 +37,7 @@ def SendToTelegram(msg) :
 
 
 class NPPair:
-    def __init__(self, code1, code2, sl_in, sl_out, ls_in, ls_out, avg_period):
+    def __init__(self, code1, code2, sl_in, sl_out, ls_in, ls_out, dr_max, dr_min, avg_period):
         self.avg_period = avg_period
         self.A_code = code1
         self.B_code = code2
@@ -45,6 +45,8 @@ class NPPair:
         self.SL_out_val = sl_out
         self.LS_in_val = ls_in
         self.LS_out_val = ls_out
+        self.dr_max = dr_max
+        self.dr_min = dr_min
         
         self.dateList = []
         self.A_closeList = []
@@ -152,7 +154,7 @@ class NPPair:
         elif(self.SL_in):
           self.SL_in = True
         else: 
-          if (self.SL_r and sz < self.last_sz and dr > self.last_avg + (self.last_std * self.SL_in_val)): 
+          if (self.SL_r and dr > self.dr_max and sz < self.last_sz and dr > self.last_avg + (self.last_std * self.SL_in_val)): 
             self.SL_in = True
           else: 
             self.SL_in = False
@@ -165,7 +167,7 @@ class NPPair:
         elif(self.LS_in):
           self.LS_in = True
         else: 
-          if (self.LS_r and sz > self.last_sz and dr < self.last_avg + (self.last_std * self.LS_in_val)): self.LS_in = True
+          if (self.LS_r and dr < self.dr_min and sz > self.last_sz and dr < self.last_avg + (self.last_std * self.LS_in_val)): self.LS_in = True
           else: self.LS_in = False
 
         print("%s : SL %c%c%c | LS %c%c%c | %8d, %8d (%7.3f,%7.3f)"%
