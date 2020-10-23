@@ -27,13 +27,25 @@ def SendToTelegram(msg) :
     # token : 1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE
     # https://api.telegram.org/bot1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE/getUpdates
     # myid : 153839694
-    token = "1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE"
-    ji = "153839694"
-    bot = telepot.Bot(token)
+    #token = "1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE"
+    #ji = "153839694"
+    #bot = telepot.Bot(token)
     #bot.sendMessage(ji, msg)
     #res = bot.sendMessage('@S3PairTN', msg)
-    res = bot.sendMessage(-1001234806937, msg)
+    #res = bot.sendMessage(-1001234806937, msg)
     #print(res)
+
+    # 상민이
+    token = "1112312932:AAGj5iYD9jWQDPYdyh5RKusr8IjRpoLPllE"
+    bot = telepot.Bot(token)
+    res = bot.sendMessage(-1001234806937, msg)
+    
+    # # 성백이
+    token = "1017606432:AAG21Y9DG0m6QbDYT6FYfIVtMlx-nMnutUs"
+    bot = telepot.Bot(token)
+    res = bot.sendMessage(-1001471005474, msg)
+
+    time.sleep(2)
 
 
 class NPPair:
@@ -115,7 +127,10 @@ class NPPair:
         # 표준화
         sz = []
         for dr,avg,std in zip(self.data['dr'],self.data['dr_avg_250'],self.data['std_250']):
-            sz.append( (dr - avg) / std)
+            if std != 0:
+                sz.append( (dr - avg) / std)
+            else:
+                sz.append( 0 )
         self.data.insert(len(self.data.columns), 'sz_250', sz)
 
         self.last_avg = self.data.loc[self.data.index[len(self.data.index)-1]][3]
@@ -138,13 +153,18 @@ class NPPair:
 
         # 괴리율, 표준화
         dr = (self.A_price - self.B_price)/self.A_price
-        sz = (dr - self.last_avg) / self.last_std
+        if self.last_std == 0:
+            sz = 0
+        else:
+            sz = (dr - self.last_avg) / self.last_std
 
         # Signal R
-        if (sz > self.SL_in_val): self.SL_r = True
-        else: self.SL_r = False
-        if (sz < self.LS_in_val): self.LS_r = True
-        else: self.LS_r = False
+        if self.SL_r != True :
+          if (sz > self.SL_in_val): self.SL_r = True
+          else: self.SL_r = False
+        if self.LS_r != True :
+          if (sz < self.LS_in_val): self.LS_r = True
+          else: self.LS_r = False
         
         # Short_Long Check
         if (self.last_sz <= self.SL_out_val): self.SL_out = True
@@ -171,7 +191,7 @@ class NPPair:
           else: self.LS_in = False
 
         print("%s : SL %c%c%c | LS %c%c%c | %8d, %8d (%7.3f,%7.3f)"%
-            ( preformat_cjk(self.A_name, 10), # self.A_name.ljust(10),
+            ( preformat_cjk(self.A_name, 14), # self.A_name.ljust(10),
              'R' if self.SL_r else '_', 'I' if self.SL_in else '_', 'O' if self.SL_out else '_',
              'R' if self.LS_r else '_', 'I' if self.LS_in else '_', 'O' if self.LS_out else '_',
              self.A_price, self.B_price, dr, sz))
