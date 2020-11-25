@@ -4,6 +4,7 @@ import requests
 import sqlite3
 import json
 import numpy
+import pandas
 from pandas import Series, DataFrame
 from bs4 import BeautifulSoup
 #from datetime import date, time, datetime, timedelta
@@ -41,9 +42,9 @@ def SendToTelegram(msg) :
     res = bot.sendMessage(-1001234806937, msg)
     
     # # 성백이
-    token = "1017606432:AAG21Y9DG0m6QbDYT6FYfIVtMlx-nMnutUs"
-    bot = telepot.Bot(token)
-    res = bot.sendMessage(-1001471005474, msg)
+    # token = "1017606432:AAG21Y9DG0m6QbDYT6FYfIVtMlx-nMnutUs"
+    # bot = telepot.Bot(token)
+    # res = bot.sendMessage(-1001471005474, msg)
 
     time.sleep(2)
 
@@ -113,16 +114,18 @@ class NPPair:
 
         # 괴리율 평균 구하기
         avg = self.data['dr'].rolling(window=avg_period).mean()
-        self.data.insert(len(self.data.columns), 'dr_avg_250', avg)
         # 하루 밀기
         avg = avg.shift(1)
+        self.data.insert(len(self.data.columns), 'dr_avg_250', avg)
+        
 
         # 표준편차 구하기
         #std = numpy.std(self.data['dr_avg_250'])
         std = self.data['dr'].rolling(window=avg_period).std()
-        self.data.insert(len(self.data.columns), 'std_250', std)
         # 하루 밀기
         std = std.shift(1)
+        self.data.insert(len(self.data.columns), 'std_250', std)
+        
 
         # 표준화
         sz = []
@@ -137,19 +140,25 @@ class NPPair:
         self.last_std = self.data.loc[self.data.index[len(self.data.index)-1]][4]
         self.last_sz  = self.data.loc[self.data.index[len(self.data.index)-1]][5]
         print('%s vs %s'%(self.A_name, self.B_name))
-        print(self.data.tail(10))
+        # print(self.data.tail(10))
+        pandas.set_option('display.max_rows', None)
+        print(self.data)
         print("LAST avg = %f, std = %f, sz = %f\n"%(self.last_avg, self.last_std, self.last_sz))
         
         self.GetSignalNow(True)
 
     def GetSignalNow(self, isFirst):
         # 현재가격을 가져온다.
-        url = 'https://polling.finance.naver.com/api/realtime.nhn?query=SERVICE_ITEM:%s'%self.A_code
-        soup = BeautifulSoup(requests.get(url).text, 'html.parser')
-        self.A_price = json.loads(str(soup))['result']['areas'][0]['datas'][0]['nv']
-        url = 'https://polling.finance.naver.com/api/realtime.nhn?query=SERVICE_ITEM:%s'%self.B_code
-        soup = BeautifulSoup(requests.get(url).text, 'html.parser')
-        self.B_price = json.loads(str(soup))['result']['areas'][0]['datas'][0]['nv']
+        try:
+          url = 'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:%s'%self.A_code
+          soup = BeautifulSoup(requests.get(url).text, 'html.parser')
+          self.A_price = json.loads(str(soup))['result']['areas'][0]['datas'][0]['nv']
+          url = 'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:%s'%self.B_code
+          soup = BeautifulSoup(requests.get(url).text, 'html.parser')
+          self.B_price = json.loads(str(soup))['result']['areas'][0]['datas'][0]['nv']
+        except(ConnectionError, Exception) as e:
+          print ("Exception is :", e)
+          return
 
         # 괴리율, 표준화
         dr = (self.A_price - self.B_price)/self.A_price
