@@ -58,8 +58,9 @@ class NPPair:
         self.SL_out_val = sl_out
         self.LS_in_val = ls_in
         self.LS_out_val = ls_out
-        self.dr_max = dr_max
-        self.dr_min = dr_min
+        # self.dr_max = dr_max
+        # self.dr_min = dr_min
+        self.T = 50
         
         self.dateList = []
         self.A_closeList = []
@@ -83,7 +84,7 @@ class NPPair:
         
         # A (보통주) 종가 가져오기
         #req = requests.get('https://fchart.stock.naver.com/sise.nhn?symbol=%s&timeframe=day&count=260&requestType=0'%self.A_code)
-        req = requests.get('https://fchart.stock.naver.com/sise.nhn?symbol=%s&timeframe=day&startTime=%s&count=%d&requestType=0'%(self.A_code, yesterday.strftime('%Y%m%d'), avg_period+20))
+        req = requests.get('https://fchart.stock.naver.com/sise.nhn?symbol=%s&timeframe=day&startTime=%s&count=%d&requestType=0'%(self.A_code, yesterday.strftime('%Y%m%d'), avg_period+120))
         html = req.text
         soup = BeautifulSoup(html, 'html.parser')
         self.A_name = soup.find('chartdata')['name']
@@ -93,7 +94,7 @@ class NPPair:
             self.A_closeList.append(int(arr[4]))
 
         # B (우선주) 종가 가져오기
-        soup = BeautifulSoup(requests.get('https://fchart.stock.naver.com/sise.nhn?symbol=%s&timeframe=day&startTime=%s&count=%d&requestType=0'%(self.B_code, yesterday.strftime('%Y%m%d'), avg_period+20)).text, 'html.parser')
+        soup = BeautifulSoup(requests.get('https://fchart.stock.naver.com/sise.nhn?symbol=%s&timeframe=day&startTime=%s&count=%d&requestType=0'%(self.B_code, yesterday.strftime('%Y%m%d'), avg_period+120)).text, 'html.parser')
         self.B_name = soup.find('chartdata')['name']
         for candle_element in soup.findAll('item'):
             self.B_closeList.append(int(candle_element['data'].split('|')[4]))
@@ -167,6 +168,9 @@ class NPPair:
         else:
             sz = (dr - self.last_avg) / self.last_std
 
+        # T 값
+        self.T = (sz * 10) + 50
+
         # Signal R
         if self.SL_r != True :
           if (sz > self.SL_in_val): self.SL_r = True
@@ -183,12 +187,13 @@ class NPPair:
         elif(self.SL_in):
           self.SL_in = True
         else: 
-          if (self.SL_r and dr > self.dr_max and sz < self.last_sz and dr > self.last_avg + (self.last_std * self.SL_in_val)): 
+          if (self.SL_r and self.T > 70 and sz < self.last_sz and dr > self.last_avg + (self.last_std * self.SL_in_val)): 
             self.SL_in = True
           else: 
             self.SL_in = False
 
         # Long_Short Check
+        # IF( AND( T < 30 , dr < self.last_avg + (self.last_std * self.LS_in_val) , sz > last_sz , LS_r == true), "IN" , ""  )
         if (self.last_sz >= self.LS_out_val): self.LS_out = True
         else: self.LS_out = False
         if (self.LS_out):
@@ -196,7 +201,7 @@ class NPPair:
         elif(self.LS_in):
           self.LS_in = True
         else: 
-          if (self.LS_r and dr < self.dr_min and sz > self.last_sz and dr < self.last_avg + (self.last_std * self.LS_in_val)): self.LS_in = True
+          if (self.LS_r and self.T < 30 and sz > self.last_sz and dr < self.last_avg + (self.last_std * self.LS_in_val)): self.LS_in = True
           else: self.LS_in = False
 
         print("%s : SL %c%c%c | LS %c%c%c | %8d, %8d (%7.3f,%7.3f)"%
