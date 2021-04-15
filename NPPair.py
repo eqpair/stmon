@@ -42,15 +42,15 @@ def SendToTelegram(msg) :
     res = bot.sendMessage(-1001234806937, msg)
     
     # # 성백이
-    # token = "1017606432:AAG21Y9DG0m6QbDYT6FYfIVtMlx-nMnutUs"
-    # bot = telepot.Bot(token)
-    # res = bot.sendMessage(-1001471005474, msg)
+    token = "1017606432:AAG21Y9DG0m6QbDYT6FYfIVtMlx-nMnutUs"
+    bot = telepot.Bot(token)
+    res = bot.sendMessage(-1001471005474, msg)
 
     time.sleep(2)
 
 
 class NPPair:
-    def __init__(self, code1, code2, sl_in, sl_out, ls_in, ls_out, dr_max, dr_min, avg_period):
+    def __init__(self, code1, code2, sl_in, sl_out, ls_in, ls_out, avg_period):
         self.avg_period = avg_period
         self.A_code = code1
         self.B_code = code2
@@ -58,8 +58,6 @@ class NPPair:
         self.SL_out_val = sl_out
         self.LS_in_val = ls_in
         self.LS_out_val = ls_out
-        # self.dr_max = dr_max
-        # self.dr_min = dr_min
         self.T = 50
         
         self.dateList = []
