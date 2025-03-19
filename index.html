@@ -302,7 +302,7 @@
                 
                 const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
                 if (!response.ok) {
-                    throw new Error('데이터를 불러오는데 실패했습니다.');
+                    throw new Error('Failed to load Data.');
                 }
                 
                 const data = await response.json();
@@ -320,7 +320,7 @@
                 
                 updateStatus('success');
             } catch (error) {
-                console.error('데이터 로드 오류:', error);
+                console.error('Data Load Error:', error);
                 updateStatus('error', error.message);
             }
         }
@@ -329,11 +329,11 @@
         async function fetchHistoryData() {
             try {
                 const historyTable = document.getElementById('history-table-body');
-                historyTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">히스토리 데이터를 불러오는 중...</td></tr>';
+                historyTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading History Data...</td></tr>';
                 
                 const response = await fetch(HISTORY_URL + `?t=${new Date().getTime()}`);
                 if (!response.ok) {
-                    throw new Error('히스토리 데이터를 불러오는데 실패했습니다.');
+                    throw new Error('Failed to load History Data.');
                 }
                 
                 const data = await response.json();
@@ -341,9 +341,9 @@
                 
                 renderHistoryData();
             } catch (error) {
-                console.error('히스토리 데이터 로드 오류:', error);
+                console.error('History Data Load Error:', error);
                 const historyTable = document.getElementById('history-table-body');
-                historyTable.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">오류: ${error.message}</td></tr>`;
+                historyTable.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error: ${error.message}</td></tr>`;
             }
         }
         
@@ -351,7 +351,7 @@
         function updateLastUpdated(timestamp) {
             const el = document.getElementById('lastUpdated');
             if (!timestamp) {
-                el.textContent = '정보 없음';
+                el.textContent = 'No Info.';
                 return;
             }
             
@@ -369,15 +369,15 @@
             switch (status) {
                 case 'loading':
                     indicator.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink';
-                    text.textContent = '데이터 로딩 중...';
+                    text.textContent = 'Loading data...';
                     break;
                 case 'success':
                     indicator.className = 'w-3 h-3 rounded-full bg-green-500 mr-2';
-                    text.textContent = '데이터 로드 완료';
+                    text.textContent = 'Data loaded successfully';
                     break;
                 case 'error':
                     indicator.className = 'w-3 h-3 rounded-full bg-red-500 mr-2';
-                    text.textContent = message || '데이터 로드 실패';
+                    text.textContent = message || 'Failed to load data';
                     break;
             }
         }
@@ -404,7 +404,7 @@
             const rSignals = allSignals.filter(s => s.signal && s.signal.includes('R'));
             
             if (rSignals.length === 0) {
-                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
+                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
                 return;
             }
             
@@ -492,7 +492,7 @@
             const container = document.getElementById(containerId);
             
             if (!signals || signals.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">표시할 데이터가 없습니다</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No Data to display</div>';
                 return;
             }
             
@@ -532,16 +532,16 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
                         <div>
-                            <span class="text-gray-500">SZ 값:</span>
+                            <span class="text-gray-500">SZ Value:</span>
                             <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
                         </div>
                         <div>
-                            <span class="text-gray-500">가격:</span>
+                            <span class="text-gray-500">Price:</span>
                             <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
                         </div>
                     </div>
                     <div class="text-xs text-gray-500 mt-2">
-                        페어 가격: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
+                        Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
                     </div>
                 `;
                 
@@ -555,7 +555,7 @@
             const historyToRender = filteredHistory || historyData;
             
             if (!historyToRender || historyToRender.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">표시할 히스토리 데이터가 없습니다</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No History Data to display</td></tr>';
                 return;
             }
             
