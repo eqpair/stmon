@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 모니터링 대시보드</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        .signal-card {
+            transition: all 0.3s ease;
+        }
+
+        .signal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .blink {
+            animation: blink 2s linear infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .sz-high {
+            color: #DC2626;
+            font-weight: bold;
+        }
+
+        .sz-medium {
+            color: #EA580C;
+            font-weight: bold;
+        }
+
+        .sz-low {
+            color: #16A34A;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">주식 모니터링 대시보드</h1>
+            <div class="flex items-center text-sm text-gray-600">
+                <span class="mr-2">마지막 업데이트:</span>
+                <span id="lastUpdated" class="font-medium"></span>
+                <div class="ml-4 flex items-center">
+                    <div id="status-indicator" class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+                    <span id="status-text">데이터 로딩 중...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- 요약 카드 -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">모니터링 요약</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-blue-700 text-sm font-medium mb-1">모니터링 종목</div>
+                        <div class="text-2xl font-bold" id="total-stocks">-</div>
+                    </div>
+                    <div class="p-4 bg-red-50 rounded-lg">
+                        <div class="text-red-700 text-sm font-medium mb-1">다이버전트 종목</div>
+                        <div class="text-2xl font-bold" id="divergent-count">-</div>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <div class="text-green-700 text-sm font-medium mb-1">R 신호 종목</div>
+                        <div class="text-2xl font-bold" id="r-signal-count">-</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-purple-700 text-sm font-medium mb-1">I 신호 종목</div>
+                        <div class="text-2xl font-bold" id="i-signal-count">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최근 알림 -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">최근 알림</h2>
+                <div id="recent-alerts" class="space-y-3">
+                    <div class="text-gray-500 text-center py-4">알림 데이터를 불러오는 중...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 메뉴 -->
+        <div class="mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex">
+                    <button id="tab-all"
+                        class="tab-button active py-4 px-6 border-b-2 border-blue-500 font-medium text-blue-600 focus:outline-none">
+                        전체 종목
+                    </button>
+                    <button id="tab-divergent"
+                        class="tab-button py-4 px-6 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none">
+                        다이버전트 종목
+                    </button>
+                    <button id="tab-history"
+                        class="tab-button py-4 px-6 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none">
+                        히스토리
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- 검색 및 필터 -->
+        <div class="mb-6 flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+                <input type="text" id="search-input" placeholder="종목명 검색..."
+                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <div class="flex gap-2">
+                <select id="filter-signal"
+                    class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="all">모든 신호</option>
+                    <option value="R">R 신호</option>
+                    <option value="I">I 신호</option>
+                    <option value="O">O 신호</option>
+                </select>
+                <select id="sort-option"
+                    class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="sz-desc">SZ 값 높은순</option>
+                    <option value="sz-asc">SZ 값 낮은순</option>
+                    <option value="name-asc">종목명 오름차순</option>
+                    <option value="name-desc">종목명 내림차순</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 데이터 표시 영역 -->
+        <div id="tab-content-all" class="tab-content">
+            <div id="all-signals-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="col-span-full text-center py-8 text-gray-500">
+                    데이터를 불러오는 중...
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-content-divergent" class="tab-content hidden">
+            <div id="divergent-signals-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="col-span-full text-center py-8 text-gray-500">
+                    데이터를 불러오는 중...
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-content-history" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    날짜/시간</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    종목명</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    SZ 값</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    신호</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    가격 정보</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                    히스토리 데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2025 주식 모니터링 대시보드. 모든 정보는 참고용으로만 사용해 주세요.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 데이터 URL
+        const DATA_URL = 'data/stock_data.json';
+        const HISTORY_URL = 'data/history.json';
+        
+        // 상태 변수
+        let allSignals = [];
+        let divergentSignals = [];
+        let historyData = [];
+        let activeTab = 'all';
+        let lastUpdated = '';
+        
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            fetchData();
+            
+            // 5분마다 데이터 새로고침
+            setInterval(fetchData, 300000);
+        });
+        
+        // 이벤트 리스너 설정
+        function setupEventListeners() {
+            // 탭 전환
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.id.split('-')[1];
+                    switchTab(tabId);
+                });
+            });
+            
+            // 검색 입력
+            document.getElementById('search-input').addEventListener('input', filterAndRenderData);
+            
+            // 필터 변경
+            document.getElementById('filter-signal').addEventListener('change', filterAndRenderData);
+            
+            // 정렬 변경
+            document.getElementById('sort-option').addEventListener('change', filterAndRenderData);
+        }
+        
+        // 탭 전환
+        function switchTab(tabId) {
+            activeTab = tabId;
+            
+            // 탭 버튼 스타일 업데이트
+            document.querySelectorAll('.tab-button').forEach(button => {
+                if (button.id === `tab-${tabId}`) {
+                    button.classList.add('border-blue-500', 'text-blue-600');
+                    button.classList.remove('border-transparent', 'text-gray-500');
+                } else {
+                    button.classList.remove('border-blue-500', 'text-blue-600');
+                    button.classList.add('border-transparent', 'text-gray-500');
+                }
+            });
+            
+            // 탭 컨텐츠 표시/숨김
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+            
+            // 필요시 데이터 로드
+            if (tabId === 'history' && historyData.length === 0) {
+                fetchHistoryData();
+            }
+            
+            filterAndRenderData();
+        }
+        
+        // 데이터 가져오기
+        async function fetchData() {
+            try {
+                updateStatus('loading');
+                
+                const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error('데이터를 불러오는데 실패했습니다.');
+                }
+                
+                const data = await response.json();
+                
+                // 데이터 저장
+                allSignals = data.all_signals || [];
+                divergentSignals = data.divergent_signals || [];
+                lastUpdated = data.last_updated;
+                
+                // UI 업데이트
+                updateLastUpdated(lastUpdated);
+                updateSummary();
+                updateRecentAlerts();
+                filterAndRenderData();
+                
+                updateStatus('success');
+            } catch (error) {
+                console.error('데이터 로드 오류:', error);
+                updateStatus('error', error.message);
+            }
+        }
+        
+        // 히스토리 데이터 가져오기
+        async function fetchHistoryData() {
+            try {
+                const historyTable = document.getElementById('history-table-body');
+                historyTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">히스토리 데이터를 불러오는 중...</td></tr>';
+                
+                const response = await fetch(HISTORY_URL + `?t=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error('히스토리 데이터를 불러오는데 실패했습니다.');
+                }
+                
+                const data = await response.json();
+                historyData = data.signals || [];
+                
+                renderHistoryData();
+            } catch (error) {
+                console.error('히스토리 데이터 로드 오류:', error);
+                const historyTable = document.getElementById('history-table-body');
+                historyTable.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">오류: ${error.message}</td></tr>`;
+            }
+        }
+        
+        // 마지막 업데이트 시간 표시
+        function updateLastUpdated(timestamp) {
+            const el = document.getElementById('lastUpdated');
+            if (!timestamp) {
+                el.textContent = '정보 없음';
+                return;
+            }
+            
+            // 날짜 포맷팅
+            const date = new Date(timestamp);
+            const formatted = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+            el.textContent = formatted;
+        }
+        
+        // 상태 표시기 업데이트
+        function updateStatus(status, message = '') {
+            const indicator = document.getElementById('status-indicator');
+            const text = document.getElementById('status-text');
+            
+            switch (status) {
+                case 'loading':
+                    indicator.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink';
+                    text.textContent = '데이터 로딩 중...';
+                    break;
+                case 'success':
+                    indicator.className = 'w-3 h-3 rounded-full bg-green-500 mr-2';
+                    text.textContent = '데이터 로드 완료';
+                    break;
+                case 'error':
+                    indicator.className = 'w-3 h-3 rounded-full bg-red-500 mr-2';
+                    text.textContent = message || '데이터 로드 실패';
+                    break;
+            }
+        }
+        
+        // 요약 정보 업데이트
+        function updateSummary() {
+            document.getElementById('total-stocks').textContent = allSignals.length;
+            document.getElementById('divergent-count').textContent = divergentSignals.length;
+            
+            // R 신호 카운트
+            const rSignalCount = allSignals.filter(s => s.signal && s.signal.includes('R')).length;
+            document.getElementById('r-signal-count').textContent = rSignalCount;
+            
+            // I 신호 카운트
+            const iSignalCount = allSignals.filter(s => s.signal && s.signal.includes('I')).length;
+            document.getElementById('i-signal-count').textContent = iSignalCount;
+        }
+        
+        // 최근 알림 업데이트
+        function updateRecentAlerts() {
+            const alertsContainer = document.getElementById('recent-alerts');
+            
+            // R 신호가 있는 항목 찾기
+            const rSignals = allSignals.filter(s => s.signal && s.signal.includes('R'));
+            
+            if (rSignals.length === 0) {
+                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
+                return;
+            }
+            
+            // 최대 3개의 알림 표시
+            const recentSignals = rSignals.slice(0, 3);
+            
+            alertsContainer.innerHTML = '';
+            
+            recentSignals.forEach(signal => {
+                const alertEl = document.createElement('div');
+                alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
+                
+                alertEl.innerHTML = `
+                    <div class="flex-shrink-0 mt-0.5">
+                        <span class="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600">
+                            <i class="fas fa-exclamation"></i>
+                        </span>
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <p class="text-sm font-medium text-gray-900">${signal.stock_name}</p>
+                        <p class="mt-1 text-xs text-gray-500">
+                            SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
+                            신호: <span class="signal-tag signal-R">R</span>
+                        </p>
+                    </div>
+                `;
+                
+                alertsContainer.appendChild(alertEl);
+            });
+        }
+        
+        // 데이터 필터링 및 렌더링
+        function filterAndRenderData() {
+            if (activeTab === 'all') {
+                renderSignals(filterSignals(allSignals), 'all-signals-container');
+            } else if (activeTab === 'divergent') {
+                renderSignals(filterSignals(divergentSignals), 'divergent-signals-container');
+            } else if (activeTab === 'history') {
+                renderHistoryData(filterSignals(historyData));
+            }
+        }
+        
+        // 신호 필터링
+        function filterSignals(signals) {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const signalFilter = document.getElementById('filter-signal').value;
+            const sortOption = document.getElementById('sort-option').value;
+            
+            // 검색 및 필터 적용
+            let filtered = signals.filter(signal => {
+                // 검색어 필터
+                if (searchTerm && !signal.stock_name.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // 신호 필터
+                if (signalFilter !== 'all' && (!signal.signal || !signal.signal.includes(signalFilter))) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // 정렬 적용
+            filtered.sort((a, b) => {
+                switch (sortOption) {
+                    case 'sz-desc':
+                        return b.sz_value - a.sz_value;
+                    case 'sz-asc':
+                        return a.sz_value - b.sz_value;
+                    case 'name-asc':
+                        return a.stock_name.localeCompare(b.stock_name);
+                    case 'name-desc':
+                        return b.stock_name.localeCompare(a.stock_name);
+                    default:
+                        return 0;
+                }
+            });
+            
+            return filtered;
+        }
+        
+        // 신호 데이터 렌더링
+        function renderSignals(signals, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (!signals || signals.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">표시할 데이터가 없습니다</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            signals.forEach(signal => {
+                const card = document.createElement('div');
+                card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
+                
+                // 신호 태그 생성
+                let signalTags = '';
+                if (signal.signal) {
+                    if (signal.signal.includes('R')) {
+                        signalTags += '<span class="signal-tag signal-R">R</span>';
+                    }
+                    if (signal.signal.includes('I')) {
+                        signalTags += '<span class="signal-tag signal-I">I</span>';
+                    }
+                    if (signal.signal.includes('O')) {
+                        signalTags += '<span class="signal-tag signal-O">O</span>';
+                    }
+                }
+                
+                // SZ 값에 따른 클래스
+                let szClass = 'sz-low';
+                if (signal.sz_value >= 2.5) {
+                    szClass = 'sz-high';
+                } else if (signal.sz_value >= 1.5) {
+                    szClass = 'sz-medium';
+                }
+                
+                // 카드 내용
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-medium text-gray-900">${signal.stock_name}</h3>
+                        <div>${signalTags}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+                        <div>
+                            <span class="text-gray-500">SZ 값:</span>
+                            <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">가격:</span>
+                            <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        페어 가격: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // 히스토리 데이터 렌더링
+        function renderHistoryData(filteredHistory = null) {
+            const tableBody = document.getElementById('history-table-body');
+            const historyToRender = filteredHistory || historyData;
+            
+            if (!historyToRender || historyToRender.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">표시할 히스토리 데이터가 없습니다</td></tr>';
+                return;
+            }
+            
+            tableBody.innerHTML = '';
+            
+            // 최근 50개 데이터만 표시
+            const recentHistory = historyToRender.slice(-50);
+            
+            recentHistory.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // 날짜 포맷팅
+                let timestamp = item.timestamp;
+                try {
+                    const date = new Date(timestamp);
+                    timestamp = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                } catch (e) {
+                    // 포맷팅 실패 시 원본 사용
+                }
+                
+                // 신호 태그 생성
+                let signalTags = '';
+                if (item.signal) {
+                    if (item.signal.includes('R')) {
+                        signalTags += '<span class="signal-tag signal-R">R</span>';
+                    }
+                    if (item.signal.includes('I')) {
+                        signalTags += '<span class="signal-tag signal-I">I</span>';
+                    }
+                    if (item.signal.includes('O')) {
+                        signalTags += '<span class="signal-tag signal-O">O</span>';
+                    }
+                }
+                
+                // SZ 값에 따른 클래스
+                let szClass = 'sz-low';
+                if (item.sz_value >= 2.5) {
+                    szClass = 'sz-high';
+                } else if (item.sz_value >= 1.5) {
+                    szClass = 'sz-medium';
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.stock_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
+                        ${item.price_b ? item.price_b.toLocaleString() : '-'}
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+
+</html>
