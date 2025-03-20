@@ -1,22 +1,6 @@
 {
   "signals": [
     {
-      "stock_name": "🟢 한화투자증권",
-      "sz_value": 1.86,
-      "signal": "___",
-      "price_a": 3545.0,
-      "price_b": 5990.0,
-      "timestamp": "2025-03-20 11:52:45"
-    },
-    {
-      "stock_name": "LG생활건강",
-      "sz_value": 2.39,
-      "signal": "___",
-      "price_a": 326000.0,
-      "price_b": 125300.0,
-      "timestamp": "2025-03-20 11:52:45"
-    },
-    {
       "stock_name": "아모레퍼시픽",
       "sz_value": -1.89,
       "signal": "__O",
@@ -3999,6 +3983,22 @@
       "price_a": 60700.0,
       "price_b": 59300.0,
       "timestamp": "2025-03-20 15:57:40"
+    },
+    {
+      "stock_name": "대신증권",
+      "sz_value": -0.3,
+      "signal": "__O",
+      "price_a": 17160.0,
+      "price_b": 16140.0,
+      "timestamp": "2025-03-20 16:28:17"
+    },
+    {
+      "stock_name": "🟢 LG화학",
+      "sz_value": 3.03,
+      "signal": "R__",
+      "price_a": 257000.0,
+      "price_b": 121400.0,
+      "timestamp": "2025-03-20 16:28:17"
     }
   ]
 }
