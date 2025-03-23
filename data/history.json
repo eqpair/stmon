@@ -1,14 +1,6 @@
 {
   "signals": [
     {
-      "stock_name": "🟢 태양금속",
-      "sz_value": 0.57,
-      "signal": "___",
-      "price_a": 2650.0,
-      "price_b": 4230.0,
-      "timestamp": "2025-03-21 11:51:05"
-    },
-    {
       "stock_name": "NPC",
       "sz_value": -1.42,
       "signal": "__O",
@@ -3999,6 +3991,14 @@
       "price_a": 2645.0,
       "price_b": 12300.0,
       "timestamp": "2025-03-21 16:26:23"
+    },
+    {
+      "stock_name": "노루홀딩스",
+      "sz_value": 1.4,
+      "signal": "___",
+      "price_a": 14150.0,
+      "price_b": 28600.0,
+      "timestamp": "2025-03-24 08:41:05"
     }
   ]
 }
