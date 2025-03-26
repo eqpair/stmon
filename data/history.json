@@ -1,14 +1,6 @@
 {
   "signals": [
     {
-      "stock_name": "🟠 SK디스커버리",
-      "sz_value": -0.17,
-      "signal": "__O",
-      "price_a": 38700.0,
-      "price_b": 33200.0,
-      "timestamp": "2025-03-26 11:09:21"
-    },
-    {
       "stock_name": "DL",
       "sz_value": -0.32,
       "signal": "__O",
@@ -3999,6 +3991,14 @@
       "price_a": 46200.0,
       "price_b": 30000.0,
       "timestamp": "2025-03-26 16:15:15"
+    },
+    {
+      "stock_name": "금호건설",
+      "sz_value": -0.86,
+      "signal": "__O",
+      "price_a": 2590.0,
+      "price_b": 11520.0,
+      "timestamp": "2025-03-26 16:45:49"
     }
   ]
 }
