@@ -1,30 +1,6 @@
 {
   "signals": [
     {
-      "stock_name": "크라운제과",
-      "sz_value": 0.38,
-      "signal": "___",
-      "price_a": 7930.0,
-      "price_b": 9260.0,
-      "timestamp": "2025-03-31 11:33:52"
-    },
-    {
-      "stock_name": "🟢 두산",
-      "sz_value": 0.4,
-      "signal": "___",
-      "price_a": 294500.0,
-      "price_b": 132200.0,
-      "timestamp": "2025-03-31 11:33:52"
-    },
-    {
-      "stock_name": "🟢 남선알미늄",
-      "sz_value": 0.48,
-      "signal": "___",
-      "price_a": 1245.0,
-      "price_b": 13510.0,
-      "timestamp": "2025-03-31 11:33:52"
-    },
-    {
       "stock_name": "금호석유",
       "sz_value": 1.47,
       "signal": "___",
@@ -3999,6 +3975,30 @@
       "price_a": 32650.0,
       "price_b": 17250.0,
       "timestamp": "2025-03-31 15:38:41"
+    },
+    {
+      "stock_name": "대한항공",
+      "sz_value": 0.35,
+      "signal": "__O",
+      "price_a": 21300.0,
+      "price_b": 21400.0,
+      "timestamp": "2025-03-31 16:09:16"
+    },
+    {
+      "stock_name": "소프트센",
+      "sz_value": -1.2,
+      "signal": "__O",
+      "price_a": 301.0,
+      "price_b": 6900.0,
+      "timestamp": "2025-03-31 16:09:16"
+    },
+    {
+      "stock_name": "유화증권",
+      "sz_value": 0.03,
+      "signal": "__O",
+      "price_a": 2320.0,
+      "price_b": 2300.0,
+      "timestamp": "2025-03-31 16:09:16"
     }
   ]
 }
