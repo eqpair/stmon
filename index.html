@@ -487,210 +487,130 @@
             return filtered;
         }
         
-        // 신호 데이터 렌더링 함수 업데이트 (종목명 클릭 기능 추가)
-            function renderSignals(signals, containerId) {
-                const container = document.getElementById(containerId);
-
-                if (!signals || signals.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">표시할 데이터가 없습니다</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-
-                signals.forEach(signal => {
-                    const card = document.createElement('div');
-                    card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
-
-                    // 신호 태그 생성
-                    let signalTags = '';
-                    if (signal.signal) {
-                        if (signal.signal.includes('R')) {
-                            signalTags += '<span class="signal-tag signal-R">R</span>';
-                        }
-                        if (signal.signal.includes('I')) {
-                            signalTags += '<span class="signal-tag signal-I">I</span>';
-                        }
-                        if (signal.signal.includes('O')) {
-                            signalTags += '<span class="signal-tag signal-O">O</span>';
-                        }
-                    }
-
-                    // SZ 값에 따른 클래스
-                    let szClass = 'sz-low';
-                    if (signal.sz_value >= 2.5) {
-                        szClass = 'sz-high';
-                    } else if (signal.sz_value >= 1.5) {
-                        szClass = 'sz-medium';
-                    }
-
-                    // 종목 코드 추출 - config.py 의 TICK_PAIRS 배열에서 종목명과 일치하는 항목의 코드를 찾아야 합니다.
-                    // 여기서는 임시로 종목 이름을 기준으로 URL을 생성합니다.
-                    const stockCode = getStockCodeByName(signal.stock_name);
-
-                    // 카드 내용 - 종목명에 링크 추가
-                    card.innerHTML = `
-            <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-medium text-gray-900">
-                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                       class="hover:text-blue-600 hover:underline">
-                        ${signal.stock_name}
-                    </a>
-                </h3>
-                <div>${signalTags}</div>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
-                <div>
-                    <span class="text-gray-500">SZ 값:</span>
-                    <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
-                </div>
-                <div>
-                    <span class="text-gray-500">가격:</span>
-                    <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
-                </div>
-            </div>
-            <div class="text-xs text-gray-500 mt-2">
-                페어 가격: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
-            </div>
-        `;
-
-                    container.appendChild(card);
-                });
+        // 신호 데이터 렌더링
+        function renderSignals(signals, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (!signals || signals.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No Data to display</div>';
+                return;
             }
-
-            // 종목명으로 종목 코드를 가져오는 함수
-            function getStockCodeByName(stockName) {
-                // TICK_PAIRS 배열에서 종목명으로 코드를 찾아야 하지만,
-                // 여기서는 임시로 종목명의 첫 글자를 기준으로 더미 코드를 생성합니다.
-
-                // 실제 구현에서는 서버 측에서 종목명과 코드 매핑을 제공해야 합니다.
-                const stockCodeMap = {
-                    '삼성전자': '005930',
-                    '현대차': '005380',
-                    'S-Oil': '010950',
-                    '한진칼': '180640',
-                    'SK': '034730',
-                    '한국금융지주': '071050',
-                    '티와이홀딩스': '363280',
-                    '삼성화재': '000810',
-                    '호텔신라': '008770',
-                    'SK이노베이션': '096770',
-                    'GS': '078930',
-                    'CJ제일제당': '097950',
-                    'SK디스커버리': '006120',
-                    '롯데지주': '004990',
-                    '깨끗한나라': '004540',
-                    '부국증권': '001270',
-                    '하이트진로홀딩스': '000140',
-                    '코오롱모빌리티그룹': '450140',
-                    '태양금속': '004100',
-                    '코오롱': '002020',
-                    '성신양회': '004980',
-                    '코오롱글로벌': '003070',
-                    '신풍제약': '019170',
-                    '한화솔루션': '009830',
-                    '한화투자증권': '003530',
-                    'LG화학': '051910',
-                    '두산': '000150',
-                    '남선알미늄': '008350',
-                    '대원전선': '006340',
-                    '대호특수강': '021040',
-                    '한양증권': '001750',
-                    '노루페인트': '090350',
-                    '크라운해태홀딩스': '005740',
-                    '롯데칠성': '005300',
-                    '일양약품': '007570',
-                    '삼양사': '145990',
-                    'JW중외제약': '001060',
-                    '삼양홀딩스': '000070'
-                };
-
-                // 정확한 일치 확인
-                if (stockCodeMap[stockName]) {
-                    return stockCodeMap[stockName];
-                }
-
-                // 부분 일치 확인 (예: "🔴 삼성전자" -> "삼성전자")
-                for (const [name, code] of Object.entries(stockCodeMap)) {
-                    if (stockName.includes(name)) {
-                        return code;
+            
+            container.innerHTML = '';
+            
+            signals.forEach(signal => {
+                const card = document.createElement('div');
+                card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
+                
+                // 신호 태그 생성
+                let signalTags = '';
+                if (signal.signal) {
+                    if (signal.signal.includes('R')) {
+                        signalTags += '<span class="signal-tag signal-R">R</span>';
+                    }
+                    if (signal.signal.includes('I')) {
+                        signalTags += '<span class="signal-tag signal-I">I</span>';
+                    }
+                    if (signal.signal.includes('O')) {
+                        signalTags += '<span class="signal-tag signal-O">O</span>';
                     }
                 }
-
-                // 코드를 찾지 못한 경우 임시 코드 반환
-                return 'unknown';
+                
+                // SZ 값에 따른 클래스
+                let szClass = 'sz-low';
+                if (signal.sz_value >= 2.5) {
+                    szClass = 'sz-high';
+                } else if (signal.sz_value >= 1.5) {
+                    szClass = 'sz-medium';
+                }
+                
+                // 카드 내용
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-medium text-gray-900">${signal.stock_name}</h3>
+                        <div>${signalTags}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+                        <div>
+                            <span class="text-gray-500">SZ Value:</span>
+                            <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Price:</span>
+                            <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // 히스토리 데이터 렌더링
+        function renderHistoryData(filteredHistory = null) {
+            const tableBody = document.getElementById('history-table-body');
+            const historyToRender = filteredHistory || historyData;
+            
+            if (!historyToRender || historyToRender.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No History Data to display</td></tr>';
+                return;
             }
-
-            // 히스토리 데이터 렌더링 함수 업데이트 (종목명 클릭 기능 추가)
-            function renderHistoryData(filteredHistory = null) {
-                const tableBody = document.getElementById('history-table-body');
-                const historyToRender = filteredHistory || historyData;
-
-                if (!historyToRender || historyToRender.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">표시할 히스토리 데이터가 없습니다</td></tr>';
-                    return;
+            
+            tableBody.innerHTML = '';
+            
+            // 최근 50개 데이터만 표시
+            const recentHistory = historyToRender.slice(-50);
+            
+            recentHistory.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // 날짜 포맷팅
+                let timestamp = item.timestamp;
+                try {
+                    const date = new Date(timestamp);
+                    timestamp = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                } catch (e) {
+                    // 포맷팅 실패 시 원본 사용
                 }
-
-                tableBody.innerHTML = '';
-
-                // 최근 50개 데이터만 표시
-                const recentHistory = historyToRender.slice(-50);
-
-                recentHistory.forEach(item => {
-                    const row = document.createElement('tr');
-
-                    // 날짜 포맷팅
-                    let timestamp = item.timestamp;
-                    try {
-                        const date = new Date(timestamp);
-                        timestamp = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-                    } catch (e) {
-                        // 포맷팅 실패 시 원본 사용
+                
+                // 신호 태그 생성
+                let signalTags = '';
+                if (item.signal) {
+                    if (item.signal.includes('R')) {
+                        signalTags += '<span class="signal-tag signal-R">R</span>';
                     }
-
-                    // 신호 태그 생성
-                    let signalTags = '';
-                    if (item.signal) {
-                        if (item.signal.includes('R')) {
-                            signalTags += '<span class="signal-tag signal-R">R</span>';
-                        }
-                        if (item.signal.includes('I')) {
-                            signalTags += '<span class="signal-tag signal-I">I</span>';
-                        }
-                        if (item.signal.includes('O')) {
-                            signalTags += '<span class="signal-tag signal-O">O</span>';
-                        }
+                    if (item.signal.includes('I')) {
+                        signalTags += '<span class="signal-tag signal-I">I</span>';
                     }
-
-                    // SZ 값에 따른 클래스
-                    let szClass = 'sz-low';
-                    if (item.sz_value >= 2.5) {
-                        szClass = 'sz-high';
-                    } else if (item.sz_value >= 1.5) {
-                        szClass = 'sz-medium';
+                    if (item.signal.includes('O')) {
+                        signalTags += '<span class="signal-tag signal-O">O</span>';
                     }
-
-                    // 종목 코드 가져오기
-                    const stockCode = getStockCodeByName(item.stock_name);
-
-                    row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
-                   class="hover:text-blue-600 hover:underline">
-                    ${item.stock_name}
-                </a>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
-                ${item.price_b ? item.price_b.toLocaleString() : '-'}
-            </td>
-        `;
-
-                    tableBody.appendChild(row);
-                });
+                }
+                
+                // SZ 값에 따른 클래스
+                let szClass = 'sz-low';
+                if (item.sz_value >= 2.5) {
+                    szClass = 'sz-high';
+                } else if (item.sz_value >= 1.5) {
+                    szClass = 'sz-medium';
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.stock_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
+                        ${item.price_b ? item.price_b.toLocaleString() : '-'}
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
         }
     </script>
 </body>
