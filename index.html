@@ -414,6 +414,9 @@
             alertsContainer.innerHTML = '';
 
             recentSignals.forEach(signal => {
+                // 종목 코드 가져오기
+                const stockCode = getStockCodeByName(signal.stock_name);
+
                 const alertEl = document.createElement('div');
                 alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
 
@@ -424,7 +427,12 @@
                         </span>
                     </div>
                     <div class="ml-3 flex-1">
-                        <p class="text-sm font-medium text-gray-900">${signal.stock_name}</p>
+                        <p class="text-sm font-medium text-gray-900">
+                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                               class="hover:text-blue-600 hover:underline">
+                                ${signal.stock_name}
+                            </a>
+                        </p>
                         <p class="mt-1 text-xs text-gray-500">
                             SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
                             신호: <span class="signal-tag signal-R">R</span>
