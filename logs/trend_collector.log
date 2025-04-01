@@ -182,3 +182,95 @@ client_session: <aiohttp.client.ClientSession object at 0xb0e73870>
 2025-04-01 17:08:51,639 - asyncio - ERROR - Unclosed connector
 connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0xb0d10fb8>, 104.651310247), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf180>, 104.874177506), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf298>, 105.08379176), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf308>, 105.290770828), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf378>, 105.472342112), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf3e8>, 105.661657791), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf458>, 105.82383755), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf4c8>, 105.983840783), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf538>, 106.139902126), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf5a8>, 106.298949806), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf618>, 106.463137001), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf688>, 106.623552333), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf768>, 106.787860881), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf6f8>, 106.94435922), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf7d8>, 107.125420759), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf848>, 107.285912154), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf8b8>, 107.448738926), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf928>, 107.639696499), (<aiohttp.client_proto.ResponseHandler object at 0xb03cf998>, 107.788367694), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfa08>, 107.953210472), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfa78>, 108.113257236), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfae8>, 108.259180917), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfb58>, 108.41199493), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfbc8>, 108.586164703), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfc38>, 108.806192041), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfca8>, 108.966316574), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfd18>, 109.126051771), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfd88>, 109.277661312), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfdf8>, 109.425818122), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfe68>, 109.580317096), (<aiohttp.client_proto.ResponseHandler object at 0xb03cfed8>, 109.73925871), (<aiohttp.client_proto.ResponseHandler object at 0xb03cff48>, 109.886294573), (<aiohttp.client_proto.ResponseHandler object at 0xb03cffb8>, 110.038494333), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1068>, 110.222572907), (<aiohttp.client_proto.ResponseHandler object at 0xb03f10d8>, 110.4084063), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1148>, 110.555640733), (<aiohttp.client_proto.ResponseHandler object at 0xb03f11b8>, 110.711682631), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1228>, 110.893775015), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1298>, 111.040409016), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1378>, 111.200155307), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1308>, 111.349632891), (<aiohttp.client_proto.ResponseHandler object at 0xb03f13e8>, 111.511378908), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1538>, 111.654542163), (<aiohttp.client_proto.ResponseHandler object at 0xb03f14c8>, 111.803418875), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1458>, 111.976222583), (<aiohttp.client_proto.ResponseHandler object at 0xb03f15a8>, 112.128093007), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1618>, 112.29372514), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1688>, 112.476912587), (<aiohttp.client_proto.ResponseHandler object at 0xb03f16f8>, 112.628653358), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1768>, 112.787093476), (<aiohttp.client_proto.ResponseHandler object at 0xb03f17d8>, 112.934527295), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1848>, 113.099107766), (<aiohttp.client_proto.ResponseHandler object at 0xb03f18b8>, 113.275167509), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1928>, 113.437652837), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1998>, 113.608294607), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1a08>, 113.765074591), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1a78>, 113.922959614), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1ae8>, 114.072641929), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1b58>, 114.224220125), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1bc8>, 114.369774626), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1c38>, 114.515103015), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1ca8>, 114.658953828), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1d18>, 114.822415157), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1d88>, 114.988966825), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1df8>, 115.150287949), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1e68>, 115.304551986), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1ed8>, 115.473605824), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1f48>, 115.665351608), (<aiohttp.client_proto.ResponseHandler object at 0xb03f1fb8>, 115.818785088), (<aiohttp.client_proto.ResponseHandler object at 0xb03f2068>, 115.976398463), (<aiohttp.client_proto.ResponseHandler object at 0xb03f20d8>, 116.124817829), (<aiohttp.client_proto.ResponseHandler object at 0xb03f2148>, 116.276354919), (<aiohttp.client_proto.ResponseHandler object at 0xb03f21b8>, 116.484240375), (<aiohttp.client_proto.ResponseHandler object at 0xb03f2228>, 116.696293597), (<aiohttp.client_proto.ResponseHandler object at 0xb03f2298>, 116.879896737), (<aiohttp.client_proto.ResponseHandler object at 0xb03f2ce0>, 117.044531622), (<aiohttp.client_proto.ResponseHandler object at 0xb0d41a40>, 117.216204689), (<aiohttp.client_proto.ResponseHandler object at 0xb0d416f8>, 117.393716691), (<aiohttp.client_proto.ResponseHandler object at 0xb0d413b0>, 117.550536496), (<aiohttp.client_proto.ResponseHandler object at 0xb03fece0>, 117.696085858), (<aiohttp.client_proto.ResponseHandler object at 0xb0d41068>, 117.846145839), (<aiohttp.client_proto.ResponseHandler object at 0xb03fe998>, 117.996236559), (<aiohttp.client_proto.ResponseHandler object at 0xb03fe650>, 118.162474698), (<aiohttp.client_proto.ResponseHandler object at 0xb03fe308>, 118.330375726), (<aiohttp.client_proto.ResponseHandler object at 0xb03f22d0>, 118.475827574)]']
 connector: <aiohttp.connector.TCPConnector object at 0xb0dd7f70>
+2025-04-01 17:11:56,264 - __main__ - INFO - 트렌드 데이터 수집 시작...
+2025-04-01 17:11:58,635 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:11:58,982 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:11:59,148 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:11:59,495 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:11:59,701 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:11:59,900 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:00,145 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:00,423 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:00,608 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:00,844 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:01,015 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:01,200 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:01,379 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:01,673 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:01,876 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:02,068 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:02,243 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:02,419 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:02,608 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:02,794 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:02,966 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:03,305 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:03,495 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:03,661 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:03,859 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:04,059 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:04,362 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:04,546 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:04,715 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:04,885 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:05,180 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:05,418 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:05,603 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:05,784 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:06,030 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:06,199 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:06,483 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:06,661 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:06,882 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:07,092 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:07,345 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:07,561 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:07,745 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:07,944 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:08,174 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:08,393 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:08,590 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:08,786 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:08,956 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:09,125 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:09,431 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:09,731 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:09,937 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:10,104 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:10,328 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:10,539 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:10,728 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:10,982 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:11,191 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:11,362 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:11,545 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:11,855 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:12,069 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:12,328 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:12,538 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:12,777 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:12,973 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:13,175 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:13,374 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:13,647 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:13,933 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:14,249 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:14,496 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:14,683 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:14,949 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:15,267 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:15,530 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:15,758 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:15,934 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:16,111 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:16,347 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:16,610 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:16,809 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:17,002 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:17,251 - __main__ - INFO -  트렌드 데이터 수집 완료
+2025-04-01 17:12:17,252 - __main__ - INFO - 트렌드 데이터 수집 완료: 성공 85개, 실패 0개
+2025-04-01 17:12:17,253 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0xb3264410>
+2025-04-01 17:12:17,266 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0xb0e5a730>, 52.853794226), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5a7a0>, 53.089907337), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5a810>, 53.260106596), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5a880>, 53.445599596), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5a8f0>, 53.624002374), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5a960>, 53.918435633), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5a9d0>, 54.121596485), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5aa40>, 54.313151522), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5aab0>, 54.488449633), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5ab20>, 54.664054077), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5ab90>, 54.853176021), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5ac00>, 55.039035429), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5ac70>, 55.21099391), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5ace0>, 55.550884651), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5ad50>, 55.74027791), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5adc0>, 55.906325706), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5ae30>, 56.104442613), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5aea0>, 56.304271595), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5af10>, 56.607027243), (<aiohttp.client_proto.ResponseHandler object at 0xb0e5af80>, 56.791753705), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1030>, 56.96032065), (<aiohttp.client_proto.ResponseHandler object at 0xb04b10a0>, 57.13066989), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1110>, 57.426194187), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1180>, 57.664696594), (<aiohttp.client_proto.ResponseHandler object at 0xb04b11f0>, 57.849066797), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1260>, 58.030379242), (<aiohttp.client_proto.ResponseHandler object at 0xb04b12d0>, 58.275024723), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1340>, 58.444789038), (<aiohttp.client_proto.ResponseHandler object at 0xb04b13b0>, 58.728240093), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1420>, 58.906163112), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1490>, 59.127248352), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1500>, 59.33753363), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1570>, 59.59057937), (<aiohttp.client_proto.ResponseHandler object at 0xb04b15e0>, 59.806464537), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1650>, 59.990141815), (<aiohttp.client_proto.ResponseHandler object at 0xb04b16c0>, 60.189553926), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1730>, 60.419691055), (<aiohttp.client_proto.ResponseHandler object at 0xb04b17a0>, 60.638290222), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1810>, 60.835441184), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1880>, 61.031626758), (<aiohttp.client_proto.ResponseHandler object at 0xb04b18f0>, 61.201051684), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1960>, 61.370848388), (<aiohttp.client_proto.ResponseHandler object at 0xb04b19d0>, 61.67670711), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1a40>, 61.976577258), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1ab0>, 62.182193424), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1b20>, 62.349659535), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1b90>, 62.573413554), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1c00>, 62.784127461), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1c70>, 62.973111128), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1ce0>, 63.22704485), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1d50>, 63.436787479), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1ea0>, 63.607244942), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1dc0>, 63.790819609), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1e30>, 64.100980145), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1f10>, 64.314749053), (<aiohttp.client_proto.ResponseHandler object at 0xb04b1f80>, 64.573875979), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2030>, 64.783320571), (<aiohttp.client_proto.ResponseHandler object at 0xb04b20a0>, 65.022116941), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2110>, 65.219047849), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2180>, 65.420537793), (<aiohttp.client_proto.ResponseHandler object at 0xb04b21f0>, 65.619822978), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2260>, 65.892462404), (<aiohttp.client_proto.ResponseHandler object at 0xb04b22d0>, 66.178902311), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2340>, 66.494051792), (<aiohttp.client_proto.ResponseHandler object at 0xb04b23b0>, 66.742329088), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2420>, 66.928834644), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2490>, 67.194675829), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2500>, 67.538517625), (<aiohttp.client_proto.ResponseHandler object at 0xb043c1f0>, 67.798156384), (<aiohttp.client_proto.ResponseHandler object at 0xb04b2570>, 68.003458106), (<aiohttp.client_proto.ResponseHandler object at 0xb0445298>, 68.179077588), (<aiohttp.client_proto.ResponseHandler object at 0xb04455e0>, 68.356884691), (<aiohttp.client_proto.ResponseHandler object at 0xb043cbc8>, 68.592626266), (<aiohttp.client_proto.ResponseHandler object at 0xb043c538>, 68.855720483), (<aiohttp.client_proto.ResponseHandler object at 0xb043cf10>, 69.060700501), (<aiohttp.client_proto.ResponseHandler object at 0xb043c880>, 69.247793073)]']
+connector: <aiohttp.connector.TCPConnector object at 0xb3221b30>

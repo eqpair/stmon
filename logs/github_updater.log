@@ -5409,3 +5409,336 @@ and the repository exists.
 
 2025-04-01 17:08:36,607 - __main__ - INFO - Git 설정 완료
 2025-04-01 17:08:56,579 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:09:29,567 - __main__ - INFO - GitHub 저장소에 성공적으로 푸시되었습니다.
+2025-04-01 17:09:29,568 - __main__ - INFO - GitHub 데이터 업데이트 완료: 2025-04-01 17:09:26.232354
+2025-04-01 17:09:42,926 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:09:42,928 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:09:42,929 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:10:15,385 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:10:54,259 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:10:54,260 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:10:54,261 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:11:06,867 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:11:07,222 - modules.pairs - ERROR - Error fetching 005930: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,223 - modules.pairs - ERROR - Error fetching 450140: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,242 - modules.pairs - ERROR - Error fetching 004100: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,243 - modules.pairs - ERROR - Error fetching 004250: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,243 - modules.pairs - ERROR - Error fetching 001790: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,245 - modules.pairs - ERROR - Error fetching 004830: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,245 - modules.pairs - ERROR - Error fetching 007810: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,246 - modules.pairs - ERROR - Error fetching 002020: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,249 - modules.pairs - ERROR - Error fetching 005380: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,250 - modules.pairs - ERROR - Error fetching 003470: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,251 - modules.pairs - ERROR - Error fetching 003540: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,252 - modules.pairs - ERROR - Error fetching 004980: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,254 - modules.pairs - ERROR - Error fetching 003070: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,256 - modules.pairs - ERROR - Error fetching 005940: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,256 - modules.pairs - ERROR - Error fetching 019170: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,257 - modules.pairs - ERROR - Error fetching 066570: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,259 - modules.pairs - ERROR - Error fetching 009830: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,260 - modules.pairs - ERROR - Error fetching 004360: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,261 - modules.pairs - ERROR - Error fetching 003530: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,262 - modules.pairs - ERROR - Error fetching 051900: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,263 - modules.pairs - ERROR - Error fetching 051910: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,264 - modules.pairs - ERROR - Error fetching 003490: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,267 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,271 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,272 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,272 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,274 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,274 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,275 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,276 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,276 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,277 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,278 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,278 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,278 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,279 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,279 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,280 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,280 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,281 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,281 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,282 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,282 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,283 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,284 - modules.pairs - ERROR - Error fetching 002790: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,285 - modules.pairs - ERROR - Error fetching 010950: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,286 - modules.pairs - ERROR - Error fetching 090430: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,287 - modules.pairs - ERROR - Error fetching 180640: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,288 - modules.pairs - ERROR - Error fetching 001510: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,292 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,292 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,293 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,293 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,294 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,295 - modules.pairs - ERROR - Error fetching 006800: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,296 - modules.pairs - ERROR - Error fetching 363280: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,297 - modules.pairs - ERROR - Error fetching 264900: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,298 - modules.pairs - ERROR - Error fetching 005960: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,299 - modules.pairs - ERROR - Error fetching 000150: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,300 - modules.pairs - ERROR - Error fetching 008350: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,301 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,301 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,302 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,303 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,303 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,303 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,304 - modules.pairs - ERROR - Error fetching 011780: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,305 - modules.pairs - ERROR - Error fetching 005720: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,306 - modules.pairs - ERROR - Error fetching 108670: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,307 - modules.pairs - ERROR - Error fetching 000810: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,308 - modules.pairs - ERROR - Error fetching 285130: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,309 - modules.pairs - ERROR - Error fetching 084690: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,309 - modules.pairs - ERROR - Error fetching 071050: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,310 - modules.pairs - ERROR - Error fetching 000320: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,311 - modules.pairs - ERROR - Error fetching 003550: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,312 - modules.pairs - ERROR - Error fetching 006400: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,313 - modules.pairs - ERROR - Error fetching 120110: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,314 - modules.pairs - ERROR - Error fetching 009410: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,315 - modules.pairs - ERROR - Error fetching 006340: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,315 - modules.pairs - ERROR - Error fetching 000540: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,316 - modules.pairs - ERROR - Error fetching 021040: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,317 - modules.pairs - ERROR - Error fetching 012200: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,318 - modules.pairs - ERROR - Error fetching 001750: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,318 - modules.pairs - ERROR - Error fetching 008770: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,319 - modules.pairs - ERROR - Error fetching 004410: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,319 - modules.pairs - ERROR - Error fetching 000720: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,320 - modules.pairs - ERROR - Error fetching 096770: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,321 - modules.pairs - ERROR - Error fetching 032680: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,322 - modules.pairs - ERROR - Error fetching 375500: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,323 - modules.pairs - ERROR - Error fetching 078930: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,324 - modules.pairs - ERROR - Error fetching 014280: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,325 - modules.pairs - ERROR - Error fetching 001680: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,326 - modules.pairs - ERROR - Error fetching 002990: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,327 - modules.pairs - ERROR - Error fetching 097950: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,327 - modules.pairs - ERROR - Error fetching 009150: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,328 - modules.pairs - ERROR - Error fetching 006120: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,329 - modules.pairs - ERROR - Error fetching 090350: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,330 - modules.pairs - ERROR - Error fetching 000210: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,331 - modules.pairs - ERROR - Error fetching 001520: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,332 - modules.pairs - ERROR - Error fetching 000880: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,332 - modules.pairs - ERROR - Error fetching 014910: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,333 - modules.pairs - ERROR - Error fetching 004990: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,334 - modules.pairs - ERROR - Error fetching 001040: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,335 - modules.pairs - ERROR - Error fetching 000100: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,336 - modules.pairs - ERROR - Error fetching 034730: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,337 - modules.pairs - ERROR - Error fetching 005740: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,338 - modules.pairs - ERROR - Error fetching 004540: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,339 - modules.pairs - ERROR - Error fetching 001270: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,340 - modules.pairs - ERROR - Error fetching 145990: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,340 - modules.pairs - ERROR - Error fetching 003460: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,341 - modules.pairs - ERROR - Error fetching 000140: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,342 - modules.pairs - ERROR - Error fetching 005300: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,344 - modules.pairs - ERROR - Error fetching 003920: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,345 - modules.pairs - ERROR - Error fetching 000070: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,346 - modules.pairs - ERROR - Error fetching 014820: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,348 - modules.pairs - ERROR - Error fetching 001460: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,348 - modules.pairs - ERROR - Error fetching 001060: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,349 - modules.pairs - ERROR - Error fetching 007570: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,350 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,350 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,351 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,352 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,352 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,353 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,353 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,353 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,354 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,354 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,355 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,356 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,356 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,357 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,357 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,358 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,358 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,359 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,359 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,360 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,360 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,360 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,361 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,361 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,362 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,362 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,363 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,363 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,363 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,364 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,364 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,364 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,365 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,365 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,365 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,366 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,366 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,366 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,367 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,367 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,367 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,368 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,368 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,368 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,369 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,369 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,369 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,370 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,370 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,370 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,371 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,371 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,372 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,372 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,372 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,372 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,373 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,373 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,373 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,373 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,374 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,374 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,374 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,374 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,374 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,375 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,375 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,375 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,375 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,376 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,376 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,377 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,377 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,377 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,377 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,377 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,378 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,378 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,378 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,378 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,378 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,379 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,379 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,379 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,379 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,379 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,380 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,380 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,380 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,380 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,381 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,381 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,381 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,381 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,382 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,382 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,382 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,382 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,383 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,383 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,383 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,384 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,384 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,384 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,384 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,385 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,385 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,385 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,386 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,386 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,386 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,387 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,387 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,387 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,387 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,388 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,388 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,388 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,389 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,389 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,389 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,389 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,390 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,390 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,390 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,390 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,391 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,391 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,391 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,391 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,391 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,391 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,392 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,392 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,392 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,392 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,393 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:11:07,756 - __main__ - ERROR - 명령어 실패: ssh: Could not resolve hostname github.com: Temporary failure in name resolution
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:11:07,756 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ssh: Could not resolve hostname github.com: Temporary failure in name resolution
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:11:07,757 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ssh: Could not resolve hostname github.com: Temporary failure in name resolution
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:11:53,651 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:11:56,746 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:12:45,965 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:12:45,966 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:12:45,967 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
