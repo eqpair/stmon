@@ -102,6 +102,11 @@ class GitHubUpdater:
             # 히스토리 데이터 업데이트
             await self._update_history_data(data)
             
+            # 트렌드 데이터 업데이트 (일주일에 한 번)
+            current_time = datetime.now()
+            if current_time.weekday() == 0 and current_time.hour < 6:  # 월요일 새벽에 실행
+                await self.update_trend_data()
+            
             # GitHub 커밋 및 푸시
             self._commit_and_push()
             
@@ -204,6 +209,23 @@ class GitHubUpdater:
         with open(history_file, 'w', encoding='utf-8') as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
     
+    async def update_trend_data(self):
+        """트렌드 데이터 업데이트"""
+        try:
+            from trend_collector import TrendCollector
+            
+            logger.info("트렌드 데이터 수집 시작")
+            collector = TrendCollector()
+            await collector.collect_all_trends()
+            logger.info("트렌드 데이터 수집 완료")
+            
+            # 트렌드 데이터 디렉토리를 Git에 추가
+            trends_dir = os.path.join(DATA_DIR, "trends")
+            os.makedirs(trends_dir, exist_ok=True)
+        
+        except Exception as e:
+            logger.error(f"트렌드 데이터 업데이트 오류: {str(e)}")
+    
     def _commit_and_push(self):
         """변경사항 커밋 및 GitHub 저장소에 푸시"""
         try:
@@ -230,51 +252,6 @@ class GitHubUpdater:
             logger.error(f"GitHub 커밋/푸시 오류: {str(e)}")
             raise
 
-async def start_github_updater():
-    """GitHub 업데이터 시작"""
-    from main import StockMonitor
-    
-    monitor = StockMonitor()
-    updater = GitHubUpdater(monitor)
-    
-    while True:
-        try:
-            await updater.update_data()
-        except Exception as e:
-            logger.error(f"업데이트 오류: {str(e)}")
-        
-        # 30분 대기
-        await asyncio.sleep(1800)  # 30분마다 업데이트
-# github_updater.py에 다음 함수를 추가
-
-async def update_trend_data(self):
-    """트렌드 데이터 업데이트"""
-    try:
-        from trend_collector import TrendCollector
-        
-        logger.info("트렌드 데이터 수집 시작")
-        collector = TrendCollector()
-        await collector.collect_all_trends()
-        logger.info("트렌드 데이터 수집 완료")
-        
-        # 트렌드 데이터 디렉토리를 Git에 추가
-        trends_dir = os.path.join(DATA_DIR, "trends")
-        os.makedirs(trends_dir, exist_ok=True)
-        
-        # GitHub 커밋 및 푸시는 update_data에서 처리하므로 별도로 처리하지 않음
-    
-    except Exception as e:
-        logger.error(f"트렌드 데이터 업데이트 오류: {str(e)}")
-
-# 그리고 기존 update_data 함수 내에 트렌드 데이터 업데이트 호출 추가
-# update_data 함수 내부에 다음 코드 추가 (적절한 위치에)
-
-# 트렌드 데이터 업데이트 (일주일에 한 번)
-current_time = datetime.now()
-if current_time.weekday() == 0 and current_time.hour < 6:  # 월요일 새벽에 실행
-    await self.update_trend_data()
-
-# start_github_updater 함수 수정 (daily_run 매개변수 추가)
 async def start_github_updater(daily_run=False):
     """GitHub 업데이터 시작"""
     from main import StockMonitor
@@ -296,7 +273,7 @@ async def start_github_updater(daily_run=False):
         # 30분 대기
         await asyncio.sleep(1800)  # 30분마다 업데이트
 
-# 메인 함수 수정
+# 메인 함수
 if __name__ == "__main__":
     import sys
     
@@ -305,6 +282,3 @@ if __name__ == "__main__":
         daily_run = True
     
     asyncio.run(start_github_updater(daily_run))
-
-if __name__ == "__main__":
-    asyncio.run(start_github_updater())
