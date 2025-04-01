@@ -4151,3 +4151,1261 @@ hint: 'git pull ...') before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 
 2025-04-01 16:08:56,325 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:09:33,449 - __main__ - ERROR - 명령어 실패: To github.com:eqpair/monitor.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'git@github.com:eqpair/monitor.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+2025-04-01 16:09:33,450 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: To github.com:eqpair/monitor.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'git@github.com:eqpair/monitor.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+2025-04-01 16:09:33,450 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: To github.com:eqpair/monitor.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'git@github.com:eqpair/monitor.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+2025-04-01 16:10:05,855 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:10:42,259 - __main__ - ERROR - 명령어 실패: To github.com:eqpair/monitor.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'git@github.com:eqpair/monitor.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+2025-04-01 16:10:42,260 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: To github.com:eqpair/monitor.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'git@github.com:eqpair/monitor.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+2025-04-01 16:10:42,261 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: To github.com:eqpair/monitor.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'git@github.com:eqpair/monitor.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+2025-04-01 16:11:14,630 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:11:50,793 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:11:50,795 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:11:50,796 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:12:23,137 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:12:58,657 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:12:58,659 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:12:58,659 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:13:31,127 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:14:11,403 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:14:11,405 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:14:11,406 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:14:43,894 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:15:19,762 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:15:19,764 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:15:19,764 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:15:52,118 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:16:30,272 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:16:30,273 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:16:30,274 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:17:02,665 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:17:39,725 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:17:39,727 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:17:39,728 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:18:12,132 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:18:48,158 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:18:48,159 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:18:48,160 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:19:20,636 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:19:59,008 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:19:59,010 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:19:59,011 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:20:31,378 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:21:07,220 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:21:07,222 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:21:07,223 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:21:39,619 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:22:15,084 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:22:15,086 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:22:15,087 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:22:47,625 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:23:26,287 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:23:26,289 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:23:26,290 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:23:58,616 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:24:34,401 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:24:34,403 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:24:34,403 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:25:06,868 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:25:42,710 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:25:42,712 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:25:42,713 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:26:15,128 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:26:51,019 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:26:51,020 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:26:51,021 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:27:23,375 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:28:02,100 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:28:02,102 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:28:02,119 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:28:34,624 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:29:10,004 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:29:10,006 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:29:10,006 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:29:42,383 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:30:18,289 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:30:18,291 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:30:18,292 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:30:50,613 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:31:26,040 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:31:26,041 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:31:26,042 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:31:58,631 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:32:34,345 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:32:34,347 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:32:34,347 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:33:06,636 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:33:43,200 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:33:43,202 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:33:43,203 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:34:15,619 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:34:51,684 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:34:51,685 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:34:51,686 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:35:24,116 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:36:00,336 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:36:00,338 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:36:00,339 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:36:32,639 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:37:08,662 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:37:08,663 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:37:08,664 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:37:41,143 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:38:17,506 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:38:17,508 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:38:17,509 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:38:49,891 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:39:25,793 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:39:25,795 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:39:25,796 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:39:58,118 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:40:34,631 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:40:34,632 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:40:34,633 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:41:07,133 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:41:42,657 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:41:42,658 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:41:42,659 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:42:15,080 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:42:50,990 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:42:50,992 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:42:50,993 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:43:23,388 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:43:59,183 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:43:59,186 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:43:59,186 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:44:31,655 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:45:09,709 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:45:09,711 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:45:09,712 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:45:42,135 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:46:18,505 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:46:18,507 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:46:18,507 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:46:50,896 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:47:27,083 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:47:27,084 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:47:27,084 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:47:59,394 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:48:34,989 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:48:34,991 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:48:34,992 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:49:07,356 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:49:43,411 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:49:43,413 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:49:43,414 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:50:15,881 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:50:51,743 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:50:51,744 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:50:51,745 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:51:24,137 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:52:00,141 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:52:00,143 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:52:00,144 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:52:32,639 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:53:09,141 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:53:09,142 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:53:09,143 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:53:41,603 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:54:17,195 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:54:17,196 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:54:17,196 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:54:49,618 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:55:27,673 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:55:27,674 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:55:27,674 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:56:00,205 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:56:36,571 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:56:36,573 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:56:36,574 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:57:08,864 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:57:44,442 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:57:44,444 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:57:44,444 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:58:16,882 - __main__ - INFO - Git 설정 완료
+2025-04-01 16:58:52,673 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:58:52,674 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:58:52,675 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 16:59:25,148 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:00:00,749 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:00:00,751 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:00:00,752 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:00:33,444 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:00:36,979 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:01:14,301 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:01:14,302 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:01:14,302 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:01:46,629 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:02:22,372 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:02:22,387 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:02:22,388 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:02:54,883 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:03:31,183 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:03:31,184 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:03:31,185 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:04:03,611 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:04:39,350 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:04:39,352 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:04:39,353 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:05:12,124 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:05:49,375 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:05:49,376 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:05:49,377 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:06:21,902 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:06:51,444 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:06:51,882 - modules.pairs - ERROR - Error fetching 005930: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,883 - modules.pairs - ERROR - Error fetching 450140: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,884 - modules.pairs - ERROR - Error fetching 004100: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,885 - modules.pairs - ERROR - Error fetching 004250: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,886 - modules.pairs - ERROR - Error fetching 001790: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,887 - modules.pairs - ERROR - Error fetching 004830: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,887 - modules.pairs - ERROR - Error fetching 002020: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,888 - modules.pairs - ERROR - Error fetching 007810: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,889 - modules.pairs - ERROR - Error fetching 005380: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,890 - modules.pairs - ERROR - Error fetching 003470: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,891 - modules.pairs - ERROR - Error fetching 003540: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,892 - modules.pairs - ERROR - Error fetching 004980: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,893 - modules.pairs - ERROR - Error fetching 003070: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,893 - modules.pairs - ERROR - Error fetching 005940: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,894 - modules.pairs - ERROR - Error fetching 019170: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,895 - modules.pairs - ERROR - Error fetching 066570: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,896 - modules.pairs - ERROR - Error fetching 009830: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,897 - modules.pairs - ERROR - Error fetching 004360: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,898 - modules.pairs - ERROR - Error fetching 003530: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,899 - modules.pairs - ERROR - Error fetching 051900: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,899 - modules.pairs - ERROR - Error fetching 090430: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,900 - modules.pairs - ERROR - Error fetching 051910: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,901 - modules.pairs - ERROR - Error fetching 002790: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,902 - modules.pairs - ERROR - Error fetching 180640: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,903 - modules.pairs - ERROR - Error fetching 001510: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,904 - modules.pairs - ERROR - Error fetching 071050: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,904 - modules.pairs - ERROR - Error fetching 363280: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,905 - modules.pairs - ERROR - Error fetching 003490: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,906 - modules.pairs - ERROR - Error fetching 008350: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,908 - modules.pairs - ERROR - Error fetching 264900: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,909 - modules.pairs - ERROR - Error fetching 000150: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,910 - modules.pairs - ERROR - Error fetching 285130: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,911 - modules.pairs - ERROR - Error fetching 032680: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,912 - modules.pairs - ERROR - Error fetching 000810: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,914 - modules.pairs - ERROR - Error fetching 108670: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,915 - modules.pairs - ERROR - Error fetching 084690: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,916 - modules.pairs - ERROR - Error fetching 000320: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,917 - modules.pairs - ERROR - Error fetching 003550: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,918 - modules.pairs - ERROR - Error fetching 006400: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,919 - modules.pairs - ERROR - Error fetching 005720: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,920 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,921 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,921 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,922 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,923 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,923 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,924 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,924 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,925 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,926 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,926 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,927 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,927 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,928 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,929 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,929 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,930 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,931 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,931 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,932 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,933 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,933 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,934 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,935 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,935 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,936 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,936 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,937 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,938 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,938 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,939 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,939 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,940 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,941 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,941 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,941 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,942 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,942 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,942 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,943 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,943 - modules.pairs - ERROR - Error fetching 120110: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,944 - modules.pairs - ERROR - Error fetching 021040: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,944 - modules.pairs - ERROR - Error fetching 011780: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,945 - modules.pairs - ERROR - Error fetching 001750: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,945 - modules.pairs - ERROR - Error fetching 096770: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,946 - modules.pairs - ERROR - Error fetching 009410: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,946 - modules.pairs - ERROR - Error fetching 012200: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,947 - modules.pairs - ERROR - Error fetching 375500: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,947 - modules.pairs - ERROR - Error fetching 004410: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,948 - modules.pairs - ERROR - Error fetching 000720: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,948 - modules.pairs - ERROR - Error fetching 005960: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,949 - modules.pairs - ERROR - Error fetching 006800: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,949 - modules.pairs - ERROR - Error fetching 006120: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,950 - modules.pairs - ERROR - Error fetching 000540: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,950 - modules.pairs - ERROR - Error fetching 000210: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,951 - modules.pairs - ERROR - Error fetching 090350: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,951 - modules.pairs - ERROR - Error fetching 001520: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,952 - modules.pairs - ERROR - Error fetching 000880: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,952 - modules.pairs - ERROR - Error fetching 078930: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,953 - modules.pairs - ERROR - Error fetching 097950: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,953 - modules.pairs - ERROR - Error fetching 005740: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,954 - modules.pairs - ERROR - Error fetching 005300: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,954 - modules.pairs - ERROR - Error fetching 014910: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,955 - modules.pairs - ERROR - Error fetching 001040: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,955 - modules.pairs - ERROR - Error fetching 004540: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,956 - modules.pairs - ERROR - Error fetching 001270: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,956 - modules.pairs - ERROR - Error fetching 010950: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,957 - modules.pairs - ERROR - Error fetching 003920: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,957 - modules.pairs - ERROR - Error fetching 003460: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,958 - modules.pairs - ERROR - Error fetching 145990: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,958 - modules.pairs - ERROR - Error fetching 004990: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,959 - modules.pairs - ERROR - Error fetching 000140: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,959 - modules.pairs - ERROR - Error fetching 001460: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,960 - modules.pairs - ERROR - Error fetching 007570: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,960 - modules.pairs - ERROR - Error fetching 009150: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,960 - modules.pairs - ERROR - Error fetching 001060: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,961 - modules.pairs - ERROR - Error fetching 014820: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,962 - modules.pairs - ERROR - Error fetching 000070: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,962 - modules.pairs - ERROR - Error fetching 008770: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,963 - modules.pairs - ERROR - Error fetching 034730: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,963 - modules.pairs - ERROR - Error fetching 001680: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,964 - modules.pairs - ERROR - Error fetching 006340: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,964 - modules.pairs - ERROR - Error fetching 014280: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,965 - modules.pairs - ERROR - Error fetching 000100: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,965 - modules.pairs - ERROR - Error fetching 002990: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,966 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,966 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,967 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,967 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,967 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,967 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,968 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,968 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,968 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,969 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,969 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,969 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,970 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,970 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,970 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,970 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,971 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,971 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,971 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,972 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,972 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,972 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,972 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,973 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,973 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,973 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,974 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,974 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,974 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,974 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,975 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,975 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,975 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,976 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,976 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,976 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,976 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,977 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,977 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,977 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,977 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,978 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,978 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,978 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,979 - modules.pairs - ERROR - Error fetching data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,979 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,979 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,980 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,980 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,980 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,980 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,981 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,981 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,981 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,982 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,982 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,982 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,982 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,983 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,983 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,983 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,983 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,983 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,984 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,984 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,984 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,984 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,984 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,985 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,985 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,985 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,985 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,985 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,986 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,986 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,986 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,986 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,986 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,987 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,987 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,987 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,987 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,987 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,988 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,988 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,988 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,988 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,988 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,989 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,989 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,989 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,989 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,989 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,990 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,990 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,990 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,990 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,990 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,991 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,991 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,991 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,991 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,992 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,992 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,992 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,992 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,992 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,993 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,993 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,993 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,993 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,994 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,994 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,994 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,994 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,995 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,995 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,995 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,995 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,996 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,996 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,996 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,997 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,997 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,997 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,997 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,997 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,998 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,998 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:51,998 - main - ERROR - Error getting signal for : Failed to fetch market data: Cannot connect to host fchart.stock.naver.com:443 ssl:default [Temporary failure in name resolution]
+2025-04-01 17:06:52,287 - __main__ - ERROR - 명령어 실패: ssh: Could not resolve hostname github.com: Temporary failure in name resolution
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:06:52,289 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ssh: Could not resolve hostname github.com: Temporary failure in name resolution
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:06:52,290 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ssh: Could not resolve hostname github.com: Temporary failure in name resolution
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:07:39,477 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:08:23,829 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:08:23,830 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:08:23,831 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:08:36,607 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:08:56,579 - __main__ - INFO - Git 설정 완료
