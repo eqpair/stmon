@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>종목 상세 정보 - EQ Pairs Monitoring System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">종목 상세 정보</h1>
+                <p class="text-sm text-gray-600">3개월 추이 분석</p>
+            </div>
+            <a href="index.html"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i> 대시보드로 돌아가기
+            </a>
+        </header>
+
+        <!-- 로딩 표시기 -->
+        <div id="loading-container" class="flex flex-col items-center justify-center py-20">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-gray-600">데이터를 불러오는 중입니다...</p>
+        </div>
+
+        <!-- 종목 정보 카드 -->
+        <div id="content-container" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격</div>
+                        <div class="text-xl font-bold" id="common-price">-</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격</div>
+                        <div class="text-xl font-bold" id="preferred-price">-</div>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
+                        <div class="text-xl font-bold" id="sz-value">-</div>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-yellow-700 text-sm font-medium mb-1">현재 신호</div>
+                        <div class="text-xl font-bold" id="current-signal">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 차트 컨테이너 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- 괴리율 차트 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">괴리율 추이</h2>
+                    <div class="chart-container">
+                        <canvas id="discount-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 가격 추이 차트 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">가격 추이</h2>
+                    <div class="chart-container">
+                        <canvas id="price-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 히스토리 신호 테이블 -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">히스토리 신호</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    날짜
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    SZ 값
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    신호
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    보통주 가격
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    우선주 가격
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="signals-table-body" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                    히스토리 데이터 로딩 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2025 EQ Pair Monitoring System.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            // URL에서 종목 정보 추출
+            const urlParams = new URLSearchParams(window.location.search);
+            const stockCode = urlParams.get('code');
+            const stockName = urlParams.get('name');
+
+            if (!stockCode || !stockName) {
+                alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 페이지 타이틀 설정
+            document.title = `${stockName} - 종목 상세 정보`;
+            document.getElementById('stock-name').textContent = stockName;
+
+            // 데이터 로드
+            loadStockData(stockCode, stockName);
+        });
+
+        // 종목 데이터 로드
+        async function loadStockData(stockCode, stockName) {
+            try {
+                // 현재 상태 데이터 로드
+                const currentDataResponse = await fetch('data/stock_data.json' + `?t=${new Date().getTime()}`);
+                if (!currentDataResponse.ok) {
+                    throw new Error('현재 데이터를 불러오는데 실패했습니다.');
+                }
+                const currentData = await currentDataResponse.json();
+
+                // 종목 데이터 찾기
+                const stockData = currentData.all_signals.find(signal =>
+                    signal.stock_name.includes(stockName) || stockName.includes(signal.stock_name)
+                );
+
+                // 히스토리 데이터 로드
+                const historyResponse = await fetch('data/history.json' + `?t=${new Date().getTime()}`);
+                if (!historyResponse.ok) {
+                    throw new Error('히스토리 데이터를 불러오는데 실패했습니다.');
+                }
+                const historyData = await historyResponse.json();
+
+                // 3개월 데이터 로드
+                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+                let trendData = null;
+
+                if (trendDataResponse.ok) {
+                    trendData = await trendDataResponse.json();
+                } else {
+                    console.warn('트렌드 데이터를 불러오는데 실패했습니다. 샘플 데이터를 사용합니다.');
+                    trendData = generateDummyTrendData(stockCode, stockName);
+                }
+
+                // UI 업데이트
+                hideLoading();
+
+                // 현재 정보 업데이트
+                if (stockData) {
+                    updateCurrentInfo(stockData);
+                } else {
+                    const dummyCurrentInfo = {
+                        stock_name: stockName,
+                        price_a: trendData.common_prices[trendData.common_prices.length - 1],
+                        price_b: trendData.preferred_prices[trendData.preferred_prices.length - 1],
+                        sz_value: calculateSZValue(trendData),
+                        signal: ''
+                    };
+                    updateCurrentInfo(dummyCurrentInfo);
+                }
+
+                // 차트 렌더링
+                renderCharts(trendData);
+
+                // 히스토리 신호 데이터 렌더링
+                const stockHistoryData = historyData.signals.filter(signal =>
+                    signal.stock_name.includes(stockName) || stockName.includes(signal.stock_name)
+                );
+                renderHistorySignals(stockHistoryData);
+
+            } catch (error) {
+                console.error('데이터 로드 오류:', error);
+                alert(`데이터를 불러오는데 실패했습니다: ${error.message}`);
+                hideLoading();
+            }
+        }
+
+        // 로딩 화면 숨기기
+        function hideLoading() {
+            document.getElementById('loading-container').classList.add('hidden');
+            document.getElementById('content-container').classList.remove('hidden');
+        }
+
+        // 현재 정보 업데이트
+        function updateCurrentInfo(stockData) {
+            document.getElementById('common-price').textContent = stockData.price_a ? stockData.price_a.toLocaleString() + '원' : '정보 없음';
+            document.getElementById('preferred-price').textContent = stockData.price_b ? stockData.price_b.toLocaleString() + '원' : '정보 없음';
+
+            const szElement = document.getElementById('sz-value');
+            szElement.textContent = stockData.sz_value ? stockData.sz_value.toFixed(2) : '정보 없음';
+
+            // SZ 값에 따른 색상 변경
+            if (stockData.sz_value >= 2.5) {
+                szElement.classList.add('text-red-600');
+            } else if (stockData.sz_value >= 1.5) {
+                szElement.classList.add('text-orange-600');
+            } else if (stockData.sz_value > 0) {
+                szElement.classList.add('text-green-600');
+            }
+
+            // 신호 표시
+            const signalElement = document.getElementById('current-signal');
+            if (stockData.signal) {
+                let signalHtml = '';
+                if (stockData.signal.includes('R')) {
+                    signalHtml += '<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full mr-1">R</span>';
+                }
+                if (stockData.signal.includes('I')) {
+                    signalHtml += '<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full mr-1">I</span>';
+                }
+                if (stockData.signal.includes('O')) {
+                    signalHtml += '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full mr-1">O</span>';
+                }
+                signalElement.innerHTML = signalHtml || '없음';
+            } else {
+                signalElement.textContent = '없음';
+            }
+        }
+
+        // 더미 트렌드 데이터 생성
+        function generateDummyTrendData(stockCode, stockName) {
+            // 3개월 날짜 생성 (오늘부터 90일 전까지)
+            const dates = [];
+            const discountRates = [];
+            const commonPrices = [];
+            const preferredPrices = [];
+
+            const today = new Date();
+            const baseCommonPrice = Math.floor(Math.random() * 50000) + 10000; // 기본 보통주 가격 (10000~60000)
+
+            for (let i = 90; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                dates.push(date.toISOString().split('T')[0]);
+
+                // 랜덤 괴리율 (-5%에서 15% 사이)
+                const discountRate = (Math.random() * 20 - 5) / 100;
+                discountRates.push(discountRate);
+
+                // 보통주 가격 (약간의 변동 추가)
+                const dayVariation = (Math.random() * 0.04) - 0.02; // -2%에서 2% 변동
+                const commonPrice = baseCommonPrice * (1 + (i / 90 * 0.1) + dayVariation);
+                commonPrices.push(Math.floor(commonPrice));
+
+                // 우선주 가격 (보통주 가격에서 괴리율 적용)
+                const preferredPrice = commonPrice * (1 - discountRate);
+                preferredPrices.push(Math.floor(preferredPrice));
+            }
+
+            return {
+                stock_code: stockCode,
+                stock_name: stockName,
+                dates: dates,
+                common_prices: commonPrices,
+                preferred_prices: preferredPrices,
+                discount_rates: discountRates,
+                last_updated: new Date().toISOString()
+            };
+        }
+
+        // SZ 값 계산 (현재 데이터가 없는 경우)
+        function calculateSZValue(trendData) {
+            if (!trendData || !trendData.discount_rates || trendData.discount_rates.length === 0) {
+                return 0;
+            }
+
+            // 최근 30일 데이터로 평균 및 표준편차 계산
+            const recentRates = trendData.discount_rates.slice(-30);
+            const meanRate = recentRates.reduce((sum, rate) => sum + rate, 0) / recentRates.length;
+
+            // 표준편차 계산
+            const squaredDiffs = recentRates.map(rate => {
+                const diff = rate - meanRate;
+                return diff * diff;
+            });
+            const stdDev = Math.sqrt(squaredDiffs.reduce((sum, val) => sum + val, 0) / recentRates.length);
+
+            // 가장 최근 괴리율
+            const currentRate = trendData.discount_rates[trendData.discount_rates.length - 1];
+
+            // SZ 값 계산 ((현재 괴리율 - 평균 괴리율) / 표준편차)
+            if (stdDev === 0) return 0; // 표준편차가 0인 경우 계산 불가
+
+            return (currentRate - meanRate) / stdDev;
+        }
+
+        // 차트 렌더링
+        function renderCharts(trendData) {
+            renderDiscountRateChart(trendData.dates, trendData.discount_rates);
+            renderPriceChart(trendData.dates, trendData.common_prices, trendData.preferred_prices);
+        }
+
+        // 괴리율 차트 렌더링
+        function renderDiscountRateChart(dates, discountRates) {
+            const ctx = document.getElementById('discount-chart').getContext('2d');
+
+            // 괴리율을 퍼센트로 변환 (소수점 -> %)
+            const discountRatesPercent = discountRates.map(rate => rate * 100);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: '괴리율 (%)',
+                        data: discountRatesPercent,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        pointRadius: 1,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `괴리율: ${context.raw.toFixed(2)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: '괴리율 (%)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 12 // x축 날짜 라벨 개수 제한
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 가격 차트 렌더링
+        function renderPriceChart(dates, commonPrices, preferredPrices) {
+            const ctx = document.getElementById('price-chart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: '보통주 가격',
+                            data: commonPrices,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2,
+                            pointRadius: 1,
+                            tension: 0.2
+                        },
+                        {
+                            label: '우선주 가격',
+                            data: preferredPrices,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2,
+                            pointRadius: 1,
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.dataset.label}: ${context.raw.toLocaleString()}원`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: '가격 (원)'
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 12 // x축 날짜 라벨 개수 제한
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 히스토리 신호 데이터 렌더링
+        function renderHistorySignals(signalsList) {
+            const tableBody = document.getElementById('signals-table-body');
+
+            if (!signalsList || signalsList.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = '';
+
+            // 최근 순으로 정렬
+            signalsList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            // 최대 20개만 표시
+            const recentSignals = signalsList.slice(0, 20);
+
+            recentSignals.forEach(signal => {
+                const row = document.createElement('tr');
+
+                // 날짜 포맷팅
+                let timestamp = '날짜 정보 없음';
+                try {
+                    const date = new Date(signal.timestamp);
+                    timestamp = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                } catch (e) {
+                    console.warn('날짜 파싱 오류:', e);
+                }
+
+                // 신호 태그 생성
+                let signalTags = '';
+                if (signal.signal) {
+                    if (signal.signal.includes('R')) {
+                        signalTags += '<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full mr-1 text-xs">R</span>';
+                    }
+                    if (signal.signal.includes('I')) {
+                        signalTags += '<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full mr-1 text-xs">I</span>';
+                    }
+                    if (signal.signal.includes('O')) {
+                        signalTags += '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full mr-1 text-xs">O</span>';
+                    }
+                }
+
+                // SZ 값 클래스 지정
+                let szClass = 'text-green-600';
+                if (signal.sz_value >= 2.5) {
+                    szClass = 'text-red-600 font-bold';
+                } else if (signal.sz_value >= 1.5) {
+                    szClass = 'text-orange-600 font-bold';
+                }
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${signal.sz_value ? signal.sz_value.toFixed(2) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${signal.price_a ? signal.price_a.toLocaleString() + '원' : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${signal.price_b ? signal.price_b.toLocaleString() + '원' : '-'}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+
+</html>

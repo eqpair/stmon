@@ -1,68 +1,180 @@
 #!/usr/bin/env python3
-# simple version
-# coding=utf8
 
-# DR : disparate ratio
-# STD : standard deviation
-# SZ : standardization
-# An close | Ap close | disparate ratio | DR AVG 250 | STD 250 | SZ | signal in | signal out
-# dr_max, dr_min : 괴리율 필터.
+import asyncio
+import logging
+from typing import List, Tuple
+from datetime import datetime, timedelta
+import sys
+from pathlib import Path
+import json
 
-import time
-import datetime
-from NPPair import NPPair
+from config import TICK_PAIRS, WAIT_TIME
+from modules.pairs import NPPair
+from modules.telegram import TelegramBot
+from modules.utils import is_market_time
+from modules.exceptions import MarketDataError
 
-# 보통주, 우선주, SL_IN, SL_OUT, LS_IN, LS_OUT, period
-tick_pair = [
-        ('005930', '005935', 2.2, 1.0, -1.0, -2.0, 127),  # 삼성전자
-        ('051910', '051915', 2.3, 1.0, -1.0, -2.0, 252),  # LG화학
-        ('051900', '051905', 2.3, 1.0, -1.0, -2.5, 127),  # LG생활건강
-        ('005380', '005385', 2.0, 1.0, -1.0, -2.0, 252),  # 현대차
-        ('066570', '066575', 2.0, 1.0, -1.5, -2.5, 252),  # LG전자
-        ('000810', '000815', 2.3, 1.0, -1.5, -2.5, 127),  # 삼성화재
-        ('006400', '006405', 2.1, 1.5, -1.0, -3.0, 252),  # 삼성SDI
-        ('003540', '003545', 2.0, 1.0, -1.0, -2.5, 252),  # 대신증권
-        ('009150', '009155', 2.2, 1.0, -1.4, -2.5, 252),  # 삼성전기
-        ('003550', '003555', 2.0, 1.0, -1.0, -2.5, 252),  # LG
-        ('000150', '000155', 2.0, 1.0, -1.0, -2.5, 252),  # 두산
-        ('010950', '010955', 2.7, 1.0, -1.0, -2.3, 252),  # S-Oil
-        ('005940', '005945', 2.0, 1.0, -1.0, -2.5, 252),  # NH투자증권
-        ('002790', '002795', 2.3, 1.0, -1.2, -2.5, 127),  # 아모레G
-        ('019170', '019175', 2.0, 1.0, -1.0, -3.0, 252),  # 신풍제약
-        ('011780', '011785', 2.0, 1.2, -1.0, -2.0, 252),  # 금호석유
-        ('285130', '28513K', 2.0, 1.0, -1.0, -2.0, 252),  # SK케미칼
-        ('006800', '006805', 2.0, 1.0, -1.0, -2.0, 127),  # 미래에셋대우
-        ('005300', '005305', 2.0, 1.0, -1.0, -2.5, 252),  # 롯데칠성
-        ('000720', '000725', 2.2, 1.0, -1.5, -3.0, 127),  # 현대건설
-        ('007570', '007575', 2.0, 1.0, -1.0, -2.5, 252),  # 일양약품
-        ('180640', '18064K', 2.0, 1.0, -1.0, -2.0, 252),  # 한진칼
-        ('108670', '108675', 2.0, 1.0, -1.0, -2.5, 127),  # LG하우시스
-        ('001510', '001515', 2.0, 1.0, -1.0, -3.0, 252),  # SK증권
-        ('009830', '009835', 2.2, 1.2, -1.5, -2.5, 252),  # 한화솔루션
-        ('000880', '000885', 2.2, 1.0, -1.5, -3.5, 127),  # 한화
-        ('003490', '003495', 2.0, 1.0, -1.0, -2.5, 252),  # 대한항공
-        ('001680', '001685', 2.0, 1.0, -1.5, -3.0, 252),  # 대상
-        ('145990', '145995', 2.0, 1.0, -1.0, -2.0, 252),  # 삼양사
-        ('002020', '002025', 2.0, 1.0, -1.3, -2.5, 252),  # 코오롱
-        ('000070', '000075', 2.0, 1.3, -1.0, -2.0, 252),  # 삼양홀딩스
-        ('001740', '001745', 2.0, 1.0, -1.5, -3.0, 252),  # SK네트웍스
-        ('002990', '002995', 2.0, 1.0, -1.0, -3.0, 252),  # 금호산업
-        ('001060', '001065', 2.0, 1.0, -1.0, -2.0, 252),  # JW중외제약
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(Path('logs/stock_monitor.log')),
+        logging.StreamHandler(sys.stdout)
     ]
+)
+logger = logging.getLogger(__name__)
 
-def showSignal(val):
-    print(val)
+def mark_special_stocks(stock_name):
+    special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
+    special_stocks_2 = ['한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션', 'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라', '부국증권', '하이트진로홀딩스']
+    special_stocks_3 = ['코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌', '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산', '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트', '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스']
+    
+    if stock_name in special_stocks_1:
+        return f'🔴 {stock_name}'
+    elif stock_name in special_stocks_2:
+        return f'🟠 {stock_name}'
+    elif stock_name in special_stocks_3:
+        return f'🟢 {stock_name}'
+    else:
+        return stock_name
+
+class StockMonitor:
+    def __init__(self):
+        self.pairs: List[NPPair] = [NPPair(*pair) for pair in TICK_PAIRS]
+        self.telegram_bot = TelegramBot()
+        self.running = True
+        self.last_r_signal_time = {}  # 종목별 마지막 R 신호 시간 추적
+        
+    async def get_signals_with_divergent(self) -> Tuple[str, str]:
+        try:
+            tasks = [asyncio.create_task(pair.get_signal_now()) for pair in self.pairs]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            all_messages = []
+            divergent_messages = []
+            r_signal_pairs = []  # 'R' 신호 페어 추적
+            
+            for pair, result in zip(self.pairs, results):
+                if isinstance(result, Exception):
+                    logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
+                    all_messages.append(f"{mark_special_stocks(pair.A_name)}: Error - {str(result)}")
+                elif result:
+                    signal_info = result
+                    all_messages.append(f"{mark_special_stocks(pair.A_name)}: {signal_info}")
+                    
+                    # sz 값이 2를 넘는지 확인
+                    try:
+                        sz_value = float(signal_info.split('/')[0].strip())
+                        if sz_value >= 2:
+                            divergent_messages.append(f"{mark_special_stocks(pair.A_name)}: {signal_info}")
+                        
+                        # 'R' 신호 확인
+                        if 'R' in signal_info.split('/')[1]:
+                            r_signal_pairs.append((pair, signal_info))
+                    except (ValueError, IndexError):
+                        continue
+                else:
+                    all_messages.append(f"{mark_special_stocks(pair.A_name)}: No signal")
+            
+            # 'R' 신호 페어에 대한 추가 메시지 처리
+            for pair, signal_info in r_signal_pairs:
+                try:
+                    # 신호 정보 파싱
+                    parts = signal_info.split('/')
+                    sz = float(parts[0].strip())
+                    
+                    # 해당 종목의 마지막 R 신호 시간 확인
+                    current_time = datetime.now()
+                    last_signal_time = self.last_r_signal_time.get(pair.A_name)
+                    # 마지막 신호 시간이 없거나 1시간 이상 지났다면 메시지 전송
+                    if (not last_signal_time) or (current_time - last_signal_time > timedelta(hours=1)):
+                        r_message = (
+                            f"🚨 R Signal Detected\n"
+                            f"{pair.A_name}\n"
+                            f"{signal_info}\n"
+                    )
+                    
+                    # 텔레그램으로 R 신호 메시지 전송
+                        await self.telegram_bot.send_message(r_message)
+                    
+                    # 마지막 R 신호 시간 업데이트
+                        self.last_r_signal_time[pair.A_name] = current_time
+                    
+                except Exception as e:
+                    logger.error(f"Error processing R signal for {pair.A_name}: {str(e)}")
+            
+            all_signals = "\n".join(all_messages)
+            divergent_signals = "\n".join(divergent_messages) if divergent_messages else "No divergent pairs found at the moment."
+            
+            return all_signals, divergent_signals
+                    
+        except Exception as e:
+            logger.error(f"Error in get_signals_with_divergent: {str(e)}")
+            raise
+
+    async def get_all_signals(self, divergence_only: bool = False) -> str:
+        try:
+            all_signals, divergent_signals = await self.get_signals_with_divergent()
+            return divergent_signals if divergence_only else all_signals
+        except Exception as e:
+            logger.error(f"Error in get_all_signals: {str(e)}")
+            raise
+
+    async def send_periodic_updates(self):
+        while self.running:
+            try:
+                if not is_market_time():
+                    await asyncio.sleep(60)
+                    continue
+                
+                logger.info("Fetching signals for periodic update...")
+                all_signals, divergent_signals = await self.get_signals_with_divergent()
+                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                message = (
+                    f"🕒 {current_time}\n\n"
+                    f"📊 Current Status\n\n{all_signals}\n\n"
+                    f"🚨 Divergent Pairs\n\n{divergent_signals}"
+                )
+                
+                await self.telegram_bot.send_message(message)
+                logger.info("Periodic update sent successfully")
+                
+                await asyncio.sleep(WAIT_TIME)
+            except Exception as e:
+                logger.error(f"Error in periodic update: {str(e)}")
+                await asyncio.sleep(30)
+
+    async def start(self):
+        try:
+            logger.info("Starting Stock Monitor...")
+            await self.telegram_bot.start(self.pairs)
+            
+            update_task = asyncio.create_task(self.send_periodic_updates())
+            polling_task = asyncio.create_task(self.telegram_bot.start_polling())
+            
+            await asyncio.gather(update_task, polling_task)
+        except Exception as e:
+            logger.error(f"Critical error in Stock Monitor: {str(e)}")
+            self.running = False
+            raise
+
+    async def shutdown(self):
+        logger.info("Shutting down Stock Monitor...")
+        self.running = False
+        await self.telegram_bot.stop()
+
+async def main():
+    monitor = StockMonitor()
+    try:
+        await monitor.start()
+    except KeyboardInterrupt:
+        logger.info("Received shutdown signal")
+        await monitor.shutdown()
+    except Exception as e:
+        logger.error(f"Fatal error: {str(e)}")
+        await monitor.shutdown()
+        sys.exit(1)
 
 if __name__ == "__main__":
-    pairs = []
-
-    for pair in tick_pair:
-        np = NPPair(pair[0], pair[1], pair[2], pair[3], pair[4], pair[5], pair[6])
-        pairs.append(np)
-
-    while 1:
-        time.sleep(60)
-        print("> %s"%datetime.datetime.now())
-        for np in pairs:
-            np.GetSignalNow(False)
-        
+    asyncio.run(main())
