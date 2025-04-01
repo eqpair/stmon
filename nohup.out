@@ -172,3 +172,37 @@ Traceback (most recent call last):
   File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/utils/exceptions.py", line 140, in detect
     raise err(cls.text or description)
 aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+/usr/lib/python3.7/html/parser.py:171: XMLParsedAsHTMLWarning: It looks like you're parsing an XML document using an HTML parser. If this really is an HTML document (maybe it's XHTML?), you can ignore or filter this warning. If it's XML, you should know that using an XML parser will be more reliable. To parse this document as XML, make sure you have the lxml package installed, and pass the keyword argument `features="xml"` into the BeautifulSoup constructor.
+  k = self.parse_starttag(i)
+2025-04-01 17:15:14,348 - __main__ - INFO - GitHub 저장소에 성공적으로 푸시되었습니다.
+2025-04-01 17:15:14,349 - __main__ - INFO - GitHub 데이터 업데이트 완료: 2025-04-01 17:15:11.153027
+2025-04-01 17:15:16,447 - aiogram.dispatcher.dispatcher - ERROR - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/dispatcher/dispatcher.py", line 386, in start_polling
+    allowed_updates=allowed_updates
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/base.py", line 237, in request
+    proxy=self.proxy, proxy_auth=self.proxy_auth, timeout=self.timeout, **kwargs)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/utils/exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+2025-04-01 17:15:26,987 - aiogram.dispatcher.dispatcher - ERROR - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/dispatcher/dispatcher.py", line 386, in start_polling
+    allowed_updates=allowed_updates
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/base.py", line 237, in request
+    proxy=self.proxy, proxy_auth=self.proxy_auth, timeout=self.timeout, **kwargs)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/utils/exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running

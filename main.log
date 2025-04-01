@@ -1,0 +1,49 @@
+nohup: ignoring input
+2025-04-01 17:15:35,586 - __main__ - INFO - Starting Stock Monitor...
+2025-04-01 17:15:38,163 - modules.telegram - INFO - Telegram bot started
+2025-04-01 17:15:42,194 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-01 17:15:47,995 - aiogram.dispatcher.dispatcher - ERROR - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/dispatcher/dispatcher.py", line 386, in start_polling
+    allowed_updates=allowed_updates
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/base.py", line 237, in request
+    proxy=self.proxy, proxy_auth=self.proxy_auth, timeout=self.timeout, **kwargs)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/utils/exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+2025-04-01 17:15:58,558 - aiogram.dispatcher.dispatcher - ERROR - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/dispatcher/dispatcher.py", line 386, in start_polling
+    allowed_updates=allowed_updates
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/base.py", line 237, in request
+    proxy=self.proxy, proxy_auth=self.proxy_auth, timeout=self.timeout, **kwargs)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/utils/exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+2025-04-01 17:16:09,123 - aiogram.dispatcher.dispatcher - ERROR - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/dispatcher/dispatcher.py", line 386, in start_polling
+    allowed_updates=allowed_updates
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/base.py", line 237, in request
+    proxy=self.proxy, proxy_auth=self.proxy_auth, timeout=self.timeout, **kwargs)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/bot/api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "/home/pi/myenv/lib/python3.7/site-packages/aiogram/utils/exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
