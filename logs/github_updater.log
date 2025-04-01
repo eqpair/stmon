@@ -5742,3 +5742,26 @@ fatal: Could not read from remote repository.
 Please make sure you have the correct access rights
 and the repository exists.
 
+2025-04-01 17:12:54,717 - __main__ - INFO - GitHub 저장소에 성공적으로 푸시되었습니다.
+2025-04-01 17:12:54,719 - __main__ - INFO - GitHub 데이터 업데이트 완료: 2025-04-01 17:12:50.258586
+2025-04-01 17:13:18,398 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:13:54,574 - __main__ - ERROR - 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:13:54,576 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:13:54,577 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: ERROR: Repository not found.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+2025-04-01 17:14:21,925 - __main__ - INFO - Git 설정 완료
+2025-04-01 17:14:27,685 - __main__ - INFO - Git 설정 완료
