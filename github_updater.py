@@ -264,14 +264,16 @@ async def start_github_updater(daily_run=False):
         await updater.update_trend_data()
         return
     
-    while True:
-        try:
-            await updater.update_data()
-        except Exception as e:
-            logger.error(f"업데이트 오류: {str(e)}")
-        
-        # 30분 대기
-        await asyncio.sleep(1800)  # 30분마다 업데이트
+    # 한 번만 실행
+    await updater.update_data()
+#    while True:
+#        try:
+#            await updater.update_data()
+#        except Exception as e:
+#            logger.error(f"업데이트 오류: {str(e)}")
+#        
+#        # 30분 대기
+#        await asyncio.sleep(1800)  # 30분마다 업데이트
 
 # 메인 함수
 if __name__ == "__main__":
