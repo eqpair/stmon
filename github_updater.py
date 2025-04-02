@@ -105,9 +105,9 @@ class GitHubUpdater:
             # 히스토리 데이터 업데이트
             await self._update_history_data(data)
             
-            # 트렌드 데이터 업데이트 (일주일에 한 번)
+            # 트렌드 데이터 매일 업데이트
             current_time = datetime.now()
-            if current_time.weekday() == 0 and current_time.hour < 6:  # 월요일 새벽에 실행
+            if current_time.hour < 6:  # 매일 새벽에 실행
                 await self.update_trend_data()
             
             # GitHub 커밋 및 푸시
