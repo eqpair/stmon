@@ -62,22 +62,22 @@ class TrendCollector:
             # 세션 가져오기
             session = await self._get_session()
             
-            # 3개월(90일) 데이터 가져오기
-            days_to_fetch = 90
+            # 1년(365일) 데이터 가져오기로 수정
+            days_to_fetch = 365
             end_date = datetime.now()
             start_date = end_date - timedelta(days=days_to_fetch)
             
             # A 종목(보통주) 데이터 가져오기
-            a_data = await self._fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+10)
+            a_data = await self._fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30)
             
             # B 종목(우선주) 데이터 가져오기
-            b_data = await self._fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+10)
+            b_data = await self._fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
             
             # 데이터 처리 및 저장
             result = self._process_trend_data(pair, a_data, b_data)
             if result:
                 self._save_trend_data(pair.A_code, result)
-                logger.info(f"{pair.A_name} 트렌드 데이터 수집 완료")
+                logger.info(f"{pair.A_name} 트렌드 데이터 수집 완료 (1년치)")
                 return True
             else:
                 logger.warning(f"{pair.A_name} 트렌드 데이터 처리 실패")
@@ -88,8 +88,9 @@ class TrendCollector:
             raise
     
     async def _fetch_stock_history(self, session, stock_code, start_date, days):
-        """주식 히스토리 데이터 가져오기"""
+        """주식 히스토리 데이터 가져오기 - 1년 데이터용 수정"""
         # 네이버 금융 API URL (일별 차트 데이터)
+        # 1년치 데이터를 위해 충분한 수의 데이터 요청
         url = f"https://fchart.stock.naver.com/sise.nhn?symbol={stock_code}&timeframe=day&startTime={start_date.strftime('%Y%m%d')}&count={days}&requestType=0"
         
         try:
@@ -105,7 +106,7 @@ class TrendCollector:
             return None
     
     def _process_trend_data(self, pair, a_data, b_data):
-        """트렌드 데이터 처리"""
+        """트렌드 데이터 처리 - 1년치 데이터 처리로 수정"""
         if not a_data or not b_data:
             return None
         
@@ -121,20 +122,22 @@ class TrendCollector:
             # 두 데이터프레임 병합
             merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
             
-            # 괴리율 계산 (A주 기준)
+            # 괴리율 계산
             merged_df['discount_rate'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
             
-            # 최근 90일 데이터만 선택
-            merged_df = merged_df.sort_index().tail(90)
+            # 전체 데이터를 사용하되 최소 365일 데이터 보장하기
+            # 최근 데이터부터 최대 365일까지 저장
+            all_data = merged_df.sort_index()
+            recent_data = all_data.tail(max(365, len(all_data)))
             
             # 결과 포맷팅
             result = {
                 'stock_code': pair.A_code,
                 'stock_name': pair.A_name,
-                'dates': merged_df.index.strftime('%Y-%m-%d').tolist(),
-                'common_prices': merged_df['close_A'].tolist(),
-                'preferred_prices': merged_df['close_B'].tolist(),
-                'discount_rates': merged_df['discount_rate'].tolist(),
+                'dates': recent_data.index.strftime('%Y-%m-%d').tolist(),
+                'common_prices': recent_data['close_A'].tolist(),
+                'preferred_prices': recent_data['close_B'].tolist(),
+                'discount_rates': recent_data['discount_rate'].tolist(),
                 'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             

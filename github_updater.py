@@ -6,7 +6,7 @@ import time
 import logging
 import asyncio
 import subprocess
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Any
 
@@ -171,7 +171,7 @@ class GitHubUpdater:
         return result
     
     async def _update_history_data(self, current_data):
-        """시그널 히스토리 데이터 업데이트"""
+        """시그널 히스토리 데이터 업데이트 - 1년치 데이터 보존"""
         history_file = DATA_DIR / "history.json"
         
         # 기존 히스토리 로드
@@ -184,26 +184,43 @@ class GitHubUpdater:
         else:
             history = {"signals": []}
         
-        # 새 신호들만 추가 (중복 방지)
+        # 1년 전 날짜 계산
+        one_year_ago = datetime.now() - timedelta(days=365)
+        one_year_ago_str = one_year_ago.strftime("%Y-%m-%d")
+        
+        # 1년치 데이터만 보존 (오래된 데이터 필터링)
+        filtered_signals = []
+        for signal in history["signals"]:
+            # 타임스탬프가 있고, 1년 이내인 데이터만 유지
+            if "timestamp" in signal:
+                signal_date = signal["timestamp"].split()[0]  # 2023-01-01 형식에서 날짜만 추출
+                if signal_date >= one_year_ago_str:
+                    filtered_signals.append(signal)
+        
+        # 필터링된 데이터로 갱신
+        history["signals"] = filtered_signals
+        
+        # 새 신호들 추가 (중복 확인)
         timestamp = current_data["timestamp"]
+        
         for signal in current_data["all_signals"]:
             signal["timestamp"] = timestamp
             
-            # 이미 동일한 시그널이 있는지 확인
+            # 기존 중복 검사 로직 사용
             is_duplicate = False
             for existing in history["signals"]:
                 if (existing["stock_name"] == signal["stock_name"] and 
-                    existing["signal"] == signal["signal"] and
-                    existing["sz_value"] == signal["sz_value"]):
+                    existing["timestamp"] == signal["timestamp"]):
                     is_duplicate = True
                     break
             
             if not is_duplicate:
                 history["signals"].append(signal)
         
-        # 히스토리 크기 제한 (최대 500개)
-        if len(history["signals"]) > 500:
-            history["signals"] = history["signals"][-500:]
+        # 히스토리 크기 제한 - 1년치 데이터를 위해 충분히 여유있게 설정
+        max_signals = 10000  # 1년 365일 * 약 20개 종목 * 하루 1-2회 데이터
+        if len(history["signals"]) > max_signals:
+            history["signals"] = history["signals"][-max_signals:]
         
         # 히스토리 저장
         with open(history_file, 'w', encoding='utf-8') as f:

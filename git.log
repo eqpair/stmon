@@ -1,2 +1,6 @@
 nohup: ignoring input
 2025-04-01 17:15:34,458 - __main__ - INFO - Git 설정 완료
+/usr/lib/python3.7/html/parser.py:171: XMLParsedAsHTMLWarning: It looks like you're parsing an XML document using an HTML parser. If this really is an HTML document (maybe it's XHTML?), you can ignore or filter this warning. If it's XML, you should know that using an XML parser will be more reliable. To parse this document as XML, make sure you have the lxml package installed, and pass the keyword argument `features="xml"` into the BeautifulSoup constructor.
+  k = self.parse_starttag(i)
+2025-04-01 17:16:18,102 - __main__ - INFO - GitHub 저장소에 성공적으로 푸시되었습니다.
+2025-04-01 17:16:18,103 - __main__ - INFO - GitHub 데이터 업데이트 완료: 2025-04-01 17:16:14.835726
