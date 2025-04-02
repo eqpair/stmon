@@ -27,7 +27,7 @@ GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/pi/work/m5000')
 GITHUB_USERNAME = os.environ.get('GITHUB_USERNAME', 'eqpair')
 GITHUB_EMAIL = os.environ.get('GITHUB_EMAIL', 'frmn3962@gmail.com')
 # SSH 방식으로 변경
-GITHUB_REPO_URL = 'git@github.com:eqpair/monitor.git'
+GITHUB_REPO_URL = 'git@github.com:eqpair/stmon.git'
 
 # 기본 데이터 디렉토리
 DATA_DIR = Path(f"{GITHUB_REPO_PATH}/data")
