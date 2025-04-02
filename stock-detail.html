@@ -471,27 +471,28 @@
             }
         });
     }
-    // Render history signals data
     function renderHistorySignals(signalsList) {
         const tableBody = document.getElementById('signals-table-body');
 
         if (!signalsList || signalsList.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No history data for this stock.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No SZ history data for this stock.</td></tr>';
             return;
         }
 
         tableBody.innerHTML = '';
 
-        // Sort by most recent
-        signalsList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        // 날짜 기준 정렬 (최신순)
+        const sortedSignals = signalsList
+            .filter(signal => signal.stock_name.toLowerCase().trim() === stockName.toLowerCase().trim())
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        // Display maximum 20 signals
-        const recentSignals = signalsList.slice(0, 20);
+        // 최근 50개 SZ 값 표시
+        const recentSignals = sortedSignals.slice(0, 50);
 
         recentSignals.forEach(signal => {
             const row = document.createElement('tr');
 
-            // Date formatting
+            // 날짜 포맷팅
             let timestamp = 'No date information';
             try {
                 const date = new Date(signal.timestamp);
@@ -500,39 +501,41 @@
                 console.warn('Date parsing error:', e);
             }
 
-            // Signal tags creation
-            let signalTags = '';
-            if (signal.signal) {
-                if (signal.signal.includes('R')) {
-                    signalTags += '<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full mr-1 text-xs">R</span>';
-                }
-                if (signal.signal.includes('I')) {
-                    signalTags += '<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full mr-1 text-xs">I</span>';
-                }
-                if (signal.signal.includes('O')) {
-                    signalTags += '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full mr-1 text-xs">O</span>';
-                }
-            }
-
-            // SZ value class assignment
-            let szClass = 'text-green-600';
+            // SZ 값 색상 클래스
+            let szClass = '';
             if (signal.sz_value >= 2.5) {
                 szClass = 'text-red-600 font-bold';
             } else if (signal.sz_value >= 1.5) {
                 szClass = 'text-orange-600 font-bold';
+            } else {
+                szClass = 'text-green-600';
             }
 
             row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${signal.sz_value ? signal.sz_value.toFixed(2) : '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${signal.price_a ? signal.price_a.toLocaleString() + ' KRW' : '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${signal.price_b ? signal.price_b.toLocaleString() + ' KRW' : '-'}</td>
-                `;
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">
+                ${signal.sz_value !== undefined ? signal.sz_value.toFixed(2) : '-'}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${signal.price_a ? signal.price_a.toLocaleString() + ' KRW' : '-'}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${signal.price_b ? signal.price_b.toLocaleString() + ' KRW' : '-'}
+            </td>
+        `;
 
             tableBody.appendChild(row);
         });
-    }
+
+        // 테이블 헤더 수정
+        const tableHeaders = document.querySelector('#signals-table-body').closest('table').querySelector('thead tr');
+        tableHeaders.innerHTML = `
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SZ Value</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Common Stock Price</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preferred Stock Price</th>
+    `;
+}
 
     // 더미 데이터 생성 함수 (1년치 데이터)
     function generateDummyTrendData(stockCode, stockName) {
