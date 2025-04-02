@@ -3,8 +3,6 @@ from config import TELEGRAM_TOKEN, CHAT_ID
 import logging
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import asyncio
-from aiogram.utils.executor import start_polling
-import os
 
 logger = logging.getLogger(__name__)
 

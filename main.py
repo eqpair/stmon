@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-import os
-import sys
-import fcntl
-import logging
-from logging.handlers import RotatingFileHandler
 import asyncio
 import logging
 from typing import List, Tuple
@@ -28,48 +23,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
-# 단일 인스턴스 실행 보장
-def single_instance(lockfile):
-    try:
-        fp = open(lockfile, 'w')
-        fcntl.flock(fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except (IOError, BlockingIOError):
-        print("다른 인스턴스가 실행 중입니다. 종료합니다.")
-        sys.exit(1)
-    return fp
-
-# 로깅 설정
-def setup_logging():
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    
-    # 콘솔 로그
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    
-    # 파일 로그 (최대 10MB, 5개 백업)
-    file_handler = RotatingFileHandler(
-        'bot.log', 
-        maxBytes=10*1024*1024,  
-        backupCount=5
-    )
-    file_handler.setLevel(logging.INFO)
-    
-    # 로그 포맷
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    console_handler.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
-    
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
-
-# 스크립트 시작 부분
-lock_file = '/tmp/bot_instance.lock'
-lock = single_instance(lock_file)
-setup_logging()
 
 def mark_special_stocks(stock_name):
     special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
