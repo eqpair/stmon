@@ -81,7 +81,7 @@
 
             <!-- History Signals Table -->
             <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Signal History</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ History</h2>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -122,12 +122,13 @@
         </div>
     </footer>
 <script>
-    // Page load event
+    let stockName = '';
+
     document.addEventListener('DOMContentLoaded', () => {
-        // Extract stock information from URL
+        // 기존 코드...
         const urlParams = new URLSearchParams(window.location.search);
-        const stockCode = urlParams.get('code');
-        const stockName = urlParams.get('name');
+        stockCode = urlParams.get('code');
+        stockName = urlParams.get('name');  // 여기서 stockName 설정
 
         if (!stockCode || !stockName) {
             alert('No stock information. Redirecting to main page.');
@@ -471,6 +472,7 @@
             }
         });
     }
+    // 히스토리 렌더링 함수 수정
     function renderHistorySignals(signalsList) {
         const tableBody = document.getElementById('signals-table-body');
 
@@ -481,9 +483,13 @@
 
         tableBody.innerHTML = '';
 
-        // 날짜 기준 정렬 (최신순)
+        // 종목명 대소문자 무시, 공백 제거 필터링
+        const normalizedStockName = stockName.trim().toLowerCase();
         const sortedSignals = signalsList
-            .filter(signal => signal.stock_name.toLowerCase().trim() === stockName.toLowerCase().trim())
+            .filter(signal =>
+                signal.stock_name.trim().toLowerCase() === normalizedStockName ||
+                signal.stock_name.trim().toLowerCase().includes(normalizedStockName)
+            )
             .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         // 최근 50개 SZ 값 표시
