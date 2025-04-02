@@ -256,7 +256,7 @@
         const szElement = document.getElementById('sz-value');
         szElement.textContent = stockData.sz_value ? stockData.sz_value.toFixed(2) : 'No information';
 
-        // SZ value color change
+        // SZ 값에 따른 색상 변경
         szElement.classList.remove('text-red-600', 'text-orange-600', 'text-green-600');
         if (stockData.sz_value >= 2.5) {
             szElement.classList.add('text-red-600');
@@ -266,6 +266,9 @@
             szElement.classList.add('text-green-600');
         }
 
+        // 디버깅용 로그 추가
+        console.log('Current Stock Data:', stockData);
+    }
         // Signal display
         const signalElement = document.getElementById('current-signal');
         if (stockData.signal) {
@@ -303,27 +306,24 @@
     function calculateSZValues(discountRates) {
         if (!discountRates || discountRates.length === 0) return [];
 
-        // 전체 데이터 길이 파악
-        const totalLength = discountRates.length;
-        
-        // 최근 30일 데이터로 평균 및 표준편차 계산
-        // 데이터가 30일 미만인 경우 전체 사용
-        const periodLength = Math.min(30, totalLength);
-        const recentRates = discountRates.slice(-periodLength);
-        
+        // 전체 1년치 데이터 사용
+        const recentRates = discountRates;
+
         // 평균 계산
         const meanRate = recentRates.reduce((sum, rate) => sum + rate, 0) / recentRates.length;
 
         // 표준편차 계산
-        const squaredDiffs = recentRates.map(rate => {
-            const diff = rate - meanRate;
-            return diff * diff;
-        });
-        const stdDev = Math.sqrt(squaredDiffs.reduce((sum, val) => sum + val, 0) / recentRates.length);
+        const squaredDiffs = recentRates.map(rate => Math.pow(rate - meanRate, 2));
+        const stdDev = Math.sqrt(
+            squaredDiffs.reduce((sum, val) => sum + val, 0) / recentRates.length
+        );
 
-        // 전체 기간(최대 1년)에 대해 SZ 값 계산
-        const szValues = discountRates.map(currentRate => {
+        // 전체 기간에 대해 SZ 값 계산
+        const szValues = recentRates.map(currentRate => {
+            // 표준편차가 0이면 0 반환 (divide by zero 방지)
             if (stdDev === 0) return 0;
+
+            // 표준화된 점수 계산 (Z-score)
             return (currentRate - meanRate) / stdDev;
         });
 
