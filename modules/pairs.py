@@ -7,6 +7,9 @@ import logging
 from bs4 import BeautifulSoup
 import json
 from .exceptions import MarketDataError
+from bs4 import XMLParsedAsHTMLWarning
+import warnings
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +68,7 @@ class NPPair:
 
     def _parse_stock_data(self, data: str, code: str) -> pd.DataFrame:
         try:
-            soup = BeautifulSoup(data, 'html.parser')
+            soup = BeautifulSoup(data, features="html.parser")
             chartdata = soup.find('chartdata')
             
             if chartdata is None:
