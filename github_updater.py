@@ -33,9 +33,6 @@ GITHUB_REPO_URL = 'git@github.com:eqpair/stmon.git'
 DATA_DIR = Path(f"{GITHUB_REPO_PATH}/data")
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# 업데이트 주기 (기본 30분)
-UPDATE_INTERVAL = 1800  # 초 단위
-
 class GitHubUpdater:
     def __init__(self, monitor):
         self.monitor = monitor
@@ -105,9 +102,9 @@ class GitHubUpdater:
             # 히스토리 데이터 업데이트
             await self._update_history_data(data)
             
-            # 트렌드 데이터 매일 업데이트
+            # 트렌드 데이터 업데이트 (일주일에 한 번)
             current_time = datetime.now()
-            if current_time.hour < 6:  # 매일 새벽에 실행
+            if current_time.weekday() == 0 and current_time.hour < 6:  # 월요일 새벽에 실행
                 await self.update_trend_data()
             
             # GitHub 커밋 및 푸시
@@ -284,15 +281,17 @@ async def start_github_updater(daily_run=False):
         await updater.update_trend_data()
         return
     
-    # 주기적 업데이트 활성화
-    while True:
+    # 한 번만 실행
+    await updater.update_data()
+#    while True:
         try:
             await updater.update_data()
         except Exception as e:
             logger.error(f"업데이트 오류: {str(e)}")
-        
-        # 설정된 간격으로 대기
-        await asyncio.sleep(UPDATE_INTERVAL)
+    
+        # 30분 대기
+        logger.info("다음 업데이트까지 30분 대기 중...")
+        await asyncio.sleep(1800)  # 30분마다 업데이트
 
 # 메인 함수
 if __name__ == "__main__":
