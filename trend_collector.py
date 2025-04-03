@@ -109,7 +109,8 @@ class TrendCollector:
         """트렌드 데이터 처리 - 1년치 데이터 처리로 수정"""
         if not a_data or not b_data:
         # 데이터를 가져오지 못한 경우, 더미 데이터 생성
-            return self._generate_unique_dummy_data(pair)
+            logger.warning(f"{pair.A_name} 데이터 가져오기 실패")
+            return None
         
         try:
             # 데이터 파싱
