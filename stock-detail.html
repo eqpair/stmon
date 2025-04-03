@@ -157,89 +157,49 @@
 
         // Load stock data
         async function loadStockData(stockCode, stockName) {
-            try {
-                console.log('Load started:', { stockCode, stockName });
+                try {
+                    // 로딩 상태 표시
+                    document.getElementById('loading-container').classList.remove('hidden');
+                    document.getElementById('content-container').classList.add('hidden');
 
-                // Load current state data
-                const currentDataResponse = await fetch('data/stock_data.json' + `?t=${new Date().getTime()}`);
-                if (!currentDataResponse.ok) {
-                    throw new Error('Failed to load current data.');
+                    // 트렌드 데이터 로드
+                    const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+
+                    if (!trendDataResponse.ok) {
+                        throw new Error(`Failed to load trend data for ${stockName}`);
+                    }
+
+                    const trendData = await trendDataResponse.json();
+
+                    // 데이터 무결성 검사
+                    if (!trendData ||
+                        !trendData.dates ||
+                        !trendData.common_prices ||
+                        !trendData.preferred_prices ||
+                        !trendData.discount_rates ||
+                        trendData.dates.length === 0) {
+                        throw new Error('Invalid or empty trend data');
+                    }
+
+                    // 로딩 상태 해제
+                    document.getElementById('loading-container').classList.add('hidden');
+                    document.getElementById('content-container').classList.remove('hidden');
+
+                    // 그래프 렌더링
+                    renderCharts(trendData);
+
+                } catch (error) {
+                    console.error('Data load error:', error);
+
+                    // 오류 상태 표시
+                    document.getElementById('loading-container').innerHTML = `
+            <div class="text-red-500 text-center">
+                <p>Failed to load stock data</p>
+                <p>${error.message}</p>
+            </div>
+        `;
                 }
-                const currentData = await currentDataResponse.json();
-
-                // Find stock data with improved matching logic
-                const stockData = currentData.all_signals.find(signal => {
-                    // Strict matching ignoring case and whitespace
-                    const normalizedInputName = stockName.trim().toLowerCase();
-                    const normalizedSignalName = signal.stock_name.trim().toLowerCase();
-
-                    console.log('Matching debug:', {
-                        inputName: stockName,
-                        signalName: signal.stock_name,
-                        match: normalizedInputName === normalizedSignalName
-                    });
-
-                    return normalizedInputName === normalizedSignalName;
-                });
-
-                // Log if no matching data found
-                if (!stockData) {
-                    console.warn('No matching stock data found:', {
-                        stockName,
-                        availableStocks: currentData.all_signals.map(s => s.stock_name)
-                    });
-                }
-
-                // Load history data
-                const historyResponse = await fetch('data/history.json' + `?t=${new Date().getTime()}`);
-                if (!historyResponse.ok) {
-                    throw new Error('Failed to load history data.');
-                }
-                const historyData = await historyResponse.json();
-
-                // Load 3-month data
-                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
-                let trendData = null;
-
-                if (trendDataResponse.ok) {
-                    trendData = await trendDataResponse.json();
-                } else {
-                    console.warn('Failed to load trend data. Using sample data.');
-                    trendData = generateDummyTrendData(stockCode, stockName);
-                }
-
-                // Update UI
-                hideLoading();
-
-                // Update current info
-                if (stockData) {
-                    updateCurrentInfo(stockData);
-                } else {
-                    const dummyCurrentInfo = {
-                        stock_name: stockName,
-                        price_a: trendData.common_prices[trendData.common_prices.length - 1],
-                        price_b: trendData.preferred_prices[trendData.preferred_prices.length - 1],
-                        sz_value: calculateSZValue(trendData),
-                        signal: ''
-                    };
-                    updateCurrentInfo(dummyCurrentInfo);
-                }
-
-                // Render charts
-                renderCharts(trendData);
-
-                // Render history signals
-                const stockHistoryData = historyData.signals.filter(signal =>
-                    signal.stock_name.toLowerCase().trim() === stockName.toLowerCase().trim()
-                );
-                renderHistorySignals(stockHistoryData);
-
-            } catch (error) {
-                console.error('Data load error:', error);
-                alert(`Failed to load data: ${error.message}`);
-                hideLoading();
             }
-        }
 
         // Hide loading screen
         function hideLoading() {
@@ -302,33 +262,21 @@
             function calculateSZValues(discountRates) {
                     if (!discountRates || discountRates.length === 0) return [];
 
-                    // 전체 데이터 길이 파악
-                    const totalLength = discountRates.length;
-
-                    // 백엔드의 avg_period와 동일하게 설정 (대부분 249일로 설정됨)
                     const periodLength = 249;
-
-                    // SZ 값 배열 초기화
                     const szValues = new Array(discountRates.length).fill(0);
 
-                    // 각 시점마다 롤링 윈도우를 적용해 SZ 값 계산
-                for (let i = periodLength - 1; i < discountRates.length; i++) {
-                    // 현재 윈도우 데이터 추출 (249일치)
-                    const windowData = discountRates.slice(i - periodLength + 1, i + 1);
+                    for (let i = periodLength - 1; i < discountRates.length; i++) {
+                        const windowData = discountRates.slice(i - periodLength + 1, i + 1);
+                        const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+                        const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
+                        const stdDev = Math.sqrt(variance);
 
-                    // 평균 계산
-                    const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+                        // 표준편차가 0이 아닌 경우에만 계산
+                        szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
+                    }
 
-                    // 표준편차 계산
-                    const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
-                    const stdDev = Math.sqrt(variance);
-
-                    // SZ 값 계산 (현재 포인트 기준)
-                    szValues[i] = stdDev === 0 ? 0 : (discountRates[i] - mean) / stdDev;
+                    return szValues;
                 }
-
-                return szValues;
-            }
         // 개별 SZ 값 계산
             function calculateSZValue(trendData) {
                     if (!trendData || !trendData.discount_rates || trendData.discount_rates.length === 0) return 0;
@@ -569,46 +517,6 @@
             });
         }
 
-        // 더미 데이터 생성 함수 (1년치 데이터)
-        function generateDummyTrendData(stockCode, stockName) {
-            // 1년치 날짜 생성 (365일)
-            const dates = [];
-            const discountRates = [];
-            const commonPrices = [];
-            const preferredPrices = [];
-
-            const today = new Date();
-            const baseCommonPrice = Math.floor(Math.random() * 50000) + 10000; // 기본 보통주 가격(10000~60000)
-
-            for (let i = 365; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(today.getDate() - i);
-                dates.push(date.toISOString().split('T')[0]);
-
-                // 랜덤 괴리율 (-5% ~ 15%)
-                const discountRate = (Math.random() * 20 - 5) / 100;
-                discountRates.push(discountRate);
-
-                // 보통주 가격 - 약간의 변동성 추가
-                const dayVariation = (Math.random() * 0.04) - 0.02; // -2% ~ 2% 변동
-                const commonPrice = baseCommonPrice * (1 + (i / 365 * 0.1) + dayVariation);
-                commonPrices.push(Math.floor(commonPrice));
-
-                // 우선주 가격 (괴리율 적용)
-                const preferredPrice = commonPrice * (1 - discountRate);
-                preferredPrices.push(Math.floor(preferredPrice));
-            }
-
-            return {
-                stock_code: stockCode,
-                stock_name: stockName,
-                dates: dates,
-                common_prices: commonPrices,
-                preferred_prices: preferredPrices,
-                discount_rates: discountRates,
-                last_updated: new Date().toISOString()
-            };
-        }
     </script>
 </body>
 
