@@ -306,36 +306,25 @@
                     const totalLength = discountRates.length;
 
                     // 백엔드의 avg_period와 동일하게 설정 (대부분 249일로 설정됨)
-                    const periodLength = Math.min(249, totalLength);
+                    const periodLength = 249;
 
                     // SZ 값 배열 초기화
-                    const szValues = []; 
+                    const szValues = new Array(discountRates.length).fill(0);
 
                     // 각 시점마다 롤링 윈도우를 적용해 SZ 값 계산
-                for (let i = 0; i < totalLength; i++) {
-                    // 롤링 윈도우 시작 위치 결정 (충분한 데이터가 없으면 0부터 시작)
-                    const startIdx = Math.max(0, i - periodLength + 1);
+                for (let i = periodLength - 1; i < discountRates.length; i++) {
+                    // 현재 윈도우 데이터 추출 (249일치)
+                    const windowData = discountRates.slice(i - periodLength + 1, i + 1);
 
-                    // 현재 포인트까지의 데이터로 평균과 표준편차 계산
-                    if (i >= periodLength - 1) {
-                        // 충분한 과거 데이터가 있을 경우
-                        const windowData = discountRates.slice(startIdx, i);
+                    // 평균 계산
+                    const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
 
-                        // 평균 계산
-                        const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+                    // 표준편차 계산
+                    const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
+                    const stdDev = Math.sqrt(variance);
 
-                        // 표준편차 계산
-                        const squaredDiffs = windowData.map(val => Math.pow(val - mean, 2));
-                        const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / windowData.length;
-                        const stdDev = Math.sqrt(variance);
-
-                        // SZ 값 계산 (Python 코드와 동일한 방식)
-                        const szValue = stdDev === 0 ? 0 : (discountRates[i] - mean) / stdDev;
-                        szValues.push(szValue);
-                    } else {
-                        // 데이터가 충분하지 않을 경우 0으로 설정
-                        szValues.push(0);
-                    }
+                    // SZ 값 계산 (현재 포인트 기준)
+                    szValues[i] = stdDev === 0 ? 0 : (discountRates[i] - mean) / stdDev;
                 }
 
                 return szValues;
