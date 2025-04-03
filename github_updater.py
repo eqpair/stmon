@@ -280,10 +280,8 @@ async def start_github_updater(daily_run=False):
         # 일일 실행 모드 (트렌드 데이터만 업데이트)
         await updater.update_trend_data()
         return
-    
-    # 한 번만 실행
-    await updater.update_data()
-#    while True:
+
+    while True:
         try:
             await updater.update_data()
         except Exception as e:
