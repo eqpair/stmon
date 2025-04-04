@@ -594,91 +594,70 @@
 
         // 히스토리 데이터 렌더링 - 5개월 제한 적용 (완전히 개선된 버전)
         function renderHistoryData(trendData) {
-            const date = trendData.dates[i];
-            const szValue = trendData.sz_values[i];
-            const commonPrice = trendData.common_prices[i];
-            const preferredPrice = trendData.preferred_prices[i]; 
-            const tableBody = document.getElementById('signals-table-body');
-            const fiveMonthsInDays = 150;
-            const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-            // 7일 간격으로 데이터 선택
-            const displayDates = [];
-            for (let i = trendData.dates.length - 1; i >= startIndex; i -= 7) {
-                displayDates.push(i);
-            }
-
-            if (!trendData || !trendData.dates || trendData.dates.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                return;
-            }
-
-            tableBody.innerHTML = '';
-
-            try {
-                // 5개월(약 150일) 데이터로 제한
+                const tableBody = document.getElementById('signals-table-body');
                 const fiveMonthsInDays = 150;
                 const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-
-                // SZ 값 계산 - 전체 데이터로 계산
-                const calculatedSZ = calculateSZValues(trendData.discount_rates);
-
-                // SZ 값을 인덱스별로 찾기 쉽게 맵 생성
-                const szValueMap = {};
-                calculatedSZ.forEach(item => {
-                    szValueMap[item.index] = item.value;
-                });
-
-                // 표시할 날짜들 (역순 - 최신 데이터부터)
+                // 7일 간격으로 데이터 선택
                 const displayDates = [];
-                for (let i = trendData.dates.length - 1; i >= startIndex; i--) {
-                    // 7일에 하나씩만 표시 (간격을 위해)
-                    if (i % 7 === 0 || i === trendData.dates.length - 1) {
-                        // SZ 값이 있는 날짜만 선택
-                        if (szValueMap[i] !== undefined) {
-                            displayDates.push(i);
-                        }
-                    }
-
-                    // 최대 20개만 표시
-                    if (displayDates.length >= 20) {
-                        break;
-                    }
+                for (let i = trendData.dates.length - 1; i >= startIndex; i -= 7) {
+                    displayDates.push(i);
                 }
 
-                // 선택된 날짜들에 대해 히스토리 테이블 렌더링
-                for (const i of displayDates) {
-                    const row = document.createElement('tr');
+                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                    return;
+                }
 
-                    // 날짜 포맷팅
-                    const date = trendData.dates[i];
-                    const szValue = szValueMap[i];
+                tableBody.innerHTML = '';
 
-                    if (szValue === undefined) continue;
+                try {
+                    // 5개월(약 150일) 데이터로 제한
+                    const fiveMonthsInDays = 150;
+                    const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
 
-                    // SZ 값 클래스 결정
-                    let szClass = 'text-green-600';
-                    if (szValue >= 2.5) {
-                        szClass = 'text-red-600 font-bold';
-                    } else if (szValue >= 1.5) {
-                        szClass = 'text-orange-600 font-bold';
-                    }
+                    // SZ 값 계산 - 전체 데이터로 계산
+                    const calculatedSZ = calculateSZValues(trendData.discount_rates);
 
-                    // 트렌드 화살표 계산 (이전 날짜와 비교)
-                    let trendIcon = '-';
-                    if (displayDates.indexOf(i) < displayDates.length - 1) {
-                        const prevIndex = displayDates[displayDates.indexOf(i) + 1];
-                        const prevSZ = szValueMap[prevIndex];
+                    // SZ 값을 인덱스별로 찾기 쉽게 맵 생성
+                    const szValueMap = {};
+                    calculatedSZ.forEach(item => {
+                        szValueMap[item.index] = item.value;
+                    });
 
-                        if (szValue > prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                        } else if (szValue < prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
-                        } else {
-                            trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
+                    // 선택된 날짜들에 대해 히스토리 테이블 렌더링
+                    for (const i of displayDates) {
+                        const row = document.createElement('tr');
+
+                        // 날짜 포맷팅
+                        const date = trendData.dates[i];
+                        const szValue = szValueMap[i];
+
+                        if (szValue === undefined) continue;
+
+                        // SZ 값 클래스 결정
+                        let szClass = 'text-green-600';
+                        if (szValue >= 2.5) {
+                            szClass = 'text-red-600 font-bold';
+                        } else if (szValue >= 1.5) {
+                            szClass = 'text-orange-600 font-bold';
                         }
-                    }
 
-                    row.innerHTML = `
+                        // 트렌드 화살표 계산 (이전 날짜와 비교)
+                        let trendIcon = '-';
+                        if (displayDates.indexOf(i) < displayDates.length - 1) {
+                            const prevIndex = displayDates[displayDates.indexOf(i) + 1];
+                            const prevSZ = szValueMap[prevIndex];
+
+                            if (szValue > prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                            } else if (szValue < prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                            } else {
+                                trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
+                            }
+                        }
+
+                        row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
@@ -686,19 +665,19 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${trendData.preferred_prices[i].toLocaleString()} KRW</td>
                     `;
 
-                    tableBody.appendChild(row);
-                }
+                        tableBody.appendChild(row);
+                    }
 
-                // 데이터가 없는 경우
-                if (tableBody.children.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                }
+                    // 데이터가 없는 경우
+                    if (tableBody.children.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                    }
 
-            } catch (err) {
-                console.error('히스토리 데이터 렌더링 오류:', err);
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">데이터 처리 중 오류가 발생했습니다.</td></tr>';
+                } catch (err) {
+                    console.error('히스토리 데이터 렌더링 오류:', err);
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">데이터 처리 중 오류가 발생했습니다.</td></tr>';
+                }
             }
-        }
     </script>
 </body>
 
