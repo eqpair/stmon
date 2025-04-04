@@ -402,20 +402,23 @@
 
         // 최근 알림 업데이트
         function updateRecentAlerts() {
-            const alertsContainer = document.getElementById('recent-alerts');
+                const alertsContainer = document.getElementById('recent-alerts');
 
-            // R 신호가 있는 항목 찾기
-            const rSignals = allSignals.filter(s => s.signal && s.signal.includes('R'));
+                // R 신호가 있는 항목 찾기
+                const rSignals = allSignals.filter(s => s.signal && s.signal.includes('R'));
 
-            if (rSignals.length === 0) {
-                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
-                return;
-            }
+                if (rSignals.length === 0) {
+                    alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
+                    return;
+                }
 
-            // 최대 3개의 알림 표시
-            const recentSignals = rSignals.slice(0, 3);
+                // SZ 값 기준으로 내림차순 정렬 (명시적으로 추가)
+                rSignals.sort((a, b) => b.sz_value - a.sz_value);
 
-            alertsContainer.innerHTML = '';
+                // 최대 3개의 알림 표시
+                const recentSignals = rSignals.slice(0, 3);
+
+                alertsContainer.innerHTML = '';
 
             recentSignals.forEach(signal => {
                 // 종목 코드 가져오기
