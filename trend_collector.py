@@ -106,134 +106,134 @@ class TrendCollector:
             return None
     
     def _process_trend_data(self, pair, a_data, b_data):
-    try:
-        # 데이터 파싱 시 추가 로깅
-        logger.info(f"Processing data for {pair.A_name}")
-        logger.info(f"A_code: {pair.A_code}, B_code: {pair.B_code}")
-        logger.info(f"Pair parameters: SL_in_val={pair.SL_in_val}, avg_period={pair.avg_period}")
+        try:
+            # 데이터 파싱 시 추가 로깅
+            logger.info(f"Processing data for {pair.A_name}")
+            logger.info(f"A_code: {pair.A_code}, B_code: {pair.B_code}")
+            logger.info(f"Pair parameters: SL_in_val={pair.SL_in_val}, avg_period={pair.avg_period}")
 
-        # 데이터 파싱
-        a_df = self._parse_stock_data(a_data, pair.A_code)
-        b_df = self._parse_stock_data(b_data, pair.B_code)
-        
-        if a_df is None or b_df is None or a_df.empty or b_df.empty:
-            logger.warning(f"{pair.A_name} 데이터 파싱 실패")
-            return None
-        
-        # 데이터 병합
-        merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
-        
-        # 로깅: 병합된 데이터 정보
-        logger.info(f"Merged data length: {len(merged_df)}")
-        logger.info(f"Date range: {merged_df.index[0]} to {merged_df.index[-1]}")
-
-        # 괴리율 계산 
-        merged_df['dr'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
-        
-        # 추가 로깅: 괴리율 통계
-        logger.info(f"Discount rate - Mean: {merged_df['dr'].mean()}, Std: {merged_df['dr'].std()}")
-        
-        # 이동평균 (1일 shift)
-        merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period).mean().shift(1)
-        
-        # 표준편차 (1일 shift)
-        merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period).std().shift(1)
-        
-        # SZ 값 계산
-        merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
-        
-        # SZ 값 로깅 (최근 10개 데이터)
-        logger.info("Recent SZ values:")
-        logger.info(merged_df['sz'].tail(10).to_string())
-
-        # 전체 데이터를 사용하되 최소 365일 데이터 보장
-        all_data = merged_df.sort_index()
-        recent_data = all_data.tail(max(365, len(all_data)))
-        
-        # 신호 생성 로직
-        signals = self._generate_signals(recent_data, pair)
-        
-        # 신호 로깅
-        logger.info("Generated Signals:")
-        for signal in signals[:10]:  # 최대 10개 신호 로깅
-            logger.info(str(signal))
-        
-        # 결과 포맷팅
-        result = {
-            'stock_code': pair.A_code,
-            'stock_name': pair.A_name,
-            'dates': recent_data.index.strftime('%Y-%m-%d').tolist(),
-            'common_prices': recent_data['close_A'].tolist(),
-            'preferred_prices': recent_data['close_B'].tolist(),
-            'discount_rates': recent_data['dr'].tolist(),
-            'sz_values': recent_data['sz'].tolist(),
-            'signals': signals,
-            'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }
-        
-        return result
-        
-    except Exception as e:
-        logger.error(f"{pair.A_name} 트렌드 데이터 처리 중 오류: {str(e)}")
-        # 전체 스택 트레이스 로깅
-        import traceback
-        logger.error(traceback.format_exc())
-        return None
-
-    def _generate_signals(self, data, pair):
-    signals = []
-    
-    # 로깅 추가
-    logger.info(f"Generating signals for {pair.A_name}")
-    logger.info(f"Data length: {len(data)}")
-    logger.info(f"SL_in_val: {pair.SL_in_val}, SL_out_val: {pair.SL_out_val}")
-    
-    for i in range(1, len(data)):
-        last_row = data.iloc[i]
-        prev_row = data.iloc[i-1]
-        
-        sz = last_row['sz']
-        T = (sz * 10) + 50
-
-        signal_conditions = {
-            'SL_R': sz > pair.SL_in_val,
-            'LS_R': sz < pair.LS_in_val,
-            'SL_O': sz <= pair.SL_out_val,
-            'LS_O': sz >= pair.LS_out_val,
-            'SL_I': (sz > pair.SL_in_val and 
-                    T > 70 and 
-                    sz < prev_row['sz'] and 
-                    last_row['dr'] > last_row['dr_avg'] + (last_row['std'] * pair.SL_in_val)),
-            'LS_I': (sz < pair.LS_in_val and 
-                    T < 30 and 
-                    sz > prev_row['sz'] and 
-                    last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * pair.LS_in_val))
-        }
-        
-        # 각 조건에 대한 상세 로깅
-        if logger.getEffectiveLevel() == logging.DEBUG:
-            for condition, value in signal_conditions.items():
-                logger.debug(f"{condition}: {value}")
-        
-        if any(signal_conditions.values()):
-            signal_info = f"{'R' if signal_conditions['SL_R'] else '_'}"
-            signal_info += f"{'I' if signal_conditions['SL_I'] else '_'}"
-            signal_info += f"{'O' if signal_conditions['SL_O'] else '_'}"
+            # 데이터 파싱
+            a_df = self._parse_stock_data(a_data, pair.A_code)
+            b_df = self._parse_stock_data(b_data, pair.B_code)
             
-            signal_entry = {
-                'timestamp': last_row.name.strftime('%Y-%m-%d %H:%M:%S'),
-                'sz_value': sz,
-                'signal': signal_info,
-                'price_a': last_row['close_A'],
-                'price_b': last_row['close_B']
+            if a_df is None or b_df is None or a_df.empty or b_df.empty:
+                logger.warning(f"{pair.A_name} 데이터 파싱 실패")
+                return None
+            
+            # 데이터 병합
+            merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
+            
+            # 로깅: 병합된 데이터 정보
+            logger.info(f"Merged data length: {len(merged_df)}")
+            logger.info(f"Date range: {merged_df.index[0]} to {merged_df.index[-1]}")
+
+            # 괴리율 계산 
+            merged_df['dr'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
+            
+            # 추가 로깅: 괴리율 통계
+            logger.info(f"Discount rate - Mean: {merged_df['dr'].mean()}, Std: {merged_df['dr'].std()}")
+            
+            # 이동평균 (1일 shift)
+            merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period).mean().shift(1)
+            
+            # 표준편차 (1일 shift)
+            merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period).std().shift(1)
+            
+            # SZ 값 계산
+            merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
+            
+            # SZ 값 로깅 (최근 10개 데이터)
+            logger.info("Recent SZ values:")
+            logger.info(merged_df['sz'].tail(10).to_string())
+
+            # 전체 데이터를 사용하되 최소 365일 데이터 보장
+            all_data = merged_df.sort_index()
+            recent_data = all_data.tail(max(365, len(all_data)))
+            
+            # 신호 생성 로직
+            signals = self._generate_signals(recent_data, pair)
+            
+            # 신호 로깅
+            logger.info("Generated Signals:")
+            for signal in signals[:10]:  # 최대 10개 신호 로깅
+                logger.info(str(signal))
+            
+            # 결과 포맷팅
+            result = {
+                'stock_code': pair.A_code,
+                'stock_name': pair.A_name,
+                'dates': recent_data.index.strftime('%Y-%m-%d').tolist(),
+                'common_prices': recent_data['close_A'].tolist(),
+                'preferred_prices': recent_data['close_B'].tolist(),
+                'discount_rates': recent_data['dr'].tolist(),
+                'sz_values': recent_data['sz'].tolist(),
+                'signals': signals,
+                'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             
-            # 신호 생성 시 상세 로깅
-            logger.info(f"Signal generated: {signal_entry}")
-            signals.append(signal_entry)
-    
-    logger.info(f"Total signals generated: {len(signals)}")
-    return signals
+            return result
+            
+        except Exception as e:
+            logger.error(f"{pair.A_name} 트렌드 데이터 처리 중 오류: {str(e)}")
+            # 전체 스택 트레이스 로깅
+            import traceback
+            logger.error(traceback.format_exc())
+            return None
+
+    def _generate_signals(self, data, pair):
+        signals = []
+        
+        # 로깅 추가
+        logger.info(f"Generating signals for {pair.A_name}")
+        logger.info(f"Data length: {len(data)}")
+        logger.info(f"SL_in_val: {pair.SL_in_val}, SL_out_val: {pair.SL_out_val}")
+        
+        for i in range(1, len(data)):
+            last_row = data.iloc[i]
+            prev_row = data.iloc[i-1]
+            
+            sz = last_row['sz']
+            T = (sz * 10) + 50
+
+            signal_conditions = {
+                'SL_R': sz > pair.SL_in_val,
+                'LS_R': sz < pair.LS_in_val,
+                'SL_O': sz <= pair.SL_out_val,
+                'LS_O': sz >= pair.LS_out_val,
+                'SL_I': (sz > pair.SL_in_val and 
+                        T > 70 and 
+                        sz < prev_row['sz'] and 
+                        last_row['dr'] > last_row['dr_avg'] + (last_row['std'] * pair.SL_in_val)),
+                'LS_I': (sz < pair.LS_in_val and 
+                        T < 30 and 
+                        sz > prev_row['sz'] and 
+                        last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * pair.LS_in_val))
+            }
+            
+            # 각 조건에 대한 상세 로깅
+            if logger.getEffectiveLevel() == logging.DEBUG:
+                for condition, value in signal_conditions.items():
+                    logger.debug(f"{condition}: {value}")
+            
+            if any(signal_conditions.values()):
+                signal_info = f"{'R' if signal_conditions['SL_R'] else '_'}"
+                signal_info += f"{'I' if signal_conditions['SL_I'] else '_'}"
+                signal_info += f"{'O' if signal_conditions['SL_O'] else '_'}"
+                
+                signal_entry = {
+                    'timestamp': last_row.name.strftime('%Y-%m-%d %H:%M:%S'),
+                    'sz_value': sz,
+                    'signal': signal_info,
+                    'price_a': last_row['close_A'],
+                    'price_b': last_row['close_B']
+                }
+                
+                # 신호 생성 시 상세 로깅
+                logger.info(f"Signal generated: {signal_entry}")
+                signals.append(signal_entry)
+        
+        logger.info(f"Total signals generated: {len(signals)}")
+        return signals
     
     def _parse_stock_data(self, data, code):
         """주식 데이터 파싱"""
