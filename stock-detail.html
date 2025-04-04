@@ -221,69 +221,88 @@
 
         async function loadStockData(stockCode, stockName) {
                 try {
-                    // 실시간 데이터 로드 - NaN 값 안전하게 처리
+                    // 실시간 데이터 로드
                     const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
                     if (!stockDataResponse.ok) {
                         throw new Error(`Failed to load stock data for ${stockName}`);
                     }
 
-                    // JSON 파싱 시 NaN 값 안전하게 처리
+                    // 데이터 텍스트로 읽기
                     const stockDataText = await stockDataResponse.text();
-                    const stockData = JSON.parse(stockDataText, (key, value) => {
-                        // NaN 값을 null로 변환
-                        if (typeof value === 'number' && isNaN(value)) {
-                            return null;
-                        }
-                        return value;
-                    });
+                    console.log('Raw stock data:', stockDataText); // 원본 데이터 로깅
 
-                    // 트렌드 데이터 로드 - NaN 값 안전하게 처리
+                    // JSON 파싱 시도
+                    let stockData;
+                    try {
+                        stockData = JSON.parse(stockDataText, (key, value) => {
+                            // NaN, undefined 값 처리
+                            if (value === 'NaN' || value === undefined || value === null) {
+                                return null;
+                            }
+                            return value;
+                        });
+                    } catch (parseError) {
+                        console.error('JSON 파싱 오류:', parseError);
+                        console.error('문제가 있는 텍스트:', stockDataText);
+                        throw new Error(`JSON 파싱 중 오류 발생: ${parseError.message}`);
+                    }
+
+                    // 트렌드 데이터 로드
                     const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
                     if (!trendDataResponse.ok) {
                         throw new Error(`Failed to load trend data for ${stockName}`);
                     }
 
-                    // 트렌드 데이터도 NaN 값 안전하게 처리
+                    // 트렌드 데이터 텍스트로 읽기
                     const trendDataText = await trendDataResponse.text();
-                    const trendData = JSON.parse(trendDataText, (key, value) => {
-                        // NaN 값을 null로 변환
-                        if (typeof value === 'number' && isNaN(value)) {
-                            return null;
-                        }
-                        return value;
-                    });
+                    console.log('Raw trend data:', trendDataText); // 원본 데이터 로깅
+
+                    // 트렌드 데이터 JSON 파싱
+                    let trendData;
+                    try {
+                        trendData = JSON.parse(trendDataText, (key, value) => {
+                            // NaN, undefined 값 처리
+                            if (value === 'NaN' || value === undefined || value === null) {
+                                return null;
+                            }
+                            return value;
+                        });
+                    } catch (parseError) {
+                        console.error('트렌드 데이터 JSON 파싱 오류:', parseError);
+                        console.error('문제가 있는 텍스트:', trendDataText);
+                        throw new Error(`트렌드 데이터 JSON 파싱 중 오류 발생: ${parseError.message}`);
+                    }
 
                     // 실시간 데이터와 트렌드 데이터 병합
                     const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
                     if (latestSignal) {
-                        // 데이터 존재 여부 확인 후 병합
+                        // 안전한 데이터 병합
                         if (trendData.common_prices && trendData.common_prices.length > 0) {
-                            trendData.common_prices[trendData.common_prices.length - 1] = latestSignal.price_a;
+                            trendData.common_prices[trendData.common_prices.length - 1] =
+                                latestSignal.price_a || trendData.common_prices[trendData.common_prices.length - 1];
                         }
                         if (trendData.preferred_prices && trendData.preferred_prices.length > 0) {
-                            trendData.preferred_prices[trendData.preferred_prices.length - 1] = latestSignal.price_b;
+                            trendData.preferred_prices[trendData.preferred_prices.length - 1] =
+                                latestSignal.price_b || trendData.preferred_prices[trendData.preferred_prices.length - 1];
                         }
                         if (trendData.discount_rates && trendData.discount_rates.length > 0) {
                             trendData.discount_rates[trendData.discount_rates.length - 1] =
                                 latestSignal.price_a && latestSignal.price_b
                                     ? (latestSignal.price_a - latestSignal.price_b) / latestSignal.price_a
-                                    : null;
+                                    : trendData.discount_rates[trendData.discount_rates.length - 1];
                         }
                     }
 
                     return trendData;
                 } catch (error) {
-                    console.error('Error loading data:', error);
+                    console.error('데이터 로드 중 전체 오류:', error);
 
-                    // 오류 발생 시 더 자세한 오류 메시지
-                    const errorMessage = error.message || '데이터를 로드할 수 없습니다.';
-
-                    // 사용자에게 오류 표시
+                    // 오류 처리 UI 업데이트
                     const errorContainer = document.getElementById('loading-container');
                     errorContainer.innerHTML = `
             <div class="text-red-500 text-center">
                 <p>데이터를 로드할 수 없습니다.</p>
-                <p>${errorMessage}</p>
+                <p>${error.message}</p>
                 <button onclick="window.location.reload()" 
                         class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
                     다시 시도
