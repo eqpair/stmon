@@ -228,7 +228,7 @@
 
                 // 트렌드 데이터 로드 (URL 매개변수 수정)
                 const timestamp = new Date().getTime();
-                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${timestamp}`);
+                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
                 if (!trendDataResponse.ok) {
                     throw new Error(`Failed to load trend data for ${stockName}`);
                 }
@@ -257,7 +257,7 @@
 
             // 실시간 데이터에서 SZ 값 가져오기
             const timestamp = new Date().getTime();
-            const stockDataResponse = await fetch(`data/stock_data.json?t=${timestamp}`);
+            const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
             const stockData = await stockDataResponse.json();
             const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
             const szValue = latestSignal ? latestSignal.sz_value : 0;
