@@ -344,18 +344,23 @@
         function calculateSZValues(discountRates) {
                 if (!discountRates || discountRates.length === 0) return [];
 
-                const periodLength = Math.min(249, Math.floor(discountRates.length * 0.7)); // 전체 길이의 70% 정도 기간 사용
+                const avgPeriod = Math.min(249, discountRates.length - 1);
                 const szValues = new Array(discountRates.length).fill(0);
 
-                // 평균과 표준편차 계산 (전체 데이터 사용)
-                const allData = discountRates.slice(0, periodLength);
-                const mean = allData.reduce((sum, val) => sum + val, 0) / allData.length;
-                const variance = allData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / allData.length;
-                const stdDev = Math.sqrt(variance);
+                // SZ 값 계산은 avgPeriod+1 인덱스부터 가능합니다
+                for (let i = avgPeriod; i < discountRates.length; i++) {
+                    // 현재 포인트의 이전 avgPeriod 개 데이터를 사용
+                    const windowData = discountRates.slice(i - avgPeriod, i);
 
-                // 모든 포인트에 대해 SZ 값 계산
-                for (let i = 0; i < discountRates.length; i++) {
-                    // 표준편차가 0이 아닌 경우에만 계산
+                    // 평균 계산
+                    const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+
+                    // 표준편차 계산
+                    const squaredDiffs = windowData.map(val => Math.pow(val - mean, 2));
+                    const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / windowData.length;
+                    const stdDev = Math.sqrt(variance);
+
+                    // SZ 값 계산
                     szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
                 }
 
@@ -364,26 +369,33 @@
 
         // SZ 차트 렌더링 함수
         function renderSZChart(dates, discountRates) {
-            const ctx = document.getElementById('sz-chart').getContext('2d');
+                const ctx = document.getElementById('sz-chart').getContext('2d');
 
-            // SZ 값 계산
-            const szValues = calculateSZValues(discountRates);
+                // 전체 데이터로 SZ 값 계산
+                const allSZValues = calculateSZValues(discountRates);
 
-            // 차트 생성
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: [{
-                        label: 'SZ Value',
-                        data: szValues,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        pointRadius: 1,
-                        tension: 0.2
-                    }]
-                },
+                // 5개월치 데이터로 제한
+                const fiveMonthsInDays = 150;
+                const startIndex = Math.max(0, dates.length - fiveMonthsInDays);
+
+                const recentDates = dates.slice(startIndex);
+                const recentSZValues = allSZValues.slice(startIndex);
+
+                // 차트 생성
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: recentDates,
+                        datasets: [{
+                            label: 'SZ Value',
+                            data: recentSZValues,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2,
+                            pointRadius: 1,
+                            tension: 0.2
+                        }]
+                    },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
