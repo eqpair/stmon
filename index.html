@@ -299,26 +299,72 @@
         async function fetchData() {
                 try {
                     const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
+                    console.log('Response status:', response.status);
+
                     if (!response.ok) {
-                        throw new Error('Failed to load Data.');
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
                     const data = await response.json();
 
-                    // 신호 처리 로직 통일
+                    // 타임스탬프 디버깅용 로그
+                    console.log('Raw data:', data);
+                    console.log('Timestamp options:', data.timestamp, data.last_updated);
+
+                    // 타임스탬프 선택 로직 개선
+                    let updateTime =
+                        data.timestamp ||
+                        data.last_updated ||
+                        (data.all_signals && data.all_signals.length > 0
+                            ? data.all_signals[0].timestamp
+                            : null);
+
+                    console.log('Selected update time:', updateTime);
+
+                    // 데이터 처리 로직
                     allSignals = processSignals(data.all_signals || []);
                     divergentSignals = processSignals(data.divergent_signals || []);
 
                     // UI 업데이트
-                    updateLastUpdated(lastUpdated);
+                    updateLastUpdated(updateTime);
                     updateSummary();
                     updateRecentAlerts();
                     filterAndRenderData();
 
                     updateStatus('success');
                 } catch (error) {
-                    console.error('Data Load Error:', error);
+                    console.error('Complete data fetch error:', error);
                     updateStatus('error', error.message);
+                }
+            }
+
+            function updateLastUpdated(timestamp) {
+                const el = document.getElementById('lastUpdated');
+
+                console.log('Updating last updated with:', timestamp);
+
+                if (!timestamp) {
+                    el.textContent = '업데이트 정보 없음';
+                    return;
+                }
+
+                try {
+                    const date = new Date(timestamp);
+
+                    if (isNaN(date.getTime())) {
+                        console.error('Invalid timestamp:', timestamp);
+                        el.textContent = '유효하지 않은 업데이트 시간';
+                        return;
+                    }
+
+                    // 한국어 날짜 포맷팅
+                    const formatted = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}시 ${date.getMinutes()}분`;
+                    el.textContent = formatted;
+
+                    console.log('Formatted date:', formatted);
+                } catch (error) {
+                    console.error('업데이트 시간 포맷팅 오류:', error);
+                    el.textContent = '업데이트 시간 확인 실패';
                 }
             }
 
