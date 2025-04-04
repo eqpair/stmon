@@ -333,69 +333,101 @@
             const recentDates = trendData.dates.slice(startIndex);
             const recentCommonPrices = trendData.common_prices.slice(startIndex);
             const recentPreferredPrices = trendData.preferred_prices.slice(startIndex);
-            const recentDiscountRates = trendData.discount_rates.slice(startIndex);
 
-            // 차트 렌더링
-            renderSZChart(recentDates, recentDiscountRates);
+            // SZ 값 계산을 위해 전체 데이터 사용 (충분한 히스토리 필요)
+            const fullDiscountRates = trendData.discount_rates;
+
+            // 차트 렌더링 - SZ 계산은 전체 데이터로 하되 표시는 최근 5개월만
+            renderSZChart(recentDates, fullDiscountRates);
             renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices);
         }
 
-        // SZ 값 계산 함수
+        // SZ 값 계산 함수 - pairs.py 방식으로 다시 구현
         function calculateSZValues(discountRates) {
-                if (!discountRates || discountRates.length === 0) return [];
+            if (!discountRates || discountRates.length === 0) return [];
 
-                const avgPeriod = Math.min(249, discountRates.length - 1);
-                const szValues = new Array(discountRates.length).fill(0);
+            // pairs.py와 동일하게 249일 평균 기간 사용
+            const avgPeriod = Math.min(249, discountRates.length - 1);
+            const szValues = new Array(discountRates.length).fill(0);
 
-                // SZ 값 계산은 avgPeriod+1 인덱스부터 가능합니다
-                for (let i = avgPeriod; i < discountRates.length; i++) {
-                    // 현재 포인트의 이전 avgPeriod 개 데이터를 사용
-                    const windowData = discountRates.slice(i - avgPeriod, i);
+            // 이동평균과 표준편차 계산
+            const drAvg = [];
+            const drStd = [];
 
-                    // 평균 계산
-                    const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
-
-                    // 표준편차 계산
-                    const squaredDiffs = windowData.map(val => Math.pow(val - mean, 2));
-                    const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / windowData.length;
-                    const stdDev = Math.sqrt(variance);
-
-                    // SZ 값 계산
-                    szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
-                }
-
-                return szValues;
+            // 초기값 채우기
+            for (let i = 0; i < avgPeriod; i++) {
+                drAvg.push(0);
+                drStd.push(0);
             }
+
+            // 이동평균 및 표준편차 계산 (rolling window)
+            for (let i = avgPeriod; i < discountRates.length; i++) {
+                const windowData = discountRates.slice(i - avgPeriod, i);
+
+                // 평균 계산
+                const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+                drAvg.push(mean);
+
+                // 표준편차 계산
+                const squaredDiffs = windowData.map(val => Math.pow(val - mean, 2));
+                const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / windowData.length;
+                drStd.push(Math.sqrt(variance));
+            }
+
+            // SZ 값 계산 (동일 인덱스만큼 shift 적용)
+            for (let i = avgPeriod; i < discountRates.length; i++) {
+                // 이전 기간의 평균과 표준편차 사용 (shift(1) 효과)
+                const avgIndex = i - 1;
+                const mean = drAvg[avgIndex];
+                const stdDev = drStd[avgIndex];
+
+                // SZ = (현재값 - 이동평균) / 표준편차
+                szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
+            }
+
+            return szValues;
+        }
 
         // SZ 차트 렌더링 함수
         function renderSZChart(dates, discountRates) {
-                const ctx = document.getElementById('sz-chart').getContext('2d');
+            const ctx = document.getElementById('sz-chart').getContext('2d');
 
-                // 전체 데이터로 SZ 값 계산
-                const allSZValues = calculateSZValues(discountRates);
+            // 전체 데이터로 SZ 값 계산
+            const allSZValues = calculateSZValues(discountRates);
 
-                // 5개월치 데이터로 제한
-                const fiveMonthsInDays = 150;
-                const startIndex = Math.max(0, dates.length - fiveMonthsInDays);
+            // 시각화를 위해 SZ 값과 날짜를 함께 저장 (유효한 값만)
+            const validData = [];
+            for (let i = 0; i < dates.length; i++) {
+                if (allSZValues[i] !== 0) { // 유효한 SZ 값만 포함
+                    validData.push({
+                        date: dates[i],
+                        sz: allSZValues[i]
+                    });
+                }
+            }
 
-                const recentDates = dates.slice(startIndex);
-                const recentSZValues = allSZValues.slice(startIndex);
+            // 날짜 기준으로 정렬
+            validData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-                // 차트 생성
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: recentDates,
-                        datasets: [{
-                            label: 'SZ Value',
-                            data: recentSZValues,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 2,
-                            pointRadius: 1,
-                            tension: 0.2
-                        }]
-                    },
+            // 차트 데이터 준비
+            const chartDates = validData.map(item => item.date);
+            const chartSZValues = validData.map(item => item.sz);
+
+            // 차트 생성
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartDates,
+                    datasets: [{
+                        label: 'SZ Value',
+                        data: chartSZValues,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        pointRadius: 1,
+                        tension: 0.2
+                    }]
+                },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
