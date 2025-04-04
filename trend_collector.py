@@ -261,22 +261,10 @@ class TrendCollector:
         """트렌드 데이터 저장"""
         file_path = TRENDS_DIR / f"{stock_code}.json"
         
-        # NaN 값을 null로 변환하는 사용자 정의 인코더
-        class NpEncoder(json.JSONEncoder):
-            def default(self, obj):
-                if isinstance(obj, np.integer):
-                    return int(obj)
-                if isinstance(obj, np.floating):
-                    # NaN 값 처리
-                    if np.isnan(obj):
-                        return None
-                    return float(obj)
-                if isinstance(obj, np.ndarray):
-                    return obj.tolist()
-                return super(NpEncoder, self).default(obj)
+        # utils.py에서 import한 안전한 JSON 저장 함수 사용
+        from .utils import safe_json_dump
         
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2, cls=NpEncoder)
+        safe_json_dump(data, file_path)
             
     def _generate_unique_dummy_data(self, pair):
         """종목별 고유한 더미 데이터 생성"""

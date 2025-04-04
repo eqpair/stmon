@@ -220,36 +220,80 @@
         }
 
         async function loadStockData(stockCode, stockName) {
-            try {
-                // 실시간 데이터 로드
-                const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
-                if (!stockDataResponse.ok) {
-                    throw new Error(`Failed to load stock data for ${stockName}`);
-                }
-                const stockData = await stockDataResponse.json();
+                try {
+                    // 실시간 데이터 로드 - NaN 값 안전하게 처리
+                    const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                    if (!stockDataResponse.ok) {
+                        throw new Error(`Failed to load stock data for ${stockName}`);
+                    }
 
-                // 트렌드 데이터 로드 (URL 매개변수 수정)
-                const timestamp = new Date().getTime();
-                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
-                if (!trendDataResponse.ok) {
-                    throw new Error(`Failed to load trend data for ${stockName}`);
-                }
-                const trendData = await trendDataResponse.json();
+                    // JSON 파싱 시 NaN 값 안전하게 처리
+                    const stockDataText = await stockDataResponse.text();
+                    const stockData = JSON.parse(stockDataText, (key, value) => {
+                        // NaN 값을 null로 변환
+                        if (typeof value === 'number' && isNaN(value)) {
+                            return null;
+                        }
+                        return value;
+                    });
 
-                // 실시간 데이터와 트렌드 데이터 병합
-                const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
-                if (latestSignal) {
-                    trendData.common_prices[trendData.common_prices.length - 1] = latestSignal.price_a;
-                    trendData.preferred_prices[trendData.preferred_prices.length - 1] = latestSignal.price_b;
-                    trendData.discount_rates[trendData.discount_rates.length - 1] = (latestSignal.price_a - latestSignal.price_b) / latestSignal.price_a;
-                }
+                    // 트렌드 데이터 로드 - NaN 값 안전하게 처리
+                    const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+                    if (!trendDataResponse.ok) {
+                        throw new Error(`Failed to load trend data for ${stockName}`);
+                    }
 
-                return trendData;
-            } catch (error) {
-                console.error('Error loading data:', error);
-                throw error;
+                    // 트렌드 데이터도 NaN 값 안전하게 처리
+                    const trendDataText = await trendDataResponse.text();
+                    const trendData = JSON.parse(trendDataText, (key, value) => {
+                        // NaN 값을 null로 변환
+                        if (typeof value === 'number' && isNaN(value)) {
+                            return null;
+                        }
+                        return value;
+                    });
+
+                    // 실시간 데이터와 트렌드 데이터 병합
+                    const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
+                    if (latestSignal) {
+                        // 데이터 존재 여부 확인 후 병합
+                        if (trendData.common_prices && trendData.common_prices.length > 0) {
+                            trendData.common_prices[trendData.common_prices.length - 1] = latestSignal.price_a;
+                        }
+                        if (trendData.preferred_prices && trendData.preferred_prices.length > 0) {
+                            trendData.preferred_prices[trendData.preferred_prices.length - 1] = latestSignal.price_b;
+                        }
+                        if (trendData.discount_rates && trendData.discount_rates.length > 0) {
+                            trendData.discount_rates[trendData.discount_rates.length - 1] =
+                                latestSignal.price_a && latestSignal.price_b
+                                    ? (latestSignal.price_a - latestSignal.price_b) / latestSignal.price_a
+                                    : null;
+                        }
+                    }
+
+                    return trendData;
+                } catch (error) {
+                    console.error('Error loading data:', error);
+
+                    // 오류 발생 시 더 자세한 오류 메시지
+                    const errorMessage = error.message || '데이터를 로드할 수 없습니다.';
+
+                    // 사용자에게 오류 표시
+                    const errorContainer = document.getElementById('loading-container');
+                    errorContainer.innerHTML = `
+            <div class="text-red-500 text-center">
+                <p>데이터를 로드할 수 없습니다.</p>
+                <p>${errorMessage}</p>
+                <button onclick="window.location.reload()" 
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                    다시 시도
+                </button>
+            </div>
+        `;
+
+                    throw error;
+                }
             }
-        }
 
         // 현재 종목 정보 업데이트 (최신 데이터 기준)
         async function updateCurrentInfo(trendData, stockName) {
