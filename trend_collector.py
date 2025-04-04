@@ -120,16 +120,27 @@ class TrendCollector:
                 logger.warning(f"{pair.A_name} 데이터 파싱 실패")
                 return None
             
-            # 기존 데이터 병합 및 처리 로직
+            # 데이터 병합
             merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
-        
-            # 괴리율 계산 (A주 기준)
-            merged_df['discount_rate'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
             
-            # 전체 데이터를 사용하되 최소 365일 데이터 보장하기
-            # 최근 데이터부터 최대 365일까지 저장
+            # 괴리율 계산 (pairs.py와 동일한 방식)
+            merged_df['dr'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
+            
+            # 이동평균 (1일 shift, pairs.py와 동일)
+            merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period).mean().shift(1)
+            
+            # 표준편차 (1일 shift, pairs.py와 동일)
+            merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period).std().shift(1)
+            
+            # SZ 값 계산 (pairs.py와 동일)
+            merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
+            
+            # 전체 데이터를 사용하되 최소 365일 데이터 보장
             all_data = merged_df.sort_index()
             recent_data = all_data.tail(max(365, len(all_data)))
+            
+            # 신호 생성 로직 추가 (pairs.py와 유사하게)
+            signals = self._generate_signals(recent_data, pair)
             
             # 결과 포맷팅
             result = {
@@ -138,7 +149,9 @@ class TrendCollector:
                 'dates': recent_data.index.strftime('%Y-%m-%d').tolist(),
                 'common_prices': recent_data['close_A'].tolist(),
                 'preferred_prices': recent_data['close_B'].tolist(),
-                'discount_rates': recent_data['discount_rate'].tolist(),
+                'discount_rates': recent_data['dr'].tolist(),
+                'sz_values': recent_data['sz'].tolist(),
+                'signals': signals,
                 'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             
@@ -147,6 +160,47 @@ class TrendCollector:
         except Exception as e:
             logger.error(f"{pair.A_name} 트렌드 데이터 처리 중 오류: {str(e)}")
             return None
+
+    def _generate_signals(self, data, pair):
+        """pairs.py의 _generate_signal 로직과 유사하게 구현"""
+        signals = []
+        
+        for i in range(1, len(data)):
+            last_row = data.iloc[i]
+            prev_row = data.iloc[i-1]
+            
+            sz = last_row['sz']
+            T = (sz * 10) + 50
+
+            signal_conditions = {
+                'SL_R': sz > pair.SL_in_val,
+                'LS_R': sz < pair.LS_in_val,
+                'SL_O': sz <= pair.SL_out_val,
+                'LS_O': sz >= pair.LS_out_val,
+                'SL_I': (sz > pair.SL_in_val and 
+                        T > 70 and 
+                        sz < prev_row['sz'] and 
+                        last_row['dr'] > last_row['dr_avg'] + (last_row['std'] * pair.SL_in_val)),
+                'LS_I': (sz < pair.LS_in_val and 
+                        T < 30 and 
+                        sz > prev_row['sz'] and 
+                        last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * pair.LS_in_val))
+            }
+            
+            if any(signal_conditions.values()):
+                signal_info = f"{'R' if signal_conditions['SL_R'] else '_'}"
+                signal_info += f"{'I' if signal_conditions['SL_I'] else '_'}"
+                signal_info += f"{'O' if signal_conditions['SL_O'] else '_'}"
+                
+                signals.append({
+                    'timestamp': last_row.name.strftime('%Y-%m-%d %H:%M:%S'),
+                    'sz_value': sz,
+                    'signal': signal_info,
+                    'price_a': last_row['close_A'],
+                    'price_b': last_row['close_B']
+                })
+        
+        return signals
     
     def _parse_stock_data(self, data, code):
         """주식 데이터 파싱"""
@@ -222,6 +276,7 @@ class TrendCollector:
         common_prices = []
         preferred_prices = []
         discount_rates = []
+        sz_values = []
 
         today = datetime.now()
         
@@ -247,6 +302,38 @@ class TrendCollector:
             # 우선주 가격 (괴리율 적용)
             preferred_price = common_price * (1 - discount_rate)
             preferred_prices.append(int(preferred_price))
+            
+            # SZ 값 생성 (랜덤 + 패턴)
+            sz_value = np.sin(i/20) * 2 + random.uniform(-1, 1)
+            sz_values.append(sz_value)
+
+        # 신호 생성 로직 추가
+        signals = []
+        for i in range(1, len(sz_values)):
+            if sz_values[i] >= 2.0:
+                signals.append({
+                    'timestamp': (today - timedelta(days=i)).strftime('%Y-%m-%d %H:%M:%S'),
+                    'sz_value': sz_values[i],
+                    'signal': 'R__',
+                    'price_a': common_prices[i],
+                    'price_b': preferred_prices[i]
+                })
+            elif sz_values[i] >= 1.5 and sz_values[i] < 2.5:
+                signals.append({
+                    'timestamp': (today - timedelta(days=i)).strftime('%Y-%m-%d %H:%M:%S'),
+                    'sz_value': sz_values[i],
+                    'signal': '_I_',
+                    'price_a': common_prices[i],
+                    'price_b': preferred_prices[i]
+                })
+            elif sz_values[i] < 0.5:
+                signals.append({
+                    'timestamp': (today - timedelta(days=i)).strftime('%Y-%m-%d %H:%M:%S'),
+                    'sz_value': sz_values[i],
+                    'signal': '__O',
+                    'price_a': common_prices[i],
+                    'price_b': preferred_prices[i]
+                })
 
         return {
             'stock_code': pair.A_code,
@@ -255,6 +342,8 @@ class TrendCollector:
             'common_prices': common_prices[::-1],
             'preferred_prices': preferred_prices[::-1],
             'discount_rates': discount_rates[::-1],
+            'sz_values': sz_values[::-1],
+            'signals': signals,
             'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
 
