@@ -295,33 +295,64 @@
 
         // 데이터 가져오기
         async function fetchData() {
-            try {
-                updateStatus('loading');
+                try {
+                    updateStatus('loading');
 
-                const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
-                if (!response.ok) {
-                    throw new Error('Failed to load Data.');
+                    const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to load Data.');
+                    }
+
+                    const data = await response.json();
+
+                    // 데이터 저장 전 신호 재계산
+                    allSignals = processSignals(data.all_signals || []);
+                    divergentSignals = processSignals(data.divergent_signals || []);
+                    lastUpdated = data.last_updated;
+
+                    // UI 업데이트
+                    updateLastUpdated(lastUpdated);
+                    updateSummary();
+                    updateRecentAlerts();
+                    filterAndRenderData();
+
+                    updateStatus('success');
+                } catch (error) {
+                    console.error('Data Load Error:', error);
+                    updateStatus('error', error.message);
                 }
-
-                const data = await response.json();
-
-                // 데이터 저장
-                allSignals = data.all_signals || [];
-                divergentSignals = data.divergent_signals || [];
-                lastUpdated = data.last_updated;
-
-                // UI 업데이트
-                updateLastUpdated(lastUpdated);
-                updateSummary();
-                updateRecentAlerts();
-                filterAndRenderData();
-
-                updateStatus('success');
-            } catch (error) {
-                console.error('Data Load Error:', error);
-                updateStatus('error', error.message);
             }
-        }
+
+            // 신호 재계산 함수 추가
+            function processSignals(signals) {
+                return signals.map(signal => {
+                    // 기존 신호 정보 유지
+                    const processedSignal = { ...signal };
+
+                    // SZ 값에 따라 신호 재계산
+                    let newSignal = '';
+
+                    // R 신호 (SZ 값이 2.0 이상)
+                    if (signal.sz_value >= 2.0) {
+                        newSignal += 'R';
+                    }
+
+                    // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
+                    if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
+                        newSignal += 'I';
+                    }
+
+                    // O 신호 (SZ 값이 0.5 미만)
+                    if (signal.sz_value < 0.5) {
+                        newSignal += 'O';
+                    }
+
+                    // 새로 계산된 신호 할당
+                    processedSignal.signal = newSignal;
+
+                    return processedSignal;
+                });
+            }
 
         // 히스토리 데이터 가져오기
         async function fetchHistoryData() {
@@ -412,7 +443,7 @@
                     return;
                 }
 
-                // SZ 값 기준으로 내림차순 정렬 (명시적으로 추가)
+                // SZ 값 기준으로 내림차순 정렬
                 rSignals.sort((a, b) => b.sz_value - a.sz_value);
 
                 // 최대 3개의 알림 표시
@@ -420,36 +451,38 @@
 
                 alertsContainer.innerHTML = '';
 
-            recentSignals.forEach(signal => {
-                // 종목 코드 가져오기
-                const stockCode = getStockCodeByName(signal.stock_name);
+                recentSignals.forEach(signal => {
+                    // 종목 코드 가져오기
+                    const stockCode = getStockCodeByName(signal.stock_name);
 
-                const alertEl = document.createElement('div');
-                alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
+                    const alertEl = document.createElement('div');
+                    alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
 
-                alertEl.innerHTML = `
-                    <div class="flex-shrink-0 mt-0.5">
-                        <span class="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600">
-                            <i class="fas fa-exclamation"></i>
-                        </span>
-                    </div>
-                    <div class="ml-3 flex-1">
-                        <p class="text-sm font-medium text-gray-900">
-                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                               class="hover:text-blue-600 hover:underline">
-                                ${signal.stock_name}
-                            </a>
-                        </p>
-                        <p class="mt-1 text-xs text-gray-500">
-                            SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
-                            Signal: <span class="signal-tag signal-R">R</span>
-                        </p>
-                    </div>
-                `;
+                    alertEl.innerHTML = `
+            <div class="flex-shrink-0 mt-0.5">
+                <span class="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600">
+                    <i class="fas fa-exclamation"></i>
+                </span>
+            </div>
+            <div class="ml-3 flex-1">
+                <p class="text-sm font-medium text-gray-900">
+                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                       class="hover:text-blue-600 hover:underline">
+                        ${signal.stock_name}
+                    </a>
+                </p>
+                <p class="mt-1 text-xs text-gray-500">
+                    SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
+                    Signal: <span class="signal-tag signal-R">R</span>
+                    ${signal.signal.includes('I') ? '<span class="signal-tag signal-I">I</span>' : ''}
+                    ${signal.signal.includes('O') ? '<span class="signal-tag signal-O">O</span>' : ''}
+                </p>
+            </div>
+        `;
 
-                alertsContainer.appendChild(alertEl);
-            });
-        }
+                    alertsContainer.appendChild(alertEl);
+                });
+            }
 
         // 데이터 필터링 및 렌더링
         function filterAndRenderData() {
