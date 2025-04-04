@@ -180,7 +180,7 @@ class TrendCollector:
             logger.error(traceback.format_exc())
             return None
 
-    def _generate_signals(self, data):
+    def _generate_signals(self, data, pair=None):
         signals = []
         
         for i in range(1, len(data)):
