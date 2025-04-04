@@ -219,31 +219,34 @@
 
             async function loadStockData(stockCode, stockName) {
                     try {
-                        const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+                        // 실시간 데이터 로드
+                        const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                        if (!stockDataResponse.ok) {
+                            throw new Error(`Failed to load stock data for ${stockName}`);
+                        }
+                        const stockData = await stockDataResponse.json();
 
+                        // 트렌드 데이터 로드
+                        const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
                         if (!trendDataResponse.ok) {
                             throw new Error(`Failed to load trend data for ${stockName}`);
                         }
-
                         const trendData = await trendDataResponse.json();
 
-                    // 데이터 무결성 검사
-                    if (!trendData ||
-                        !trendData.dates ||
-                        !trendData.common_prices ||
-                        !trendData.preferred_prices ||
-                        !trendData.discount_rates ||
-                        trendData.dates.length === 0) {
-                        throw new Error('유효하지 않거나 비어있는 트렌드 데이터입니다');
-                    }
+                        // 실시간 데이터와 트렌드 데이터 병합
+                        const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
+                        if (latestSignal) {
+                            trendData.common_prices[trendData.common_prices.length - 1] = latestSignal.price_a;
+                            trendData.preferred_prices[trendData.preferred_prices.length - 1] = latestSignal.price_b;
+                            trendData.discount_rates[trendData.discount_rates.length - 1] = (latestSignal.price_a - latestSignal.price_b) / latestSignal.price_a;
+                        }
 
-                    // 처리된 데이터 반환
-                    return trendData;
-                } catch (error) {
-                    console.error('Error loading data:', error);
-                    throw error;
+                        return trendData;
+                    } catch (error) {
+                        console.error('Error loading data:', error);
+                        throw error;
+                    }
                 }
-            }
 
             function processSignals(signals) {
                 return signals.map(signal => {
@@ -279,46 +282,44 @@
                 const latestCommonPrice = trendData.common_prices[lastIndex];
                 const latestPreferredPrice = trendData.preferred_prices[lastIndex];
 
-            // 가격 정보 업데이트
-            document.getElementById('common-price').textContent = latestCommonPrice ? latestCommonPrice.toLocaleString() + ' KRW' : 'No information';
-            document.getElementById('preferred-price').textContent = latestPreferredPrice ? latestPreferredPrice.toLocaleString() + ' KRW' : 'No information';
+                // 실시간 데이터에서 SZ 값 가져오기
+                const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                const stockData = await stockDataResponse.json();
+                const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
+                const szValue = latestSignal ? latestSignal.sz_value : 0;
 
-            // SZ 값 계산 및 표시
-            const szValue = calculateCurrentSZValue(trendData);
-            const szElement = document.getElementById('sz-value');
-            szElement.textContent = szValue.toFixed(2);
+                // 가격 정보 업데이트
+                document.getElementById('common-price').textContent = latestCommonPrice ? latestCommonPrice.toLocaleString() + ' KRW' : 'No information';
+                document.getElementById('preferred-price').textContent = latestPreferredPrice ? latestPreferredPrice.toLocaleString() + ' KRW' : 'No information';
 
-            // SZ 값에 따른 색상 변경
-            szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
-            if (szValue >= 2.5) {
-                szElement.classList.add('sz-high');
-            } else if (szValue >= 1.5) {
-                szElement.classList.add('sz-medium');
-            } else {
-                szElement.classList.add('sz-low');
+                // SZ 값 표시
+                const szElement = document.getElementById('sz-value');
+                szElement.textContent = szValue.toFixed(2);
+
+                // SZ 값에 따른 색상 변경
+                szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                if (szValue >= 2.5) {
+                    szElement.classList.add('sz-high');
+                } else if (szValue >= 1.5) {
+                    szElement.classList.add('sz-medium');
+                } else {
+                    szElement.classList.add('sz-low');
+                }
+
+                // 신호 표시
+                const signalElement = document.getElementById('current-signal');
+                let signalHtml = '';
+                if (szValue >= 2.0) {
+                    signalHtml += '<span class="signal-tag signal-R">R</span>';
+                }
+                if (szValue >= 1.5 && szValue < 2.5) {
+                    signalHtml += '<span class="signal-tag signal-I">I</span>';
+                }
+                if (szValue < 0.5) {
+                    signalHtml += '<span class="signal-tag signal-O">O</span>';
+                }
+                signalElement.innerHTML = signalHtml || 'None';
             }
-
-            // 신호 표시 (SZ 값에 기반)
-            const signalElement = document.getElementById('current-signal');
-            let signalHtml = '';
-
-            // SZ 값에 따른 신호 결정
-            if (szValue >= 2.0) {
-                signalHtml += '<span class="signal-tag signal-R">R</span>';
-            }
-
-            // Implementing a simple I signal logic
-            if (szValue >= 1.5 && szValue < 2.5) {
-                signalHtml += '<span class="signal-tag signal-I">I</span>';
-            }
-
-            // Implementing a simple O signal logic
-            if (szValue < 0.5) {
-                signalHtml += '<span class="signal-tag signal-O">O</span>';
-            }
-
-            signalElement.innerHTML = signalHtml || 'None';
-        }
 
         // 현재 SZ 값 계산 - 개선된 버전
         function calculateCurrentSZValue(trendData) {
