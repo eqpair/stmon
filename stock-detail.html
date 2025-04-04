@@ -14,6 +14,44 @@
             height: 300px;
             width: 100%;
         }
+
+        .sz-high {
+            color: #DC2626;
+            font-weight: bold;
+        }
+
+        .sz-medium {
+            color: #EA580C;
+            font-weight: bold;
+        }
+
+        .sz-low {
+            color: #16A34A;
+        }
+
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
     </style>
 </head>
 
@@ -22,7 +60,7 @@
         <header class="mb-8 flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Stock Details</h1>
-                <p class="text-sm text-gray-600">1년 추세 분석</p>
+                <p class="text-sm text-gray-600">최근 5개월 추세 분석</p>
             </div>
             <a href="index.html"
                 class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
@@ -32,8 +70,8 @@
 
         <!-- Loading Indicator -->
         <div id="loading-container" class="flex flex-col items-center justify-center py-20">
-            <div class="loading-spinner mb-4"></div>
-            <p class="text-gray-600">Loading data...</p>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <p class="text-gray-600">데이터 로딩 중...</p>
         </div>
 
         <!-- Content Container -->
@@ -122,24 +160,24 @@
         </div>
     </footer>
     <script>
-        // Page load event
+        // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => {
-            // Extract stock information from URL
+            // URL에서 종목 정보 추출
             const urlParams = new URLSearchParams(window.location.search);
             const stockCode = urlParams.get('code');
             const stockName = urlParams.get('name');
 
             if (!stockCode || !stockName) {
-                alert('No stock information. Redirecting to main page.');
+                alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
                 window.location.href = 'index.html';
                 return;
             }
 
-            // Set page title
+            // 페이지 제목 설정
             document.title = `${stockName} - Stock Details`;
             document.getElementById('stock-name').textContent = stockName;
 
-            // Load data
+            // 데이터 로드
             loadStockData(stockCode, stockName);
 
             // 페이지 제목 업데이트
@@ -148,106 +186,150 @@
 
         // 페이지 타이틀 및 설명 업데이트
         function updatePageTitle() {
-            // 페이지 제목 업데이트
             const titleEl = document.querySelector('.text-sm.text-gray-600');
             if (titleEl) {
-                titleEl.textContent = '1년 추세 분석';
+                titleEl.textContent = '최근 5개월 추세 분석';
             }
         }
 
-        // Load stock data
+        // 종목 데이터 로드
         async function loadStockData(stockCode, stockName) {
-                try {
-                    // 로딩 상태 표시
-                    document.getElementById('loading-container').classList.remove('hidden');
-                    document.getElementById('content-container').classList.add('hidden');
+            try {
+                // 로딩 상태 표시
+                document.getElementById('loading-container').classList.remove('hidden');
+                document.getElementById('content-container').classList.add('hidden');
 
-                    // 트렌드 데이터 로드
-                    const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+                // 트렌드 데이터 로드
+                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
 
-                    if (!trendDataResponse.ok) {
-                        throw new Error(`Failed to load trend data for ${stockName}`);
-                    }
-
-                    const trendData = await trendDataResponse.json();
-
-                    // 데이터 무결성 검사
-                    if (!trendData ||
-                        !trendData.dates ||
-                        !trendData.common_prices ||
-                        !trendData.preferred_prices ||
-                        !trendData.discount_rates ||
-                        trendData.dates.length === 0) {
-                        throw new Error('Invalid or empty trend data');
-                    }
-
-                    // 로딩 상태 해제
-                    document.getElementById('loading-container').classList.add('hidden');
-                    document.getElementById('content-container').classList.remove('hidden');
-
-                    // 그래프 렌더링
-                    renderCharts(trendData);
-
-                } catch (error) {
-                    console.error('Data load error:', error);
-
-                    // 오류 상태 표시
-                    document.getElementById('loading-container').innerHTML = `
-            <div class="text-red-500 text-center">
-                <p>Failed to load stock data</p>
-                <p>${error.message}</p>
-            </div>
-        `;
+                if (!trendDataResponse.ok) {
+                    throw new Error(`${stockName}의 트렌드 데이터를 불러오는데 실패했습니다`);
                 }
-            }
 
-        // Hide loading screen
-        function hideLoading() {
-            document.getElementById('loading-container').classList.add('hidden');
-            document.getElementById('content-container').classList.remove('hidden');
+                const trendData = await trendDataResponse.json();
+
+                // 데이터 무결성 검사
+                if (!trendData ||
+                    !trendData.dates ||
+                    !trendData.common_prices ||
+                    !trendData.preferred_prices ||
+                    !trendData.discount_rates ||
+                    trendData.dates.length === 0) {
+                    throw new Error('유효하지 않거나 비어있는 트렌드 데이터입니다');
+                }
+
+                // 로딩 상태 해제
+                document.getElementById('loading-container').classList.add('hidden');
+                document.getElementById('content-container').classList.remove('hidden');
+
+                // 현재 종목 정보 표시 (최신 데이터로 업데이트)
+                updateCurrentInfo(trendData);
+
+                // 그래프 렌더링
+                renderCharts(trendData);
+
+                // 이력 데이터 표시
+                renderHistoryData(trendData);
+
+            } catch (error) {
+                console.error('데이터 로드 오류:', error);
+
+                // 오류 상태 표시
+                document.getElementById('loading-container').innerHTML = `
+                    <div class="text-red-500 text-center">
+                        <p>종목 데이터를 불러오는데 실패했습니다</p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
         }
 
-        // Update current information
-        function updateCurrentInfo(stockData) {
-            document.getElementById('common-price').textContent = stockData.price_a ? stockData.price_a.toLocaleString() + ' KRW' : 'No information';
-            document.getElementById('preferred-price').textContent = stockData.price_b ? stockData.price_b.toLocaleString() + ' KRW' : 'No information';
+        // 현재 종목 정보 업데이트 (최신 데이터 기준)
+        function updateCurrentInfo(trendData) {
+            // 최신 데이터 인덱스
+            const lastIndex = trendData.dates.length - 1;
 
+            // 최신 가격 정보
+            const latestCommonPrice = trendData.common_prices[lastIndex];
+            const latestPreferredPrice = trendData.preferred_prices[lastIndex];
+
+            // 가격 정보 업데이트
+            document.getElementById('common-price').textContent = latestCommonPrice ? latestCommonPrice.toLocaleString() + ' KRW' : 'No information';
+            document.getElementById('preferred-price').textContent = latestPreferredPrice ? latestPreferredPrice.toLocaleString() + ' KRW' : 'No information';
+
+            // SZ 값 계산 및 표시
+            const szValue = calculateCurrentSZValue(trendData);
             const szElement = document.getElementById('sz-value');
-            szElement.textContent = stockData.sz_value ? stockData.sz_value.toFixed(2) : 'No information';
+            szElement.textContent = szValue.toFixed(2);
 
-            // SZ value color change
-            szElement.classList.remove('text-red-600', 'text-orange-600', 'text-green-600');
-            if (stockData.sz_value >= 2.5) {
-                szElement.classList.add('text-red-600');
-            } else if (stockData.sz_value >= 1.5) {
-                szElement.classList.add('text-orange-600');
-            } else if (stockData.sz_value > 0) {
-                szElement.classList.add('text-green-600');
-            }
-
-            // Signal display
-            const signalElement = document.getElementById('current-signal');
-            if (stockData.signal) {
-                let signalHtml = '';
-                if (stockData.signal.includes('R')) {
-                    signalHtml += '<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full mr-1">R</span>';
-                }
-                if (stockData.signal.includes('I')) {
-                    signalHtml += '<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full mr-1">I</span>';
-                }
-                if (stockData.signal.includes('O')) {
-                    signalHtml += '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full mr-1">O</span>';
-                }
-                signalElement.innerHTML = signalHtml || 'None';
+            // SZ 값에 따른 색상 변경
+            szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+            if (szValue >= 2.5) {
+                szElement.classList.add('sz-high');
+            } else if (szValue >= 1.5) {
+                szElement.classList.add('sz-medium');
             } else {
-                signalElement.textContent = 'None';
+                szElement.classList.add('sz-low');
             }
+
+            // 신호 표시 (SZ 값에 기반)
+            const signalElement = document.getElementById('current-signal');
+            let signalHtml = '';
+
+            // SZ 값에 따른 신호 결정
+            if (szValue >= 2.0) {
+                signalHtml += '<span class="signal-tag signal-R">R</span>';
+            }
+
+            // Implementing a simple I signal logic
+            if (szValue >= 1.5 && szValue < 2.5) {
+                signalHtml += '<span class="signal-tag signal-I">I</span>';
+            }
+
+            // Implementing a simple O signal logic
+            if (szValue < 0.5) {
+                signalHtml += '<span class="signal-tag signal-O">O</span>';
+            }
+
+            signalElement.innerHTML = signalHtml || 'None';
         }
-        // 차트 렌더링 함수 수정
+
+        // 현재 SZ 값 계산
+        function calculateCurrentSZValue(trendData) {
+            if (!trendData || !trendData.discount_rates || trendData.discount_rates.length === 0) return 0;
+
+            const discountRates = trendData.discount_rates;
+            const totalLength = discountRates.length;
+
+            // 백엔드의 avg_period와 동일하게 설정 (대부분 249일로 설정됨)
+            const periodLength = Math.min(249, totalLength - 1);
+
+            if (totalLength <= periodLength) {
+                return 0; // 충분한 데이터가 없을 경우
+            }
+
+            // 마지막 SZ 값 계산을 위한 기간 데이터
+            const windowData = discountRates.slice(totalLength - periodLength - 1, totalLength - 1);
+
+            // 평균 계산
+            const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+
+            // 표준편차 계산
+            const squaredDiffs = windowData.map(val => Math.pow(val - mean, 2));
+            const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / windowData.length;
+            const stdDev = Math.sqrt(variance);
+
+            // 최신 데이터로 SZ 값 계산
+            const latestRate = discountRates[totalLength - 1];
+            return stdDev === 0 ? 0 : (latestRate - mean) / stdDev;
+        }
+
+        // 차트 렌더링 함수 (5개월 데이터로 제한)
         function renderCharts(trendData) {
-            // 이제 데이터 제한을 1년(365일)로 설정
-            // 데이터가 많을 경우 최근 365일 데이터만 사용
-            const startIndex = Math.max(0, trendData.dates.length - 365);
+            // 최근 5개월(약 150일) 데이터로 제한
+            const fiveMonthsInDays = 150;
+            const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
+
             const recentDates = trendData.dates.slice(startIndex);
             const recentCommonPrices = trendData.common_prices.slice(startIndex);
             const recentPreferredPrices = trendData.preferred_prices.slice(startIndex);
@@ -258,123 +340,81 @@
             renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices);
         }
 
-        // SZ 값 계산 함수 수정
-            function calculateSZValues(discountRates) {
-                    if (!discountRates || discountRates.length === 0) return [];
+        // SZ 값 계산 함수
+        function calculateSZValues(discountRates) {
+            if (!discountRates || discountRates.length === 0) return [];
 
-                    const periodLength = 249;
-                    const szValues = new Array(discountRates.length).fill(0);
+            const periodLength = Math.min(249, discountRates.length - 1);
+            const szValues = new Array(discountRates.length).fill(0);
 
-                    for (let i = periodLength - 1; i < discountRates.length; i++) {
-                        const windowData = discountRates.slice(i - periodLength + 1, i + 1);
-                        const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
-                        const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
-                        const stdDev = Math.sqrt(variance);
+            for (let i = periodLength; i < discountRates.length; i++) {
+                const windowData = discountRates.slice(i - periodLength, i);
+                const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+                const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
+                const stdDev = Math.sqrt(variance);
 
-                        // 표준편차가 0이 아닌 경우에만 계산
-                        szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
-                    }
+                // 표준편차가 0이 아닌 경우에만 계산
+                szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
+            }
 
-                    return szValues;
-                }
-        // 개별 SZ 값 계산
-            function calculateSZValue(trendData) {
-                    if (!trendData || !trendData.discount_rates || trendData.discount_rates.length === 0) return 0;
-
-                    const discountRates = trendData.discount_rates;
-                    const totalLength = discountRates.length;
-
-                    // 백엔드의 avg_period와 동일하게 설정 (대부분 249일로 설정됨)
-                    const periodLength = Math.min(249, totalLength - 1);
-
-                    if (totalLength <= periodLength) {
-                        return 0; // 충분한 데이터가 없을 경우
-                    }
-
-                    // 마지막 SZ 값 계산을 위한 기간 데이터
-                    const windowData = discountRates.slice(totalLength - periodLength - 1, totalLength - 1);
-
-                    // 평균 계산
-                    const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
-
-                    // 표준편차 계산
-                    const squaredDiffs = windowData.map(val => Math.pow(val - mean, 2));
-                    const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / windowData.length;
-                    const stdDev = Math.sqrt(variance);
-
-                    // 최신 데이터로 SZ 값 계산
-                    const latestRate = discountRates[totalLength - 1];
-                    return stdDev === 0 ? 0 : (latestRate - mean) / stdDev;
-                }
-
-            // SZ 차트 렌더링 함수
-    function renderSZChart(dates, discountRates) {
-        const ctx = document.getElementById('sz-chart').getContext('2d');
-
-        // 수정된 함수를 사용하여 SZ 값 계산
-        const szValues = calculateSZValues(discountRates);
-
-        // 현재 표시된 SZ 값과 마지막 계산된 SZ 값의 크게 차이가 나는 경우를 위한 코드
-        // 현재 표시된 SZ 값 가져오기
-        const currentSZElement = document.getElementById('sz-value');
-        const currentSZText = currentSZElement.textContent;
-        const currentSZ = parseFloat(currentSZText);
-
-        // szValues가 비어있지 않고 현재 SZ 값이 유효한 경우
-        if (szValues.length > 0 && !isNaN(currentSZ)) {
-            // 마지막 데이터 포인트를 현재 표시된 SZ 값으로 업데이트 (선택 사항)
-            // 주석을 해제하여 사용
-            // szValues[szValues.length - 1] = currentSZ;
+            return szValues;
         }
 
-        // 차트 생성
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: 'SZ Value',
-                    data: szValues,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    pointRadius: 1,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return `SZ Value: ${context.raw.toFixed(2)}`;
-                            }
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: '1년 SZ 값 트렌드'
-                    }
+        // SZ 차트 렌더링 함수
+        function renderSZChart(dates, discountRates) {
+            const ctx = document.getElementById('sz-chart').getContext('2d');
+
+            // SZ 값 계산
+            const szValues = calculateSZValues(discountRates);
+
+            // 차트 생성
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'SZ Value',
+                        data: szValues,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        pointRadius: 1,
+                        tension: 0.2
+                    }]
                 },
-                scales: {
-                    y: {
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `SZ Value: ${context.raw.toFixed(2)}`;
+                                }
+                            }
+                        },
                         title: {
                             display: true,
-                            text: 'SZ Value'
+                            text: '최근 5개월 SZ 값 트렌드'
                         }
                     },
-                    x: {
-                        ticks: {
-                            maxTicksLimit: 12,
-                            autoSkip: true
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'SZ Value'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 10,
+                                autoSkip: true
+                            }
                         }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
 
         // 가격 차트 렌더링 함수
         function renderPriceChart(dates, commonPrices, preferredPrices) {
@@ -391,7 +431,7 @@
                             backgroundColor: 'rgba(255, 99, 132, 0.2)',
                             borderColor: 'rgba(255, 99, 132, 1)',
                             borderWidth: 2,
-                            pointRadius: 0, // 포인트 제거 (1년 데이터는 너무 많은 포인트가 있음)
+                            pointRadius: 0,
                             tension: 0.2
                         },
                         {
@@ -400,7 +440,7 @@
                             backgroundColor: 'rgba(54, 162, 235, 0.2)',
                             borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 2,
-                            pointRadius: 0, // 포인트 제거
+                            pointRadius: 0,
                             tension: 0.2
                         }
                     ]
@@ -418,7 +458,7 @@
                         },
                         title: {
                             display: true,
-                            text: '1년 가격 트렌드'
+                            text: '최근 5개월 가격 트렌드'
                         }
                     },
                     scales: {
@@ -435,7 +475,7 @@
                         },
                         x: {
                             ticks: {
-                                maxTicksLimit: 12, // 1년 데이터에 대해 적절한 눈금 수
+                                maxTicksLimit: 10,
                                 autoSkip: true
                             }
                         }
@@ -443,80 +483,78 @@
                 }
             });
         }
-        // Render history signals data
-        function renderHistorySignals(signalsList) {
+
+        // 히스토리 데이터 렌더링 - 5개월 제한 적용
+        function renderHistoryData(trendData) {
             const tableBody = document.getElementById('signals-table-body');
 
-            if (!signalsList || signalsList.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No history data for this stock.</td></tr>';
+            if (!trendData || !trendData.dates || trendData.dates.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
                 return;
             }
 
             tableBody.innerHTML = '';
 
-            // Sort by most recent
-            signalsList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            // 5개월(약 150일) 데이터로 제한
+            const fiveMonthsInDays = 150;
+            const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
 
-            // Display maximum 20 signals
-            const recentSignals = signalsList.slice(0, 20);
+            // SZ 값 계산
+            const szValues = calculateSZValues(trendData.discount_rates);
 
-            recentSignals.forEach((signal, i) => {
+            // 최근 데이터부터 표시 (역순)
+            for (let i = trendData.dates.length - 1; i >= startIndex; i--) {
+                // 주말이나 휴일은 건너뛸 수 있음 (간격 두기 위해)
+                if (i % 7 === 0 || szValues[i] === 0) {
+                    continue;
+                }
+
                 const row = document.createElement('tr');
 
-                // Date formatting
-                let timestamp = 'No date information';
-                try {
-                    const date = new Date(signal.timestamp);
-                    timestamp = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-                } catch (e) {
-                    console.warn('Date parsing error:', e);
+                // 날짜 포맷팅
+                const date = trendData.dates[i];
+
+                // SZ 값 클래스 결정
+                let szClass = 'text-green-600';
+                if (szValues[i] >= 2.5) {
+                    szClass = 'text-red-600 font-bold';
+                } else if (szValues[i] >= 1.5) {
+                    szClass = 'text-orange-600 font-bold';
                 }
 
-                // Signal tags creation
-                let signalTags = '';
-                if (signal.signal) {
-                    if (signal.signal.includes('R')) {
-                        signalTags += '<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full mr-1 text-xs">R</span>';
-                    }
-                    if (signal.signal.includes('I')) {
-                        signalTags += '<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full mr-1 text-xs">I</span>';
-                    }
-                    if (signal.signal.includes('O')) {
-                        signalTags += '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full mr-1 text-xs">O</span>';
-                    }
-                }
-
-                // 추가: 트렌드 화살표 계산
+                // 트렌드 화살표 계산
                 let trendIcon = '-';
-                if (i > 0 && recentSignals[i - 1].sz_value) {
-                    if (signal.sz_value > recentSignals[i - 1].sz_value) {
+                if (i < trendData.dates.length - 1 && szValues[i + 1] !== undefined) {
+                    if (szValues[i] > szValues[i + 1]) {
                         trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                    } else if (signal.sz_value < recentSignals[i - 1].sz_value) {
+                    } else if (szValues[i] < szValues[i + 1]) {
                         trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
                     } else {
                         trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
                     }
                 }
-                // SZ value class assignment
-                let szClass = 'text-green-600';
-                if (signal.sz_value >= 2.5) {
-                    szClass = 'text-red-600 font-bold';
-                } else if (signal.sz_value >= 1.5) {
-                    szClass = 'text-orange-600 font-bold';
-                }
 
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${signal.sz_value ? signal.sz_value.toFixed(2) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValues[i].toFixed(2)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${signal.price_a ? signal.price_a.toLocaleString() + ' KRW' : '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${signal.price_b ? signal.price_b.toLocaleString() + ' KRW' : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${trendData.common_prices[i].toLocaleString()} KRW</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${trendData.preferred_prices[i].toLocaleString()} KRW</td>
                 `;
 
                 tableBody.appendChild(row);
-            });
-        }
 
+                // 최대 20개 행만 표시 (성능 고려)
+                if (tableBody.children.length >= 20) {
+                    break;
+                }
+            }
+
+            // 데이터가 없는 경우
+            if (tableBody.children.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+            }
+        }
     </script>
 </body>
 
