@@ -277,7 +277,7 @@
             // 기존의 updateCurrentInfo, renderCharts, renderHistoryData 함수들은 그대로 유지
 
         // 현재 종목 정보 업데이트 (최신 데이터 기준)
-        function updateCurrentInfo(trendData) {
+        async function updateCurrentInfo(trendData) {
                 const lastIndex = trendData.dates.length - 1;
                 const latestCommonPrice = trendData.common_prices[lastIndex];
                 const latestPreferredPrice = trendData.preferred_prices[lastIndex];
