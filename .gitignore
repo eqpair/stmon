@@ -1,12 +1,28 @@
-.vscode
-__pycache__/
-.pyc
-
-logs/*.log
-logs/*.log
-logs/*.log
-logs/*.log
-.bashrc
-logs/*.log
-.bashrc
+# 로그 파일들
 *.log
+nohup.out
+server.log
+git.log
+bot.log
+trend.log
+
+# 임시 파일
+*.swp
+nano.save
+
+# 가상환경
+myenv/
+
+# Python 캐시
+__pycache__/
+*.pyc
+
+# 데이터베이스
+*.db
+
+# 환경 설정 파일
+.env
+.python-version
+
+# macOS 시스템 파일
+.DS_Store
