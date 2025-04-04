@@ -342,23 +342,25 @@
 
         // SZ 값 계산 함수
         function calculateSZValues(discountRates) {
-            if (!discountRates || discountRates.length === 0) return [];
+                if (!discountRates || discountRates.length === 0) return [];
 
-            const periodLength = Math.min(249, discountRates.length - 1);
-            const szValues = new Array(discountRates.length).fill(0);
+                const periodLength = Math.min(249, Math.floor(discountRates.length * 0.7)); // 전체 길이의 70% 정도 기간 사용
+                const szValues = new Array(discountRates.length).fill(0);
 
-            for (let i = periodLength; i < discountRates.length; i++) {
-                const windowData = discountRates.slice(i - periodLength, i);
-                const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
-                const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
+                // 평균과 표준편차 계산 (전체 데이터 사용)
+                const allData = discountRates.slice(0, periodLength);
+                const mean = allData.reduce((sum, val) => sum + val, 0) / allData.length;
+                const variance = allData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / allData.length;
                 const stdDev = Math.sqrt(variance);
 
-                // 표준편차가 0이 아닌 경우에만 계산
-                szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
-            }
+                // 모든 포인트에 대해 SZ 값 계산
+                for (let i = 0; i < discountRates.length; i++) {
+                    // 표준편차가 0이 아닌 경우에만 계산
+                    szValues[i] = stdDev !== 0 ? (discountRates[i] - mean) / stdDev : 0;
+                }
 
-            return szValues;
-        }
+                return szValues;
+            }
 
         // SZ 차트 렌더링 함수
         function renderSZChart(dates, discountRates) {
