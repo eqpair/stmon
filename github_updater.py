@@ -80,36 +80,36 @@ class GitHubUpdater:
         return process.stdout.strip()
     
     async def update_data(self):
-    try:
-        # 기존 코드: 모니터링 데이터 가져오기
-        all_signals, divergent_signals = await self.monitor.get_signals_with_divergent()
-        
-        # 데이터 구조화
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        data = {
-            "timestamp": current_time,
-            "last_updated": current_time,
-            "all_signals": self._parse_signals(all_signals),
-            "divergent_signals": self._parse_signals(divergent_signals)
-        }
-        
-        # 데이터 파일 저장
-        data_file = DATA_DIR / "stock_data.json"
-        with open(data_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        
-        # 히스토리 데이터the same time, 트렌드 데이터도 업데이트
-        from trend_collector import TrendCollector
-        collector = TrendCollector()
-        await collector.collect_all_trends()  # 트렌드 데이터 업데이트
-        
-        # 기존 코드: 히스토리 데이터 업데이트 및 커밋
-        await self._update_history_data(data)
-        self._commit_and_push()
-        
-        logger.info(f"GitHub 데이터 업데이트 완료: {current_time}")
-    except Exception as e:
-        logger.error(f"데이터 업데이트 오류: {str(e)}")
+        try:
+            # 기존 코드: 모니터링 데이터 가져오기
+            all_signals, divergent_signals = await self.monitor.get_signals_with_divergent()
+            
+            # 데이터 구조화
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            data = {
+                "timestamp": current_time,
+                "last_updated": current_time,
+                "all_signals": self._parse_signals(all_signals),
+                "divergent_signals": self._parse_signals(divergent_signals)
+            }
+            
+            # 데이터 파일 저장
+            data_file = DATA_DIR / "stock_data.json"
+            with open(data_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            
+            # 히스토리 데이터the same time, 트렌드 데이터도 업데이트
+            from trend_collector import TrendCollector
+            collector = TrendCollector()
+            await collector.collect_all_trends()  # 트렌드 데이터 업데이트
+            
+            # 기존 코드: 히스토리 데이터 업데이트 및 커밋
+            await self._update_history_data(data)
+            self._commit_and_push()
+            
+            logger.info(f"GitHub 데이터 업데이트 완료: {current_time}")
+        except Exception as e:
+            logger.error(f"데이터 업데이트 오류: {str(e)}")
     
     def _parse_signals(self, signals_text: str) -> List[Dict[str, Any]]:
         result = []
