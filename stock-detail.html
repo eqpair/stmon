@@ -227,21 +227,15 @@
                         throw new Error(`Failed to load stock data for ${stockName}`);
                     }
 
-                    // 데이터 텍스트로 읽기
                     const stockDataText = await stockDataResponse.text();
                     console.log('Raw stock data:', stockDataText); // 원본 데이터 로깅
 
-                    // JSON 파싱 시도
                     let stockData;
                     try {
-                        stockData = JSON.parse(stockDataText, (key, value) => {
-                            // NaN, undefined, Infinity 값 처리
-                            if (value === null ||
-                                value === undefined ||
-                                value === 'NaN' ||
-                                value === Infinity ||
-                                value === -Infinity ||
-                                (typeof value === 'number' && isNaN(value))) {
+                        // JSON 파싱 전에 "NaN" 문자열을 null로 치환
+                        const cleanedStockDataText = stockDataText.replace(/"NaN"/g, 'null');
+                        stockData = JSON.parse(cleanedStockDataText, (key, value) => {
+                            if (value === null || value === undefined || value === Infinity || value === -Infinity || (typeof value === 'number' && isNaN(value))) {
                                 return null;
                             }
                             return value;
@@ -258,21 +252,15 @@
                         throw new Error(`Failed to load trend data for ${stockName}`);
                     }
 
-                    // 트렌드 데이터 텍스트로 읽기
                     const trendDataText = await trendDataResponse.text();
                     console.log('Raw trend data:', trendDataText); // 원본 데이터 로깅
 
-                    // 트렌드 데이터 JSON 파싱
                     let trendData;
                     try {
-                        trendData = JSON.parse(trendDataText, (key, value) => {
-                            // NaN, undefined, Infinity 값 처리
-                            if (value === null ||
-                                value === undefined ||
-                                value === 'NaN' ||
-                                value === Infinity ||
-                                value === -Infinity ||
-                                (typeof value === 'number' && isNaN(value))) {
+                        // JSON 파싱 전에 "NaN" 문자열을 null로 치환
+                        const cleanedTrendDataText = trendDataText.replace(/"NaN"/g, 'null');
+                        trendData = JSON.parse(cleanedTrendDataText, (key, value) => {
+                            if (value === null || value === undefined || value === Infinity || value === -Infinity || (typeof value === 'number' && isNaN(value))) {
                                 return null;
                             }
                             return value;
@@ -284,22 +272,21 @@
                     }
 
                     // 실시간 데이터와 트렌드 데이터 병합
-                    const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
-                    if (latestSignal) {
-                        // 안전한 데이터 병합
-                        if (trendData.common_prices && trendData.common_prices.length > 0) {
-                            trendData.common_prices[trendData.common_prices.length - 1] =
-                                latestSignal.price_a || trendData.common_prices[trendData.common_prices.length - 1];
+                    const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName) || {};
+                    trendData.common_prices = trendData.common_prices || [];
+                    trendData.preferred_prices = trendData.preferred_prices || [];
+                    trendData.discount_rates = trendData.discount_rates || [];
+
+                    if (latestSignal.price_a && latestSignal.price_b) {
+                        if (trendData.common_prices.length > 0) {
+                            trendData.common_prices[trendData.common_prices.length - 1] = latestSignal.price_a;
                         }
-                        if (trendData.preferred_prices && trendData.preferred_prices.length > 0) {
-                            trendData.preferred_prices[trendData.preferred_prices.length - 1] =
-                                latestSignal.price_b || trendData.preferred_prices[trendData.preferred_prices.length - 1];
+                        if (trendData.preferred_prices.length > 0) {
+                            trendData.preferred_prices[trendData.preferred_prices.length - 1] = latestSignal.price_b;
                         }
-                        if (trendData.discount_rates && trendData.discount_rates.length > 0) {
+                        if (trendData.discount_rates.length > 0) {
                             trendData.discount_rates[trendData.discount_rates.length - 1] =
-                                latestSignal.price_a && latestSignal.price_b
-                                    ? (latestSignal.price_a - latestSignal.price_b) / latestSignal.price_a
-                                    : trendData.discount_rates[trendData.discount_rates.length - 1];
+                                (latestSignal.price_a - latestSignal.price_b) / latestSignal.price_a;
                         }
                     }
 
@@ -326,69 +313,70 @@
 
         // 현재 종목 정보 업데이트 (최신 데이터 기준)
         async function updateCurrentInfo(trendData, stockName) {
-            const lastIndex = trendData.dates.length - 1;
-            const latestCommonPrice = trendData.common_prices[lastIndex];
-            const latestPreferredPrice = trendData.preferred_prices[lastIndex];
+                const lastIndex = trendData.dates.length - 1;
+                const latestCommonPrice = trendData.common_prices[lastIndex];
+                const latestPreferredPrice = trendData.preferred_prices[lastIndex];
 
-            // 실시간 데이터에서 SZ 값 가져오기
-            const timestamp = new Date().getTime();
-            const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
-            const stockData = await stockDataResponse.json();
-            const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName);
-            const szValue = latestSignal ? latestSignal.sz_value : 0;
+                // 실시간 데이터에서 SZ 값 가져오기
+                const timestamp = new Date().getTime();
+                const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                const stockDataText = await stockDataResponse.text();
+                const cleanedStockDataText = stockDataText.replace(/"NaN"/g, 'null');
+                const stockData = JSON.parse(cleanedStockDataText);
+                const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName) || {};
+                const szValue = latestSignal.sz_value ?? 0; // null이면 0으로 대체
 
-            // 가격 정보 업데이트
-            document.getElementById('common-price').textContent = latestCommonPrice ? latestCommonPrice.toLocaleString() + ' KRW' : 'No information';
-            document.getElementById('preferred-price').textContent = latestPreferredPrice ? latestPreferredPrice.toLocaleString() + ' KRW' : 'No information';
+                // 가격 정보 업데이트
+                document.getElementById('common-price').textContent = latestCommonPrice ? latestCommonPrice.toLocaleString() + ' KRW' : 'No information';
+                document.getElementById('preferred-price').textContent = latestPreferredPrice ? latestPreferredPrice.toLocaleString() + ' KRW' : 'No information';
 
-            // SZ 값 표시
-            const szElement = document.getElementById('sz-value');
-            szElement.textContent = szValue.toFixed(2);
+                // SZ 값 표시
+                const szElement = document.getElementById('sz-value');
+                szElement.textContent = szValue.toFixed(2);
 
-            // SZ 값에 따른 색상 변경
-            szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
-            if (szValue >= 2.5) {
-                szElement.classList.add('sz-high');
-            } else if (szValue >= 1.5) {
-                szElement.classList.add('sz-medium');
-            } else {
-                szElement.classList.add('sz-low');
+                // SZ 값에 따른 색상 변경
+                szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                if (szValue >= 2.5) {
+                    szElement.classList.add('sz-high');
+                } else if (szValue >= 1.5) {
+                    szElement.classList.add('sz-medium');
+                } else {
+                    szElement.classList.add('sz-low');
+                }
+
+                // 신호 표시
+                const signalElement = document.getElementById('current-signal');
+                let signalHtml = '';
+                if (szValue >= 2.0) {
+                    signalHtml += '<span class="signal-tag signal-R">R</span>';
+                }
+                if (szValue >= 1.5 && szValue < 2.5) {
+                    signalHtml += '<span class="signal-tag signal-I">I</span>';
+                }
+                if (szValue < 0.5) {
+                    signalHtml += '<span class="signal-tag signal-O">O</span>';
+                }
+                signalElement.innerHTML = signalHtml || 'None';
             }
-
-            // 신호 표시
-            const signalElement = document.getElementById('current-signal');
-            let signalHtml = '';
-            if (szValue >= 2.0) {
-                signalHtml += '<span class="signal-tag signal-R">R</span>';
-            }
-            if (szValue >= 1.5 && szValue < 2.5) {
-                signalHtml += '<span class="signal-tag signal-I">I</span>';
-            }
-            if (szValue < 0.5) {
-                signalHtml += '<span class="signal-tag signal-O">O</span>';
-            }
-            signalElement.innerHTML = signalHtml || 'None';
-        }
-
         // 차트 렌더링 함수 (5개월 데이터로 제한)
         function renderCharts(trendData) {
-            const recentDates = trendData.dates.slice(-150);
-            const recentCommonPrices = trendData.common_prices.slice(-150);
-            const recentPreferredPrices = trendData.preferred_prices.slice(-150);
+                const recentDates = trendData.dates.slice(-150);
+                const recentCommonPrices = trendData.common_prices.slice(-150).map(val => val ?? 0); // null을 0으로 대체
+                const recentPreferredPrices = trendData.preferred_prices.slice(-150).map(val => val ?? 0); // null을 0으로 대체
 
-            // SZ 값 계산을 위해 전체 데이터 사용 (충분한 히스토리 필요)
-            renderSZChart(trendData.dates, trendData.discount_rates);
-            renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices);
+                // SZ 값 계산을 위해 전체 데이터 사용 (충분한 히스토리 필요)
+                renderSZChart(trendData.dates, trendData.discount_rates);
+                renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices);
 
-            // 디버깅 정보 출력
-            console.log('데이터 로드 성공! 데이터 크기:', {
-                '전체 데이터 길이': trendData.dates.length,
-                '최근 5개월 길이': recentDates.length,
-                '최초 날짜': trendData.dates[0],
-                '최근 날짜': trendData.dates[trendData.dates.length - 1],
-                '할인율 데이터 길이': trendData.discount_rates.length
-            });
-        }
+                // 디버깅 정보 출력
+                console.log('데이터 로드 성공! 데이터 크기:', {
+                    '전체 데이터 길이': trendData.dates.length,
+                    '최근 5개월 길이': recentDates.length,
+                    '최초 날짜': trendData.dates[0],
+                    '최근 날짜': trendData.dates[trendData.dates.length - 1],
+                    '할인율 데이터 길이': trendData.discount_rates.length
+                });
+            }
 
         // SZ 값 계산 함수 - 개선된 버전
         function calculateSZValues(discountRates) {
@@ -597,85 +585,75 @@
 
         // 히스토리 데이터 렌더링 - 5개월 제한 적용 (완전히 개선된 버전)
         function renderHistoryData(trendData) {
-            const tableBody = document.getElementById('signals-table-body');
-            const fiveMonthsInDays = 150;
-            const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-            // 5일 간격으로 데이터 선택
-            const displayDates = [];
-            for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
-                displayDates.push(i);
-            }
-
-            if (!trendData || !trendData.dates || trendData.dates.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                return;
-            }
-
-            tableBody.innerHTML = '';
-
-            try {
-                // SZ 값 계산 - 전체 데이터로 계산
-                const calculatedSZ = calculateSZValues(trendData.discount_rates);
-
-                // SZ 값을 인덱스별로 찾기 쉽게 맵 생성
-                const szValueMap = {};
-                calculatedSZ.forEach(item => {
-                    szValueMap[item.index] = item.value;
-                });
-
-                // 선택된 날짜들에 대해 히스토리 테이블 렌더링
-                for (const i of displayDates) {
-                    const row = document.createElement('tr');
-
-                    // 날짜 포맷팅
-                    const date = trendData.dates[i];
-                    const szValue = szValueMap[i];
-
-                    if (szValue === undefined) continue;
-
-                    // SZ 값 클래스 결정
-                    let szClass = 'text-green-600';
-                    if (szValue >= 2.5) {
-                        szClass = 'text-red-600 font-bold';
-                    } else if (szValue >= 1.5) {
-                        szClass = 'text-orange-600 font-bold';
-                    }
-
-                    // 트렌드 화살표 계산 (이전 날짜와 비교)
-                    let trendIcon = '-';
-                    if (displayDates.indexOf(i) < displayDates.length - 1) {
-                        const prevIndex = displayDates[displayDates.indexOf(i) + 1];
-                        const prevSZ = szValueMap[prevIndex];
-
-                        if (szValue > prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                        } else if (szValue < prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
-                        } else {
-                            trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
-                        }
-                    }
-
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${trendData.common_prices[i].toLocaleString()} KRW</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${trendData.preferred_prices[i].toLocaleString()} KRW</td>
-                    `;
-
-                    tableBody.appendChild(row);
+                const tableBody = document.getElementById('signals-table-body');
+                const fiveMonthsInDays = 150;
+                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
+                const displayDates = [];
+                for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
+                    displayDates.push(i);
                 }
 
-                // 데이터가 없는 경우
-                if (tableBody.children.length === 0) {
+                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                    return;
                 }
-            } catch (err) {
-                console.error('히스토리 데이터 렌더링 오류:', err);
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">데이터 처리 중 오류가 발생했습니다.</td></tr>';
+
+                tableBody.innerHTML = '';
+
+                try {
+                    const calculatedSZ = calculateSZValues(trendData.discount_rates);
+                    const szValueMap = {};
+                    calculatedSZ.forEach(item => {
+                        szValueMap[item.index] = item.value ?? 0; // null을 0으로 대체
+                    });
+
+                    for (const i of displayDates) {
+                        const row = document.createElement('tr');
+                        const date = trendData.dates[i];
+                        const szValue = szValueMap[i] ?? 0; // null을 0으로 대체
+
+                        if (szValue === undefined) continue;
+
+                        let szClass = 'text-green-600';
+                        if (szValue >= 2.5) {
+                            szClass = 'text-red-600 font-bold';
+                        } else if (szValue >= 1.5) {
+                            szClass = 'text-orange-600 font-bold';
+                        }
+
+                        let trendIcon = '-';
+                        if (displayDates.indexOf(i) < displayDates.length - 1) {
+                            const prevIndex = displayDates[displayDates.indexOf(i) + 1];
+                            const prevSZ = szValueMap[prevIndex] ?? 0; // null을 0으로 대체
+
+                            if (szValue > prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                            } else if (szValue < prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                            } else {
+                                trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
+                            }
+                        }
+
+                        row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+            `;
+
+                        tableBody.appendChild(row);
+                    }
+
+                    if (tableBody.children.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                    }
+                } catch (err) {
+                    console.error('히스토리 데이터 렌더링 오류:', err);
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">데이터 처리 중 오류가 발생했습니다.</td></tr>';
+                }
             }
-        }
     </script>
 </body>
 
