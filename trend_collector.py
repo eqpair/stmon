@@ -180,59 +180,34 @@ class TrendCollector:
             logger.error(traceback.format_exc())
             return None
 
-    def _generate_signals(self, data, pair):
+    def _generate_signals(self, data):
         signals = []
-        
-        # 로깅 추가
-        logger.info(f"Generating signals for {pair.A_name}")
-        logger.info(f"Data length: {len(data)}")
-        logger.info(f"SL_in_val: {pair.SL_in_val}, SL_out_val: {pair.SL_out_val}")
         
         for i in range(1, len(data)):
             last_row = data.iloc[i]
             prev_row = data.iloc[i-1]
             
             sz = last_row['sz']
-            T = (sz * 10) + 50
-
-            signal_conditions = {
-                'SL_R': sz > pair.SL_in_val,
-                'LS_R': sz < pair.LS_in_val,
-                'SL_O': sz <= pair.SL_out_val,
-                'LS_O': sz >= pair.LS_out_val,
-                'SL_I': (sz > pair.SL_in_val and 
-                        T > 70 and 
-                        sz < prev_row['sz'] and 
-                        last_row['dr'] > last_row['dr_avg'] + (last_row['std'] * pair.SL_in_val)),
-                'LS_I': (sz < pair.LS_in_val and 
-                        T < 30 and 
-                        sz > prev_row['sz'] and 
-                        last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * pair.LS_in_val))
-            }
             
-            # 각 조건에 대한 상세 로깅
-            if logger.getEffectiveLevel() == logging.DEBUG:
-                for condition, value in signal_conditions.items():
-                    logger.debug(f"{condition}: {value}")
+            # 신호 생성 로직 통일
+            signal = ''
+            if sz >= 2.0:
+                signal += 'R'
+            if sz >= 1.5 and sz < 2.5:
+                signal += 'I'
+            if sz < 0.5:
+                signal += 'O'
             
-            if any(signal_conditions.values()):
-                signal_info = f"{'R' if signal_conditions['SL_R'] else '_'}"
-                signal_info += f"{'I' if signal_conditions['SL_I'] else '_'}"
-                signal_info += f"{'O' if signal_conditions['SL_O'] else '_'}"
-                
+            if signal:  # 비어있지 않은 경우에만 신호 추가
                 signal_entry = {
                     'timestamp': last_row.name.strftime('%Y-%m-%d %H:%M:%S'),
                     'sz_value': sz,
-                    'signal': signal_info,
+                    'signal': signal,
                     'price_a': last_row['close_A'],
                     'price_b': last_row['close_B']
                 }
-                
-                # 신호 생성 시 상세 로깅
-                logger.info(f"Signal generated: {signal_entry}")
                 signals.append(signal_entry)
         
-        logger.info(f"Total signals generated: {len(signals)}")
         return signals
     
     def _parse_stock_data(self, data, code):

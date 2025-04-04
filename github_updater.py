@@ -116,7 +116,6 @@ class GitHubUpdater:
             logger.error(f"데이터 업데이트 오류: {str(e)}")
     
     def _parse_signals(self, signals_text: str) -> List[Dict[str, Any]]:
-        """시그널 텍스트를 구조화된 데이터로 파싱"""
         result = []
         if not signals_text or "No divergent pairs" in signals_text:
             return result
@@ -126,7 +125,6 @@ class GitHubUpdater:
                 continue
                 
             try:
-                # 형식: "종목명: 값/신호 / 가격1, 가격2"
                 parts = line.split(':')
                 if len(parts) < 2:
                     continue
@@ -142,7 +140,15 @@ class GitHubUpdater:
                 sz_value = float(signal_parts[0].strip())
                 signal_info = signal_parts[1].strip()
                 
-                # 가격 정보 파싱
+                # 신호 로직 통일
+                signal = ''
+                if sz_value >= 2.0:
+                    signal += 'R'
+                if sz_value >= 1.5 and sz_value < 2.5:
+                    signal += 'I'
+                if sz_value < 0.5:
+                    signal += 'O'
+                
                 if len(signal_parts) >= 3:
                     price_part = signal_parts[2].strip()
                     prices = price_part.split(',')
@@ -156,7 +162,7 @@ class GitHubUpdater:
                 signal_data = {
                     "stock_name": stock_name,
                     "sz_value": sz_value,
-                    "signal": signal_info.strip(),
+                    "signal": signal,
                     "price_a": price_a,
                     "price_b": price_b,
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
