@@ -162,38 +162,62 @@
     <script>
         // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => {
-            // URL에서 종목 정보 추출
-            const urlParams = new URLSearchParams(window.location.search);
-            const stockCode = urlParams.get('code');
-            const stockName = urlParams.get('name');
+                // URL에서 종목 정보 추출
+                const urlParams = new URLSearchParams(window.location.search);
+                const stockCode = urlParams.get('code');
+                const stockName = urlParams.get('name');
 
-            if (!stockCode || !stockName) {
-                alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
-                window.location.href = 'index.html';
-                return;
+                if (!stockCode || !stockName) {
+                    alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                // 페이지 제목 설정
+                document.title = `${stockName} - Stock Details`;
+                document.getElementById('stock-name').textContent = stockName;
+
+                // 데이터 로드 및 처리
+                loadAndProcessStockData(stockCode, stockName);
+            });
+
+            async function loadAndProcessStockData(stockCode, stockName) {
+                try {
+                    // 로딩 컨테이너 표시
+                    document.getElementById('loading-container').style.display = 'flex';
+                    document.getElementById('content-container').classList.add('hidden');
+
+                    // 데이터 로드
+                    const trendData = await loadStockData(stockCode, stockName);
+
+                    // 데이터 처리 함수들 호출
+                    updateCurrentInfo(trendData);
+                    renderCharts(trendData);
+                    renderHistoryData(trendData);
+
+                    // 로딩 컨테이너 숨기기, 콘텐츠 표시
+                    document.getElementById('loading-container').style.display = 'none';
+                    document.getElementById('content-container').classList.remove('hidden');
+
+                } catch (error) {
+                    console.error('데이터 로드 및 처리 오류:', error);
+
+                    // 로딩 컨테이너에 오류 메시지 표시
+                    const loadingContainer = document.getElementById('loading-container');
+                    loadingContainer.innerHTML = `
+            <div class="text-red-500 text-center">
+                <p>데이터를 로드할 수 없습니다.</p>
+                <p>${error.message}</p>
+                <button onclick="window.location.href='index.html'" 
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                    메인 페이지로 돌아가기
+                </button>
+            </div>
+        `;
+                }
             }
 
-            // 페이지 제목 설정
-            document.title = `${stockName} - Stock Details`;
-            document.getElementById('stock-name').textContent = stockName;
-
-            // 데이터 로드
-            loadStockData(stockCode, stockName);
-
-            // 페이지 제목 업데이트
-            updatePageTitle();
-        });
-
-        // 페이지 타이틀 및 설명 업데이트
-        function updatePageTitle() {
-            const titleEl = document.querySelector('.text-sm.text-gray-600');
-            if (titleEl) {
-                titleEl.textContent = '최근 5개월 추세 분석';
-            }
-        }
-
-        // 종목 데이터 로드
-        async function loadStockData(stockCode, stockName) {
+            async function loadStockData(stockCode, stockName) {
                 try {
                     // 트렌드 데이터 로드
                     const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
@@ -224,6 +248,34 @@
                     throw error;
                 }
             }
+
+            function processSignals(signals) {
+                return signals.map(signal => {
+                    const processedSignal = { ...signal };
+                    let newSignal = '';
+
+                    // R 신호 (SZ 값이 2.0 이상)
+                    if (signal.sz_value >= 2.0) {
+                        newSignal += 'R';
+                    }
+
+                    // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
+                    if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
+                        newSignal += 'I';
+                    }
+
+                    // O 신호 (SZ 값이 0.5 미만)
+                    if (signal.sz_value < 0.5) {
+                        newSignal += 'O';
+                    }
+
+                    // 새로 계산된 신호 할당
+                    processedSignal.signal = newSignal;
+                    return processedSignal;
+                });
+            }
+
+            // 기존의 updateCurrentInfo, renderCharts, renderHistoryData 함수들은 그대로 유지
 
         // 현재 종목 정보 업데이트 (최신 데이터 기준)
         function updateCurrentInfo(trendData) {
