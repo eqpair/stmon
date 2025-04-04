@@ -296,8 +296,6 @@
         // 데이터 가져오기
         async function fetchData() {
                 try {
-                    updateStatus('loading');
-
                     const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
                     if (!response.ok) {
                         throw new Error('Failed to load Data.');
@@ -305,10 +303,9 @@
 
                     const data = await response.json();
 
-                    // 데이터 저장 전 신호 재계산
+                    // 신호 처리 로직 통일
                     allSignals = processSignals(data.all_signals || []);
                     divergentSignals = processSignals(data.divergent_signals || []);
-                    lastUpdated = data.last_updated;
 
                     // UI 업데이트
                     updateLastUpdated(lastUpdated);
