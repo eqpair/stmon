@@ -235,8 +235,13 @@
                     let stockData;
                     try {
                         stockData = JSON.parse(stockDataText, (key, value) => {
-                            // NaN, undefined 값 처리
-                            if (value === 'NaN' || value === undefined || value === null) {
+                            // NaN, undefined, Infinity 값 처리
+                            if (value === null ||
+                                value === undefined ||
+                                value === 'NaN' ||
+                                value === Infinity ||
+                                value === -Infinity ||
+                                (typeof value === 'number' && isNaN(value))) {
                                 return null;
                             }
                             return value;
@@ -261,8 +266,13 @@
                     let trendData;
                     try {
                         trendData = JSON.parse(trendDataText, (key, value) => {
-                            // NaN, undefined 값 처리
-                            if (value === 'NaN' || value === undefined || value === null) {
+                            // NaN, undefined, Infinity 값 처리
+                            if (value === null ||
+                                value === undefined ||
+                                value === 'NaN' ||
+                                value === Infinity ||
+                                value === -Infinity ||
+                                (typeof value === 'number' && isNaN(value))) {
                                 return null;
                             }
                             return value;

@@ -55,17 +55,6 @@ class ImprovedNpEncoder(json.JSONEncoder):
 def clean_data(data):
     """
     데이터 구조에서 원치 않는 값(NaN, None, 빈 리스트) 제거
-    
-    이 함수는 재귀적으로 데이터 구조를 탐색하며 다음을 제거합니다:
-    - None 값
-    - NaN 값
-    - 빈 리스트
-    
-    Args:
-        data: 정리할 데이터 (dict, list, 또는 기본 타입)
-    
-    Returns:
-        정리된 데이터
     """
     # 딕셔너리 처리
     if isinstance(data, dict):
@@ -73,7 +62,7 @@ def clean_data(data):
             k: clean_data(v) 
             for k, v in data.items() 
             if v is not None and 
-               not (isinstance(v, float) and np.isnan(v)) and 
+               not (isinstance(v, (float, np.float64)) and (np.isnan(v) or np.isinf(v))) and 
                not (isinstance(v, list) and len(v) == 0)
         }
     
@@ -82,12 +71,12 @@ def clean_data(data):
         return [
             clean_data(item) for item in data 
             if item is not None and 
-               not (isinstance(item, float) and np.isnan(item)) and 
+               not (isinstance(item, (float, np.float64)) and (np.isnan(item) or np.isinf(item))) and 
                not (isinstance(item, list) and len(item) == 0)
         ]
     
-    # 부동소수점 NaN 값 처리
-    elif isinstance(data, float) and np.isnan(data):
+    # 부동소수점 NaN, Infinity 값 처리
+    elif isinstance(data, (float, np.float64)) and (np.isnan(data) or np.isinf(data)):
         return None
     
     # 다른 타입은 그대로 반환
