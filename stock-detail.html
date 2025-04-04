@@ -525,7 +525,7 @@
             const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
             // 5일 간격으로 데이터 선택
             const displayDates = [];
-            for (let i = trendData.dates.length - 1; i >= startIndex; i -= 5) {
+            for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
                 displayDates.push(i);
             }
 
