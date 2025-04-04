@@ -325,34 +325,34 @@
 
             // 신호 재계산 함수 추가
             function processSignals(signals) {
-                return signals.map(signal => {
-                    // 기존 신호 정보 유지
-                    const processedSignal = { ...signal };
+                    return signals.map(signal => {
+                        // 기존 신호 정보 유지
+                        const processedSignal = { ...signal };
 
-                    // SZ 값에 따라 신호 재계산
-                    let newSignal = '';
+                        // SZ 값에 따라 신호 재계산
+                        let newSignal = '';
 
-                    // R 신호 (SZ 값이 2.0 이상)
-                    if (signal.sz_value >= 2.0) {
-                        newSignal += 'R';
-                    }
+                        // R 신호 (SZ 값이 2.0 이상)
+                        if (signal.sz_value >= 2.0) {
+                            newSignal += 'R';
+                        }
 
-                    // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
-                    if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
-                        newSignal += 'I';
-                    }
+                        // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
+                        if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
+                            newSignal += 'I';
+                        }
 
-                    // O 신호 (SZ 값이 0.5 미만)
-                    if (signal.sz_value < 0.5) {
-                        newSignal += 'O';
-                    }
+                        // O 신호 (SZ 값이 0.5 미만)
+                        if (signal.sz_value < 0.5) {
+                            newSignal += 'O';
+                        }
 
-                    // 새로 계산된 신호 할당
-                    processedSignal.signal = newSignal;
+                        // 새로 계산된 신호 할당
+                        processedSignal.signal = newSignal;
 
-                    return processedSignal;
-                });
-            }
+                        return processedSignal;
+                    });
+                }
 
         // 히스토리 데이터 가져오기
         async function fetchHistoryData() {
@@ -473,7 +473,7 @@
                 </p>
                 <p class="mt-1 text-xs text-gray-500">
                     SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
-                    Signal: <span class="signal-tag signal-R">R</span>
+                    Signal: ${signal.signal.includes('R') ? '<span class="signal-tag signal-R">R</span>' : ''}
                     ${signal.signal.includes('I') ? '<span class="signal-tag signal-I">I</span>' : ''}
                     ${signal.signal.includes('O') ? '<span class="signal-tag signal-O">O</span>' : ''}
                 </p>
