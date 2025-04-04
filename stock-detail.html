@@ -218,15 +218,14 @@
             }
 
             async function loadStockData(stockCode, stockName) {
-                try {
-                    // 트렌드 데이터 로드
-                    const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+                    try {
+                        const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
 
-                    if (!trendDataResponse.ok) {
-                        throw new Error(`${stockName}의 트렌드 데이터를 불러오는데 실패했습니다`);
-                    }
+                        if (!trendDataResponse.ok) {
+                            throw new Error(`Failed to load trend data for ${stockName}`);
+                        }
 
-                    const trendData = await trendDataResponse.json();
+                        const trendData = await trendDataResponse.json();
 
                     // 데이터 무결성 검사
                     if (!trendData ||
@@ -239,12 +238,9 @@
                     }
 
                     // 처리된 데이터 반환
-                    return {
-                        ...trendData,
-                        processed_signals: processSignals(trendData.signals || [])
-                    };
+                    return trendData;
                 } catch (error) {
-                    console.error('데이터 로드 오류:', error);
+                    console.error('Error loading data:', error);
                     throw error;
                 }
             }
@@ -279,12 +275,9 @@
 
         // 현재 종목 정보 업데이트 (최신 데이터 기준)
         function updateCurrentInfo(trendData) {
-            // 최신 데이터 인덱스
-            const lastIndex = trendData.dates.length - 1;
-
-            // 최신 가격 정보
-            const latestCommonPrice = trendData.common_prices[lastIndex];
-            const latestPreferredPrice = trendData.preferred_prices[lastIndex];
+                const lastIndex = trendData.dates.length - 1;
+                const latestCommonPrice = trendData.common_prices[lastIndex];
+                const latestPreferredPrice = trendData.preferred_prices[lastIndex];
 
             // 가격 정보 업데이트
             document.getElementById('common-price').textContent = latestCommonPrice ? latestCommonPrice.toLocaleString() + ' KRW' : 'No information';
@@ -375,13 +368,9 @@
 
         // 차트 렌더링 함수 (5개월 데이터로 제한)
         function renderCharts(trendData) {
-            // 최근 5개월(약 150일) 데이터로 제한
-            const fiveMonthsInDays = 150;
-            const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-
-            const recentDates = trendData.dates.slice(startIndex);
-            const recentCommonPrices = trendData.common_prices.slice(startIndex);
-            const recentPreferredPrices = trendData.preferred_prices.slice(startIndex);
+                const recentDates = trendData.dates.slice(-150);
+                const recentCommonPrices = trendData.common_prices.slice(-150);
+                const recentPreferredPrices = trendData.preferred_prices.slice(-150);
 
             // SZ 값 계산을 위해 전체 데이터 사용 (충분한 히스토리 필요)
             // 이때 날짜는 최근 5개월만 넘기고 할인율은 전체 데이터 넘김
@@ -605,7 +594,18 @@
 
         // 히스토리 데이터 렌더링 - 5개월 제한 적용 (완전히 개선된 버전)
         function renderHistoryData(trendData) {
+            const date = trendData.dates[i];
+            const szValue = trendData.sz_values[i];
+            const commonPrice = trendData.common_prices[i];
+            const preferredPrice = trendData.preferred_prices[i]; 
             const tableBody = document.getElementById('signals-table-body');
+            const fiveMonthsInDays = 150;
+            const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
+            // 7일 간격으로 데이터 선택
+            const displayDates = [];
+            for (let i = trendData.dates.length - 1; i >= startIndex; i -= 7) {
+                displayDates.push(i);
+            }
 
             if (!trendData || !trendData.dates || trendData.dates.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
