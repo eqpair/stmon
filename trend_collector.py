@@ -47,38 +47,14 @@ class TrendCollector:
         """모든 종목의 트렌드 데이터 수집"""
         logger.info("트렌드 데이터 수집 시작...")
         
-        # 중요 종목 목록 - DL이앤씨 등 우선 처리할 종목들
-        priority_codes = ['375500', '37550K']
-        
-        # 우선 순위 종목과 일반 종목 분리
-        priority_pairs = []
-        regular_pairs = []
-        
-        for pair in self.pairs:
-            if pair.A_code in priority_codes or pair.B_code in priority_codes:
-                priority_pairs.append(pair)
-            else:
-                regular_pairs.append(pair)
-        
-        # 우선 중요 종목 처리 (순차적으로)
-        logger.info(f"중요 종목 {len(priority_pairs)}개 처리 시작")
-        for pair in priority_pairs:
-            try:
-                await self.collect_trend_data(pair)
-                await asyncio.sleep(2)  # 각 요청 사이 2초 대기
-            except Exception as e:
-                logger.error(f"중요 종목 {pair.A_name} 처리 오류: {str(e)}")
-        
-        logger.info("중요 종목 처리 완료, 일반 종목 처리 시작")
-        await asyncio.sleep(5)  # 중요/일반 종목 처리 사이 5초 대기
-        
-        # 나머지 종목 배치 처리
+        # 배치 크기 정의
         batch_size = 3  # 한 번에 3개씩 처리
-        success_count = len(priority_pairs)
+        success_count = 0
         error_count = 0
         
-        for i in range(0, len(regular_pairs), batch_size):
-            batch = regular_pairs[i:i+batch_size]
+        # 배치 단위로 처리
+        for i in range(0, len(self.pairs), batch_size):
+            batch = self.pairs[i:i+batch_size]
             batch_tasks = []
             
             for pair in batch:
@@ -96,8 +72,8 @@ class TrendCollector:
             error_count += batch_error
             
             # 다음 배치 전 대기
-            if i + batch_size < len(regular_pairs):
-                logger.info(f"배치 처리 완료: {i+1}~{i+len(batch)} / {len(regular_pairs)}")
+            if i + batch_size < len(self.pairs):
+                logger.info(f"배치 처리 완료: {i+1}~{i+len(batch)} / {len(self.pairs)}")
                 await asyncio.sleep(5)  # 배치 사이 5초 대기
         
         logger.info(f"트렌드 데이터 수집 완료: 성공 {success_count}개, 실패 {error_count}개")
