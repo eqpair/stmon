@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 
 from config import TICK_PAIRS
 from modules.pairs import NPPair
+from modules.utils import safe_json_dump
 
 # 로깅 설정
 logging.basicConfig(
