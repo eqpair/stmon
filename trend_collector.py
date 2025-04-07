@@ -107,11 +107,6 @@ class TrendCollector:
     
     def _process_trend_data(self, pair, a_data, b_data):
         try:
-            # 데이터 파싱 시 추가 로깅
-            logger.info(f"Processing data for {pair.A_name}")
-            logger.info(f"A_code: {pair.A_code}, B_code: {pair.B_code}")
-            logger.info(f"Pair parameters: SL_in_val={pair.SL_in_val}, avg_period={pair.avg_period}")
-
             # 데이터 파싱
             a_df = self._parse_stock_data(a_data, pair.A_code)
             b_df = self._parse_stock_data(b_data, pair.B_code)
@@ -123,51 +118,36 @@ class TrendCollector:
             # 데이터 병합
             merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
             
-            # 로깅: 병합된 데이터 정보
-            logger.info(f"Merged data length: {len(merged_df)}")
-            logger.info(f"Date range: {merged_df.index[0]} to {merged_df.index[-1]}")
-
-            # 괴리율 계산 
+            # 괴리율 계산 - NaN 값 처리 추가
             merged_df['dr'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
+            merged_df['dr'] = merged_df['dr'].replace([np.inf, -np.inf], np.nan)
             
-            # 추가 로깅: 괴리율 통계
-            logger.info(f"Discount rate - Mean: {merged_df['dr'].mean()}, Std: {merged_df['dr'].std()}")
+            # NaN 값 처리 - 평균값으로 대체
+            merged_df['dr'] = merged_df['dr'].fillna(merged_df['dr'].mean())
             
-            # 이동평균 (1일 shift)
-            merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period).mean().shift(1)
+            # 이동평균 및 표준편차 계산 (NaN 처리 포함)
+            merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period, min_periods=1).mean().shift(1)
+            merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period, min_periods=1).std().shift(1)
             
-            # 표준편차 (1일 shift)
-            merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period).std().shift(1)
+            # 0으로 나누는 경우 방지 (표준편차가 0인 경우)
+            merged_df['std'] = merged_df['std'].replace(0, np.nan)
+            merged_df['std'] = merged_df['std'].fillna(merged_df['std'].mean() if not pd.isna(merged_df['std'].mean()) else 0.001)
             
-            # SZ 값 계산
+            # SZ 값 계산 (NaN 값 안전하게 처리)
             merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
+            merged_df['sz'] = merged_df['sz'].replace([np.inf, -np.inf], np.nan)
+            merged_df['sz'] = merged_df['sz'].fillna(0)
             
-            # SZ 값 로깅 (최근 10개 데이터)
-            logger.info("Recent SZ values:")
-            logger.info(merged_df['sz'].tail(10).to_string())
-
-            # 전체 데이터를 사용하되 최소 365일 데이터 보장
-            all_data = merged_df.sort_index()
-            recent_data = all_data.tail(max(365, len(all_data)))
-            
-            # 신호 생성 로직
-            signals = self._generate_signals(recent_data, pair)
-            
-            # 신호 로깅
-            logger.info("Generated Signals:")
-            for signal in signals[:10]:  # 최대 10개 신호 로깅
-                logger.info(str(signal))
-            
-            # 결과 포맷팅
+            # 결과 데이터 생성 시 직접 NaN 값을 변환
             result = {
                 'stock_code': pair.A_code,
                 'stock_name': pair.A_name,
-                'dates': recent_data.index.strftime('%Y-%m-%d').tolist(),
-                'common_prices': recent_data['close_A'].tolist(),
-                'preferred_prices': recent_data['close_B'].tolist(),
-                'discount_rates': recent_data['dr'].tolist(),
-                'sz_values': recent_data['sz'].tolist(),
-                'signals': signals,
+                'dates': merged_df.index.strftime('%Y-%m-%d').tolist(),
+                'common_prices': [None if pd.isna(x) else float(x) for x in merged_df['close_A'].tolist()],
+                'preferred_prices': [None if pd.isna(x) else float(x) for x in merged_df['close_B'].tolist()],
+                'discount_rates': [None if pd.isna(x) else float(x) for x in merged_df['dr'].tolist()],
+                'sz_values': [None if pd.isna(x) else float(x) for x in merged_df['sz'].tolist()],
+                'signals': self._generate_signals(merged_df, pair),
                 'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             
@@ -175,7 +155,6 @@ class TrendCollector:
             
         except Exception as e:
             logger.error(f"{pair.A_name} 트렌드 데이터 처리 중 오류: {str(e)}")
-            # 전체 스택 트레이스 로깅
             import traceback
             logger.error(traceback.format_exc())
             return None

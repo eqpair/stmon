@@ -2,6 +2,7 @@ from datetime import datetime, time
 import logging
 import json
 import numpy as np
+import math  # math.isnan() 및 math.isinf() 함수 사용을 위해 추가
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +26,6 @@ def is_market_time() -> bool:
     return is_weekday and is_work_hours
 
 class ImprovedNpEncoder(json.JSONEncoder):
-    """
-    NumPy 데이터 타입을 안전하게 JSON으로 변환하는 인코더
-    
-    이 클래스는 NumPy의 특수한 데이터 타입(정수, 부동소수점, 배열)을 
-    표준 Python 타입으로 변환합니다.
-    """
     def default(self, obj):
         # NumPy 정수형 처리
         if isinstance(obj, np.integer):
@@ -38,17 +33,21 @@ class ImprovedNpEncoder(json.JSONEncoder):
         
         # NumPy 부동소수점 처리
         if isinstance(obj, np.floating):
-            # NaN, 무한대 값 처리
+            # NaN, 무한대 값 처리 - 명시적으로 None으로 변환
             if np.isnan(obj) or np.isinf(obj):
                 return None
             return float(obj)
         
         # NumPy 배열 처리
         if isinstance(obj, np.ndarray):
-            # NaN 값 제거하고 변환
-            return [self.default(x) for x in obj 
-                    if not (isinstance(x, float) and np.isnan(x))]
+            # NaN 값을 None으로 변환하여 배열 반환
+            return [None if (isinstance(x, (float, np.floating)) and (np.isnan(x) or np.isinf(x))) 
+                   else self.default(x) for x in obj]
         
+        # 일반 float 타입의 NaN, Infinity 값도 처리
+        if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+            return None
+            
         # 기본 JSON 인코더로 처리
         return super(ImprovedNpEncoder, self).default(obj)
 
@@ -86,26 +85,21 @@ def clean_data(data):
 def safe_json_dump(data, file_path):
     """
     데이터를 안전하게 JSON 파일로 저장
-    
-    이 함수는 다음 작업을 수행합니다:
-    1. 데이터 정리 (clean_data 함수 사용)
-    2. 사용자 정의 JSON 인코더로 저장
-    3. UTF-8 인코딩 사용
-    4. 들여쓰기로 가독성 높임
-    
-    Args:
-        data: JSON으로 저장할 데이터
-        file_path: 저장할 파일 경로
     """
     # 데이터 정리
     cleaned_data = clean_data(data)
     
-    # JSON으로 저장
+    # JSON 문자열로 변환
+    json_str = json.dumps(
+        cleaned_data, 
+        ensure_ascii=False,
+        indent=2,
+        cls=ImprovedNpEncoder
+    )
+    
+    # NaN 문자열 명시적으로 replace
+    json_str = json_str.replace('"NaN"', 'null').replace('NaN', 'null')
+    
+    # 파일로 저장
     with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(
-            cleaned_data, 
-            f, 
-            ensure_ascii=False,  # 한글 처리
-            indent=2,            # 가독성을 위한 들여쓰기
-            cls=ImprovedNpEncoder # 커스텀 인코더 사용
-        )
+        f.write(json_str)
