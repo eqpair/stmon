@@ -3,7 +3,9 @@
 import asyncio
 import aiohttp
 import json
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -242,7 +244,7 @@ class TrendCollector:
         file_path = TRENDS_DIR / f"{stock_code}.json"
         
         # utils.py에서 import한 안전한 JSON 저장 함수 사용
-        from .utils import safe_json_dump
+        from modules.utils import safe_json_dump
         
         safe_json_dump(data, file_path)
             
