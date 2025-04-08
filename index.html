@@ -742,7 +742,7 @@
                 return stockCodeMap[stockName];
             }
 
-            // 부분 일치 확인 (예: "🔴 삼성전자" -> "삼성전자")
+            // 부분 일치 확인
             for (const [nameWithRate, code] of Object.entries(stockCodeMap)) {
                 if (stockName.includes(nameWithRate.split(' ')[0])) {
                     return code;
