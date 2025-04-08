@@ -55,15 +55,6 @@
             color: #16A34A;
         }
 
-        .price-box {
-            transition: all 0.3s ease;
-        }
-
-        .price-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
         .entry-limit {
             animation: pulse 2s infinite;
         }
@@ -134,10 +125,10 @@
                 </div>
             </div>
 
-            <!-- 진입 가능 범위 -->
+            <!-- SZ 값 2.0 기준 진입 한계점 -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    매매 진입 가능 범위
+                    SZ 값 2.0 기준 진입 한계점
                     <span class="text-sm font-normal text-red-600">(SZ 값 2.0 이상만 진입 가능)</span>
                 </h2>
 
@@ -152,73 +143,71 @@
                     </div>
                 </div>
 
-                <div class="border-t border-gray-200 pt-4">
-                    <h3 class="font-medium text-gray-800 mb-3">진입 한계점 가격 정보:</h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div class="border border-red-200 rounded-lg p-4 entry-limit">
-                            <div class="text-red-700 font-medium mb-2">보통주 한계 가격</div>
-                            <div class="text-2xl font-bold" id="limit-common-price">-</div>
-                            <div class="text-sm text-gray-500 mt-1">현재 대비: <span id="common-diff">-</span></div>
-                        </div>
-
-                        <div class="border border-green-200 rounded-lg p-4">
-                            <div class="text-green-700 font-medium mb-2">우선주 (고정)</div>
-                            <div class="text-2xl font-bold" id="limit-preferred-price">-</div>
-                            <div class="text-sm text-gray-500 mt-1">변동 없음</div>
-                        </div>
-
-                        <div class="border border-blue-200 rounded-lg p-4">
-                            <div class="text-blue-700 font-medium mb-2">괴리율 한계점</div>
-                            <div class="text-2xl font-bold" id="limit-spread">-</div>
-                            <div class="text-sm text-gray-500 mt-1">현재 대비: <span id="spread-diff">-</span></div>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="border border-red-200 rounded-lg p-4 entry-limit">
+                        <div class="text-red-700 font-medium mb-2">보통주 한계 가격</div>
+                        <div class="text-2xl font-bold" id="limit-common-price">-</div>
+                        <div class="text-sm text-gray-600 mt-1">현재 대비: <span id="common-diff">-</span></div>
+                        <div class="text-xs text-gray-500 mt-1">이 가격 이하로 내려가면 진입 불가</div>
                     </div>
 
-                    <div class="bg-yellow-50 p-4 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
-                            <div class="text-yellow-800">
-                                <strong>주의:</strong> 보통주 가격이 위 한계 가격 이하로 내려가면 SZ 값이 2.0 미만으로 떨어져 매매 진입이 불가능합니다.
-                            </div>
+                    <div class="border border-green-200 rounded-lg p-4 entry-limit">
+                        <div class="text-green-700 font-medium mb-2">우선주 한계 가격</div>
+                        <div class="text-2xl font-bold" id="limit-preferred-price">-</div>
+                        <div class="text-sm text-gray-600 mt-1">현재 대비: <span id="preferred-diff">-</span></div>
+                        <div class="text-xs text-gray-500 mt-1">이 가격 이상으로 올라가면 진입 불가</div>
+                    </div>
+
+                    <div class="border border-blue-200 rounded-lg p-4">
+                        <div class="text-blue-700 font-medium mb-2">SZ 2.0 기준 괴리율</div>
+                        <div class="text-2xl font-bold" id="limit-spread">-</div>
+                        <div class="text-sm text-gray-600 mt-1">현재 대비: <span id="spread-diff">-</span></div>
+                        <div class="text-xs text-gray-500 mt-1">이 괴리율 이하면 진입 불가</div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
+                        <div class="text-yellow-800">
+                            <strong>주의:</strong> 보통주 가격이 내려가거나 우선주 가격이 오르면 SZ 값이 감소합니다. 위 한계 가격을 넘어서면 SZ 값이 2.0 미만으로 떨어져
+                            매매 진입이 불가능합니다.
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 가격 변동에 따른 SZ 값 변화 테이블 -->
+            <!-- 가격 변동 시뮬레이션 테이블 -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">가격 변동에 따른 SZ 값 변화</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">가격 변동 시나리오</h2>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto mb-4">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    보통주 가격 변화
-                                </th>
+                                    시나리오</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    보통주 가격
-                                </th>
+                                    보통주 가격</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    괴리율
-                                </th>
+                                    우선주 가격</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    예상 SZ 값
-                                </th>
+                                    괴리율</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    진입 가능 여부
-                                </th>
+                                    예상 SZ 값</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    진입 가능 여부</th>
                             </tr>
                         </thead>
-                        <tbody id="price-simulation-body" class="bg-white divide-y divide-gray-200">
+                        <tbody id="scenarios-table-body" class="bg-white divide-y divide-gray-200">
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
                                     데이터 계산 중...
                                 </td>
                             </tr>
@@ -282,10 +271,10 @@
                 updateCurrentState(stockData, trendData);
 
                 // 진입 한계 계산 및 표시
-                calculateEntryLimits(stockData, trendData);
+                calculateEntryLimits(stockData);
 
-                // 가격 변동 시뮬레이션 테이블 생성
-                createPriceSimulationTable(stockData, trendData);
+                // 가격 변동 시나리오 테이블 생성
+                createPriceScenarios(stockData);
 
                 // 차트 렌더링
                 renderSZChart(trendData);
@@ -362,9 +351,9 @@
             // 마지막 데이터 인덱스
             const lastIndex = trendData.dates.length - 1;
 
-            // 가격 정보 설정
-            const commonPrice = stockData.price_a || trendData.common_prices[lastIndex];
-            const preferredPrice = stockData.price_b || trendData.preferred_prices[lastIndex];
+            // 가격 정보 설정 (소수점 제거)
+            const commonPrice = Math.round(stockData.price_a || trendData.common_prices[lastIndex]);
+            const preferredPrice = Math.round(stockData.price_b || trendData.preferred_prices[lastIndex]);
 
             document.getElementById('common-price').textContent = commonPrice.toLocaleString() + ' KRW';
             document.getElementById('preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
@@ -382,79 +371,107 @@
         }
 
         // 진입 한계 계산 및 표시
-        function calculateEntryLimits(stockData, trendData) {
+        function calculateEntryLimits(stockData) {
             // 기본 정보
-            const commonPrice = stockData.price_a;
-            const preferredPrice = stockData.price_b;
+            const commonPrice = Math.round(stockData.price_a);
+            const preferredPrice = Math.round(stockData.price_b);
             const currentSZ = stockData.sz_value;
 
-            // 0. 현재 괴리율 계산
+            // 현재 괴리율 계산
             const currentSpreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
 
-            // 1. SZ 값이 2.0일 때의 괴리율 계산 (선형 관계 가정)
-            // 현재 SZ에 해당하는 괴리율에서 SZ:괴리율 비율 유지
+            // 임계 SZ 값
             const limitSZ = 2.0;
+
+            // ===== 보통주 한계점 (우선주 고정) =====
+            // SZ 값이 2.0일 때의 괴리율 계산 (선형 관계 가정)
             const limitSpreadRate = (currentSpreadRate * limitSZ) / currentSZ;
 
-            // 2. 해당 괴리율에서의 보통주 가격 계산 (우선주 가격은 일정하다고 가정)
-            // 괴리율 = ((보통주 - 우선주) / 보통주) * 100
-            // 보통주 = 우선주 / (1 - 괴리율/100)
-            const limitCommonPrice = preferredPrice / (1 - (limitSpreadRate / 100));
+            // 해당 괴리율에서의 보통주 한계 가격 계산 (우선주 가격은 일정하다고 가정)
+            const limitCommonPrice = Math.round(preferredPrice / (1 - (limitSpreadRate / 100)));
+
+            // ===== 우선주 한계점 (보통주 고정) =====
+            // 해당 괴리율에서의 우선주 한계 가격 계산 (보통주 가격은 일정하다고 가정)
+            const limitPreferredPrice = Math.round(commonPrice * (1 - (limitSpreadRate / 100)));
 
             // 한계점 정보 표시
             document.getElementById('limit-common-price').textContent = limitCommonPrice.toLocaleString() + ' KRW';
-            document.getElementById('limit-preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
+            document.getElementById('limit-preferred-price').textContent = limitPreferredPrice.toLocaleString() + ' KRW';
             document.getElementById('limit-spread').textContent = limitSpreadRate.toFixed(2) + '%';
 
             // 현재 대비 변화량
             const commonDiff = ((limitCommonPrice - commonPrice) / commonPrice * 100).toFixed(2);
+            const preferredDiff = ((limitPreferredPrice - preferredPrice) / preferredPrice * 100).toFixed(2);
             const spreadDiff = (limitSpreadRate - currentSpreadRate).toFixed(2);
 
             const commonDiffEl = document.getElementById('common-diff');
             commonDiffEl.textContent = `${commonDiff}%`;
-            commonDiffEl.className = commonDiff < 0 ? 'text-red-600' : 'text-green-600';
+            commonDiffEl.className = commonDiff < 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium';
+
+            const preferredDiffEl = document.getElementById('preferred-diff');
+            preferredDiffEl.textContent = `${preferredDiff}%`;
+            preferredDiffEl.className = preferredDiff < 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium';
 
             const spreadDiffEl = document.getElementById('spread-diff');
             spreadDiffEl.textContent = `${spreadDiff}%p`;
-            spreadDiffEl.className = spreadDiff < 0 ? 'text-red-600' : 'text-green-600';
+            spreadDiffEl.className = spreadDiff < 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium';
         }
 
-        // 가격 변동 시뮬레이션 테이블 생성
-        function createPriceSimulationTable(stockData, trendData) {
-            const tableBody = document.getElementById('price-simulation-body');
-            const commonPrice = stockData.price_a;
-            const preferredPrice = stockData.price_b;
+        // 가격 변동 시나리오 테이블 생성
+        function createPriceScenarios(stockData) {
+            const tableBody = document.getElementById('scenarios-table-body');
+            const commonPrice = Math.round(stockData.price_a);
+            const preferredPrice = Math.round(stockData.price_b);
             const currentSZ = stockData.sz_value;
+
+            // 현재 괴리율 계산
+            const currentSpreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
 
             // 테이블 내용 초기화
             tableBody.innerHTML = '';
 
-            // 가격 변동 시나리오 (-10% ~ +2% 변동, 2% 단위)
+            // 시나리오 정의: 보통주 하락 + 우선주 상승 조합
             const scenarios = [
-                { change: 2, label: '+2%' },
-                { change: 0, label: '변동 없음' },
-                { change: -2, label: '-2%' },
-                { change: -4, label: '-4%' },
-                { change: -6, label: '-6%' },
-                { change: -8, label: '-8%' },
-                { change: -10, label: '-10%' }
+                { name: "현재 상태", commonChange: 0, preferredChange: 0 },
+                { name: "보통주 -2%", commonChange: -2, preferredChange: 0 },
+                { name: "보통주 -5%", commonChange: -5, preferredChange: 0 },
+                { name: "우선주 +2%", commonChange: 0, preferredChange: 2 },
+                { name: "우선주 +5%", commonChange: 0, preferredChange: 5 },
+                { name: "보통주 -2%, 우선주 +2%", commonChange: -2, preferredChange: 2 },
+                { name: "보통주 -5%, 우선주 +5%", commonChange: -5, preferredChange: 5 },
+                { name: "보통주 -5%, 우선주 +2%", commonChange: -5, preferredChange: 2 },
+                { name: "보통주 -2%, 우선주 +5%", commonChange: -2, preferredChange: 5 }
             ];
 
             // 각 시나리오에 대한 행 생성
             scenarios.forEach(scenario => {
                 const row = document.createElement('tr');
 
-                // 변동된 보통주 가격 계산
-                const newCommonPrice = commonPrice * (1 + (scenario.change / 100));
+                // 새 가격 계산
+                const newCommonPrice = Math.round(commonPrice * (1 + (scenario.commonChange / 100)));
+                const newPreferredPrice = Math.round(preferredPrice * (1 + (scenario.preferredChange / 100)));
 
                 // 새로운 괴리율 계산
-                const newSpreadRate = ((newCommonPrice - preferredPrice) / newCommonPrice) * 100;
+                const newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
 
                 // 새로운 SZ 값 계산 (선형 관계 가정)
-                const newSZ = (currentSZ * newSpreadRate) / ((commonPrice - preferredPrice) / commonPrice * 100);
+                const newSZ = (currentSZ * newSpreadRate) / currentSpreadRate;
 
                 // 진입 가능 여부 판단
                 const isEntryPossible = newSZ >= 2.0;
+
+                // 현재 상태인 경우 강조 표시
+                const isCurrentState = scenario.commonChange === 0 && scenario.preferredChange === 0;
+
+                // 진입 임계점 부근인 경우 강조 표시
+                const isNearThreshold = newSZ >= 1.9 && newSZ <= 2.1;
+
+                // 행 스타일 설정
+                if (isCurrentState) {
+                    row.classList.add('bg-blue-50');
+                } else if (isNearThreshold) {
+                    row.classList.add('bg-yellow-50');
+                }
 
                 // 셀 스타일 설정
                 const szCellClass = isEntryPossible ? 'text-green-600 font-medium' : 'text-red-600 font-medium';
@@ -462,27 +479,27 @@
 
                 // 행 내용 설정
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium ${scenario.change === 0 ? 'bg-blue-50' : ''}">
-                        ${scenario.label}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        ${scenario.name}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${scenario.change === 0 ? 'bg-blue-50' : ''}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         ${newCommonPrice.toLocaleString()} KRW
+                        ${scenario.commonChange !== 0 ? `<span class="text-xs text-${scenario.commonChange > 0 ? 'green' : 'red'}-600">(${scenario.commonChange > 0 ? '+' : ''}${scenario.commonChange}%)</span>` : ''}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${scenario.change === 0 ? 'bg-blue-50' : ''}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${newPreferredPrice.toLocaleString()} KRW
+                        ${scenario.preferredChange !== 0 ? `<span class="text-xs text-${scenario.preferredChange > 0 ? 'green' : 'red'}-600">(${scenario.preferredChange > 0 ? '+' : ''}${scenario.preferredChange}%)</span>` : ''}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         ${newSpreadRate.toFixed(2)}%
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szCellClass} ${scenario.change === 0 ? 'bg-blue-50' : ''}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szCellClass}">
                         ${newSZ.toFixed(2)}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${possibilityCellClass} ${scenario.change === 0 ? 'bg-blue-50' : ''}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${possibilityCellClass}">
                         ${isEntryPossible ? '가능 ✓' : '불가능 ✗'}
                     </td>
                 `;
-
-                // SZ 값이 2.0 근처인 중요 행 강조
-                if (newSZ >= 1.9 && newSZ <= 2.1) {
-                    row.classList.add('bg-yellow-50');
-                }
 
                 tableBody.appendChild(row);
             });
