@@ -233,7 +233,7 @@
                 updateCurrentState(stockData, trendData);
 
                 // 가격 변동 시나리오 테이블 생성
-                createDetailedScenarios(stockData);
+                createDetailedScenarios(stockData, trendData);
 
                 // 차트 렌더링
                 renderSZChart(trendData);
@@ -326,113 +326,124 @@
             document.getElementById('current-spread').textContent = spreadRate.toFixed(2) + '%';
         }
 
+        // SZ 값 계산 함수
+        function calculateSZValues(discountRates) {
+            const avgPeriod = 249;
+            const szValues = [];
+
+            for (let i = avgPeriod; i < discountRates.length; i++) {
+                const windowData = discountRates.slice(i - avgPeriod, i);
+
+                // 평균 계산
+                const mean = windowData.reduce((sum, val) => sum + (val ?? 0), 0) / windowData.length;
+
+                // 표준편차 계산
+                const variance = windowData.reduce((sum, val) => {
+                    const value = val ?? 0;
+                    return sum + Math.pow(value - mean, 2);
+                }, 0) / windowData.length;
+                const stdDev = Math.sqrt(variance);
+
+                // SZ 값 계산 (분모가 0인 경우 방지)
+                const sz = stdDev !== 0
+                    ? ((discountRates[i] ?? 0) - mean) / stdDev
+                    : 0;
+
+                szValues.push(sz);
+            }
+
+            return szValues;
+        }
+
         // 한계점 찾기 함수
         function findLimitScenario(commonPrice, preferredPrice, historicalData) {
-                // 과거 1년간의 SZ 값과 괴리율 데이터 사용
-                const calculatedSZValues = calculateSZValues(historicalData.discount_rates);
+            // 과거 1년간의 SZ 값과 괴리율 데이터 사용
+            const calculatedSZValues = calculateSZValues(historicalData.discount_rates);
 
-                // 현재 괴리율 계산
-                const currentSpreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
+            // 현재 괴리율 계산
+            const currentSpreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
 
-                let limitCommonChange = 0;
-                let limitPreferredChange = 0;
+            let limitScenario = null;
 
-                // 다양한 변동 시나리오 탐색
-                for (let commonChange = -50; commonChange <= 0; commonChange += 0.1) {
-                    for (let preferredChange = 0; preferredChange <= 50; preferredChange += 0.1) {
-                        const newCommonPrice = commonPrice * (1 + (commonChange / 100));
-                        const newPreferredPrice = preferredPrice * (1 + (preferredChange / 100));
+            // 다양한 변동 시나리오 탐색
+            for (let commonChange = -50; commonChange <= 0; commonChange += 0.1) {
+                for (let preferredChange = 0; preferredChange <= 50; preferredChange += 0.1) {
+                    const newCommonPrice = commonPrice * (1 + (commonChange / 100));
+                    const newPreferredPrice = preferredPrice * (1 + (preferredChange / 100));
 
-                        const newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
+                    const newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
 
-                        // SZ 값 재계산 (평균적인 과거 SZ 변동 로직 적용)
-                        const newSZ = calculateAverageSZ(
-                            currentSpreadRate,
-                            newSpreadRate,
-                            calculatedSZValues
-                        );
-
-                        // SZ 값이 2.0 이하가 되는 지점 찾기
-                        if (newSZ <= 2.0) {
-                            limitCommonChange = commonChange;
-                            limitPreferredChange = preferredChange;
-                            break;
-                        }
-                    }
-
-                    if (limitCommonChange !== 0) break;
-                }
-
-                return {
-                    commonChange: limitCommonChange,
-                    preferredChange: limitPreferredChange,
-                    newCommonPrice: commonPrice * (1 + (limitCommonChange / 100)),
-                    newPreferredPrice: preferredPrice * (1 + (limitPreferredChange / 100)),
-                    newSZ: calculateAverageSZ(
+                    // SZ 값 재계산
+                    const newSZ = calculateAverageSZ(
                         currentSpreadRate,
-                        ((commonPrice * (1 + (limitCommonChange / 100))) - (preferredPrice * (1 + (limitPreferredChange / 100)))) / (commonPrice * (1 + (limitCommonChange / 100))) * 100,
+                        newSpreadRate,
                         calculatedSZValues
-                    )
-                };
-            }
+                    );
 
-            function calculateSZValues(discountRates) {
-                // 과거 데이터를 기반으로 SZ 값 계산 로직
-                // 이는 trend_collector.py의 _process_trend_data 메서드와 유사
-                const avgPeriod = 249;
-                const szValues = [];
-
-                for (let i = avgPeriod; i < discountRates.length; i++) {
-                    const windowData = discountRates.slice(i - avgPeriod, i);
-
-                    // 평균 계산
-                    const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
-
-                    // 표준편차 계산
-                    const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
-                    const stdDev = Math.sqrt(variance);
-
-                    // SZ 값 계산
-                    const sz = (discountRates[i] - mean) / stdDev;
-
-                    szValues.push(sz);
+                    // SZ 값이 2.0 이하가 되는 지점 찾기
+                    if (newSZ <= 2.0) {
+                        limitScenario = {
+                            commonChange,
+                            preferredChange,
+                            newCommonPrice,
+                            newPreferredPrice,
+                            newSZ
+                        };
+                        break;
+                    }
                 }
 
-                return szValues;
+                if (limitScenario) break;
             }
 
-            function calculateAverageSZ(origSpreadRate, newSpreadRate, historicalSZValues) {
-                // 과거 SZ 값들의 통계적 특성 고려
-                const avgSZ = historicalSZValues.reduce((sum, val) => sum + val, 0) / historicalSZValues.length;
-                const stdSZ = Math.sqrt(
-                    historicalSZValues.reduce((sum, val) => sum + Math.pow(val - avgSZ, 2), 0) / historicalSZValues.length
-                );
+            return limitScenario;
+        }
 
-                // 괴리율 변화에 따른 SZ 값 조정
-                const spreadRateRatio = newSpreadRate / origSpreadRate;
+        // 평균 SZ 값 계산 함수
+        function calculateAverageSZ(origSpreadRate, newSpreadRate, historicalSZValues) {
+            // 과거 SZ 값들의 통계적 특성 고려
+            const avgSZ = historicalSZValues.reduce((sum, val) => sum + val, 0) / historicalSZValues.length;
+            const stdSZ = Math.sqrt(
+                historicalSZValues.reduce((sum, val) => sum + Math.pow(val - avgSZ, 2), 0) / historicalSZValues.length
+            );
 
-                return avgSZ * spreadRateRatio;
-            }
+            // 괴리율 변화에 따른 SZ 값 조정
+            const spreadRateRatio = newSpreadRate / origSpreadRate;
 
-            function createDetailedScenarios(stockData, trendData) {
-                const commonPrice = Math.round(stockData.price_a);
-                const preferredPrice = Math.round(stockData.price_b);
+            return avgSZ * spreadRateRatio;
+        }
 
-                const limitScenario = findLimitScenario(commonPrice, preferredPrice, trendData);
+        // 상세 시나리오 생성 함수
+        function createDetailedScenarios(stockData, trendData) {
+            const commonPrice = Math.round(stockData.price_a);
+            const preferredPrice = Math.round(stockData.price_b);
 
-                // 테이블에 결과 렌더링
-                const tableBody = document.getElementById('scenarios-table-body');
+            const limitScenario = findLimitScenario(commonPrice, preferredPrice, trendData);
+
+            // 테이블에 결과 렌더링
+            const tableBody = document.getElementById('scenarios-table-body');
+
+            if (limitScenario) {
                 tableBody.innerHTML = `
-        <tr>
-            <td>Limit</td>
-            <td>${limitScenario.newCommonPrice.toLocaleString()} KRW (${limitScenario.commonChange.toFixed(2)}%)</td>
-            <td>${limitScenario.newPreferredPrice.toLocaleString()} KRW (+${limitScenario.preferredChange.toFixed(2)}%)</td>
-            <td>${((limitScenario.newCommonPrice - limitScenario.newPreferredPrice) / limitScenario.newCommonPrice * 100).toFixed(2)}%</td>
-            <td class="text-red-600">${limitScenario.newSZ.toFixed(2)}</td>
-            <td class="text-red-600">진입 한계</td>
-        </tr>
-    `;
+                    <tr>
+                        <td>매매 한계 시나리오</td>
+                        <td>${limitScenario.newCommonPrice.toLocaleString()} KRW (${limitScenario.commonChange.toFixed(2)}%)</td>
+                        <td>${limitScenario.newPreferredPrice.toLocaleString()} KRW (+${limitScenario.preferredChange.toFixed(2)}%)</td>
+                        <td>${((limitScenario.newCommonPrice - limitScenario.newPreferredPrice) / limitScenario.newCommonPrice * 100).toFixed(2)}%</td>
+                        <td class="text-red-600">${limitScenario.newSZ.toFixed(2)}</td>
+                        <td class="text-red-600">진입 불가능 ✗</td>
+                    </tr>
+                `;
+            } else {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-red-600">
+                            한계 시나리오를 찾을 수 없습니다.
+                        </td>
+                    </tr>
+                `;
             }
+        }
 
         // SZ 차트 렌더링
         function renderSZChart(trendData) {
