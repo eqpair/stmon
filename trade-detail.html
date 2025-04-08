@@ -358,18 +358,19 @@
                 const discountRates = historicalData.discount_rates;
                 const avgPeriod = 249;  // 1년 거래일 기준
 
-                // 과거 데이터의 평균과 표준편차 계산
+                // 과거 데이터 윈도우 선택
                 const windowData = discountRates.slice(-avgPeriod);
 
+                // 평균 계산
                 const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
+
+                // 표준편차 계산
                 const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
                 const stdDev = Math.sqrt(variance);
 
-                // 현재 괴리율
-                const currentDiscountRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
-
-                // 탐색 범위 설정 (보통주 최대 -20%, 우선주 최대 +20%)
+                // 탐색 범위 설정
                 let limitScenario = null;
+                let smallestDifference = Infinity;
 
                 for (let commonChange = -20; commonChange <= 0; commonChange += 0.1) {
                     for (let preferredChange = 0; preferredChange <= 20; preferredChange += 0.1) {
@@ -379,11 +380,14 @@
                         // 새로운 괴리율 계산
                         const newDiscountRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
 
-                        // SZ 값 계산
+                        // SZ 값 계산 (과거 데이터 기반)
                         const newSZ = (newDiscountRate - mean) / stdDev;
 
-                        // SZ 값이 2.0에 근접한 지점 찾기
-                        if (Math.abs(newSZ - 2.0) < 0.01) {
+                        // 2.0에 가장 근접한 시나리오 찾기
+                        const difference = Math.abs(newSZ - 2.0);
+
+                        if (difference < smallestDifference) {
+                            smallestDifference = difference;
                             limitScenario = {
                                 commonChange,
                                 preferredChange,
@@ -392,6 +396,10 @@
                                 newDiscountRate,
                                 newSZ
                             };
+                        }
+
+                        // 2.0에 거의 근접하면 즉시 반환
+                        if (difference < 0.01) {
                             return limitScenario;
                         }
                     }
