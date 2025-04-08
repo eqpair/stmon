@@ -565,36 +565,36 @@
                 }
 
                 function setupSliderListeners() {
-                    // 보통주 슬라이더
-                    const commonSlider = document.getElementById('common-price-slider');
-                    const commonPercent = document.getElementById('common-price-percent');
-                    const commonAdjusted = document.getElementById('common-price-adjusted');
+                        // 보통주 슬라이더
+                        const commonSlider = document.getElementById('common-price-slider');
+                        const commonPercent = document.getElementById('common-price-percent');
+                        const commonAdjusted = document.getElementById('common-price-adjusted');
 
-                    commonSlider.addEventListener('input', function () {
-                        const percent = this.value;
-                        commonPercent.textContent = `${percent}%`;
+                        commonSlider.addEventListener('input', function () {
+                            const percent = parseFloat(this.value); // parseInt() 대신 parseFloat() 사용
+                            commonPercent.textContent = `${percent}%`;
 
-                        const adjusted = stockData.current.commonPrice * (1 + parseInt(percent) / 100);
-                        commonAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
-                    });
+                            const adjusted = stockData.current.commonPrice * (1 + percent / 100);
+                            commonAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
+                        });
 
-                    // 우선주 슬라이더
-                    const preferredSlider = document.getElementById('preferred-price-slider');
-                    const preferredPercent = document.getElementById('preferred-price-percent');
-                    const preferredAdjusted = document.getElementById('preferred-price-adjusted');
+                        // 우선주 슬라이더
+                        const preferredSlider = document.getElementById('preferred-price-slider');
+                        const preferredPercent = document.getElementById('preferred-price-percent');
+                        const preferredAdjusted = document.getElementById('preferred-price-adjusted');
 
-                    preferredSlider.addEventListener('input', function () {
-                        const percent = this.value;
-                        preferredPercent.textContent = `${percent}%`;
+                        preferredSlider.addEventListener('input', function () {
+                            const percent = parseFloat(this.value); // parseInt() 대신 parseFloat() 사용
+                            preferredPercent.textContent = `${percent}%`;
 
-                        const adjusted = stockData.current.preferredPrice * (1 + parseInt(percent) / 100);
-                        preferredAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
-                    });
-                }
+                            const adjusted = stockData.current.preferredPrice * (1 + percent / 100);
+                            preferredAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
+                        });
+                    }
                 function calculateManualScenario() {
-                        // 슬라이더에서 값 가져오기
-                        const commonPct = parseInt(document.getElementById('common-price-slider').value);
-                        const preferredPct = parseInt(document.getElementById('preferred-price-slider').value);
+                        // 슬라이더에서 값 가져오기 - parseInt() 대신 parseFloat() 사용
+                        const commonPct = parseFloat(document.getElementById('common-price-slider').value);
+                        const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
 
                         // 조정된 가격 계산
                         const adjustedCommon = stockData.current.commonPrice * (1 + commonPct / 100);
@@ -624,26 +624,25 @@
                         }
 
                         // 시나리오 해석 업데이트
-                    const interpretationEl = document.getElementById('scenario-interpretation');
-                    if (adjustedSZValue >= 2.0) {
-                        interpretationEl.innerHTML = `
-                            <p class="text-red-600 font-medium">현재 SZ 값이 2.0 이상입니다!</p>
-                            <p class="mt-1">
-                                보통주가 ${commonPct}% ${commonPct >= 0 ? '상승' : '하락'}하고,<br>
-                                우선주가 ${preferredPct}% ${preferredPct >= 0 ? '상승' : '하락'}할 경우,<br>
-                                SZ 값은 <span class="${adjustedSZValue >= 2.5 ? 'sz-high' : 'sz-medium'}">${adjustedSZValue.toFixed(2)}</span>에 도달합니다.
-                            </p>
-                        `;
-                                        } else {
-                                            interpretationEl.innerHTML = `
-                            <p>현재 조정된 SZ 값은 <span class="${adjustedSZValue >= 1.5 ? 'sz-medium' : 'sz-low'
-                                                }">${adjustedSZValue.toFixed(2)}</span>입니다.</p>
-                            <p class="mt-1">
-                                이 시나리오에서는 SZ 값이 2.0에 도달하지 않습니다.<br>
-                                SZ 값 2.0 도달을 위해서는 더 큰 가격 변동이 필요합니다.
-                            </p>
-                        `;
-                    }
+                        const interpretationEl = document.getElementById('scenario-interpretation');
+                        if (adjustedSZValue >= 2.0) {
+                            interpretationEl.innerHTML = `
+                                <p class="text-red-600 font-medium">현재 SZ 값이 2.0 이상입니다!</p>
+                                <p class="mt-1">
+                                    보통주가 ${commonPct}% ${commonPct >= 0 ? '상승' : '하락'}하고,<br>
+                                    우선주가 ${preferredPct}% ${preferredPct >= 0 ? '상승' : '하락'}할 경우,<br>
+                                    SZ 값은 <span class="${adjustedSZValue >= 2.5 ? 'sz-high' : 'sz-medium'}">${adjustedSZValue.toFixed(2)}</span>에 도달합니다.
+                                </p>
+                            `;
+                                            } else {
+                                                interpretationEl.innerHTML = `
+                                <p>현재 조정된 SZ 값은 <span class="${adjustedSZValue >= 1.5 ? 'sz-medium' : 'sz-low'}">${adjustedSZValue.toFixed(2)}</span>입니다.</p>
+                                <p class="mt-1">
+                                    이 시나리오에서는 SZ 값이 2.0에 도달하지 않습니다.<br>
+                                    SZ 값 2.0 도달을 위해서는 더 큰 가격 변동이 필요합니다.
+                                </p>
+                            `;
+                        }
                     }
                     function calculateScenarios() {
                             // 시나리오 1: 보통주 하락, 우선주 상승 (비율 50:50으로 조정)
