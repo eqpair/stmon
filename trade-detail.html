@@ -97,26 +97,26 @@
     <div class="container mx-auto px-4 py-8">
         <header class="mb-8 flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">시나리오 분석</h1>
-                <p class="text-sm text-gray-600">SZ 값 2.0 도달을 위한 가격 변동 시나리오</p>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Scenario Analysis</h1>
+                <p class="text-sm text-gray-600">SZ 2.0 target: Price fluctuations</p>
             </div>
             <a href="javascript:history.back()"
                 class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                <i class="fas fa-arrow-left mr-2"></i> 뒤로 가기
+                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
             </a>
         </header>
 
         <!-- Loading Indicator -->
         <div id="loading-container" class="flex flex-col items-center justify-center py-20">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-            <p class="text-gray-600">데이터 로딩 중...</p>
+            <p class="text-gray-600">Loading data...</p>
         </div>
 
         <!-- Content Container -->
         <div id="content-container" class="hidden">
             <!-- Current Stock Info Card -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">현재 주식 정보</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="p-4 bg-blue-50 rounded-lg">
                         <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격</div>
@@ -138,12 +138,12 @@
             </div>
 <!-- Scenario Tool -->
 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">시나리오 분석 도구</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Scenario Analysis Tool</h2>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <!-- Manual Scenario Controls -->
         <div class="bg-gray-50 rounded-lg p-6">
-            <h3 class="text-lg font-medium text-gray-800 mb-4">수동 시나리오 조정</h3>
+            <h3 class="text-lg font-medium text-gray-800 mb-4">Control</h3>
 
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -189,7 +189,7 @@
 
         <!-- Calculation Results -->
         <div id="manual-result" class="bg-gray-50 rounded-lg p-6">
-            <h3 class="text-lg font-medium text-gray-800 mb-4">시나리오 결과</h3>
+            <h3 class="text-lg font-medium text-gray-800 mb-4">Result</h3>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="p-4 bg-white rounded-lg shadow">
@@ -203,21 +203,21 @@
             </div>
 
             <div class="p-4 bg-white rounded-lg shadow mt-4">
-                <div class="text-gray-700 text-sm font-medium mb-2">시나리오 해석</div>
+                <div class="text-gray-700 text-sm font-medium mb-2">Result Analysis</div>
                 <div id="scenario-interpretation" class="text-sm text-gray-800">
-                    가격을 조정하여 시나리오를 계산해 보세요.
+                    Adjust the price to calculate the scenario.
                 </div>
             </div>
         </div>
     </div>
     <!-- Auto Scenario Generation -->
     <div class="mt-8">
-        <h3 class="text-lg font-medium text-gray-800 mb-4">SZ 값 2.0 도달을 위한 가격 변동 시나리오</h3>
+        <h3 class="text-lg font-medium text-gray-800 mb-4">SZ 2.0 target: Price fluctuations</h3>
     
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <!-- Scenario 1: Common Down, Preferred Up -->
             <div class="bg-gray-50 rounded-lg p-4 scenario-result">
-                <h4 class="font-medium text-gray-900 mb-2">시나리오 1: 보통주 하락, 우선주 상승</h4>
+                <h4 class="font-medium text-gray-900 mb-2">Scenario 1: 보통주 하락, 우선주 상승</h4>
                 <!-- 시나리오 1 -->
                 <div id="scenario1" class="text-sm">
                     <p class="mb-2">
@@ -235,7 +235,7 @@
     
             <!-- Scenario 2: Common Down Only -->
             <div class="bg-gray-50 rounded-lg p-4 scenario-result">
-                <h4 class="font-medium text-gray-900 mb-2">시나리오 2: 보통주만 하락</h4>
+                <h4 class="font-medium text-gray-900 mb-2">Scenario 2: 보통주만 하락</h4>
                 <div id="scenario2" class="text-sm">
                     <p class="mb-2">
                         보통주가 <span id="s2-common-percent" class="font-bold text-red-600">-</span> 하락하고,<br>
@@ -250,7 +250,7 @@
     
             <!-- Scenario 3: Preferred Up Only -->
             <div class="bg-gray-50 rounded-lg p-4 scenario-result">
-                <h4 class="font-medium text-gray-900 mb-2">시나리오 3: 우선주만 상승</h4>
+                <h4 class="font-medium text-gray-900 mb-2">Scenario 3: 우선주만 상승</h4>
                 <div id="scenario3" class="text-sm">
                     <p class="mb-2">
                         우선주가 <span id="s3-preferred-percent" class="font-bold text-green-600">-</span> 상승하고,<br>
@@ -268,7 +268,7 @@
     
     <!-- Historical SZ Value Chart -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ 값 추이</h2>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ value trend</h2>
         <div class="chart-container">
             <canvas id="sz-chart"></canvas>
         </div>
@@ -296,8 +296,8 @@
             }
 
             // 페이지 제목 설정
-            document.title = `${stockName} - 시나리오 분석`;
-            document.getElementById('stock-name').textContent = `${stockName} 시나리오 분석`;
+            document.title = `${stockName} - Scenario Analysis`;
+            document.getElementById('stock-name').textContent = `${stockName} Scenario Analysis`;
 
             // 데이터 로드 및 처리
             loadAndProcessStockData(stockCode, stockName);
@@ -521,7 +521,7 @@
                                 tension: 0.1
                             },
                             {
-                                label: 'SZ = 2.0 기준선',
+                                label: 'SZ = 2.0 Threshold',
                                 data: Array(chartLabels.length).fill(2.0),
                                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                                 borderColor: 'rgba(255, 99, 132, 1)',
@@ -543,7 +543,7 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: '최근 5개월 SZ 값 트렌드'
+                                    text: 'Recent 5-month SZ value trend'
                                 }
                             },
                             scales: {
