@@ -344,7 +344,7 @@
                         const stockCode = urlParams.get('code');
 
                         // 매매가능 버튼 클릭 시 trade-detail.html로 이동
-                        tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
+                        tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURI(stockName)}`;
                     } else {
                         console.warn(`Failed to load stock data for ${stockName} in updateCurrentInfo`);
                     }
