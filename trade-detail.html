@@ -371,35 +371,34 @@
                 // 탐색 범위 및 한계 시나리오 찾기
                 let limitScenario = null;
 
-                for (let commonChange = -20; commonChange <= 0; commonChange += 0.1) {
-                    for (let preferredChange = 0; preferredChange <= 20; preferredChange += 0.1) {
-                        const newCommonPrice = commonPrice * (1 + (commonChange / 100));
-                        const newPreferredPrice = preferredPrice * (1 + (preferredChange / 100));
+                // 보통주 하락과 우선주 상승 비율을 동일하게 설정
+                for (let changeRate = 0; changeRate <= 20; changeRate += 0.1) {
+                    const commonChange = -changeRate;
+                    const preferredChange = changeRate;
 
-                        // 새로운 괴리율 계산
-                        const newDiscountRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
+                    const newCommonPrice = commonPrice * (1 + (commonChange / 100));
+                    const newPreferredPrice = preferredPrice * (1 + (preferredChange / 100));
 
-                        // SZ 값 계산
-                        const newSZ = (newDiscountRate - mean) / stdDev;
+                    // 새로운 괴리율 계산
+                    const newDiscountRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
 
-                        // SZ 값이 2.0 이상인 최대 변동 지점 찾기
-                        if (newSZ >= 2.0) {
-                            limitScenario = {
-                                commonChange,
-                                preferredChange,
-                                newCommonPrice,
-                                newPreferredPrice,
-                                newDiscountRate,
-                                newSZ
-                            };
-                        } else {
-                            // SZ 값이 2.0 미만이 되면 마지막 2.0 이상인 시나리오 반환
-                            return limitScenario;
-                        }
+                    // SZ 값 계산
+                    const newSZ = (newDiscountRate - mean) / stdDev;
+
+                    // SZ 값이 2.0에 가장 근접한 시나리오 찾기
+                    if (Math.abs(newSZ - 2.0) < 0.01) {
+                        return {
+                            commonChange,
+                            preferredChange,
+                            newCommonPrice,
+                            newPreferredPrice,
+                            newDiscountRate,
+                            newSZ
+                        };
                     }
                 }
 
-                return limitScenario;
+                return null;
             }
 
             function createDetailedScenarios(stockData, trendData) {
