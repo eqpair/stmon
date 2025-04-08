@@ -31,30 +31,6 @@
             color: #16A34A;
         }
 
-        .signal-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-right: 4px;
-        }
-
-        .signal-R {
-            background-color: #FEE2E2;
-            color: #DC2626;
-        }
-
-        .signal-I {
-            background-color: #E0F2FE;
-            color: #0284C7;
-        }
-
-        .signal-O {
-            background-color: #DCFCE7;
-            color: #16A34A;
-        }
-
         .entry-limit {
             animation: pulse 2s infinite;
         }
@@ -193,10 +169,8 @@
     </footer>
 
     <script>
-        // 전역 변수로 차트 인스턴스 관리
         let szChart = null;
 
-        // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => initializePage());
 
         async function initializePage() {
@@ -205,10 +179,7 @@
                 const stockCode = urlParams.get('code');
                 const stockName = urlParams.get('name');
 
-                if (!stockCode || !stockName) {
-                    throw new Error('종목 정보가 없습니다');
-                }
-
+                if (!stockCode || !stockName) throw new Error('종목 정보가 없습니다');
                 updatePageTitle(stockName);
                 await loadAndProcessTradeData(stockCode, stockName);
             } catch (error) {
@@ -229,7 +200,6 @@
                     loadStockData(stockName),
                     loadTrendData(stockCode)
                 ]);
-
                 updateCurrentState(stockData, trendData);
                 createDetailedScenarios(stockData);
                 renderSZChart(trendData);
@@ -258,10 +228,8 @@
         }
 
         function processJsonData(text, filterKey, filterValue) {
-            const cleanedText = text
-                .replace(/"NaN"|NaN|Infinity|-Infinity/g, 'null');
+            const cleanedText = text.replace(/"NaN"|NaN|Infinity|-Infinity/g, 'null');
             const data = JSON.parse(cleanedText);
-
             if (filterKey && filterValue) {
                 const item = data.all_signals?.find(s => s[filterKey] === filterValue);
                 if (!item) throw new Error('종목 정보 없음');
@@ -308,16 +276,15 @@
             scenarios.forEach((scenario, index) => {
                 tableBody.appendChild(createScenarioRow(scenario, index === 0));
             });
-
-            tableBody.appendChild(createInfoRow(limitScenario));
         }
 
         function findEntryLimitScenario(commonPrice, preferredPrice, currentSZ) {
-            const MAX_CHANGE = 20;
-            const STEP = 0.1;
+            const MAX_CHANGE = 50; // 최대 변화 범위 (퍼센트)
+            const STEP = 0.1; // 단계별 변화
             let bestScenario = null;
             let minDiff = Infinity;
 
+            // 보통주는 하락(-), 우선주는 상승(+)만 고려
             for (let cChange = -MAX_CHANGE; cChange <= 0; cChange += STEP) {
                 for (let pChange = 0; pChange <= MAX_CHANGE; pChange += STEP) {
                     const newCommon = Math.round(commonPrice * (1 + cChange / 100));
@@ -350,25 +317,15 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${scenario.name}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     ${scenario.commonPrice.toLocaleString()} KRW
-                    ${isCurrent ? '' : `<span class="text-xs text-${scenario.commonChange > 0 ? 'green' : 'red'}-600">(${scenario.commonChange.toFixed(1)}%)</span>`}
+                    ${isCurrent ? '' : `<span class="text-xs text-red-600">(${scenario.commonChange.toFixed(1)}%)</span>`}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     ${scenario.preferredPrice.toLocaleString()} KRW
-                    ${isCurrent ? '' : `<span class="text-xs text-${scenario.preferredChange > 0 ? 'green' : 'red'}-600">(+${scenario.preferredChange.toFixed(1)}%)</span>`}
+                    ${isCurrent ? '' : `<span class="text-xs text-green-600">(+${scenario.preferredChange.toFixed(1)}%)</span>`}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${scenario.spreadRate.toFixed(2)}%</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-${isEntryPossible ? 'green' : 'red'}-600 font-medium">${scenario.sz.toFixed(2)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-${isEntryPossible ? 'green' : 'red'}-600 font-bold">${isEntryPossible ? '가능 ✓' : '불가능 ✗'}</td>
-            `;
-            return row;
-        }
-
-        function createInfoRow(limitScenario) {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-600 bg-gray-50">
-                    📍 SZ 2.0 한계점: 보통주 ${limitScenario.commonChange.toFixed(1)}% 하락, 우선주 +${limitScenario.preferredChange.toFixed(1)}% 상승
-                </td>
             `;
             return row;
         }
@@ -381,7 +338,6 @@
 
         function renderSZChart(trendData) {
             if (szChart) szChart.destroy();
-
             const ctx = document.getElementById('sz-chart').getContext('2d');
             szChart = new Chart(ctx, {
                 type: 'line',
@@ -397,9 +353,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: false }
-                    }
+                    scales: { y: { beginAtZero: false } }
                 }
             });
         }
