@@ -175,7 +175,7 @@
             // URL에서 종목 정보 추출
             const urlParams = new URLSearchParams(window.location.search);
             const stockCode = urlParams.get('code');
-            const stockName = urlParams.get('name');
+            const stockName = decodeURIComponent(urlParams.get('name'));
 
             if (!stockCode || !stockName) {
                 alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
