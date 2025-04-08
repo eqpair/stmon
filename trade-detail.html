@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
-    <title>매매 진입 가능 범위 - EQ Pairs Monitoring System</title>
+    <title>Trend Detail - Scenario Analysis</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -31,43 +31,79 @@
             color: #16A34A;
         }
 
-        .entry-limit {
-            animation: pulse 2s infinite;
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
         }
 
-        @keyframes pulse {
-            0% {
-                background-color: rgba(220, 38, 38, 0.1);
-            }
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
 
-            50% {
-                background-color: rgba(220, 38, 38, 0.2);
-            }
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
 
-            100% {
-                background-color: rgba(220, 38, 38, 0.1);
-            }
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .slider {
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .scenario-result {
+            transition: all 0.3s;
         }
     </style>
 </head>
-
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <header class="mb-8 flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">매매 진입 가능 범위</h1>
-                <p class="text-sm text-gray-600">보통주 숏 & 우선주 롱 전략</p>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">시나리오 분석</h1>
+                <p class="text-sm text-gray-600">SZ 값 2.0 도달을 위한 가격 변동 시나리오</p>
             </div>
-            <div class="flex space-x-4">
-                <a href="#" onclick="window.history.back(); return false;"
-                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                    <i class="fas fa-arrow-left mr-2"></i> 이전 페이지
-                </a>
-                <a href="index.html"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-home mr-2"></i> 대시보드
-                </a>
-            </div>
+            <a href="javascript:history.back()"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i> 뒤로 가기
+            </a>
         </header>
 
         <!-- Loading Indicator -->
@@ -78,297 +114,666 @@
 
         <!-- Content Container -->
         <div id="content-container" class="hidden">
-            <!-- 현재 상태 카드 -->
+            <!-- Current Stock Info Card -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">현재 상태</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">현재 주식 정보</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="p-4 bg-blue-50 rounded-lg">
                         <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격</div>
-                        <div class="text-xl font-bold" id="common-price">-</div>
+                        <div class="text-xl font-bold" id="current-common-price">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
                         <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격</div>
-                        <div class="text-xl font-bold" id="preferred-price">-</div>
-                    </div>
-                    <div class="p-4 bg-red-50 rounded-lg">
-                        <div class="text-red-700 text-sm font-medium mb-1">현재 SZ 값</div>
-                        <div class="text-xl font-bold sz-high" id="sz-value">-</div>
+                        <div class="text-xl font-bold" id="current-preferred-price">-</div>
                     </div>
                     <div class="p-4 bg-green-50 rounded-lg">
-                        <div class="text-green-700 text-sm font-medium mb-1">현재 괴리율</div>
-                        <div class="text-xl font-bold" id="current-spread">-</div>
+                        <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
+                        <div class="text-xl font-bold" id="current-sz-value">-</div>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-yellow-700 text-sm font-medium mb-1">현재 괴리율</div>
+                        <div class="text-xl font-bold" id="current-discount-rate">-</div>
                     </div>
                 </div>
             </div>
+<!-- Scenario Tool -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">시나리오 분석 도구</h2>
 
-            <!-- 주요 시나리오 테이블 -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    보통주 하락 / 우선주 상승 시나리오
-                    <span class="text-sm font-normal text-red-600">(SZ 값 2.0 이상만 진입 가능)</span>
-                </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Manual Scenario Controls -->
+        <div class="bg-gray-50 rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-800 mb-4">수동 시나리오 조정</h3>
 
-                <div class="p-4 bg-yellow-50 rounded-lg mb-6">
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
-                        <div class="text-yellow-800">
-                            <strong>주의:</strong> 보통주가 내려가고 우선주가 올라갈수록 SZ 값이 감소합니다. SZ 값이 2.0 미만이 되면 매매 진입이 불가능합니다.
-                        </div>
-                    </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    보통주 가격 조정
+                    <span class="text-xs text-gray-500">(현재 가격: <span id="common-base-price">-</span>원)</span>
+                </label>
+                <input type="range" id="common-price-slider" class="slider mb-2" min="-30" max="30" value="0">
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>-30%</span>
+                    <span id="common-price-percent">0%</span>
+                    <span>+30%</span>
                 </div>
-
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    시나리오</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    보통주 가격</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    우선주 가격</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    괴리율</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    SZ 값</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    진입 가능 여부</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scenarios-table-body" class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                    데이터 계산 중...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="mt-2 text-sm">
+                    <span class="font-medium">변경된 가격:</span>
+                    <span id="common-price-adjusted" class="font-bold text-blue-600">-</span>
                 </div>
             </div>
 
-            <!-- 과거 SZ 차트 (최근 30일) -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">최근 30일 SZ 값 추이</h2>
-                <div class="chart-container">
-                    <canvas id="sz-chart"></canvas>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    우선주 가격 조정
+                    <span class="text-xs text-gray-500">(현재 가격: <span id="preferred-base-price">-</span>원)</span>
+                </label>
+                <input type="range" id="preferred-price-slider" class="slider mb-2" min="-30" max="30" value="0">
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>-30%</span>
+                    <span id="preferred-price-percent">0%</span>
+                    <span>+30%</span>
+                </div>
+                <div class="mt-2 text-sm">
+                    <span class="font-medium">변경된 가격:</span>
+                    <span id="preferred-price-adjusted" class="font-bold text-blue-600">-</span>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button id="calculate-button"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    계산하기
+                </button>
+            </div>
+        </div>
+
+        <!-- Calculation Results -->
+        <div id="manual-result" class="bg-gray-50 rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-800 mb-4">시나리오 결과</h3>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="p-4 bg-white rounded-lg shadow">
+                    <div class="text-gray-700 text-sm font-medium mb-1">조정된 괴리율</div>
+                    <div class="text-xl font-bold" id="adjusted-discount-rate">-</div>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow">
+                    <div class="text-gray-700 text-sm font-medium mb-1">조정된 SZ 값</div>
+                    <div class="text-xl font-bold" id="adjusted-sz-value">-</div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-white rounded-lg shadow mt-4">
+                <div class="text-gray-700 text-sm font-medium mb-2">시나리오 해석</div>
+                <div id="scenario-interpretation" class="text-sm text-gray-800">
+                    가격을 조정하여 시나리오를 계산해 보세요.
                 </div>
             </div>
         </div>
     </div>
-
+    <!-- Auto Scenario Generation -->
+    <div class="mt-8">
+        <h3 class="text-lg font-medium text-gray-800 mb-4">SZ 값 2.0 도달을 위한 가격 변동 시나리오</h3>
+    
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- Scenario 1: Common Down, Preferred Up -->
+            <div class="bg-gray-50 rounded-lg p-4 scenario-result">
+                <h4 class="font-medium text-gray-900 mb-2">시나리오 1: 보통주 하락, 우선주 상승</h4>
+                <div id="scenario1" class="text-sm">
+                    <p class="mb-2">보통주는 <span id="s1-common-percent" class="font-bold text-red-600">-</span> 하락하고, 우선주는
+                        <span id="s1-preferred-percent" class="font-bold text-green-600">-</span> 상승할 경우 SZ 값이 2.0에 도달합니다.
+                    </p>
+                    <p class="mt-2">보통주 가격: <span id="s1-common-price" class="font-medium">-</span></p>
+                    <p>우선주 가격: <span id="s1-preferred-price" class="font-medium">-</span></p>
+                    <p>괴리율: <span id="s1-discount-rate" class="font-medium">-</span></p>
+                </div>
+            </div>
+    
+            <!-- Scenario 2: Common Down Only -->
+            <div class="bg-gray-50 rounded-lg p-4 scenario-result">
+                <h4 class="font-medium text-gray-900 mb-2">시나리오 2: 보통주만 하락</h4>
+                <div id="scenario2" class="text-sm">
+                    <p class="mb-2">보통주가 <span id="s2-common-percent" class="font-bold text-red-600">-</span> 하락하고, 우선주는 현재
+                        가격을 유지할 경우 SZ 값이 2.0에 도달합니다.</p>
+                    <p class="mt-2">보통주 가격: <span id="s2-common-price" class="font-medium">-</span></p>
+                    <p>우선주 가격: <span id="s2-preferred-price" class="font-medium">-</span></p>
+                    <p>괴리율: <span id="s2-discount-rate" class="font-medium">-</span></p>
+                </div>
+            </div>
+    
+            <!-- Scenario 3: Preferred Up Only -->
+            <div class="bg-gray-50 rounded-lg p-4 scenario-result">
+                <h4 class="font-medium text-gray-900 mb-2">시나리오 3: 우선주만 상승</h4>
+                <div id="scenario3" class="text-sm">
+                    <p class="mb-2">우선주가 <span id="s3-preferred-percent" class="font-bold text-green-600">-</span> 상승하고,
+                        보통주는 현재 가격을 유지할 경우 SZ 값이 2.0에 도달합니다.</p>
+                    <p class="mt-2">보통주 가격: <span id="s3-common-price" class="font-medium">-</span></p>
+                    <p>우선주 가격: <span id="s3-preferred-price" class="font-medium">-</span></p>
+                    <p>괴리율: <span id="s3-discount-rate" class="font-medium">-</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <!-- Historical SZ Value Chart -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ 값 추이</h2>
+        <div class="chart-container">
+            <canvas id="sz-chart"></canvas>
+        </div>
+    </div>
+    </div>
+    </div>
+    
     <footer class="bg-white py-6 mt-8">
         <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
             <p>© 2025 EQ Pair Monitoring System.</p>
         </div>
     </footer>
-
     <script>
-        let szChart = null;
+        // 페이지 로드 이벤트
+        document.addEventListener('DOMContentLoaded', () => {
+            // URL에서 종목 정보 추출
+            const urlParams = new URLSearchParams(window.location.search);
+            const stockCode = urlParams.get('code');
+            const stockName = urlParams.get('name');
 
-        document.addEventListener('DOMContentLoaded', () => initializePage());
+            if (!stockCode || !stockName) {
+                alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
+                window.location.href = 'index.html';
+                return;
+            }
 
-        async function initializePage() {
+            // 페이지 제목 설정
+            document.title = `${stockName} - 시나리오 분석`;
+            document.getElementById('stock-name').textContent = `${stockName} 시나리오 분석`;
+
+            // 데이터 로드 및 처리
+            loadAndProcessStockData(stockCode, stockName);
+
+            // 슬라이더 이벤트 리스너 설정
+            setupSliderListeners();
+
+            // 계산 버튼 이벤트 리스너
+            document.getElementById('calculate-button').addEventListener('click', calculateManualScenario);
+        });
+
+        // 전역 변수 설정
+        let stockData = {
+            current: {
+                commonPrice: 0,
+                preferredPrice: 0,
+                szValue: 0,
+                discountRate: 0
+            },
+            history: {
+                dates: [],
+                szValues: [],
+                discountRates: [],
+                mean: 0,
+                stdDev: 0
+            }
+        };
+
+        async function loadAndProcessStockData(stockCode, stockName) {
             try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const stockCode = urlParams.get('code');
-                const stockName = urlParams.get('name');
+                // 로딩 컨테이너 표시
+                document.getElementById('loading-container').style.display = 'flex';
+                document.getElementById('content-container').classList.add('hidden');
 
-                if (!stockCode || !stockName) throw new Error('종목 정보가 없습니다');
-                updatePageTitle(stockName);
-                await loadAndProcessTradeData(stockCode, stockName);
+                // 데이터 로드
+                const trendData = await loadStockData(stockCode, stockName);
+                const stockDataJson = await loadStockDataJson();
+
+                // 현재 SZ 값 추출
+                const currentSignal = stockDataJson.all_signals.find(s => s.stock_name === stockName);
+                if (!currentSignal) {
+                    throw new Error('현재 신호 데이터를 찾을 수 없습니다.');
+                }
+
+                // 현재 주가 데이터 저장
+                const lastIndex = trendData.dates.length - 1;
+                stockData.current.commonPrice = trendData.common_prices[lastIndex];
+                stockData.current.preferredPrice = trendData.preferred_prices[lastIndex];
+                stockData.current.szValue = currentSignal.sz_value;
+                stockData.current.discountRate = (stockData.current.commonPrice - stockData.current.preferredPrice) / stockData.current.commonPrice;
+
+                // 히스토리 데이터 저장
+                stockData.history.dates = trendData.dates.slice(-150); // 최근 5개월만
+                stockData.history.discountRates = trendData.discount_rates.slice(-150);
+
+                // SZ 값 계산을 위한 통계 데이터
+                const windowData = trendData.discount_rates.slice(-250, -1); // 최근 250일(약 1년) 데이터로 계산
+                stockData.history.mean = calculateMean(windowData);
+                stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
+                stockData.history.szValues = trendData.sz_values ? trendData.sz_values.slice(-150) :
+                    calculateSZValues(trendData.discount_rates, stockData.history.mean, stockData.history.stdDev).slice(-150);
+
+                // UI 업데이트
+                updateCurrentInfo();
+                renderSZChart();
+                calculateScenarios();
+
+                // 로딩 컨테이너 숨기기, 콘텐츠 표시
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
             } catch (error) {
-                handleInitializationError(error);
+                console.error('데이터 로드 및 처리 오류:', error);
+
+                // 로딩 컨테이너에 오류 메시지 표시
+                const loadingContainer = document.getElementById('loading-container');
+                loadingContainer.innerHTML = `
+                        <div class="text-red-500 text-center">
+                            <p>데이터를 로드할 수 없습니다.</p>
+                            <p>${error.message}</p>
+                            <button onclick="window.location.reload()" 
+                                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                                다시 시도
+                            </button>
+                            <button onclick="window.location.href='index.html'" 
+                                    class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                                메인 페이지로 돌아가기
+                            </button>
+                        </div>
+                    `;
             }
         }
+        async function loadStockData(stockCode, stockName) {
+                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+                if (!trendDataResponse.ok) {
+                    throw new Error(`트렌드 데이터를 로드할 수 없습니다: ${stockName}`);
+                }
 
-        function updatePageTitle(stockName) {
-            const title = `${stockName} - 매매 진입 가능 범위`;
-            document.title = title;
-            document.getElementById('stock-name').textContent = title;
-        }
+                const trendDataText = await trendDataResponse.text();
 
-        async function loadAndProcessTradeData(stockCode, stockName) {
-            toggleLoading(true);
-            try {
-                const [stockData, trendData] = await Promise.all([
-                    loadStockData(stockName),
-                    loadTrendData(stockCode)
-                ]);
-                updateCurrentState(stockData, trendData);
-                createDetailedScenarios(stockData);
-                renderSZChart(trendData);
-            } finally {
-                toggleLoading(false);
-            }
-        }
+                // JSON 파싱 전에 "NaN" 문자열을 null로 대체
+                const cleanedTrendDataText = trendDataText
+                    .replace(/"NaN"/g, 'null')
+                    .replace(/NaN/g, 'null')
+                    .replace(/Infinity/g, 'null')
+                    .replace(/-Infinity/g, 'null');
 
-        function toggleLoading(show) {
-            const loading = document.getElementById('loading-container');
-            const content = document.getElementById('content-container');
-            loading.style.display = show ? 'flex' : 'none';
-            content.classList.toggle('hidden', show);
-        }
-
-        async function loadStockData(stockName) {
-            const response = await fetch(`data/stock_data.json?t=${Date.now()}`);
-            if (!response.ok) throw new Error('주식 데이터 로드 실패');
-            return processJsonData(await response.text(), stockName, 'stock_name');
-        }
-
-        async function loadTrendData(stockCode) {
-            const response = await fetch(`data/trends/${stockCode}.json?t=${Date.now()}`);
-            if (!response.ok) throw new Error('트렌드 데이터 로드 실패');
-            return processJsonData(await response.text());
-        }
-
-        function processJsonData(text, filterKey, filterValue) {
-            const cleanedText = text.replace(/"NaN"|NaN|Infinity|-Infinity/g, 'null');
-            const data = JSON.parse(cleanedText);
-            if (filterKey && filterValue) {
-                const item = data.all_signals?.find(s => s[filterKey] === filterValue);
-                if (!item) throw new Error('종목 정보 없음');
-                return item;
-            }
-            return data;
-        }
-
-        function updateCurrentState(stockData, trendData) {
-            const lastIndex = trendData.dates.length - 1;
-            const commonPrice = Math.round(stockData.price_a || trendData.common_prices[lastIndex] || 0);
-            const preferredPrice = Math.round(stockData.price_b || trendData.preferred_prices[lastIndex] || 0);
-            const szValue = stockData.sz_value || 0;
-            const spreadRate = commonPrice ? ((commonPrice - preferredPrice) / commonPrice) * 100 : 0;
-
-            document.getElementById('common-price').textContent = `${commonPrice.toLocaleString()} KRW`;
-            document.getElementById('preferred-price').textContent = `${preferredPrice.toLocaleString()} KRW`;
-            document.getElementById('sz-value').textContent = szValue.toFixed(2);
-            document.getElementById('sz-value').className = `text-xl font-bold ${getSZClass(szValue)}`;
-            document.getElementById('current-spread').textContent = `${spreadRate.toFixed(2)}%`;
-        }
-
-        function getSZClass(szValue) {
-            if (szValue >= 2.0) return 'sz-high';
-            if (szValue >= 1.5) return 'sz-medium';
-            return 'sz-low';
-        }
-
-        function createDetailedScenarios(stockData) {
-            const tableBody = document.getElementById('scenarios-table-body');
-            const commonPrice = Math.round(stockData.price_a || 0);
-            const preferredPrice = Math.round(stockData.price_b || 0);
-            const currentSZ = stockData.sz_value || 0;
-            const currentSpreadRate = commonPrice ? ((commonPrice - preferredPrice) / commonPrice) * 100 : 0;
-
-            const limitScenario = findEntryLimitScenario(commonPrice, preferredPrice, currentSZ);
-            tableBody.innerHTML = '';
-
-            const scenarios = [
-                { name: "현재 상태", commonPrice, preferredPrice, spreadRate: currentSpreadRate, sz: currentSZ, change: 0 },
-                { ...limitScenario, name: "SZ 값 = 2.0 한계점" }
-            ];
-
-            scenarios.forEach((scenario, index) => {
-                tableBody.appendChild(createScenarioRow(scenario, index === 0));
-            });
-        }
-
-        function findEntryLimitScenario(commonPrice, preferredPrice, currentSZ) {
-            const MAX_CHANGE = 50; // 최대 변화 범위 (퍼센트)
-            const STEP = 0.1; // 단계별 변화
-            let bestScenario = null;
-            let minDiff = Infinity;
-
-            // 보통주는 하락(-), 우선주는 상승(+)만 고려
-            for (let cChange = -MAX_CHANGE; cChange <= 0; cChange += STEP) {
-                for (let pChange = 0; pChange <= MAX_CHANGE; pChange += STEP) {
-                    const newCommon = Math.round(commonPrice * (1 + cChange / 100));
-                    const newPreferred = Math.round(preferredPrice * (1 + pChange / 100));
-                    const newSZ = calculateSZ(newCommon, newPreferred, commonPrice, preferredPrice, currentSZ);
-                    const diff = Math.abs(newSZ - 2.0);
-
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        bestScenario = {
-                            commonChange: cChange,
-                            preferredChange: pChange,
-                            commonPrice: newCommon,
-                            preferredPrice: newPreferred,
-                            spreadRate: newCommon ? ((newCommon - newPreferred) / newCommon) * 100 : 0,
-                            sz: newSZ
-                        };
+                return JSON.parse(cleanedTrendDataText, (key, value) => {
+                    // 파싱 중에 특수값 처리
+                    if (value === null || value === undefined ||
+                        (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
+                        return null;
                     }
-                }
+                    if (typeof value === 'number' && !isFinite(value)) {
+                        return null;
+                    }
+                    return value;
+                });
             }
-            return bestScenario;
-        }
 
-        function createScenarioRow(scenario, isCurrent) {
-            const row = document.createElement('tr');
-            row.className = isCurrent ? 'bg-blue-50' : 'bg-yellow-50 entry-limit';
-            const isEntryPossible = scenario.sz >= 2.0;
-
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${scenario.name}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${scenario.commonPrice.toLocaleString()} KRW
-                    ${isCurrent ? '' : `<span class="text-xs text-red-600">(${scenario.commonChange.toFixed(1)}%)</span>`}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${scenario.preferredPrice.toLocaleString()} KRW
-                    ${isCurrent ? '' : `<span class="text-xs text-green-600">(+${scenario.preferredChange.toFixed(1)}%)</span>`}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${scenario.spreadRate.toFixed(2)}%</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-${isEntryPossible ? 'green' : 'red'}-600 font-medium">${scenario.sz.toFixed(2)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-${isEntryPossible ? 'green' : 'red'}-600 font-bold">${isEntryPossible ? '가능 ✓' : '불가능 ✗'}</td>
-            `;
-            return row;
-        }
-
-        function calculateSZ(commonPrice, preferredPrice, origCommonPrice, origPreferredPrice, origSZ) {
-            const origSpread = origCommonPrice - origPreferredPrice;
-            const newSpread = commonPrice - preferredPrice;
-            return origSpread === 0 ? origSZ : (origSZ * newSpread) / origSpread;
-        }
-
-        function renderSZChart(trendData) {
-            if (szChart) szChart.destroy();
-            const ctx = document.getElementById('sz-chart').getContext('2d');
-            szChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: trendData.dates,
-                    datasets: [{
-                        label: 'SZ 값',
-                        data: trendData.sz_values,
-                        borderColor: '#DC2626',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: false } }
+            async function loadStockDataJson() {
+                const response = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error('신호 데이터를 로드할 수 없습니다.');
                 }
-            });
-        }
 
-        function handleInitializationError(error) {
-            const loading = document.getElementById('loading-container');
-            loading.innerHTML = `
-                <div class="text-red-500 text-center">
-                    <p>오류 발생: ${error.message}</p>
-                    <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">다시 시도</button>
-                    <button onclick="location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">메인 페이지</button>
-                </div>
-            `;
-        }
-    </script>
-</body>
+                const dataText = await response.text();
 
-</html>
+                // 특수값 처리
+                const cleanedDataText = dataText
+                    .replace(/"NaN"/g, 'null')
+                    .replace(/NaN/g, 'null')
+                    .replace(/Infinity/g, 'null')
+                    .replace(/-Infinity/g, 'null');
+
+                return JSON.parse(cleanedDataText);
+            }
+
+            function calculateMean(data) {
+                const validData = data.filter(val => val !== null && !isNaN(val));
+                if (validData.length === 0) return 0;
+
+                const sum = validData.reduce((acc, val) => acc + val, 0);
+                return sum / validData.length;
+            }
+
+            function calculateStdDev(data, mean) {
+                const validData = data.filter(val => val !== null && !isNaN(val));
+                if (validData.length === 0) return 0;
+
+                const squaredDiffs = validData.map(val => Math.pow(val - mean, 2));
+                const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / validData.length;
+                return Math.sqrt(variance);
+            }
+
+            function calculateSZValues(discountRates, mean, stdDev) {
+                if (!discountRates || discountRates.length === 0) return [];
+
+                return discountRates.map(rate => {
+                    if (rate === null || isNaN(rate)) return null;
+                    if (stdDev === 0) return 0;
+                    return (rate - mean) / stdDev;
+                });
+            }
+
+            function calculateSZValue(discountRate) {
+                if (stockData.history.stdDev === 0) return 0;
+                return (discountRate - stockData.history.mean) / stockData.history.stdDev;
+            }
+
+            function updateCurrentInfo() {
+                // 현재 가격 정보 업데이트
+                document.getElementById('current-common-price').textContent = stockData.current.commonPrice.toLocaleString() + ' KRW';
+                document.getElementById('current-preferred-price').textContent = stockData.current.preferredPrice.toLocaleString() + ' KRW';
+
+                // SZ 값 표시
+                const szElement = document.getElementById('current-sz-value');
+                szElement.textContent = stockData.current.szValue.toFixed(2);
+
+                // SZ 값에 따른 색상 변경
+                szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                if (stockData.current.szValue >= 2.5) {
+                    szElement.classList.add('sz-high');
+                } else if (stockData.current.szValue >= 1.5) {
+                    szElement.classList.add('sz-medium');
+                } else {
+                    szElement.classList.add('sz-low');
+                }
+
+                // 괴리율 표시 (백분율로 변환)
+                const discountElement = document.getElementById('current-discount-rate');
+                const discountPercent = (stockData.current.discountRate * 100).toFixed(2);
+                discountElement.textContent = discountPercent + '%';
+
+                // 슬라이더 기본 가격 업데이트
+                document.getElementById('common-base-price').textContent = stockData.current.commonPrice.toLocaleString();
+                document.getElementById('preferred-base-price').textContent = stockData.current.preferredPrice.toLocaleString();
+
+                // 조정된 가격 초기화
+                document.getElementById('common-price-adjusted').textContent = stockData.current.commonPrice.toLocaleString() + ' KRW';
+                document.getElementById('preferred-price-adjusted').textContent = stockData.current.preferredPrice.toLocaleString() + ' KRW';
+            }
+            function renderSZChart() {
+                    const ctx = document.getElementById('sz-chart').getContext('2d');
+
+                    // 데이터 준비
+                    const chartLabels = stockData.history.dates;
+                    const chartValues = stockData.history.szValues;
+
+                    // 차트 생성
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{
+                                label: 'SZ Value',
+                                data: chartValues,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 2,
+                                pointRadius: 1,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'SZ = 2.0 기준선',
+                                data: Array(chartLabels.length).fill(2.0),
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1,
+                                borderDash: [5, 5],
+                                pointRadius: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            return `SZ Value: ${context.raw ? context.raw.toFixed(2) : 'N/A'}`;
+                                        }
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: '최근 5개월 SZ 값 트렌드'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'SZ Value'
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        maxTicksLimit: 10,
+                                        autoSkip: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                function setupSliderListeners() {
+                    // 보통주 슬라이더
+                    const commonSlider = document.getElementById('common-price-slider');
+                    const commonPercent = document.getElementById('common-price-percent');
+                    const commonAdjusted = document.getElementById('common-price-adjusted');
+
+                    commonSlider.addEventListener('input', function () {
+                        const percent = this.value;
+                        commonPercent.textContent = `${percent}%`;
+
+                        const adjusted = stockData.current.commonPrice * (1 + parseInt(percent) / 100);
+                        commonAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
+                    });
+
+                    // 우선주 슬라이더
+                    const preferredSlider = document.getElementById('preferred-price-slider');
+                    const preferredPercent = document.getElementById('preferred-price-percent');
+                    const preferredAdjusted = document.getElementById('preferred-price-adjusted');
+
+                    preferredSlider.addEventListener('input', function () {
+                        const percent = this.value;
+                        preferredPercent.textContent = `${percent}%`;
+
+                        const adjusted = stockData.current.preferredPrice * (1 + parseInt(percent) / 100);
+                        preferredAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
+                    });
+                }
+                function calculateManualScenario() {
+                        // 슬라이더에서 값 가져오기
+                        const commonPct = parseInt(document.getElementById('common-price-slider').value);
+                        const preferredPct = parseInt(document.getElementById('preferred-price-slider').value);
+
+                        // 조정된 가격 계산
+                        const adjustedCommon = stockData.current.commonPrice * (1 + commonPct / 100);
+                        const adjustedPreferred = stockData.current.preferredPrice * (1 + preferredPct / 100);
+
+                        // 조정된 괴리율 계산
+                        const adjustedDiscountRate = (adjustedCommon - adjustedPreferred) / adjustedCommon;
+
+                        // 조정된 SZ 값 계산
+                        const adjustedSZValue = calculateSZValue(adjustedDiscountRate);
+
+                        // UI 업데이트
+                        const discountRateEl = document.getElementById('adjusted-discount-rate');
+                        discountRateEl.textContent = (adjustedDiscountRate * 100).toFixed(2) + '%';
+
+                        const szValueEl = document.getElementById('adjusted-sz-value');
+                        szValueEl.textContent = adjustedSZValue.toFixed(2);
+
+                        // SZ 값에 따른 색상 적용
+                        szValueEl.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                        if (adjustedSZValue >= 2.5) {
+                            szValueEl.classList.add('sz-high');
+                        } else if (adjustedSZValue >= 1.5) {
+                            szValueEl.classList.add('sz-medium');
+                        } else {
+                            szValueEl.classList.add('sz-low');
+                        }
+
+                        // 시나리오 해석 업데이트
+                        const interpretationEl = document.getElementById('scenario-interpretation');
+                        if (adjustedSZValue >= 2.0) {
+                            interpretationEl.innerHTML = `
+                    <p class="text-red-600 font-medium">현재 SZ 값이 2.0 이상입니다!</p>
+                    <p class="mt-1">보통주가 ${commonPct}% ${commonPct >= 0 ? '상승' : '하락'}하고, 우선주가 ${preferredPct}% ${preferredPct >= 0 ? '상승' : '하락'}할 경우, 
+                    SZ 값은 <span class="${adjustedSZValue >= 2.5 ? 'sz-high' : 'sz-medium'}">${adjustedSZValue.toFixed(2)}</span>에 도달합니다.</p>
+                `;
+                        } else {
+                            interpretationEl.innerHTML = `
+                    <p>현재 조정된 SZ 값은 <span class="${adjustedSZValue >= 1.5 ? 'sz-medium' : 'sz-low'
+                                }">${adjustedSZValue.toFixed(2)}</span>입니다.</p>
+                    <p class="mt-1">이 시나리오에서는 SZ 값이 2.0에 도달하지 않습니다. SZ 값 2.0 도달을 위해서는 더 큰 가격 변동이 필요합니다.</p>
+                `;
+                        }
+                    }
+                    function calculateScenarios() {
+                            // 시나리오 1: 보통주 하락, 우선주 상승 (비율 50:50으로 조정)
+                            calculateScenario1();
+
+                            // 시나리오 2: 보통주만 하락
+                            calculateScenario2();
+
+                            // 시나리오 3: 우선주만 상승
+                            calculateScenario3();
+                        }
+
+                        function calculateScenario1() {
+                            // 보통주 하락, 우선주 상승 (비율 50:50으로 조정)
+                            let targetDiscountRate = 0;
+                            let commonPct = 0;
+                            let preferredPct = 0;
+
+                            // 반복적으로 계산하여 SZ=2.0에 도달하는 가격 변동 찾기
+                            for (let i = 1; i <= 50; i++) {
+                                // 보통주 i% 하락, 우선주 i% 상승 시도
+                                const commonPrice = stockData.current.commonPrice * (1 - i / 100);
+                                const preferredPrice = stockData.current.preferredPrice * (1 + i / 100);
+
+                                const discountRate = (commonPrice - preferredPrice) / commonPrice;
+                                const szValue = calculateSZValue(discountRate);
+
+                                if (szValue >= 2.0) {
+                                    targetDiscountRate = discountRate;
+                                    commonPct = -i;
+                                    preferredPct = i;
+                                    break;
+                                }
+                            }
+
+                            // 계산 결과가 나오지 않으면 더 큰 범위 시도
+                            if (commonPct === 0) {
+                                for (let i = 1; i <= 30; i++) {
+                                    // 보통주 2i% 하락, 우선주 i% 상승 시도 (2:1 비율)
+                                    const commonPrice = stockData.current.commonPrice * (1 - i * 2 / 100);
+                                    const preferredPrice = stockData.current.preferredPrice * (1 + i / 100);
+
+                                    const discountRate = (commonPrice - preferredPrice) / commonPrice;
+                                    const szValue = calculateSZValue(discountRate);
+
+                                    if (szValue >= 2.0) {
+                                        targetDiscountRate = discountRate;
+                                        commonPct = -i * 2;
+                                        preferredPct = i;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // UI 업데이트
+                            if (commonPct === 0) {
+                                // 계산 결과가 없는 경우
+                                document.getElementById('scenario1').innerHTML =
+                                    '<p class="text-red-600">현재 데이터로는 SZ 값 2.0에 도달하는 조합을 찾을 수 없습니다.</p>';
+                            } else {
+                                // 계산 결과 업데이트
+                                const commonPrice = stockData.current.commonPrice * (1 + commonPct / 100);
+                                const preferredPrice = stockData.current.preferredPrice * (1 + preferredPct / 100);
+
+                                document.getElementById('s1-common-percent').textContent = `${Math.abs(commonPct).toFixed(1)}%`;
+                                document.getElementById('s1-preferred-percent').textContent = `${Math.abs(preferredPct).toFixed(1)}%`;
+                                document.getElementById('s1-common-price').textContent = commonPrice.toLocaleString() + ' KRW';
+                                document.getElementById('s1-preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
+                                document.getElementById('s1-discount-rate').textContent = (targetDiscountRate * 100).toFixed(2) + '%';
+                            }
+                        }
+                        function calculateScenario2() {
+                                // 보통주만 하락
+                                let targetDiscountRate = 0;
+                                let commonPct = 0;
+
+                                // 반복적으로 계산하여 SZ=2.0에 도달하는 가격 변동 찾기
+                                for (let i = 1; i <= 50; i++) {
+                                    // 보통주 i% 하락
+                                    const commonPrice = stockData.current.commonPrice * (1 - i / 100);
+                                    const preferredPrice = stockData.current.preferredPrice; // 우선주 가격 유지
+
+                                    const discountRate = (commonPrice - preferredPrice) / commonPrice;
+                                    const szValue = calculateSZValue(discountRate);
+
+                                    if (szValue >= 2.0) {
+                                        targetDiscountRate = discountRate;
+                                        commonPct = -i;
+                                        break;
+                                    }
+                                }
+
+                                // UI 업데이트
+                                if (commonPct === 0) {
+                                    // 계산 결과가 없는 경우
+                                    document.getElementById('scenario2').innerHTML =
+                                        '<p class="text-red-600">현재 데이터로는 SZ 값 2.0에 도달하는 보통주 하락 비율을 찾을 수 없습니다.</p>';
+                                } else {
+                                    // 계산 결과 업데이트
+                                    const commonPrice = stockData.current.commonPrice * (1 + commonPct / 100);
+                                    const preferredPrice = stockData.current.preferredPrice;
+
+                                    document.getElementById('s2-common-percent').textContent = `${Math.abs(commonPct).toFixed(1)}%`;
+                                    document.getElementById('s2-common-price').textContent = commonPrice.toLocaleString() + ' KRW';
+                                    document.getElementById('s2-preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
+                                    document.getElementById('s2-discount-rate').textContent = (targetDiscountRate * 100).toFixed(2) + '%';
+                                }
+                            }
+
+                            function calculateScenario3() {
+                                // 우선주만 상승
+                                let targetDiscountRate = 0;
+                                let preferredPct = 0;
+
+                                // 반복적으로 계산하여 SZ=2.0에 도달하는 가격 변동 찾기
+                                for (let i = 1; i <= 50; i++) {
+                                    // 우선주 i% 상승
+                                    const commonPrice = stockData.current.commonPrice; // 보통주 가격 유지
+                                    const preferredPrice = stockData.current.preferredPrice * (1 + i / 100);
+
+                                    const discountRate = (commonPrice - preferredPrice) / commonPrice;
+                                    const szValue = calculateSZValue(discountRate);
+
+                                    if (szValue >= 2.0) {
+                                        targetDiscountRate = discountRate;
+                                        preferredPct = i;
+                                        break;
+                                    }
+                                }
+
+                                // UI 업데이트
+                                if (preferredPct === 0) {
+                                    // 계산 결과가 없는 경우
+                                    document.getElementById('scenario3').innerHTML =
+                                        '<p class="text-red-600">현재 데이터로는 SZ 값 2.0에 도달하는 우선주 상승 비율을 찾을 수 없습니다.</p>';
+                                } else {
+                                    // 계산 결과 업데이트
+                                    const commonPrice = stockData.current.commonPrice;
+                                    const preferredPrice = stockData.current.preferredPrice * (1 + preferredPct / 100);
+
+                                    document.getElementById('s3-preferred-percent').textContent = `${Math.abs(preferredPct).toFixed(1)}%`;
+                                    document.getElementById('s3-common-price').textContent = commonPrice.toLocaleString() + ' KRW';
+                                    document.getElementById('s3-preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
+                                    document.getElementById('s3-discount-rate').textContent = (targetDiscountRate * 100).toFixed(2) + '%';
+                                }
+                            }
+                        </script>
+    </body>
+    
+    </html>
