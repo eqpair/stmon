@@ -72,17 +72,6 @@
                 background-color: rgba(220, 38, 38, 0.1);
             }
         }
-
-        /* 테이블 그리드 강조 */
-        .grid-highlight {
-            background-color: #fef3c7;
-            /* 연한 노란색 */
-        }
-
-        /* SZ 경계값에 대한 강조 */
-        .sz-boundary {
-            border-left: 3px solid #ef4444;
-        }
     </style>
 </head>
 
@@ -136,86 +125,21 @@
                 </div>
             </div>
 
-            <!-- 진입 가능 범위 그리드 뷰 -->
+            <!-- 주요 시나리오 테이블 -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                    보통주/우선주 가격 변동에 따른 SZ 값
+                    보통주 하락 / 우선주 상승 시나리오
                     <span class="text-sm font-normal text-red-600">(SZ 값 2.0 이상만 진입 가능)</span>
                 </h2>
 
-                <div class="mb-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-4 bg-yellow-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
-                                <div class="text-yellow-800">
-                                    <strong>보통주 하락 + 우선주 상승</strong>시 SZ 값이 감소하며,
-                                    SZ 값이 2.0 미만이 되면 매매 진입이 불가능합니다.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-blue-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                                <div class="text-blue-800">
-                                    아래 표의 <strong class="bg-yellow-100 px-1">노란색 셀</strong>은 SZ 값 2.0 근처를 나타냅니다.
-                                    이 선을 벗어나면 진입이 불가능합니다.
-                                </div>
-                            </div>
+                <div class="p-4 bg-yellow-50 rounded-lg mb-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
+                        <div class="text-yellow-800">
+                            <strong>주의:</strong> 보통주가 내려가고 우선주가 올라갈수록 SZ 값이 감소합니다. SZ 값이 2.0 미만이 되면 매매 진입이 불가능합니다.
                         </div>
                     </div>
                 </div>
-
-                <!-- 그리드 뷰 -->
-                <div class="overflow-x-auto mb-4">
-                    <table class="min-w-full border border-gray-200">
-                        <thead>
-                            <tr>
-                                <th class="border bg-gray-100 px-4 py-2"></th>
-                                <th class="border bg-gray-100 px-4 py-2 text-center" colspan="9">보통주 가격 변동</th>
-                            </tr>
-                            <tr>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">우선주 가격 변동</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">-8%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">-6%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">-5%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">-4%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">-2%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">0%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">+2%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">+4%</th>
-                                <th class="border bg-gray-100 px-4 py-2 text-gray-600">+6%</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sz-grid-body">
-                            <!-- JavaScript로 채워질 내용 -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="flex flex-col sm:flex-row items-start gap-4 mt-4">
-                    <div class="flex items-center">
-                        <div class="w-6 h-6 bg-red-100 border border-red-300 mr-2"></div>
-                        <span class="text-sm">SZ 값 &lt; 2.0 (진입 불가)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-6 h-6 bg-yellow-100 border border-yellow-300 mr-2"></div>
-                        <span class="text-sm">SZ 값 2.0 근처 (주의)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-6 h-6 bg-green-100 border border-green-300 mr-2"></div>
-                        <span class="text-sm">SZ 값 &gt; 2.0 (진입 가능)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-6 h-6 bg-blue-100 border border-blue-300 mr-2"></div>
-                        <span class="text-sm">현재 상태</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 가격 변동 세부 시나리오 -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">주요 시나리오 상세 정보</h2>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -305,9 +229,6 @@
 
                 // 현재 상태 업데이트
                 updateCurrentState(stockData, trendData);
-
-                // SZ 그리드 생성
-                createSZGrid(stockData);
 
                 // 가격 변동 시나리오 테이블 생성
                 createDetailedScenarios(stockData);
@@ -415,74 +336,6 @@
             return (origSZ * newSpreadRate) / origSpreadRate;
         }
 
-        // SZ 그리드 생성
-        function createSZGrid(stockData) {
-            const gridBody = document.getElementById('sz-grid-body');
-            const commonPrice = Math.round(stockData.price_a);
-            const preferredPrice = Math.round(stockData.price_b);
-            const currentSZ = stockData.sz_value;
-
-            // 우선주 가격 변동 범위 (-2%부터 +8%까지, 2% 단위)
-            const preferredChanges = [8, 6, 5, 4, 2, 0, -2, -4, -6];
-
-            // 그리드 내용 초기화
-            gridBody.innerHTML = '';
-
-            // 각 우선주 변동에 대한 행 생성
-            preferredChanges.forEach(preferredChange => {
-                const row = document.createElement('tr');
-
-                // 우선주 변동 라벨 셀
-                const labelCell = document.createElement('td');
-                labelCell.className = 'border bg-gray-100 px-4 py-2 text-gray-600';
-                labelCell.textContent = `${preferredChange >= 0 ? '+' : ''}${preferredChange}%`;
-                row.appendChild(labelCell);
-
-                // 보통주 변동에 따른 SZ 값 셀
-                const commonChanges = [-8, -6, -5, -4, -2, 0, 2, 4, 6];
-
-                commonChanges.forEach(commonChange => {
-                    // 새 가격 계산
-                    const newCommonPrice = Math.round(commonPrice * (1 + (commonChange / 100)));
-                    const newPreferredPrice = Math.round(preferredPrice * (1 + (preferredChange / 100)));
-
-                    // 새 SZ 값 계산
-                    const newSZ = calculateSZ(newCommonPrice, newPreferredPrice, commonPrice, preferredPrice, currentSZ);
-
-                    // 셀 생성
-                    const cell = document.createElement('td');
-                    cell.className = 'border px-4 py-2 text-center';
-
-                    // 현재 상태인 경우 (0%, 0%)
-                    if (commonChange === 0 && preferredChange === 0) {
-                        cell.classList.add('bg-blue-100');
-                    }
-                    // SZ 값에 따른 배경색 설정
-                    else if (newSZ < 2.0) {
-                        cell.classList.add('bg-red-100');
-                    } else if (newSZ >= 1.9 && newSZ <= 2.1) {
-                        cell.classList.add('bg-yellow-100');
-                    } else {
-                        cell.classList.add('bg-green-100');
-                    }
-
-                    // SZ 값 표시
-                    cell.innerHTML = `<div class="font-medium">${newSZ.toFixed(2)}</div>`;
-
-                    // 진입 가능 여부 표시
-                    if (newSZ >= 2.0) {
-                        cell.innerHTML += `<div class="text-xs text-green-600">진입 가능</div>`;
-                    } else {
-                        cell.innerHTML += `<div class="text-xs text-red-600">진입 불가</div>`;
-                    }
-
-                    row.appendChild(cell);
-                });
-
-                gridBody.appendChild(row);
-            });
-        }
-
         // 세부 시나리오 테이블 생성
         function createDetailedScenarios(stockData) {
             const tableBody = document.getElementById('scenarios-table-body');
@@ -496,19 +349,46 @@
             // 테이블 내용 초기화
             tableBody.innerHTML = '';
 
-            // 주요 시나리오 정의
+            // 주요 시나리오 정의 (보통주 -N%, 우선주 +N%)
             const scenarios = [
                 { name: "현재 상태", commonChange: 0, preferredChange: 0 },
-                { name: "보통주 -5%", commonChange: -5, preferredChange: 0 },
-                { name: "우선주 +5%", commonChange: 0, preferredChange: 5 },
+                { name: "보통주 -1%, 우선주 +1%", commonChange: -1, preferredChange: 1 },
                 { name: "보통주 -2%, 우선주 +2%", commonChange: -2, preferredChange: 2 },
+                { name: "보통주 -3%, 우선주 +3%", commonChange: -3, preferredChange: 3 },
+                { name: "보통주 -4%, 우선주 +4%", commonChange: -4, preferredChange: 4 },
                 { name: "보통주 -5%, 우선주 +5%", commonChange: -5, preferredChange: 5 },
-                { name: "한계점 (SZ = 2.0)", commonChange: "limit", preferredChange: "limit" }
+                { name: "SZ 값 = 2.0 한계점", commonChange: "limit", preferredChange: "limit" }
             ];
 
             // 한계점 계산 (SZ = 2.0)
             const limitSZ = 2.0;
-            const limitSpreadRate = (currentSpreadRate * limitSZ) / currentSZ;
+
+            // 현재 SZ 값에 대한 비율
+            const szRatio = limitSZ / currentSZ;
+
+            // 현재 괴리율에 대한 한계 괴리율
+            const limitSpreadRate = currentSpreadRate * szRatio;
+
+            let limitCommonChange = 0;
+            let limitPreferredChange = 0;
+
+            // 한계점 근사값 찾기 위한 시뮬레이션
+            for (let i = 1; i <= 10; i++) {
+                const testCommonChange = -i;
+                const testPreferredChange = i;
+
+                const testCommonPrice = commonPrice * (1 + (testCommonChange / 100));
+                const testPreferredPrice = preferredPrice * (1 + (testPreferredChange / 100));
+
+                const testSZ = calculateSZ(testCommonPrice, testPreferredPrice, commonPrice, preferredPrice, currentSZ);
+
+                if (testSZ <= 2.0) {
+                    // 한계점 찾음 (마지막으로 2.0 이상인 지점)
+                    limitCommonChange = -(i - 0.5);
+                    limitPreferredChange = (i - 0.5);
+                    break;
+                }
+            }
 
             // 각 시나리오에 대한 행 생성
             scenarios.forEach(scenario => {
@@ -518,25 +398,14 @@
 
                 // 한계점 시나리오 처리
                 if (scenario.commonChange === "limit") {
-                    // SZ 값이 정확히 2.0일 때의 가격 조합 계산
-                    // 괴리율을 유지하면서 보통주 가격 하락, 우선주 가격 상승
-                    const ratio = 0.5; // 변화 비율 분배 (보통주:우선주 = 1:1)
-
-                    // 괴리율 변화에 필요한 총 가격 변화율
-                    const totalChangeNeeded = (limitSpreadRate - currentSpreadRate) / currentSpreadRate;
-
-                    // 보통주 가격 하락률
-                    const commonChangeRate = -totalChangeNeeded * ratio;
-
-                    // 우선주 가격 상승률
-                    const preferredChangeRate = totalChangeNeeded * (1 - ratio);
-
-                    newCommonPrice = Math.round(commonPrice * (1 + commonChangeRate));
-                    newPreferredPrice = Math.round(preferredPrice * (1 + preferredChangeRate));
+                    // 한계점에서의 가격 변화
+                    newCommonPrice = Math.round(commonPrice * (1 + (limitCommonChange / 100)));
+                    newPreferredPrice = Math.round(preferredPrice * (1 + (limitPreferredChange / 100)));
                     newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
-                    newSZ = limitSZ;
+                    newSZ = 2.0; // 정확히 2.0으로 설정
 
-                    scenario.name = `한계점 (보통주 ${(commonChangeRate * 100).toFixed(1)}%, 우선주 ${(preferredChangeRate * 100).toFixed(1)}%)`;
+                    // 시나리오 이름 업데이트
+                    scenario.name = `SZ 값 = 2.0 한계점 (보통주 ${limitCommonChange.toFixed(1)}%, 우선주 +${limitPreferredChange.toFixed(1)}%)`;
                 } else {
                     // 일반 시나리오
                     newCommonPrice = Math.round(commonPrice * (1 + (scenario.commonChange / 100)));
@@ -556,6 +425,8 @@
                     row.classList.add('bg-blue-50');
                 } else if (scenario.commonChange === "limit") {
                     row.classList.add('bg-yellow-50');
+                } else if (!isEntryPossible) {
+                    row.classList.add('bg-red-50');
                 }
 
                 // 셀 스타일 설정
