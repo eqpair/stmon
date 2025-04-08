@@ -332,6 +332,9 @@
             // 새 괴리율 계산
             const newSpreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
 
+            // 괴리율이 0에 가까우면 예외 처리
+            if (Math.abs(origSpreadRate) < 0.001) return origSZ;
+
             // 새 SZ 값 계산 (선형 비례 가정)
             return (origSZ * newSpreadRate) / origSpreadRate;
         }
@@ -356,76 +359,73 @@
                 { name: "보통주 -2%, 우선주 +2%", commonChange: -2, preferredChange: 2 },
                 { name: "보통주 -3%, 우선주 +3%", commonChange: -3, preferredChange: 3 },
                 { name: "보통주 -4%, 우선주 +4%", commonChange: -4, preferredChange: 4 },
-                { name: "보통주 -5%, 우선주 +5%", commonChange: -5, preferredChange: 5 },
-                { name: "SZ 값 = 2.0 한계점", commonChange: "limit", preferredChange: "limit" }
+                { name: "보통주 -5%, 우선주 +5%", commonChange: -5, preferredChange: 5 }
             ];
 
-            // 한계점 계산 (SZ = 2.0)
+            // 한계점 계산 (SZ = 2.0) - 수정된 계산 방식
+            // 현재 SZ와 한계 SZ 비율 계산
             const limitSZ = 2.0;
-
-            // 현재 SZ 값에 대한 비율
             const szRatio = limitSZ / currentSZ;
 
-            // 현재 괴리율에 대한 한계 괴리율
-            const limitSpreadRate = currentSpreadRate * szRatio;
+            // 목표 괴리율 = 현재 괴리율 * (한계 SZ / 현재 SZ)
+            const targetSpreadRate = currentSpreadRate * szRatio;
 
+            // 필요한 변화율 계산 (단순화를 위해 보통주와 우선주 동일 비율로 변화 가정)
+            // 임의의 보통주 하락률 시도 (이진 탐색으로 최적화 가능)
             let limitCommonChange = 0;
             let limitPreferredChange = 0;
 
-            // 한계점 근사값 찾기 위한 시뮬레이션
-            for (let i = 1; i <= 10; i++) {
-                const testCommonChange = -i;
-                const testPreferredChange = i;
+            // 한계점 찾기 위한 반복 계산 (정밀도 향상)
+            // 보통주와 우선주가 동일한 비율로 반대 방향 이동
+            for (let change = 0; change <= 25; change += 0.1) {
+                const testCommonChange = -change;
+                const testPreferredChange = change;
 
                 const testCommonPrice = commonPrice * (1 + (testCommonChange / 100));
                 const testPreferredPrice = preferredPrice * (1 + (testPreferredChange / 100));
 
+                const testSpreadRate = ((testCommonPrice - testPreferredPrice) / testCommonPrice) * 100;
                 const testSZ = calculateSZ(testCommonPrice, testPreferredPrice, commonPrice, preferredPrice, currentSZ);
 
                 if (testSZ <= 2.0) {
-                    // 한계점 찾음 (마지막으로 2.0 이상인 지점)
-                    limitCommonChange = -(i - 0.5);
-                    limitPreferredChange = (i - 0.5);
+                    // 마지막으로 SZ가 2.0 이상이었던 값을 사용
+                    limitCommonChange = -Math.max(0, change - 0.1);
+                    limitPreferredChange = Math.max(0, change - 0.1);
                     break;
                 }
             }
+
+            // 한계점 시나리오 추가 (정밀한 계산 결과 사용)
+            scenarios.push({
+                name: `SZ 값 = 2.0 한계점 (보통주 ${limitCommonChange.toFixed(1)}%, 우선주 +${limitPreferredChange.toFixed(1)}%)`,
+                commonChange: limitCommonChange,
+                preferredChange: limitPreferredChange
+            });
 
             // 각 시나리오에 대한 행 생성
             scenarios.forEach(scenario => {
                 const row = document.createElement('tr');
 
-                let newCommonPrice, newPreferredPrice, newSpreadRate, newSZ;
+                // 가격 계산
+                const newCommonPrice = Math.round(commonPrice * (1 + (scenario.commonChange / 100)));
+                const newPreferredPrice = Math.round(preferredPrice * (1 + (scenario.preferredChange / 100)));
 
-                // 한계점 시나리오 처리
-                if (scenario.commonChange === "limit") {
-                    // 한계점에서의 가격 변화
-                    newCommonPrice = Math.round(commonPrice * (1 + (limitCommonChange / 100)));
-                    newPreferredPrice = Math.round(preferredPrice * (1 + (limitPreferredChange / 100)));
-                    newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
-                    newSZ = 2.0; // 정확히 2.0으로 설정
-
-                    // 시나리오 이름 업데이트
-                    scenario.name = `SZ 값 = 2.0 한계점 (보통주 ${limitCommonChange.toFixed(1)}%, 우선주 +${limitPreferredChange.toFixed(1)}%)`;
-                } else {
-                    // 일반 시나리오
-                    newCommonPrice = Math.round(commonPrice * (1 + (scenario.commonChange / 100)));
-                    newPreferredPrice = Math.round(preferredPrice * (1 + (scenario.preferredChange / 100)));
-                    newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
-                    newSZ = calculateSZ(newCommonPrice, newPreferredPrice, commonPrice, preferredPrice, currentSZ);
-                }
+                // 괴리율 및 SZ 값 계산
+                const newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
+                const newSZ = calculateSZ(newCommonPrice, newPreferredPrice, commonPrice, preferredPrice, currentSZ);
 
                 // 진입 가능 여부 판단
                 const isEntryPossible = newSZ >= 2.0;
 
-                // 현재 상태인 경우 강조 표시
-                const isCurrentState = scenario.commonChange === 0 && scenario.preferredChange === 0;
-
                 // 행 스타일 설정
-                if (isCurrentState) {
+                if (scenario.commonChange === 0 && scenario.preferredChange === 0) {
+                    // 현재 상태
                     row.classList.add('bg-blue-50');
-                } else if (scenario.commonChange === "limit") {
+                } else if (Math.abs(newSZ - 2.0) < 0.05) {
+                    // SZ 값이 2.0에 가까운 한계점
                     row.classList.add('bg-yellow-50');
                 } else if (!isEntryPossible) {
+                    // 진입 불가능
                     row.classList.add('bg-red-50');
                 }
 
@@ -440,11 +440,11 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         ${newCommonPrice.toLocaleString()} KRW
-                        ${scenario.commonChange === "limit" ? '' : `<span class="text-xs text-${scenario.commonChange > 0 ? 'green' : 'red'}-600">(${scenario.commonChange > 0 ? '+' : ''}${scenario.commonChange}%)</span>`}
+                        <span class="text-xs text-${scenario.commonChange > 0 ? 'green' : 'red'}-600">(${scenario.commonChange > 0 ? '+' : ''}${parseFloat(scenario.commonChange).toFixed(1)}%)</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         ${newPreferredPrice.toLocaleString()} KRW
-                        ${scenario.preferredChange === "limit" ? '' : `<span class="text-xs text-${scenario.preferredChange > 0 ? 'green' : 'red'}-600">(${scenario.preferredChange > 0 ? '+' : ''}${scenario.preferredChange}%)</span>`}
+                        <span class="text-xs text-${scenario.preferredChange > 0 ? 'green' : 'red'}-600">(${scenario.preferredChange > 0 ? '+' : ''}${parseFloat(scenario.preferredChange).toFixed(1)}%)</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         ${newSpreadRate.toFixed(2)}%
