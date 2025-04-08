@@ -368,9 +368,8 @@
                 const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
                 const stdDev = Math.sqrt(variance);
 
-                // 탐색 범위 설정
+                // 탐색 범위 및 한계 시나리오 찾기
                 let limitScenario = null;
-                let smallestDifference = Infinity;
 
                 for (let commonChange = -20; commonChange <= 0; commonChange += 0.1) {
                     for (let preferredChange = 0; preferredChange <= 20; preferredChange += 0.1) {
@@ -380,14 +379,11 @@
                         // 새로운 괴리율 계산
                         const newDiscountRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
 
-                        // SZ 값 계산 (과거 데이터 기반)
+                        // SZ 값 계산
                         const newSZ = (newDiscountRate - mean) / stdDev;
 
-                        // 2.0에 가장 근접한 시나리오 찾기
-                        const difference = Math.abs(newSZ - 2.0);
-
-                        if (difference < smallestDifference) {
-                            smallestDifference = difference;
+                        // SZ 값이 2.0 이상인 최대 변동 지점 찾기
+                        if (newSZ >= 2.0) {
                             limitScenario = {
                                 commonChange,
                                 preferredChange,
@@ -396,10 +392,8 @@
                                 newDiscountRate,
                                 newSZ
                             };
-                        }
-
-                        // 2.0에 거의 근접하면 즉시 반환
-                        if (difference < 0.01) {
+                        } else {
+                            // SZ 값이 2.0 미만이 되면 마지막 2.0 이상인 시나리오 반환
                             return limitScenario;
                         }
                     }
