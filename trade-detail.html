@@ -292,7 +292,7 @@
             // URL에서 종목 정보 추출
             const urlParams = new URLSearchParams(window.location.search);
             const stockCode = urlParams.get('code');
-            const stockName = urlParams.get('name');
+            const stockName = decodeURIComponent(urlParams.get('name')).split(' (')[0];
 
             if (!stockCode || !stockName) {
                 alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
@@ -302,7 +302,7 @@
 
             // 페이지 제목 설정
             document.title = `${stockName} - Scenario Analysis`;
-            document.getElementById('stock-name').textContent = `${stockName} Scenario Analysis`;
+            document.getElementById('stock-name').textContent = decodeURIComponent(urlParams.get('name'));
 
             // 데이터 로드 및 처리
             loadAndProcessStockData(stockCode, stockName);
