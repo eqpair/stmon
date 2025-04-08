@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <title>매매 상세 정보 - EQ Pairs Monitoring System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .sz-high {
+            color: #DC2626;
+            font-weight: bold;
+        }
+
+        .sz-medium {
+            color: #EA580C;
+            font-weight: bold;
+        }
+
+        .sz-low {
+            color: #16A34A;
+        }
+
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .trade-card {
+            transition: all 0.3s ease;
+        }
+
+        .trade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-field {
+            @apply px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">매매 상세 정보</h1>
+                <p class="text-sm text-gray-600">보통주 숏 & 우선주 롱 전략</p>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#" onclick="window.history.back(); return false;"
+                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i> 이전 페이지
+                </a>
+                <a href="index.html"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-home mr-2"></i> 대시보드
+                </a>
+            </div>
+        </header>
+
+        <!-- Loading Indicator -->
+        <div id="loading-container" class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <p class="text-gray-600">데이터 로딩 중...</p>
+        </div>
+
+        <!-- Content Container -->
+        <div id="content-container" class="hidden">
+            <!-- 현재 상태 카드 -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">현재 상태</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격</div>
+                        <div class="text-xl font-bold" id="common-price">-</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격</div>
+                        <div class="text-xl font-bold" id="preferred-price">-</div>
+                    </div>
+                    <div class="p-4 bg-red-50 rounded-lg">
+                        <div class="text-red-700 text-sm font-medium mb-1">현재 SZ 값</div>
+                        <div class="text-xl font-bold sz-high" id="sz-value">-</div>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <div class="text-green-700 text-sm font-medium mb-1">현재 괴리율</div>
+                        <div class="text-xl font-bold" id="current-spread">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 매매 전략 카드 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- 매매 준비 정보 -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">매매 준비 정보</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-1/2 font-medium text-gray-700">진입 전략:</div>
+                            <div class="w-1/2 text-red-600 font-bold">보통주 숏 & 우선주 롱</div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-1/2 font-medium text-gray-700">보통주:</div>
+                            <div class="w-1/2">
+                                <span class="text-red-600 font-bold">숏</span> (SZ값 > 2.0)
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-1/2 font-medium text-gray-700">우선주:</div>
+                            <div class="w-1/2">
+                                <span class="text-green-600 font-bold">롱</span> (SZ값 > 2.0)
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-1/2 font-medium text-gray-700">청산 시점:</div>
+                            <div class="w-1/2">SZ값 < 0.5</div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-1/2 font-medium text-gray-700">예상 수익률:</div>
+                                <div class="w-1/2 text-green-600 font-bold" id="expected-profit">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 시뮬레이션 계산기 -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">매매 시뮬레이션</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-1/3">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">매매 수량</label>
+                                    <input type="number" id="trade-quantity" value="100" min="1"
+                                        class="input-field w-full" />
+                                </div>
+                                <div class="w-1/3">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">청산 SZ 값</label>
+                                    <input type="number" id="exit-sz" value="0.5" step="0.1" min="0" max="1.0"
+                                        class="input-field w-full" />
+                                </div>
+                                <div class="w-1/3">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">청산 괴리율 (%)</label>
+                                    <input type="number" id="exit-spread" readonly
+                                        class="input-field w-full bg-gray-100" />
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                <button id="calculate-btn"
+                                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    계산하기
+                                </button>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg mt-4">
+                                <h3 class="font-medium text-gray-800 mb-2">예상 결과</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="text-sm text-gray-600">초기 투자금:</div>
+                                    <div class="text-sm font-medium" id="initial-investment">-</div>
+
+                                    <div class="text-sm text-gray-600">예상 수익:</div>
+                                    <div class="text-sm font-medium text-green-600" id="estimated-profit">-</div>
+
+                                    <div class="text-sm text-gray-600">수익률:</div>
+                                    <div class="text-sm font-medium text-green-600" id="profit-percent">-</div>
+
+                                    <div class="text-sm text-gray-600">목표 SZ에서 보통주 가격:</div>
+                                    <div class="text-sm font-medium" id="target-common-price">-</div>
+
+                                    <div class="text-sm text-gray-600">목표 SZ에서 우선주 가격:</div>
+                                    <div class="text-sm font-medium" id="target-preferred-price">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 매매 알림 -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">매매 수행 체크리스트</h2>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="check1" class="mr-2 h-5 w-5 text-blue-600" />
+                            <label for="check1" class="text-gray-700">SZ 값이 2.0 이상인지 확인 (현재: <span
+                                    id="checklist-sz">-</span>)</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="check2" class="mr-2 h-5 w-5 text-blue-600" />
+                            <label for="check2" class="text-gray-700">시그널이 R 인지 확인 (현재: <span
+                                    id="checklist-signal">-</span>)</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="check3" class="mr-2 h-5 w-5 text-blue-600" />
+                            <label for="check3" class="text-gray-700">보통주 숏 가능 여부 확인 (금액: <span
+                                    id="checklist-short">-</span>)</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="check4" class="mr-2 h-5 w-5 text-blue-600" />
+                            <label for="check4" class="text-gray-700">우선주 롱 가능 여부 확인 (금액: <span
+                                    id="checklist-long">-</span>)</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="check5" class="mr-2 h-5 w-5 text-blue-600" />
+                            <label for="check5" class="text-gray-700">주문 금액이 계좌 잔고 이내인지 확인</label>
+                        </div>
+                        <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p class="text-yellow-800">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                <strong>주의:</strong> 매매 전에 모든 항목을 체크하고, 시장 상황을 고려하세요. 이 정보는 참고용이며, 실제 매매는 본인의 판단에 따라
+                                진행하세요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 과거 SZ 차트 (최근 30일) -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">최근 30일 SZ 값 추이</h2>
+                    <div class="chart-container">
+                        <canvas id="sz-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="bg-white py-6 mt-8">
+            <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+                <p>© 2025 EQ Pair Monitoring System.</p>
+            </div>
+        </footer>
+
+        <script>
+        // 페이지 로드 이벤트
+        document.addEventListener('DOMContentLoaded', async () => {
+            // URL에서 종목 정보 추출
+            const urlParams = new URLSearchParams(window.location.search);
+            const stockCode = urlParams.get('code');
+            const stockName = urlParams.get('name');
+
+            if (!stockCode || !stockName) {
+                alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 페이지 제목 설정
+            document.title = `${stockName} - 매매 상세 정보`;
+            document.getElementById('stock-name').textContent = `${stockName} - 매매 상세 정보`;
+
+            // 데이터 로드 및 처리
+            await loadAndProcessTradeData(stockCode, stockName);
+
+            // 계산 버튼 이벤트 리스너
+            document.getElementById('calculate-btn').addEventListener('click', performTradeCalculation);
+        });
+
+        // 데이터 로드 및 처리 함수
+        async function loadAndProcessTradeData(stockCode, stockName) {
+            try {
+                // 로딩 컨테이너 표시
+                document.getElementById('loading-container').style.display = 'flex';
+                document.getElementById('content-container').classList.add('hidden');
+
+                // 데이터 로드
+                const [stockData, trendData] = await Promise.all([
+                    loadStockData(stockName),
+                    loadTrendData(stockCode)
+                ]);
+
+                // 현재 상태 업데이트
+                updateCurrentState(stockData, trendData);
+
+                // 체크리스트 업데이트
+                updateChecklist(stockData);
+
+                // 차트 렌더링
+                renderSZChart(trendData);
+
+                // 초기 계산 수행
+                performTradeCalculation();
+
+                // 로딩 컨테이너 숨기기, 콘텐츠 표시
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
+            } catch (error) {
+                console.error('데이터 로드 및 처리 오류:', error);
+
+                // 로딩 컨테이너에 오류 메시지 표시
+                const loadingContainer = document.getElementById('loading-container');
+                loadingContainer.innerHTML = `
+                    <div class="text-red-500 text-center">
+                        <p>데이터를 로드할 수 없습니다.</p>
+                        <p>${error.message}</p>
+                        <button onclick="window.location.reload()" 
+                                class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                            다시 시도
+                        </button>
+                        <button onclick="window.location.href='index.html'" 
+                                class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                            메인 페이지로 돌아가기
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // 주식 데이터 로드
+        async function loadStockData(stockName) {
+            const response = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+            if (!response.ok) {
+                throw new Error(`Failed to load stock data for ${stockName}`);
+            }
+
+            const stockDataText = await response.text();
+            const cleanedStockDataText = stockDataText
+                .replace(/"NaN"/g, 'null')
+                .replace(/NaN/g, 'null')
+                .replace(/Infinity/g, 'null')
+                .replace(/-Infinity/g, 'null');
+
+            const stockData = JSON.parse(cleanedStockDataText);
+            
+            // 해당 종목 찾기
+            const stockItem = stockData.all_signals.find(signal => signal.stock_name === stockName);
+            if (!stockItem) {
+                throw new Error(`${stockName}에 대한 정보를 찾을 수 없습니다.`);
+            }
+
+            return stockItem;
+        }
+
+        // 트렌드 데이터 로드
+        async function loadTrendData(stockCode) {
+            const response = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+            if (!response.ok) {
+                throw new Error(`Failed to load trend data for ${stockCode}`);
+            }
+
+            const trendDataText = await response.text();
+            const cleanedTrendDataText = trendDataText
+                .replace(/"NaN"/g, 'null')
+                .replace(/NaN/g, 'null')
+                .replace(/Infinity/g, 'null')
+                .replace(/-Infinity/g, 'null');
+
+            return JSON.parse(cleanedTrendDataText);
+        }
+
+        // 현재 상태 업데이트
+        function updateCurrentState(stockData, trendData) {
+            // 마지막 데이터 인덱스
+            const lastIndex = trendData.dates.length - 1;
+
+            // 가격 정보 설정
+            const commonPrice = stockData.price_a || trendData.common_prices[lastIndex];
+            const preferredPrice = stockData.price_b || trendData.preferred_prices[lastIndex];
+            
+            document.getElementById('common-price').textContent = commonPrice.toLocaleString() + ' KRW';
+            document.getElementById('preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
+            
+            // SZ 값 설정
+            const szValue = stockData.sz_value || 0;
+            document.getElementById('sz-value').textContent = szValue.toFixed(2);
+
+            // 괴리율 계산 및 설정 (보통주 - 우선주) / 보통주
+            const spreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
+            document.getElementById('current-spread').textContent = spreadRate.toFixed(2) + '%';
+
+            // 예상 수익률 계산 (괴리율에서 목표 괴리율(0.5%) 차감)
+            const targetSpreadRate = 0.5; // 0.5%
+            const profitRate = spreadRate - targetSpreadRate;
+            document.getElementById('expected-profit').textContent = profitRate.toFixed(2) + '%';
+        }
+
+        // 체크리스트 업데이트
+        function updateChecklist(stockData) {
+            // SZ 값 설정
+            document.getElementById('checklist-sz').textContent = stockData.sz_value.toFixed(2);
+            
+            // 시그널 설정
+            document.getElementById('checklist-signal').textContent = stockData.signal || '-';
+            
+            // 보통주 숏 금액
+            document.getElementById('checklist-short').textContent = stockData.price_a.toLocaleString() + ' KRW';
+            
+            // 우선주 롱 금액
+            document.getElementById('checklist-long').textContent = stockData.price_b.toLocaleString() + ' KRW';
+            
+            // SZ 값이 2.0 이상인지 체크
+            document.getElementById('check1').checked = stockData.sz_value >= 2.0;
+            
+            // 시그널이 R인지 체크
+            document.getElementById('check2').checked = stockData.signal && stockData.signal.includes('R');
+        }
+
+        // SZ 차트 렌더링
+        function renderSZChart(trendData) {
+            // 최근 30일 데이터만 사용
+            const recentLength = Math.min(30, trendData.dates.length);
+            const recentDates = trendData.dates.slice(-recentLength);
+            const recentSZ = trendData.sz_values ? trendData.sz_values.slice(-recentLength) : [];
+
+            // Chart.js 인스턴스가 이미 있으면 제거
+            if (window.szChart) {
+                window.szChart.destroy();
+            }
+
+            const ctx = document.getElementById('sz-chart').getContext('2d');
+            window.szChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: recentDates,
+                    datasets: [{
+                        label: 'SZ Value',
+                        data: recentSZ,
+                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                        borderColor: 'rgba(220, 38, 38, 1)',
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `SZ: ${context.raw !== null ? context.raw.toFixed(2) : ''}`;
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'SZ Value'
+                            },
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 10,
+                                autoSkip: true
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 매매 계산 함수
+        function performTradeCalculation() {
+            // 입력값 가져오기
+            const tradeQuantity = parseInt(document.getElementById('trade-quantity').value) || 100;
+            const exitSZ = parseFloat(document.getElementById('exit-sz').value) || 0.5;
+            
+            // 현재 가격 가져오기
+            const commonPriceText = document.getElementById('common-price').textContent;
+            const preferredPriceText = document.getElementById('preferred-price').textContent;
+            
+            const commonPrice = parseInt(commonPriceText.replace(/[^0-9]/g, ''));
+            const preferredPrice = parseInt(preferredPriceText.replace(/[^0-9]/g, ''));
+            
+            // 현재 괴리율 계산
+            const currentSpread = ((commonPrice - preferredPrice) / commonPrice) * 100;
+            
+            // 목표 SZ(exitSZ)에서의 괴리율 계산 (선형 관계 가정)
+            // SZ 2.0이 현재 괴리율에 해당하고, SZ 0.5는 약 0.5% 괴리율로 가정
+            const szValue = parseFloat(document.getElementById('sz-value').textContent);
+            const targetSpread = 0.5 + ((currentSpread - 0.5) * (exitSZ - 0.5) / (szValue - 0.5));
+            
+            // 목표 괴리율 표시
+            document.getElementById('exit-spread').value = targetSpread.toFixed(2);
+            
+            // 목표 SZ에서의 가격 계산 (단순화된 모델)
+            // 우선주 가격은 고정되고 보통주 가격이 변한다고 가정
+            const targetCommonPrice = preferredPrice / (1 - (targetSpread / 100));
+            
+            // 초기 투자 계산
+            const initialInvestment = (commonPrice + preferredPrice) * tradeQuantity;
+            
+            // 예상 수익 계산
+            const finalValue = (targetCommonPrice + preferredPrice) * tradeQuantity;
+            const profit = (commonPrice - targetCommonPrice) * tradeQuantity; // 숏 포지션의 수익
+            
+            // 수익률 계산
+            const profitPercent = (profit / initialInvestment) * 100;
+            
+            // 결과 표시
+            document.getElementById('initial-investment').textContent = initialInvestment.toLocaleString() + ' KRW';
+            document.getElementById('estimated-profit').textContent = profit.toLocaleString() + ' KRW';
+            document.getElementById('profit-percent').textContent = profitPercent.toFixed(2) + '%';
+            document.getElementById('target-common-price').textContent = targetCommonPrice.toLocaleString() + ' KRW';
+            document.getElementById('target-preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
+        }
+        </script>
+</body>
+
+</html>
