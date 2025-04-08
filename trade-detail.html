@@ -191,7 +191,7 @@
             <p>© 2025 EQ Pair Monitoring System.</p>
         </div>
     </footer>
- 
+
     <script>
         // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', async () => {
@@ -231,7 +231,7 @@
                 updateCurrentState(stockData, trendData);
 
                 // 가격 변동 시나리오 테이블 생성
-                createDetailedScenarios(stockData, trendData);
+                createDetailedScenarios(stockData);
 
                 // 차트 렌더링
                 renderSZChart(trendData);
@@ -305,209 +305,165 @@
 
         // 현재 상태 업데이트
         function updateCurrentState(stockData, trendData) {
-            // 마지막 데이터 인덱스
-            const lastIndex = trendData.dates.length - 1;
+                // 마지막 데이터 인덱스
+                const lastIndex = trendData.dates.length - 1;
 
-            // 가격 정보 설정 (소수점 제거)
-            const commonPrice = Math.round(stockData.price_a || trendData.common_prices[lastIndex]);
-            const preferredPrice = Math.round(stockData.price_b || trendData.preferred_prices[lastIndex]);
+                // 가격 정보 설정 (소수점 제거)
+                const commonPrice = Math.round(stockData.price_a || trendData.common_prices[lastIndex]);
+                const preferredPrice = Math.round(stockData.price_b || trendData.preferred_prices[lastIndex]);
 
-            document.getElementById('common-price').textContent = commonPrice.toLocaleString() + ' KRW';
-            document.getElementById('preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
+                document.getElementById('common-price').textContent = commonPrice.toLocaleString() + ' KRW';
+                document.getElementById('preferred-price').textContent = preferredPrice.toLocaleString() + ' KRW';
 
-            // SZ 값 설정
-            const szValue = stockData.sz_value || 0;
-            document.getElementById('sz-value').textContent = szValue.toFixed(2);
+                // SZ 값 설정
+                const szValue = stockData.sz_value || 0;
+                document.getElementById('sz-value').textContent = szValue.toFixed(2);
 
-            // 괴리율 계산 및 설정 (보통주 - 우선주) / 보통주
-            const spreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
-            document.getElementById('current-spread').textContent = spreadRate.toFixed(2) + '%';
-        }
-
-        // SZ 값 계산 함수
-        function calculateSZValues(discountRates) {
-            const avgPeriod = 249;
-            const szValues = [];
-
-            for (let i = avgPeriod; i < discountRates.length; i++) {
-                const windowData = discountRates.slice(i - avgPeriod, i);
-
-                // 평균 계산
-                const mean = windowData.reduce((sum, val) => sum + (val ?? 0), 0) / windowData.length;
-
-                // 표준편차 계산
-                const variance = windowData.reduce((sum, val) => {
-                    const value = val ?? 0;
-                    return sum + Math.pow(value - mean, 2);
-                }, 0) / windowData.length;
-                const stdDev = Math.sqrt(variance);
-
-                // SZ 값 계산 (분모가 0인 경우 방지)
-                const sz = stdDev !== 0
-                    ? ((discountRates[i] ?? 0) - mean) / stdDev
-                    : 0;
-
-                szValues.push(sz);
+                // 괴리율 계산 및 설정 (보통주 - 우선주) / 보통주
+                const spreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
+                document.getElementById('current-spread').textContent = spreadRate.toFixed(2) + '%';
             }
 
-            return szValues;
-        }
-
-        // 한계점 찾기 함수
-        function findLimitScenario(commonPrice, preferredPrice, historicalData) {
-                const discountRates = historicalData.discount_rates;
-                const avgPeriod = 249;  // 1년 거래일 기준
-
-                // 과거 데이터 윈도우 선택
-                const windowData = discountRates.slice(-avgPeriod);
-
-                // 평균 계산
-                const mean = windowData.reduce((sum, val) => sum + val, 0) / windowData.length;
-
-                // 표준편차 계산
-                const variance = windowData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / windowData.length;
-                const stdDev = Math.sqrt(variance);
-
-                // 탐색 범위 및 한계 시나리오 찾기
-                let limitScenario = null;
-
-                // 보통주 하락과 우선주 상승 비율을 동일하게 설정
-                for (let changeRate = 0; changeRate <= 20; changeRate += 0.1) {
-                    const commonChange = -changeRate;
-                    const preferredChange = changeRate;
-
-                    const newCommonPrice = commonPrice * (1 + (commonChange / 100));
-                    const newPreferredPrice = preferredPrice * (1 + (preferredChange / 100));
-
-                    // 새로운 괴리율 계산
-                    const newDiscountRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
-
-                    // SZ 값 계산
-                    const newSZ = (newDiscountRate - mean) / stdDev;
-
-                    // SZ 값이 2.0에 가장 근접한 시나리오 찾기
-                    if (Math.abs(newSZ - 2.0) < 0.01) {
-                        return {
-                            commonChange,
-                            preferredChange,
-                            newCommonPrice,
-                            newPreferredPrice,
-                            newDiscountRate,
-                            newSZ
-                        };
-                    }
-                }
-
-                return null;
-            }
-
-            function createDetailedScenarios(stockData, trendData) {
+            // 세부 시나리오 테이블 생성
+            function createDetailedScenarios(stockData) {
+                const tableBody = document.getElementById('scenarios-table-body');
                 const commonPrice = Math.round(stockData.price_a);
                 const preferredPrice = Math.round(stockData.price_b);
+                const currentSZ = stockData.sz_value;
 
-                const limitScenario = findLimitScenario(commonPrice, preferredPrice, trendData);
+                // 현재 괴리율 계산
+                const currentSpreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
 
-                // 테이블에 결과 렌더링
-                const tableBody = document.getElementById('scenarios-table-body');
+                // 한계점 찾기 위한 정밀한 계산
+                function findEntryLimitScenario() {
+                    const MAX_CHANGE_PERCENT = 20; // 최대 변화율
+                    const PRECISION = 0.1; // 정밀도
 
-                if (limitScenario) {
-                    tableBody.innerHTML = `
-            <tr>
-                <td>매매 한계 시나리오</td>
-                <td>${limitScenario.newCommonPrice.toLocaleString()} KRW (${limitScenario.commonChange.toFixed(2)}%)</td>
-                <td>${limitScenario.newPreferredPrice.toLocaleString()} KRW (+${limitScenario.preferredChange.toFixed(2)}%)</td>
-                <td>${limitScenario.newDiscountRate.toFixed(2)}%</td>
-                <td class="text-red-600">${limitScenario.newSZ.toFixed(2)}</td>
-                <td class="text-red-600">진입 불가능 ✗</td>
-            </tr>
-        `;
-                } else {
-                    tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center text-red-600">
-                    한계 시나리오를 찾을 수 없습니다.
-                </td>
-            </tr>
-        `;
-                }
-            }
+                    let bestScenario = null;
+                    let minDiff = Infinity;
 
-        // SZ 차트 렌더링
-        function renderSZChart(trendData) {
-            // 최근 30일 데이터만 사용
-            const recentLength = Math.min(30, trendData.dates.length);
-            const recentDates = trendData.dates.slice(-recentLength);
-            const recentSZ = trendData.sz_values ? trendData.sz_values.slice(-recentLength) : [];
+                    for (let commonChange = -MAX_CHANGE_PERCENT; commonChange <= 0; commonChange += PRECISION) {
+                        for (let preferredChange = 0; preferredChange <= MAX_CHANGE_PERCENT; preferredChange += PRECISION) {
+                            const newCommonPrice = Math.round(commonPrice * (1 + (commonChange / 100)));
+                            const newPreferredPrice = Math.round(preferredPrice * (1 + (preferredChange / 100)));
 
-            // Chart.js 인스턴스가 이미 있으면 제거
-            if (window.szChart) {
-                window.szChart.destroy();
-            }
+                            const newSpreadRate = ((newCommonPrice - newPreferredPrice) / newCommonPrice) * 100;
+                            const newSZ = calculateSZ(newCommonPrice, newPreferredPrice, commonPrice, preferredPrice, currentSZ);
 
-            const ctx = document.getElementById('sz-chart').getContext('2d');
-            window.szChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: recentDates,
-                    datasets: [{
-                        label: 'SZ Value',
-                        data: recentSZ,
-                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
-                        borderColor: 'rgba(220, 38, 38, 1)',
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        tension: 0.2
-                    }, {
-                        label: 'SZ = 2.0 (진입 가능 경계)',
-                        data: Array(recentDates.length).fill(2.0),
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        borderColor: 'rgba(37, 99, 235, 0.8)',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        pointRadius: 0,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    if (context.datasetIndex === 0) {
-                                        return `SZ: ${context.raw !== null ? context.raw.toFixed(2) : ''}`;
-                                    } else {
-                                        return '진입 가능 최소 SZ: 2.0';
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            title: {
-                                display: true,
-                                text: 'SZ Value'
-                            },
-                            grid: {
-                                drawBorder: false
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxTicksLimit: 10,
-                                autoSkip: true
-                            },
-                            grid: {
-                                display: false
+                            // 2.0에 가장 가까운 시나리오 찾기
+                            const diff = Math.abs(newSZ - 2.0);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                bestScenario = {
+                                    commonChange,
+                                    preferredChange,
+                                    newCommonPrice,
+                                    newPreferredPrice,
+                                    newSpreadRate,
+                                    newSZ
+                                };
                             }
                         }
                     }
+
+                    return bestScenario;
                 }
-            });
-        }
+
+                const limitScenario = findEntryLimitScenario();
+
+                // 테이블 내용 초기화
+                tableBody.innerHTML = '';
+
+                // 현재 상태 및 한계점 시나리오 행 추가
+                const scenarios = [
+                    {
+                        name: "현재 상태",
+                        commonChange: 0,
+                        preferredChange: 0,
+                        commonPrice: commonPrice,
+                        preferredPrice: preferredPrice,
+                        spreadRate: currentSpreadRate,
+                        sz: currentSZ
+                    },
+                    {
+                        name: `SZ 값 = 2.0 한계점`,
+                        commonChange: limitScenario.commonChange,
+                        preferredChange: limitScenario.preferredChange,
+                        commonPrice: limitScenario.newCommonPrice,
+                        preferredPrice: limitScenario.newPreferredPrice,
+                        spreadRate: limitScenario.newSpreadRate,
+                        sz: limitScenario.newSZ
+                    }
+                ];
+
+                scenarios.forEach(scenario => {
+                    const row = document.createElement('tr');
+
+                    // 행 스타일 설정
+                    if (scenario.commonChange === 0) {
+                        row.classList.add('bg-blue-50');
+                    } else {
+                        row.classList.add('bg-yellow-50', 'entry-limit');
+                    }
+
+                    // 진입 가능 여부 판단
+                    const isEntryPossible = scenario.sz >= 2.0;
+
+                    // 셀 스타일 설정
+                    const szCellClass = isEntryPossible ? 'text-green-600 font-medium' : 'text-red-600 font-medium';
+                    const possibilityCellClass = isEntryPossible ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+
+                    // 행 내용 설정
+                    row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                ${scenario.name}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${scenario.commonPrice.toLocaleString()} KRW
+                <span class="text-xs text-${scenario.commonChange > 0 ? 'green' : 'red'}-600">(${scenario.commonChange > 0 ? '+' : ''}${parseFloat(scenario.commonChange).toFixed(1)}%)</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${scenario.preferredPrice.toLocaleString()} KRW
+                <span class="text-xs text-${scenario.preferredChange > 0 ? 'green' : 'red'}-600">(${scenario.preferredChange > 0 ? '+' : ''}${parseFloat(scenario.preferredChange).toFixed(1)}%)</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${scenario.spreadRate.toFixed(2)}%
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm ${szCellClass}">
+                ${scenario.sz.toFixed(2)}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm ${possibilityCellClass}">
+                ${isEntryPossible ? '가능 ✓' : '불가능 ✗'}
+            </td>
+        `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // 추가 정보 출력 (디버깅 및 사용자 정보 제공용)
+                const infoRow = document.createElement('tr');
+                infoRow.innerHTML = `
+        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-600 bg-gray-50">
+            📍 SZ 2.0 한계점: 보통주 ${limitScenario.commonChange.toFixed(1)}% 하락, 우선주 +${limitScenario.preferredChange.toFixed(1)}% 상승
+        </td>
+    `;
+                tableBody.appendChild(infoRow);
+            }
+
+            // SZ 계산 함수
+            function calculateSZ(commonPrice, preferredPrice, origCommonPrice, origPreferredPrice, origSZ) {
+                // 원래 괴리율 계산
+                const origSpreadRate = ((origCommonPrice - origPreferredPrice) / origCommonPrice) * 100;
+
+                // 새 괴리율 계산
+                const newSpreadRate = ((commonPrice - preferredPrice) / commonPrice) * 100;
+
+                // 괴리율이 0에 가까우면 예외 처리
+                if (Math.abs(origSpreadRate) < 0.001) return origSZ;
+
+                // 새 SZ 값 계산 (선형 비례 가정)
+                return (origSZ * newSpreadRate) / origSpreadRate;
+            }
     </script>
 </body>
-
 </html>
