@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import psutil
 import asyncio
 import logging
 from typing import List, Tuple
@@ -7,12 +8,24 @@ from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 import json
+import os
+import sys
 
 from config import TICK_PAIRS, WAIT_TIME
 from modules.pairs import NPPair
 from modules.telegram import TelegramBot
 from modules.utils import is_market_time
 from modules.exceptions import MarketDataError
+
+def ensure_single_instance():
+        script_name = os.path.basename(sys.argv[0])
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                if proc.name() == 'python3' and script_name in proc.cmdline() and proc.pid != os.getpid():
+                    print(f"Terminating existing instance with PID {proc.pid}")
+                    proc.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                pass
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,9 +38,24 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def mark_special_stocks(stock_name):
-    special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
-    special_stocks_2 = ['한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션', 'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라', '부국증권', '하이트진로홀딩스']
-    special_stocks_3 = ['코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌', '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산', '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트', '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스']
+    special_stocks_1 = [
+        '삼성전자 (0.5)', '현대차 (0.5)', 'S-Oil (0.5)', '한진칼 (1)', 'SK (0.5)'
+    ]
+    special_stocks_2 = [
+        '한국금융지주 (1)', '티와이홀딩스 (5.25)', '삼성화재 (0.5)', '호텔신라 (3)',
+        'SK이노베이션 (1)', 'GS (1)', 'CJ제일제당 (1)', 'SK디스커버리 (5)', 
+        '롯데지주 (1)', '깨끗한나라 (1.5)', '부국증권 (5)', '하이트진로홀딩스 (5)'
+    ]
+    special_stocks_3 = [
+        '코오롱모빌리티그룹 (4.5)', '태양금속 (5)', '코오롱 (5)', '성신양회 (5)', '코오롱글로벌 (5)',
+        '신풍제약 (1.5)', '한화솔루션 (1)', '한화투자증권 (5)', 'LG화학 (0.5)', '두산 (0.25)', 
+        '남선알미늄 (5)', '대원전선 (5)', '대호특수강 (7)', '한양증권 (0.5)', '노루페인트 (5)', 
+        '크라운해태홀딩스 (5)', '롯데칠성 (1)', '일양약품 (5)', '삼양사 (5)', 
+        'JW중외제약 (5)', '삼양홀딩스 (5)'
+    ]
+#    special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
+#    special_stocks_2 = ['한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션', 'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라', '부국증권', '하이트진로홀딩스']
+#    special_stocks_3 = ['코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌', '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산', '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트', '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스']
     
     if stock_name in special_stocks_1:
         return f'🔴 {stock_name}'
@@ -44,7 +72,7 @@ class StockMonitor:
         self.telegram_bot = TelegramBot()
         self.running = True
         self.last_r_signal_time = {}  # 종목별 마지막 R 신호 시간 추적
-        
+            
     async def get_signals_with_divergent(self) -> Tuple[str, str]:
         try:
             tasks = [asyncio.create_task(pair.get_signal_now()) for pair in self.pairs]
@@ -177,4 +205,6 @@ async def main():
         sys.exit(1)
 
 if __name__ == "__main__":
+    ensure_single_instance()  # 중복 프로세스 종료
     asyncio.run(main())
+    
