@@ -185,7 +185,7 @@
 
             // 페이지 제목 설정
             document.title = `${stockName} - Stock Details`;
-            document.getElementById('stock-name').textContent = stockName;
+            document.getElementById('stock-name').textContent = decodeURIComponent(urlParams.get('name'));
 
             // 데이터 로드 및 처리
             loadAndProcessStockData(stockCode, stockName);

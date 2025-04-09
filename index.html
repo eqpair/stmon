@@ -504,26 +504,26 @@
                     alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
 
                     alertEl.innerHTML = `
-            <div class="flex-shrink-0 mt-0.5">
-                <span class="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600">
-                    <i class="fas fa-exclamation"></i>
-                </span>
-            </div>
-            <div class="ml-3 flex-1">
-                <p class="text-sm font-medium text-gray-900">
-                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name.split(' (')[0])}" 
-                       class="hover:text-blue-600 hover:underline">
-                        ${signal.stock_name}
-                    </a>
-                </p>
-                <p class="mt-1 text-xs text-gray-500">
-                    SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
-                    Signal: ${signal.signal.includes('R') ? '<span class="signal-tag signal-R">R</span>' : ''}
-                    ${signal.signal.includes('I') ? '<span class="signal-tag signal-I">I</span>' : ''}
-                    ${signal.signal.includes('O') ? '<span class="signal-tag signal-O">O</span>' : ''}
-                </p>
-            </div>
-        `;
+                        <div class="flex-shrink-0 mt-0.5">
+                            <span class="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600">
+                                <i class="fas fa-exclamation"></i>
+                            </span>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <p class="text-sm font-medium text-gray-900">
+                                <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                                class="hover:text-blue-600 hover:underline">
+                                    ${signal.stock_name}
+                                </a>
+                            </p>
+                            <p class="mt-1 text-xs text-gray-500">
+                                SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
+                                Signal: ${signal.signal.includes('R') ? '<span class="signal-tag signal-R">R</span>' : ''}
+                                ${signal.signal.includes('I') ? '<span class="signal-tag signal-I">I</span>' : ''}
+                                ${signal.signal.includes('O') ? '<span class="signal-tag signal-O">O</span>' : ''}
+                            </p>
+                        </div>
+                    `;
 
                     alertsContainer.appendChild(alertEl);
                 });
@@ -621,29 +621,29 @@
 
                 // 카드 내용 - 종목명에 링크 추가
                 card.innerHTML = `
-            <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-medium text-gray-900">
-                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name.split(' (')[0])}" 
-                       class="hover:text-blue-600 hover:underline">
-                        ${signal.stock_name}
-                    </a>
-                </h3>
-                <div>${signalTags}</div>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
-                <div>
-                    <span class="text-gray-500">SZ Value:</span>
-                    <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
-                </div>
-                <div>
-                    <span class="text-gray-500">Price:</span>
-                    <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
-                </div>
-            </div>
-            <div class="text-xs text-gray-500 mt-2">
-                Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
-            </div>
-        `;
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-medium text-gray-900">
+                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                            class="hover:text-blue-600 hover:underline">
+                                ${signal.stock_name}
+                            </a>
+                        </h3>
+                        <div>${signalTags}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+                        <div>
+                            <span class="text-gray-500">SZ Value:</span>
+                            <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Price:</span>
+                            <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
+                    </div>
+                `;
 
                 container.appendChild(card);
             });
@@ -854,20 +854,20 @@
                 const stockCode = getStockCodeByName(item.stock_name);
 
                 row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name.split(' (')[0])}" 
-                   class="hover:text-blue-600 hover:underline">
-                    ${item.stock_name}
-                </a>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
-                ${item.price_b ? item.price_b.toLocaleString() : '-'}
-            </td>
-        `;
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
+                        class="hover:text-blue-600 hover:underline">
+                            ${item.stock_name}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
+                        ${item.price_b ? item.price_b.toLocaleString() : '-'}
+                    </td>
+                `;
 
                 tableBody.appendChild(row);
             });
