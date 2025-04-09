@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher, types
 from config import TELEGRAM_TOKEN, CHAT_ID
 import logging
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.fsm.storage.memory import MemoryStorage
 import asyncio
 
 logger = logging.getLogger(__name__)
