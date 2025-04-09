@@ -121,12 +121,19 @@ class GitHubUpdater:
                 continue
                 
             try:
-                parts = line.split(':')
-                if len(parts) < 2:
+                # 특수 아이콘 처리 - 🔴 🟠 🟢 같은 아이콘이 앞에 있을 수 있음
+                line = line.strip()
+                if line.startswith('🔴 ') or line.startswith('🟠 ') or line.startswith('🟢 ') or line.startswith('🔵 '):
+                    line = line[2:].strip()  # 아이콘 제거
+                    
+                # 콜론(:) 위치 찾기 (첫 번째 콜론이 아닌 종목명 뒤의 콜론)
+                colon_pos = line.find(':')
+                if colon_pos == -1:
                     continue
                     
-                stock_name = parts[0].strip()
-                signal_part = ':'.join(parts[1:]).strip()
+                # 종목명과 신호 부분 분리
+                stock_name = line[:colon_pos].strip()
+                signal_part = line[colon_pos+1:].strip()
                 
                 # 신호 부분 파싱
                 signal_parts = signal_part.split('/')

@@ -38,6 +38,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def mark_special_stocks(stock_name):
+    """
+    특별 관심 종목에 아이콘 표시
+    
+    이 함수는 특별 관심 종목들을 그룹으로 나누어 다른 아이콘으로 표시합니다.
+    종목명에 괄호가 있으면 정확히 비교하고, 없으면 괄호 앞 부분만 비교합니다.
+    """
+    # 괄호가 있는 종목명만 포함된 리스트
     special_stocks_1 = [
         '삼성전자 (0.5)', '현대차 (0.5)', 'S-Oil (0.5)', '한진칼 (1)', 'SK (0.5)'
     ]
@@ -53,17 +60,50 @@ def mark_special_stocks(stock_name):
         '크라운해태홀딩스 (5)', '롯데칠성 (1)', '일양약품 (5)', '삼양사 (5)', 
         'JW중외제약 (5)', '삼양홀딩스 (5)'
     ]
+    special_stocks_4 = [
+        'NH투자증권 (1)', 'LG전자 (0.5)', 'LG생활건강 (0.5)', '아모레G (0.5)', '대한항공 (0.04)',
+        '미래에셋증권 (1)', '금호석유 (0.5)', 'SK케미칼 (1)', '삼성전기 (0.5)', 'LG (0.5)', 
+        '삼성SDI (0.5)', '코오롱인더 (1)', '현대건설 (0.5)', 'DL이앤씨 (1)', '대상 (1)', 
+        'DL (1)', 'CJ (1)', '유한양행 (1)', 'BYC (0.5)'
+    ]
 #    special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
 #    special_stocks_2 = ['한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션', 'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라', '부국증권', '하이트진로홀딩스']
 #    special_stocks_3 = ['코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌', '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산', '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트', '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스']
-    
-    if stock_name in special_stocks_1:
-        return f'🔴 {stock_name}'
-    elif stock_name in special_stocks_2:
-        return f'🟠 {stock_name}'
-    elif stock_name in special_stocks_3:
-        return f'🟢 {stock_name}'
+#    special_stocks_4 = ['NH투자증권', 'LG전자', 'LG생활건강', '아모레G', '대한항공', '미래에셋증권', '금호석유', 'SK케미칼', '삼성전기', 'LG', '삼성SDI', '코오롱인더', '현대건설', 'DL이앤씨', '대상', 'DL', 'CJ', '유한양행', 'BYC']
+     
+    if ' (' in stock_name:
+        # 괄호가 있으면 정확히 비교
+        if stock_name in special_stocks_1:
+            return f'🔴 {stock_name}'
+        elif stock_name in special_stocks_2:
+            return f'🟠 {stock_name}'
+        elif stock_name in special_stocks_3:
+            return f'🟢 {stock_name}'
+        elif stock_name in special_stocks_4:
+            return f'🔵 {stock_name}'
+        else:
+            return stock_name
     else:
+        # 괄호가 없으면 괄호 앞부분만 비교
+        stock_base_name = stock_name.split(' (')[0] if ' (' in stock_name else stock_name
+        
+        # 각 리스트 확인하여 일치하는 항목 찾기
+        for item in special_stocks_1:
+            if item.startswith(stock_base_name):
+                return f'🔴 {stock_name}'
+                
+        for item in special_stocks_2:
+            if item.startswith(stock_base_name):
+                return f'🟠 {stock_name}'
+                
+        for item in special_stocks_3:
+            if item.startswith(stock_base_name):
+                return f'🟢 {stock_name}'
+                
+        for item in special_stocks_4:
+            if item.startswith(stock_base_name):
+                return f'🔵 {stock_name}'
+                
         return stock_name
 
 class StockMonitor:
