@@ -121,7 +121,7 @@ class GitHubUpdater:
                 continue
                 
             try:
-                # 특수 아이콘 처리 - 🔴 🟠 🟢 같은 아이콘이 앞에 있을 수 있음
+                # 특수 아이콘 처리 - 🔴 🟠 🟢 🔵 같은 아이콘이 앞에 있을 수 있음
                 line = line.strip()
                 if line.startswith('🔴 ') or line.startswith('🟠 ') or line.startswith('🟢 ') or line.startswith('🔵 '):
                     line = line[2:].strip()  # 아이콘 제거
