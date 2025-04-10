@@ -416,12 +416,21 @@
                 const trendData = await loadStockData(stockCode, stockName);
                 const stockDataJson = await loadStockDataJson();
 
-                // 현재 SZ 값 추출
-                const currentSignal = stockDataJson.all_signals.find(s => s.stock_name === stockName);
-                if (!currentSignal) {
-                    throw new Error('현재 신호 데이터를 찾을 수 없습니다.');
-                }
+                // 현재 신호 데이터 추출 - 수정된 부분
+                const currentSignal = stockDataJson.all_signals.find(s =>
+                    s.stock_name.includes(stockName) || // 부분 일치 검색
+                    s.stock_name.split('-')[0] === stockName // 대시 형식 처리
+                );
 
+                if (!currentSignal) {
+                    // 더 상세한 디버깅 정보 로깅
+                    console.error('현재 신호 데이터를 찾을 수 없음', {
+                        stockName: stockName,
+                        availableSignals: stockDataJson.all_signals.map(s => s.stock_name)
+                    });
+                    throw new Error(`${stockName}에 대한 신호 데이터를 찾을 수 없습니다.`);
+                }
+                
                 // 현재 주가 데이터 저장
                 const lastIndex = trendData.dates.length - 1;
                 stockData.current.commonPrice = trendData.common_prices[lastIndex];
