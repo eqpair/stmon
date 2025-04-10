@@ -51,14 +51,31 @@
     
             /* 슬라이더 */
             .slider {
-                height: 10px;
+                width: 100%; /* 전체 너비 차지 */
+                height: 15px; /* 높이 조정 */
+                -webkit-appearance: none; /* 브라우저 기본 스타일 제거 */
+                appearance: none;
+                background: #d3d3d3;
+                outline: none;
+                opacity: 0.7;
+                transition: opacity .2s;
+                border-radius: 5px; /* 둥근 모서리 */
             }
-    
+
+            .slider:hover {
+                opacity: 1;
+            }
+
             .slider::-webkit-slider-thumb {
-                width: 20px;
-                height: 20px;
+                -webkit-appearance: none; /* 브라우저 기본 스타일 제거 */
+                appearance: none;
+                width: 25px; /* 썸 너비 */
+                height: 25px; /* 썸 높이 */
+                background: #4CAF50; /* 썸 배경색 */
+                cursor: pointer;
+                border-radius: 50%; /* 동그란 썸 */
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 약간의 그림자 효과 */
             }
-    
             /* 버튼 */
             #calculate-button {
                 padding: 0.75rem;
