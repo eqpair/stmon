@@ -161,7 +161,7 @@ class GitHubUpdater:
                     price_a = None
                     price_b = None
                 
-                # 데이터 구조화
+                # 데이터 구조화 - 원래 종목명 유지
                 signal_data = {
                     "stock_name": stock_name,
                     "sz_value": sz_value,
