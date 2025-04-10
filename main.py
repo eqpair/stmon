@@ -118,24 +118,24 @@ class StockMonitor:
             for pair, result in zip(self.pairs, results):
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
-                    all_messages.append(f"{mark_special_stocks(pair.A_name)}: Error - {str(result)}")
+                    all_messages.append(f"{mark_special_stocks(pair.A_name)}\nError - {str(result)}")
                 elif result:
                     signal_info = result
-                    all_messages.append(f"{mark_special_stocks(pair.A_name)}: {signal_info}")
-                    
+                    all_messages.append(f"{mark_special_stocks(pair.A_name)}\n{signal_info}")
+                
                     # sz 값이 2를 넘는지 확인
                     try:
                         sz_value = float(signal_info.split('/')[0].strip())
                         if sz_value >= 2:
-                            divergent_messages.append(f"{mark_special_stocks(pair.A_name)}: {signal_info}")
-                        
+                            divergent_messages.append(f"{mark_special_stocks(pair.A_name)}\n{signal_info}")
+                    
                         # 'R' 신호 확인
                         if 'R' in signal_info.split('/')[1]:
                             r_signal_pairs.append((pair, signal_info))
                     except (ValueError, IndexError):
                         continue
                 else:
-                    all_messages.append(f"{mark_special_stocks(pair.A_name)}: No signal")
+                    all_messages.append(f"{mark_special_stocks(pair.A_name)}\nNo signal")
             
             # 'R' 신호 페어에 대한 추가 메시지 처리
             for pair, signal_info in r_signal_pairs:
@@ -150,8 +150,8 @@ class StockMonitor:
                     # 마지막 신호 시간이 없거나 1시간 이상 지났다면 메시지 전송
                     if (not last_signal_time) or (current_time - last_signal_time > timedelta(hours=1)):
                         # mark_special_stocks 함수를 사용하여 종목명에 아이콘 추가
-                        marked_stock_name = mark_special_stocks(pair.A_name).replace("🔴 ", "").replace("🟠 ", "").replace("🟢 ", "").replace("🔵 ", "")
-                        
+                        marked_stock_name = mark_special_stocks(pair.A_name)
+
                         r_message = (
                             f"🚨 R Signal Detected\n"
                             f"{marked_stock_name}\n"
