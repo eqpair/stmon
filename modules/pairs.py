@@ -7,6 +7,7 @@ import logging
 from bs4 import BeautifulSoup
 import json
 from .exceptions import MarketDataError
+from .utils import add_weight_info  # add_weight_info 함수 임포트 추가
 from bs4 import XMLParsedAsHTMLWarning
 import warnings
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -76,6 +77,9 @@ class NPPair:
                 
             # chartdata에서 name 속성을 찾고, 없으면 code를 사용
             name = chartdata.get('name', code)
+            
+            # 종목명에 가중치 정보 추가
+            name = add_weight_info(code, name)
             
             # item들을 찾습니다
             items = soup.find_all('item')
