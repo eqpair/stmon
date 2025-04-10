@@ -11,117 +11,80 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <style>
-        /* 모바일 반응형 최적화 */
-        @media (max-width: 640px) {
-            .container {
-                padding: 0.5rem;
-            }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
     
-            /* 헤더 */
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        .sz-high {
+            color: #DC2626;
+            font-weight: bold;
+        }
     
-            header h1 {
-                font-size: 1.5rem;
-                margin-bottom: 0.5rem;
-            }
+        .sz-medium {
+            color: #EA580C;
+            font-weight: bold;
+        }
     
-            /* 그리드 레이아웃 */
-            .grid-cols-1,
-            .grid-cols-4,
+        .sz-low {
+            color: #16A34A;
+        }
+    
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+    
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+    
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+    
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+    
+        /* 반응형 디자인 */
+        @media (max-width: 1024px) {
             .grid-cols-2 {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(1, 1fr);
             }
     
-            /* 정보 카드 */
-            .bg-white .grid>div {
-                padding: 0.75rem;
+            .chart-container {
+                height: 250px;
+            }
+        }
+    
+        @media (max-width: 640px) {
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
             }
     
-            .bg-white .grid>div .text-sm {
-                font-size: 0.625rem;
-            }
-    
-            .bg-white .grid>div .text-xl {
-                font-size: 1rem;
-            }
-    
-            /* 차트 컨테이너 */
             .chart-container {
                 height: 200px;
             }
     
-            /* 테이블 */
-            .overflow-x-auto {
-                font-size: 0.75rem;
-            }
-    
-            table th,
-            table td {
-                padding: 0.5rem;
-            }
-    
-            /* 뒤로가기 버튼 */
-            .px-4.py-2 {
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
-            }
-        }
-    
-        /* 터치 영역 최적화 */
-        @media (max-width: 640px) {
-    
-            a,
-            button,
-            .signal-tag {
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-        /* 기존 스타일에 추가 */
-        @media (max-width: 1024px) {
-            .grid-cols-2 {
-                grid-template-columns: repeat(1, 1fr); /* 2열에서 1열로 변경 */
-            }
-        }
-
-        @media (max-width: 640px) {
-            .grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr); /* 4열에서 2열로 변경 */
-            }
-
-            /* 차트 컨테이너 크기 조정 */
-            .chart-container {
-                height: 250px; /* 모바일에서 차트 높이 조정 */
-            }
-
-            /* 폰트 크기 조정 */
             .text-3xl {
                 font-size: 1.5rem;
             }
-
+    
             .text-sm {
                 font-size: 0.75rem;
             }
-
-            /* 테이블 반응형 처리 */
+    
             .overflow-x-auto {
                 overflow-x: scroll;
-            }
-        }
-        /* 모바일에서 텍스트 가독성 개선 */
-        @media (max-width: 640px) {
-            body {
-                -webkit-text-size-adjust: 100%;
-                -ms-text-size-adjust: 100%;
-            }
-    
-            * {
-                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
             }
         }
     </style>

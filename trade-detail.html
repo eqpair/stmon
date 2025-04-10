@@ -11,158 +11,103 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <style>
-        /* 모바일 반응형 최적화 */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+    
+        .sz-high {
+            color: #DC2626;
+            font-weight: bold;
+        }
+    
+        .sz-medium {
+            color: #EA580C;
+            font-weight: bold;
+        }
+    
+        .sz-low {
+            color: #16A34A;
+        }
+    
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+    
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+    
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+    
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+    
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+    
+        .slider:hover {
+            opacity: 1;
+        }
+    
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    
+        .slider::-moz-range-thumb {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    
+        .scenario-result {
+            transition: all 0.3s;
+        }
+    
+        /* 반응형 디자인 */
         @media (max-width: 640px) {
-            .container {
-                padding: 0.5rem;
+            .chart-container {
+                height: 250px;
             }
     
-            /* 헤더 */
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-    
-            header h1 {
-                font-size: 1.5rem;
-                margin-bottom: 0.5rem;
-            }
-    
-            /* 그리드 레이아웃 */
-            .grid-cols-1,
-            .grid-cols-2,
-            .grid-cols-3 {
-                grid-template-columns: 1fr;
-            }
-    
-            /* 카드 */
-            .bg-white,
-            .bg-gray-50 {
-                padding: 1rem;
-            }
-    
-            .text-xl {
-                font-size: 1.25rem;
-            }
-    
-            .text-sm {
-                font-size: 0.75rem;
-            }
-    
-            /* 슬라이더 */
             .slider {
-                width: 100%; /* 전체 너비 사용 */
-                height: 10px; /* 높이 조정 */
-                -webkit-appearance: none; /* 브라우저 기본 스타일 제거 */
-                appearance: none;
-                background: #d3d3d3;
-                outline: none;
-                opacity: 0.7;
-                transition: opacity .2s;
-                border-radius: 10px; /* 더 둥근 모서리 */
-                margin: 15px 0; /* 여백 추가 */
-            }
-
-            .slider:hover {
-                opacity: 1;
-            }
-
-            .slider::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 25px; /* 썸 너비 */
-                height: 25px; /* 썸 높이 */
-                background: #4CAF50;
-                cursor: pointer;
-                border-radius: 50%; /* 완전한 원 모양 */
-                box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* 그림자 효과 */
-            }
-
-            /* 슬라이더 컨테이너에 패딩 추가 */
-            .slider-container {
-                padding: 0 15px;
-            }
-            /* 버튼 */
-            #calculate-button {
-                padding: 0.75rem;
-                font-size: 0.875rem;
+                height: 12px;
             }
     
-            /* 시나리오 카드 */
-            .scenario-result {
-                margin-bottom: 1rem;
-            }
-            /* 기존 div.mb-4 내부의 슬라이더 컨테이너 스타일 */
-            .mb-4 .slider-wrapper {
-                padding: 0 10px;
-            }
-        }
-        @media (max-width: 1024px) {
-        .grid-cols-3 {
-            grid-template-columns: repeat(1, 1fr); /* 3열에서 1열로 변경 */
-            }
-        }
-
-        @media (max-width: 640px) {
-            /* 헤더 */
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            /* 시나리오 카드 */
-            .scenario-result {
-                margin-bottom: 1rem;
-            }
-
-            /* 슬라이더 */
-            .slider {
-                height: 10px;
-            }
-
-            .slider::-webkit-slider-thumb {
-                width: 20px;
-                height: 20px;
-            }
-
-            /* 폰트 크기 조정 */
-            .text-3xl {
-                font-size: 1.5rem;
-            }
-
-            .text-xl {
-                font-size: 1.25rem;
-            }
-
-            /* 버튼 */
-            #calculate-button {
-                padding: 0.75rem;
-                font-size: 0.875rem;
-            }
-        }
-        /* 터치 영역 최적화 */
-        @media (max-width: 640px) {
-    
-            a,
-            button,
-            .signal-tag,
-            .slider {
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-    
-        /* 모바일에서 텍스트 가독성 개선 */
-        @media (max-width: 640px) {
-            body {
-                -webkit-text-size-adjust: 100%;
-                -ms-text-size-adjust: 100%;
-            }
-    
-            * {
-                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            .slider::-webkit-slider-thumb,
+            .slider::-moz-range-thumb {
+                width: 25px;
+                height: 25px;
             }
         }
     </style>
