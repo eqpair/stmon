@@ -4,7 +4,7 @@
 <head>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
     <title>EQ Pairs Monitoring System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
@@ -67,6 +67,28 @@
             }
         }
     
+        /* 기존 스타일에 추가 */
+        @media (max-width: 1024px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, 1fr); /* 3열에서 2열로 변경 */
+            }
+        }
+
+        @media (max-width: 640px) {
+            .grid-cols-3 {
+                grid-template-columns: 1fr; /* 2열에서 1열로 변경 */
+            }
+
+            /* 폰트 크기 조정 */
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            /* 탭 메뉴 간격 조정 */
+            .tab-button {
+                padding: 0.75rem 1rem;
+            }
+        }
         /* 추가: 터치 영역 확대 */
         @media (max-width: 640px) {
     
@@ -589,6 +611,7 @@
         // 신호 데이터 렌더링 함수 - 아이콘과 가중치 정보 표시
         function renderSignals(signals, containerId) {
             const container = document.getElementById(containerId);
+            const screenWidth = window.innerWidth;
 
             if (!signals || signals.length === 0) {
                 container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No data to display</div>';
@@ -600,6 +623,9 @@
             signals.forEach(signal => {
                 const card = document.createElement('div');
                 card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
+                
+                // 화면 크기에 따라 카드 배치 조정
+                let cardsPerRow = screenWidth > 1024 ? 3 : (screenWidth > 640 ? 2 : 1);
 
                 // 신호 태그 생성
                 let signalTags = '';

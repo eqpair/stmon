@@ -4,7 +4,7 @@
 <head>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
     <title>Stock Details - EQ Pairs Monitoring System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
@@ -82,7 +82,37 @@
                 justify-content: center;
             }
         }
-    
+        /* 기존 스타일에 추가 */
+        @media (max-width: 1024px) {
+            .grid-cols-2 {
+                grid-template-columns: repeat(1, 1fr); /* 2열에서 1열로 변경 */
+            }
+        }
+
+        @media (max-width: 640px) {
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr); /* 4열에서 2열로 변경 */
+            }
+
+            /* 차트 컨테이너 크기 조정 */
+            .chart-container {
+                height: 250px; /* 모바일에서 차트 높이 조정 */
+            }
+
+            /* 폰트 크기 조정 */
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-sm {
+                font-size: 0.75rem;
+            }
+
+            /* 테이블 반응형 처리 */
+            .overflow-x-auto {
+                overflow-x: scroll;
+            }
+        }
         /* 모바일에서 텍스트 가독성 개선 */
         @media (max-width: 640px) {
             body {
@@ -436,6 +466,15 @@
         // 차트 렌더링 함수 (5개월 데이터로 제한)
         function renderCharts(trendData) {
             try {
+                // 화면 크기 감지
+                const screenWidth = window.innerWidth;
+                const isMobile = screenWidth <= 640;
+
+                // 차트 높이와 포인트 크기 동적 조정
+                const chartHeight = isMobile ? 250 : 300;
+                const pointRadius = isMobile ? 0 : 1;
+
+                // 최근 데이터 슬라이스 (5개월 데이터)
                 const recentDates = trendData.dates.slice(-150);
                 const recentCommonPrices = trendData.common_prices.slice(-150);
                 const recentPreferredPrices = trendData.preferred_prices.slice(-150);
@@ -445,17 +484,18 @@
                     throw new Error('차트 렌더링을 위한 데이터가 부족합니다.');
                 }
 
-                // SZ 값 계산을 위해 전체 데이터 사용
-                renderSZChart(trendData.dates, trendData.discount_rates);
-                renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices);
+                // SZ 값 차트 렌더링
+                renderSZChart(trendData.dates, trendData.discount_rates, chartHeight, pointRadius);
+
+                // 가격 차트 렌더링
+                renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices, chartHeight, pointRadius);
 
                 // 디버깅 정보 출력
                 console.log('데이터 로드 성공! 데이터 크기:', {
                     '전체 데이터 길이': trendData.dates.length,
                     '최근 5개월 길이': recentDates.length,
                     '최초 날짜': trendData.dates[0],
-                    '최근 날짜': trendData.dates[trendData.dates.length - 1],
-                    '할인율 데이터 길이': trendData.discount_rates.length
+                    '최근 날짜': trendData.dates[trendData.dates.length - 1]
                 });
             } catch (error) {
                 console.error('차트 렌더링 오류:', error);
@@ -522,26 +562,21 @@
             });
         }
 
-        // SZ 차트 렌더링 함수 - 완전히 개선된 버전
-        function renderSZChart(dates, discountRates) {
-            try {
+        // SZ 차트 렌더링 함수 수정
+            function renderSZChart(dates, discountRates, chartHeight, pointRadius) {
                 const ctx = document.getElementById('sz-chart').getContext('2d');
+                const screenWidth = window.innerWidth;
+                const isMobile = screenWidth <= 640;
 
-                // 1. 전체 데이터로 SZ 값 계산
+                // 기존 SZ 값 계산 로직 유지
                 const calculatedSZ = calculateSZValues(discountRates);
-
-                // 2. 최근 5개월 데이터만 필터링
                 const fiveMonthsInDays = 150;
                 const startIndex = Math.max(0, discountRates.length - fiveMonthsInDays);
-
-                // 3. 계산된 SZ 값 중 최근 5개월에 해당하는 것만 선택
                 const recentSZ = calculatedSZ.filter(item => item.index >= startIndex);
 
-                // 4. 차트 데이터 준비
                 const chartLabels = [];
                 const chartValues = [];
 
-                // 5. 계산된 SZ 값의 인덱스를 원본 날짜 배열에 매핑
                 for (const sz of recentSZ) {
                     if (sz.index < dates.length) {
                         chartLabels.push(dates[sz.index]);
@@ -549,17 +584,12 @@
                     }
                 }
 
-                // 데이터 유효성 검사
-                if (!chartLabels.length || !chartValues.length) {
-                    throw new Error('SZ 차트 데이터를 준비할 수 없습니다.');
-                }
-
-                // 6. Chart.js 인스턴스가 이미 있으면 제거
+                // 기존 차트 제거
                 if (window.szChart) {
                     window.szChart.destroy();
                 }
 
-                // 7. 새 차트 생성
+                // 새 차트 생성 (모바일 최적화 옵션 추가)
                 window.szChart = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -570,58 +600,74 @@
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 2,
-                            pointRadius: 1,
+                            pointRadius: pointRadius,
                             tension: 0.1
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        height: chartHeight,
                         plugins: {
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
                                         return `SZ Value: ${context.raw.toFixed(2)}`;
                                     }
+                                },
+                                bodyFont: {
+                                    size: isMobile ? 10 : 12
                                 }
                             },
                             title: {
                                 display: true,
-                                text: '5 Month SZ Value Trend'
+                                text: '5 Month SZ Value Trend',
+                                font: {
+                                    size: isMobile ? 12 : 16
+                                }
+                            }
+                        },
+                        elements: {
+                            point: {
+                                hitRadius: isMobile ? 10 : 5
                             }
                         },
                         scales: {
                             y: {
                                 title: {
                                     display: true,
-                                    text: 'SZ Value'
+                                    text: 'SZ Value',
+                                    font: {
+                                        size: isMobile ? 10 : 12
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: isMobile ? 9 : 12
+                                    }
                                 }
                             },
                             x: {
                                 ticks: {
-                                    maxTicksLimit: 10,
-                                    autoSkip: true
+                                    maxTicksLimit: isMobile ? 5 : 10,
+                                    autoSkip: true,
+                                    font: {
+                                        size: isMobile ? 9 : 12
+                                    }
                                 }
                             }
                         }
                     }
                 });
-            } catch (error) {
-                console.error('SZ 차트 렌더링 오류:', error);
-                document.getElementById('sz-chart').parentElement.innerHTML = '<p class="text-red-500 text-center">SZ 차트 데이터를 로드할 수 없습니다.</p>';
             }
-        }
 
-        // 가격 차트 렌더링 함수
-        function renderPriceChart(dates, commonPrices, preferredPrices) {
-            try {
+        // 가격 차트 렌더링 함수도 유사하게 수정
+            function renderPriceChart(dates, commonPrices, preferredPrices, chartHeight, pointRadius) {
                 const ctx = document.getElementById('price-chart').getContext('2d');
+                const screenWidth = window.innerWidth;
+                const isMobile = screenWidth <= 640;
 
-                // 데이터 유효성 검사
-                if (!dates.length || !commonPrices.length || !preferredPrices.length) {
-                    throw new Error('가격 차트 데이터를 준비할 수 없습니다.');
-                }
-
+                // 기존 차트 생성 로직 유지하되, 모바일 최적화 옵션 추가
                 new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -633,7 +679,7 @@
                                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                                 borderColor: 'rgba(255, 99, 132, 1)',
                                 borderWidth: 2,
-                                pointRadius: 0,
+                                pointRadius: pointRadius,
                                 tension: 0.2
                             },
                             {
@@ -642,7 +688,7 @@
                                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                                 borderColor: 'rgba(54, 162, 235, 1)',
                                 borderWidth: 2,
-                                pointRadius: 0,
+                                pointRadius: pointRadius,
                                 tension: 0.2
                             }
                         ]
@@ -650,45 +696,62 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        height: chartHeight,
                         plugins: {
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
                                         return `${context.dataset.label}: ${context.raw.toLocaleString()} KRW`;
                                     }
+                                },
+                                bodyFont: {
+                                    size: isMobile ? 10 : 12
                                 }
                             },
                             title: {
                                 display: true,
-                                text: '5 Month Price Trend'
+                                text: '5 Month Price Trend',
+                                font: {
+                                    size: isMobile ? 12 : 16
+                                }
+                            }
+                        },
+                        elements: {
+                            point: {
+                                hitRadius: isMobile ? 10 : 5
                             }
                         },
                         scales: {
                             y: {
                                 title: {
                                     display: true,
-                                    text: 'Price (KRW)'
+                                    text: 'Price (KRW)',
+                                    font: {
+                                        size: isMobile ? 10 : 12
+                                    }
                                 },
                                 ticks: {
                                     callback: function (value) {
                                         return value.toLocaleString();
+                                    },
+                                    font: {
+                                        size: isMobile ? 9 : 12
                                     }
                                 }
                             },
                             x: {
                                 ticks: {
-                                    maxTicksLimit: 10,
-                                    autoSkip: true
+                                    maxTicksLimit: isMobile ? 5 : 10,
+                                    autoSkip: true,
+                                    font: {
+                                        size: isMobile ? 9 : 12
+                                    }
                                 }
                             }
                         }
                     }
                 });
-            } catch (error) {
-                console.error('가격 차트 렌더링 오류:', error);
-                document.getElementById('price-chart').parentElement.innerHTML = '<p class="text-red-500 text-center">가격 차트 데이터를 로드할 수 없습니다.</p>';
             }
-        }
 
         // 히스토리 데이터 렌더링 - 5개월 제한 적용 (완전히 개선된 버전)
         function renderHistoryData(trendData) {
