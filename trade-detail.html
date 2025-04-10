@@ -563,78 +563,97 @@
             document.getElementById('preferred-price-adjusted').textContent = stockData.current.preferredPrice.toLocaleString() + ' KRW';
         }
         function renderSZChart() {
-            const ctx = document.getElementById('sz-chart').getContext('2d');
-            const screenWidth = window.innerWidth;
-            const isMobile = screenWidth <= 640;
+                const ctx = document.getElementById('sz-chart').getContext('2d');
+                const screenWidth = window.innerWidth;
+                const isMobile = screenWidth <= 640;
 
-            const chartHeight = isMobile ? 250 : 300;
-            const pointRadius = isMobile ? 0 : 1;
+                const chartHeight = isMobile ? 250 : 300;
+                const pointRadius = isMobile ? 0 : 1;
 
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        label: 'SZ Value',
-                        data: chartValues,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        pointRadius: 1,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'SZ = 2.0 Threshold',
-                        data: Array(chartLabels.length).fill(2.0),
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1,
-                        borderDash: [5, 5],
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    height: chartHeight,
-                    plugins: {
-                        tooltip: {
-                            bodyFont: {
-                                size: isMobile ? 10 : 12
-                            }
+                // 차트 데이터 준비
+                const chartLabels = stockData.history.dates;
+                const chartValues = stockData.history.szValues;
+
+                // 차트 생성
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            label: 'SZ Value',
+                            data: chartValues,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2,
+                            pointRadius: pointRadius,
+                            tension: 0.1
                         },
-                        title: {
-                            font: {
-                                size: isMobile ? 12 : 16
-                            }
-                        }
+                        {
+                            label: 'SZ = 2.0 Threshold',
+                            data: Array(chartLabels.length).fill(2.0),
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        }]
                     },
-                    elements: {
-                        point: {
-                            radius: pointRadius,
-                            hitRadius: isMobile ? 10 : 5
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                maxTicksLimit: isMobile ? 5 : 10,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        height: chartHeight,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `SZ Value: ${context.raw ? context.raw.toFixed(2) : 'N/A'}`;
+                                    }
+                                },
+                                bodyFont: {
+                                    size: isMobile ? 10 : 12
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Recent 5-month SZ value trend',
                                 font: {
-                                    size: isMobile ? 9 : 12
+                                    size: isMobile ? 12 : 16
                                 }
                             }
                         },
-                        y: {
-                            ticks: {
-                                font: {
-                                    size: isMobile ? 9 : 12
+                        elements: {
+                            point: {
+                                hitRadius: isMobile ? 10 : 5
+                            }
+                        },
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'SZ Value',
+                                    font: {
+                                        size: isMobile ? 10 : 12
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: isMobile ? 9 : 12
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    maxTicksLimit: isMobile ? 5 : 10,
+                                    autoSkip: true,
+                                    font: {
+                                        size: isMobile ? 9 : 12
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
 
         function setupSliderListeners() {
                 const commonSlider = document.getElementById('common-price-slider');
