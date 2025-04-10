@@ -108,14 +108,30 @@ class StockMonitor:
             
     async def get_signals_with_divergent(self) -> Tuple[str, str]:
         try:
-            tasks = [asyncio.create_task(pair.get_signal_now()) for pair in self.pairs]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+            # 배치 크기 설정 (한 번에 처리할 페어 수)
+            batch_size = 5
+            all_results = []
+            
+            # 페어를 배치로 나누어 처리
+            for i in range(0, len(self.pairs), batch_size):
+                logger.info(f"처리 중인 배치: {i+1}~{min(i+batch_size, len(self.pairs))} / {len(self.pairs)}")
+                batch_pairs = self.pairs[i:i+batch_size]
+                batch_tasks = [asyncio.create_task(pair.get_signal_now()) for pair in batch_pairs]
+                batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+                
+                # 결과 처리
+                for pair, result in zip(batch_pairs, batch_results):
+                    all_results.append((pair, result))
+                
+                # 배치 간 딜레이 추가
+                if i + batch_size < len(self.pairs):
+                    await asyncio.sleep(3)  # 배치 간 3초 대기
             
             all_messages = []
             divergent_messages = []
             r_signal_pairs = []  # 'R' 신호 페어 추적
             
-            for pair, result in zip(self.pairs, results):
+            for pair, result in all_results:
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
                     all_messages.append(f"{mark_special_stocks(pair.A_name)}\nError - {str(result)}")
