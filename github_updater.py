@@ -114,6 +114,7 @@ class GitHubUpdater:
     def _parse_signals(self, signals_text: str) -> List[Dict[str, Any]]:
         result = []
         if not signals_text or "No divergent pairs" in signals_text:
+            logger.warning(f"신호 데이터 없음 또는 divergent pairs 없음")
             return result
             
         for line in signals_text.split('\n'):
@@ -128,9 +129,24 @@ class GitHubUpdater:
                     icon_prefix = line[:2]  # 아이콘 저장
                     line = line[2:].strip()  # 아이콘 제거
                     
-                # 콜론(:) 위치 찾기 (첫 번째 콜론이 아닌 종목명 뒤의 콜론)
+                # 콜론(:) 위치 찾기
                 colon_pos = line.find(':')
                 if colon_pos == -1:
+                    # No signal 혹은 Error로 끝나는 라인 처리
+                    parts = line.split('\n')
+                    stock_name = parts[0].strip()
+                    
+                    # 기본 신호 데이터 생성
+                    signal_data = {
+                        "stock_name": stock_name,
+                        "sz_value": 0.0,
+                        "signal": "",
+                        "price_a": None,
+                        "price_b": None,
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                    
+                    result.append(signal_data)
                     continue
                     
                 # 종목명과 신호 부분 분리
@@ -157,11 +173,18 @@ class GitHubUpdater:
                 
                 # 신호 부분 파싱
                 signal_parts = signal_part.split('/')
-                if len(signal_parts) < 2:
-                    continue
+                 # 기본값 설정
+                sz_value = 0.0
+                signal = ""
+                price_a = None
+                price_b = None
                 
-                sz_value = float(signal_parts[0].strip())
-                signal_info = signal_parts[1].strip()
+                if len(signal_parts) >= 1:
+                    try:
+                        sz_value = float(signal_parts[0].strip())
+                    except ValueError:
+                        # 숫자로 변환할 수 없는 경우 (예: "No signal")
+                        sz_value = 0.0
                 
                 # 신호 로직 통일
                 signal = ''
@@ -173,13 +196,14 @@ class GitHubUpdater:
                     signal += 'O'
                 
                 if len(signal_parts) >= 3:
-                    price_part = signal_parts[2].strip()
-                    prices = price_part.split(',')
-                    price_a = float(prices[0].strip()) if len(prices) > 0 else None
-                    price_b = float(prices[1].strip()) if len(prices) > 1 else None
-                else:
-                    price_a = None
-                    price_b = None
+                    try:
+                        price_part = signal_parts[2].strip()
+                        prices = price_part.split(',')
+                        price_a = float(prices[0].strip()) if len(prices) > 0 and prices[0].strip() else None
+                        price_b = float(prices[1].strip()) if len(prices) > 1 and prices[1].strip() else None
+                    except (ValueError, IndexError):
+                        price_a = None
+                        price_b = None
                 
                 # 데이터 구조화 - 아이콘과 가중치가 포함된 종목명 사용
                 signal_data = {
@@ -195,8 +219,26 @@ class GitHubUpdater:
                 
             except Exception as e:
                 logger.warning(f"라인 파싱 오류: {line} - {str(e)}")
-                continue
-                
+                # 오류가 발생해도 기본 데이터 추가
+                try:
+                    # 종목명만 얻을 수 있으면 기본 데이터 추가
+                    parts = line.split('\n')
+                    stock_name = parts[0].strip()
+                    
+                    signal_data = {
+                        "stock_name": stock_name,
+                        "sz_value": 0.0,
+                        "signal": "",
+                        "price_a": None,
+                        "price_b": None,
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                    
+                    result.append(signal_data)
+                except:
+                    continue
+                    
+        logger.info(f"파싱된 신호 수: {len(result)}")
         return result
     
     async def _update_history_data(self, current_data):
