@@ -117,43 +117,29 @@ class GitHubUpdater:
             logger.warning(f"신호 데이터 없음 또는 divergent pairs 없음")
             return result
             
-        for line in signals_text.split('\n'):
-            if not line.strip():
-                continue
-                
+        # 데이터를 올바르게 파싱하기 위해 2줄씩 처리
+        lines = signals_text.split('\n')
+        i = 0
+        
+        while i < len(lines) - 1:
             try:
-                # 특수 아이콘 처리 - 🔴 🟠 🟢 🔵 같은 아이콘이 앞에 있을 수 있음
-                line = line.strip()
-                icon_prefix = ""
-                if line.startswith('🔴 ') or line.startswith('🟠 ') or line.startswith('🟢 ') or line.startswith('🔵 '):
-                    icon_prefix = line[:2]  # 아이콘 저장
-                    line = line[2:].strip()  # 아이콘 제거
-                    
-                # 콜론(:) 위치 찾기
-                colon_pos = line.find(':')
-                if colon_pos == -1:
-                    # No signal 혹은 Error로 끝나는 라인 처리
-                    parts = line.split('\n')
-                    stock_name = parts[0].strip()
-                    
-                    # 기본 신호 데이터 생성
-                    signal_data = {
-                        "stock_name": stock_name,
-                        "sz_value": 0.0,
-                        "signal": "",
-                        "price_a": None,
-                        "price_b": None,
-                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    }
-                    
-                    result.append(signal_data)
+                stock_name_line = lines[i].strip()
+                signal_line = lines[i+1].strip() if i+1 < len(lines) else ""
+                
+                if not stock_name_line or not signal_line:
+                    i += 2
                     continue
                     
-                # 종목명과 신호 부분 분리
-                stock_name = line[:colon_pos].strip()
-                signal_part = line[colon_pos+1:].strip()
-                
-                # 가중치 정보 추출 (괄호 안에 있는 숫자)
+                # 종목명 처리
+                if stock_name_line.startswith('🔴 ') or stock_name_line.startswith('🟠 ') or stock_name_line.startswith('🟢 ') or stock_name_line.startswith('🔵 '):
+                    icon_prefix = stock_name_line[:2]  # 아이콘 저장
+                    stock_name = stock_name_line[2:].strip()  # 아이콘 제거
+                else:
+                    icon_prefix = ""
+                    stock_name = stock_name_line
+                    
+                # 가중치 정보 추출
+                formatted_stock_name = stock_name
                 weight_info = ""
                 if ' (' in stock_name and ')' in stock_name:
                     parts = stock_name.split(' (')
@@ -162,52 +148,56 @@ class GitHubUpdater:
                         base_name = parts[0]
                         # 웹 표시용 종목명 포맷: 기본명-가중치-
                         formatted_stock_name = f"{base_name}-{weight_info}-"
-                    else:
-                        formatted_stock_name = stock_name
-                else:
-                    formatted_stock_name = stock_name
                 
                 # 아이콘이 있으면 종목명 앞에 추가
                 if icon_prefix:
                     formatted_stock_name = f"{icon_prefix} {formatted_stock_name}"
+                    
+                # 신호 라인 파싱
+                if '/' not in signal_line:
+                    i += 2
+                    continue
+                    
+                signal_parts = signal_line.split('/')
                 
-                # 신호 부분 파싱
-                signal_parts = signal_part.split('/')
-                 # 기본값 설정
+                # SZ 값 추출
                 sz_value = 0.0
+                try:
+                    sz_value = float(signal_parts[0].strip())
+                except ValueError:
+                    sz_value = 0.0
+                    
+                # 신호 추출
                 signal = ""
+                if len(signal_parts) > 1:
+                    signal_info = signal_parts[1].strip()
+                    if 'R' in signal_info:
+                        signal += 'R'
+                    if 'I' in signal_info:
+                        signal += 'I'
+                    if 'O' in signal_info:
+                        signal += 'O'
+                        
+                # 가격 추출
                 price_a = None
                 price_b = None
+                if len(signal_parts) > 2:
+                    price_part = signal_parts[2].strip()
+                    price_items = price_part.split(',')
+                    if len(price_items) > 0:
+                        try:
+                            price_a = float(price_items[0].strip())
+                        except ValueError:
+                            pass
+                    if len(price_items) > 1:
+                        try:
+                            price_b = float(price_items[1].strip())
+                        except ValueError:
+                            pass
                 
-                if len(signal_parts) >= 1:
-                    try:
-                        sz_value = float(signal_parts[0].strip())
-                    except ValueError:
-                        # 숫자로 변환할 수 없는 경우 (예: "No signal")
-                        sz_value = 0.0
-                
-                # 신호 로직 통일
-                signal = ''
-                if sz_value >= 2.0:
-                    signal += 'R'
-                if sz_value >= 1.5 and sz_value < 2.5:
-                    signal += 'I'
-                if sz_value < 0.5:
-                    signal += 'O'
-                
-                if len(signal_parts) >= 3:
-                    try:
-                        price_part = signal_parts[2].strip()
-                        prices = price_part.split(',')
-                        price_a = float(prices[0].strip()) if len(prices) > 0 and prices[0].strip() else None
-                        price_b = float(prices[1].strip()) if len(prices) > 1 and prices[1].strip() else None
-                    except (ValueError, IndexError):
-                        price_a = None
-                        price_b = None
-                
-                # 데이터 구조화 - 아이콘과 가중치가 포함된 종목명 사용
+                # 데이터 구조화
                 signal_data = {
-                    "stock_name": formatted_stock_name,  # 아이콘과 가중치가 포함된 종목명
+                    "stock_name": formatted_stock_name,
                     "sz_value": sz_value,
                     "signal": signal,
                     "price_a": price_a,
@@ -218,26 +208,11 @@ class GitHubUpdater:
                 result.append(signal_data)
                 
             except Exception as e:
-                logger.warning(f"라인 파싱 오류: {line} - {str(e)}")
-                # 오류가 발생해도 기본 데이터 추가
-                try:
-                    # 종목명만 얻을 수 있으면 기본 데이터 추가
-                    parts = line.split('\n')
-                    stock_name = parts[0].strip()
-                    
-                    signal_data = {
-                        "stock_name": stock_name,
-                        "sz_value": 0.0,
-                        "signal": "",
-                        "price_a": None,
-                        "price_b": None,
-                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    }
-                    
-                    result.append(signal_data)
-                except:
-                    continue
-                    
+                logger.warning(f"라인 파싱 오류: {lines[i:i+2]} - {str(e)}")
+            
+            # 다음 종목으로 이동 (2줄씩)
+            i += 2
+        
         logger.info(f"파싱된 신호 수: {len(result)}")
         return result
     
