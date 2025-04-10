@@ -51,15 +51,16 @@
     
             /* 슬라이더 */
             .slider {
-                width: 100%; /* 전체 너비 차지 */
-                height: 15px; /* 높이 조정 */
+                width: 100%; /* 전체 너비 사용 */
+                height: 10px; /* 높이 조정 */
                 -webkit-appearance: none; /* 브라우저 기본 스타일 제거 */
                 appearance: none;
                 background: #d3d3d3;
                 outline: none;
                 opacity: 0.7;
                 transition: opacity .2s;
-                border-radius: 5px; /* 둥근 모서리 */
+                border-radius: 10px; /* 더 둥근 모서리 */
+                margin: 15px 0; /* 여백 추가 */
             }
 
             .slider:hover {
@@ -67,14 +68,19 @@
             }
 
             .slider::-webkit-slider-thumb {
-                -webkit-appearance: none; /* 브라우저 기본 스타일 제거 */
+                -webkit-appearance: none;
                 appearance: none;
                 width: 25px; /* 썸 너비 */
                 height: 25px; /* 썸 높이 */
-                background: #4CAF50; /* 썸 배경색 */
+                background: #4CAF50;
                 cursor: pointer;
-                border-radius: 50%; /* 동그란 썸 */
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 약간의 그림자 효과 */
+                border-radius: 50%; /* 완전한 원 모양 */
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* 그림자 효과 */
+            }
+
+            /* 슬라이더 컨테이너에 패딩 추가 */
+            .slider-container {
+                padding: 0 15px;
             }
             /* 버튼 */
             #calculate-button {
@@ -85,6 +91,10 @@
             /* 시나리오 카드 */
             .scenario-result {
                 margin-bottom: 1rem;
+            }
+            /* 기존 div.mb-4 내부의 슬라이더 컨테이너 스타일 */
+            .mb-4 .slider-wrapper {
+                padding: 0 10px;
             }
         }
         @media (max-width: 1024px) {
@@ -220,11 +230,11 @@
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 보통주 가격 조정
-                                <span class="text-xs text-gray-500">(현재 가격: <span
-                                        id="common-base-price">-</span>원)</span>
+                                <span class="text-xs text-gray-500">(현재 가격: <span id="common-base-price">-</span>원)</span>
                             </label>
-                            <input type="range" id="common-price-slider" class="slider mb-2" min="-5" max="5" step="0.5"
-                                value="0">
+                            <div class="slider-wrapper">
+                                <input type="range" id="common-price-slider" class="slider mb-2" min="-5" max="5" step="0.5" value="0">
+                            </div>
                             <div class="flex justify-between text-xs text-gray-500">
                                 <span>-5%</span>
                                 <span id="common-price-percent">0%</span>
@@ -430,7 +440,7 @@
                     });
                     throw new Error(`${stockName}에 대한 신호 데이터를 찾을 수 없습니다.`);
                 }
-                
+
                 // 현재 주가 데이터 저장
                 const lastIndex = trendData.dates.length - 1;
                 stockData.current.commonPrice = trendData.common_prices[lastIndex];
