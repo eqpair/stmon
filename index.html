@@ -10,69 +10,76 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <style>
-        .signal-card {
-            transition: all 0.3s ease;
-        }
-
-        .signal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .blink {
-            animation: blink 2s linear infinite;
-        }
-
-        @keyframes blink {
-            0% {
-                opacity: 1;
+        /* 모바일 최적화를 위한 추가/수정 스타일 */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
             }
-
-            50% {
-                opacity: 0.5;
+    
+            /* 헤더 */
+            header h1 {
+                font-size: 1.5rem;
             }
-
-            100% {
-                opacity: 1;
+    
+            /* 모니터링 요약 카드 */
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+    
+            /* 탭 메뉴 */
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+    
+            /* 검색 및 필터 */
+            .flex-col {
+                flex-direction: column;
+            }
+    
+            #search-input,
+            #filter-signal,
+            #sort-option {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+    
+            /* 시그널 카드 */
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+    
+            .signal-card {
+                padding: 0.75rem;
+            }
+    
+            .signal-card h3 {
+                font-size: 1rem;
+            }
+    
+            /* 히스토리 테이블 */
+            .min-w-full {
+                overflow-x: auto;
+            }
+    
+            table {
+                font-size: 0.75rem;
             }
         }
-
-        .signal-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-right: 4px;
-        }
-
-        .signal-R {
-            background-color: #FEE2E2;
-            color: #DC2626;
-        }
-
-        .signal-I {
-            background-color: #E0F2FE;
-            color: #0284C7;
-        }
-
-        .signal-O {
-            background-color: #DCFCE7;
-            color: #16A34A;
-        }
-
-        .sz-high {
-            color: #DC2626;
-            font-weight: bold;
-        }
-
-        .sz-medium {
-            color: #EA580C;
-            font-weight: bold;
-        }
-
-        .sz-low {
-            color: #16A34A;
+    
+        /* 추가: 터치 영역 확대 */
+        @media (max-width: 640px) {
+    
+            .tab-button,
+            #search-input,
+            #filter-signal,
+            #sort-option,
+            .signal-card a {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -297,107 +304,107 @@
 
         // 데이터 가져오기
         async function fetchData() {
-                try {
-                    const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
-                    console.log('Response status:', response.status);
+            try {
+                const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
+                console.log('Response status:', response.status);
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    // 타임스탬프 디버깅용 로그
-                    console.log('Raw data:', data);
-                    console.log('Timestamp options:', data.timestamp, data.last_updated);
-
-                    // 타임스탬프 선택 로직 개선
-                    let updateTime =
-                        data.timestamp ||
-                        data.last_updated ||
-                        (data.all_signals && data.all_signals.length > 0
-                            ? data.all_signals[0].timestamp
-                            : null);
-
-                    console.log('Selected update time:', updateTime);
-
-                    // 데이터 처리 로직
-                    allSignals = processSignals(data.all_signals || []);
-                    divergentSignals = processSignals(data.divergent_signals || []);
-
-                    // UI 업데이트
-                    updateLastUpdated(updateTime);
-                    updateSummary();
-                    updateRecentAlerts();
-                    filterAndRenderData();
-
-                    updateStatus('success');
-                } catch (error) {
-                    console.error('Complete data fetch error:', error);
-                    updateStatus('error', error.message);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
+                const data = await response.json();
+
+                // 타임스탬프 디버깅용 로그
+                console.log('Raw data:', data);
+                console.log('Timestamp options:', data.timestamp, data.last_updated);
+
+                // 타임스탬프 선택 로직 개선
+                let updateTime =
+                    data.timestamp ||
+                    data.last_updated ||
+                    (data.all_signals && data.all_signals.length > 0
+                        ? data.all_signals[0].timestamp
+                        : null);
+
+                console.log('Selected update time:', updateTime);
+
+                // 데이터 처리 로직
+                allSignals = processSignals(data.all_signals || []);
+                divergentSignals = processSignals(data.divergent_signals || []);
+
+                // UI 업데이트
+                updateLastUpdated(updateTime);
+                updateSummary();
+                updateRecentAlerts();
+                filterAndRenderData();
+
+                updateStatus('success');
+            } catch (error) {
+                console.error('Complete data fetch error:', error);
+                updateStatus('error', error.message);
+            }
+        }
+
+        function updateLastUpdated(timestamp) {
+            const el = document.getElementById('lastUpdated');
+
+            console.log('Updating last updated with:', timestamp);
+
+            if (!timestamp) {
+                el.textContent = '업데이트 정보 없음';
+                return;
             }
 
-            function updateLastUpdated(timestamp) {
-                const el = document.getElementById('lastUpdated');
+            try {
+                const date = new Date(timestamp);
 
-                console.log('Updating last updated with:', timestamp);
-
-                if (!timestamp) {
-                    el.textContent = '업데이트 정보 없음';
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid timestamp:', timestamp);
+                    el.textContent = '유효하지 않은 업데이트 시간';
                     return;
                 }
 
-                try {
-                    const date = new Date(timestamp);
+                // 한국어 날짜 포맷팅
+                const formatted = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}시 ${date.getMinutes()}분`;
+                el.textContent = formatted;
 
-                    if (isNaN(date.getTime())) {
-                        console.error('Invalid timestamp:', timestamp);
-                        el.textContent = '유효하지 않은 업데이트 시간';
-                        return;
-                    }
-
-                    // 한국어 날짜 포맷팅
-                    const formatted = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}시 ${date.getMinutes()}분`;
-                    el.textContent = formatted;
-
-                    console.log('Formatted date:', formatted);
-                } catch (error) {
-                    console.error('업데이트 시간 포맷팅 오류:', error);
-                    el.textContent = '업데이트 시간 확인 실패';
-                }
+                console.log('Formatted date:', formatted);
+            } catch (error) {
+                console.error('업데이트 시간 포맷팅 오류:', error);
+                el.textContent = '업데이트 시간 확인 실패';
             }
+        }
 
-            // 신호 재계산 함수 추가
-            function processSignals(signals) {
-                    return signals.map(signal => {
-                        // 기존 신호 정보 유지
-                        const processedSignal = { ...signal };
+        // 신호 재계산 함수 추가
+        function processSignals(signals) {
+            return signals.map(signal => {
+                // 기존 신호 정보 유지
+                const processedSignal = { ...signal };
 
-                        // SZ 값에 따라 신호 재계산
-                        let newSignal = '';
+                // SZ 값에 따라 신호 재계산
+                let newSignal = '';
 
-                        // R 신호 (SZ 값이 2.0 이상)
-                        if (signal.sz_value >= 2.0) {
-                            newSignal += 'R';
-                        }
-
-                        // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
-                        if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
-                            newSignal += 'I';
-                        }
-
-                        // O 신호 (SZ 값이 0.5 미만)
-                        if (signal.sz_value < 0.5) {
-                            newSignal += 'O';
-                        }
-
-                        // 새로 계산된 신호 할당
-                        processedSignal.signal = newSignal;
-
-                        return processedSignal;
-                    });
+                // R 신호 (SZ 값이 2.0 이상)
+                if (signal.sz_value >= 2.0) {
+                    newSignal += 'R';
                 }
+
+                // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
+                if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
+                    newSignal += 'I';
+                }
+
+                // O 신호 (SZ 값이 0.5 미만)
+                if (signal.sz_value < 0.5) {
+                    newSignal += 'O';
+                }
+
+                // 새로 계산된 신호 할당
+                processedSignal.signal = newSignal;
+
+                return processedSignal;
+            });
+        }
 
         // 히스토리 데이터 가져오기
         async function fetchHistoryData() {
@@ -478,32 +485,32 @@
 
         // 최근 알림 업데이트
         function updateRecentAlerts() {
-                const alertsContainer = document.getElementById('recent-alerts');
+            const alertsContainer = document.getElementById('recent-alerts');
 
-                // R 신호가 있는 항목 찾기
-                const rSignals = allSignals.filter(s => s.signal && s.signal.includes('R'));
+            // R 신호가 있는 항목 찾기
+            const rSignals = allSignals.filter(s => s.signal && s.signal.includes('R'));
 
-                if (rSignals.length === 0) {
-                    alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
-                    return;
-                }
+            if (rSignals.length === 0) {
+                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
+                return;
+            }
 
-                // SZ 값 기준으로 내림차순 정렬
-                rSignals.sort((a, b) => b.sz_value - a.sz_value);
+            // SZ 값 기준으로 내림차순 정렬
+            rSignals.sort((a, b) => b.sz_value - a.sz_value);
 
-                // 최대 3개의 알림 표시
-                const recentSignals = rSignals.slice(0, 3);
+            // 최대 3개의 알림 표시
+            const recentSignals = rSignals.slice(0, 3);
 
-                alertsContainer.innerHTML = '';
+            alertsContainer.innerHTML = '';
 
-                recentSignals.forEach(signal => {
-                    // 종목 코드 가져오기
-                    const stockCode = getStockCodeByName(signal.stock_name);
+            recentSignals.forEach(signal => {
+                // 종목 코드 가져오기
+                const stockCode = getStockCodeByName(signal.stock_name);
 
-                    const alertEl = document.createElement('div');
-                    alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
+                const alertEl = document.createElement('div');
+                alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
 
-                    alertEl.innerHTML = `
+                alertEl.innerHTML = `
                         <div class="flex-shrink-0 mt-0.5">
                             <span class="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600">
                                 <i class="fas fa-exclamation"></i>
@@ -525,9 +532,9 @@
                         </div>
                     `;
 
-                    alertsContainer.appendChild(alertEl);
-                });
-            }
+                alertsContainer.appendChild(alertEl);
+            });
+        }
 
         // 데이터 필터링 및 렌더링
         function filterAndRenderData() {
@@ -580,63 +587,63 @@
             return filtered;
         }
         // 신호 데이터 렌더링 함수 - 아이콘과 가중치 정보 표시
-            function renderSignals(signals, containerId) {
-                const container = document.getElementById(containerId);
+        function renderSignals(signals, containerId) {
+            const container = document.getElementById(containerId);
 
-                if (!signals || signals.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No data to display</div>';
-                    return;
+            if (!signals || signals.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No data to display</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            signals.forEach(signal => {
+                const card = document.createElement('div');
+                card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
+
+                // 신호 태그 생성
+                let signalTags = '';
+                if (signal.signal) {
+                    if (signal.signal.includes('R')) {
+                        signalTags += '<span class="signal-tag signal-R">R</span>';
+                    }
+                    if (signal.signal.includes('I')) {
+                        signalTags += '<span class="signal-tag signal-I">I</span>';
+                    }
+                    if (signal.signal.includes('O')) {
+                        signalTags += '<span class="signal-tag signal-O">O</span>';
+                    }
                 }
 
-                container.innerHTML = '';
+                // SZ 값에 따른 클래스
+                let szClass = 'sz-low';
+                if (signal.sz_value >= 2.5) {
+                    szClass = 'sz-high';
+                } else if (signal.sz_value >= 1.5) {
+                    szClass = 'sz-medium';
+                }
 
-                signals.forEach(signal => {
-                    const card = document.createElement('div');
-                    card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
+                // 종목명 처리 - 아이콘이 이미 포함된 경우 그대로 사용
+                let displayStockName = signal.stock_name;
 
-                    // 신호 태그 생성
-                    let signalTags = '';
-                    if (signal.signal) {
-                        if (signal.signal.includes('R')) {
-                            signalTags += '<span class="signal-tag signal-R">R</span>';
-                        }
-                        if (signal.signal.includes('I')) {
-                            signalTags += '<span class="signal-tag signal-I">I</span>';
-                        }
-                        if (signal.signal.includes('O')) {
-                            signalTags += '<span class="signal-tag signal-O">O</span>';
-                        }
-                    }
+                // 종목 코드 추출 - 아이콘과 가중치를 고려하여 기본 종목명 추출
+                let baseStockName = displayStockName;
 
-                    // SZ 값에 따른 클래스
-                    let szClass = 'sz-low';
-                    if (signal.sz_value >= 2.5) {
-                        szClass = 'sz-high';
-                    } else if (signal.sz_value >= 1.5) {
-                        szClass = 'sz-medium';
-                    }
+                // 아이콘 제거 (있는 경우)
+                if (baseStockName.startsWith('🔴 ') || baseStockName.startsWith('🟠 ') ||
+                    baseStockName.startsWith('🟢 ') || baseStockName.startsWith('🔵 ')) {
+                    baseStockName = baseStockName.substring(2).trim();
+                }
 
-                    // 종목명 처리 - 아이콘이 이미 포함된 경우 그대로 사용
-                    let displayStockName = signal.stock_name;
+                // 가중치 정보 제거 (기본명만 남김)
+                if (baseStockName.includes('-')) {
+                    baseStockName = baseStockName.split('-')[0].trim();
+                }
 
-                    // 종목 코드 추출 - 아이콘과 가중치를 고려하여 기본 종목명 추출
-                    let baseStockName = displayStockName;
+                const stockCode = getStockCodeByName(baseStockName);
 
-                    // 아이콘 제거 (있는 경우)
-                    if (baseStockName.startsWith('🔴 ') || baseStockName.startsWith('🟠 ') ||
-                        baseStockName.startsWith('🟢 ') || baseStockName.startsWith('🔵 ')) {
-                        baseStockName = baseStockName.substring(2).trim();
-                    }
-
-                    // 가중치 정보 제거 (기본명만 남김)
-                    if (baseStockName.includes('-')) {
-                        baseStockName = baseStockName.split('-')[0].trim();
-                    }
-
-                    const stockCode = getStockCodeByName(baseStockName);
-
-                    // 카드 내용 - 종목명에 링크 추가
-                    card.innerHTML = `
+                // 카드 내용 - 종목명에 링크 추가
+                card.innerHTML = `
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-medium text-gray-900">
                                 <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
@@ -661,123 +668,123 @@
                         </div>
                     `;
 
-                    container.appendChild(card);
-                });
-            }
+                container.appendChild(card);
+            });
+        }
 
         // 종목명으로 종목 코드를 가져오는 함수
-            function getStockCodeByName(stockName) {
-                // 아이콘 제거 (있는 경우)
-                let cleanName = stockName;
-                if (cleanName.startsWith('🔴 ') || cleanName.startsWith('🟠 ') ||
-                    cleanName.startsWith('🟢 ') || cleanName.startsWith('🔵 ')) {
-                    cleanName = cleanName.substring(2).trim();
-                }
-
-                // 가중치 형식 처리 (대시 형식이나 괄호 형식 모두 처리)
-                // 예: "삼성전자-0.5-" 또는 "삼성전자 (0.5)"
-                let baseName = cleanName;
-                if (baseName.includes('-')) {
-                    baseName = baseName.split('-')[0].trim();
-                } else if (baseName.includes(' (')) {
-                    baseName = baseName.split(' (')[0].trim();
-                }
-
-                // 종목 코드 맵핑
-                const stockCodeMap = {
-                    '삼성전자': '005930',
-                    '코오롱모빌리티그룹': '450140',
-                    '태양금속': '004100',
-                    'NPC': '004250',
-                    '대한제당': '001790',
-                    '덕성': '004830',
-                    '코리아써키트': '007810',
-                    '코오롱': '002020',
-                    '현대차': '005380',
-                    '대신증권': '003540',
-                    '성신양회': '004980',
-                    '코오롱글로벌': '003070',
-                    'NH투자증권': '005940',
-                    '신풍제약': '019170',
-                    'LG전자': '066570',
-                    '한화솔루션': '009830',
-                    '세방': '004360',
-                    '한화투자증권': '003530',
-                    'LG생활건강': '051900',
-                    '아모레퍼시픽': '090430',
-                    'LG화학': '051910',
-                    '아모레G': '002790',
-                    '대한항공': '003490',
-                    'S-Oil': '010950',
-                    '한진칼': '180640',
-                    'SK증권': '001510',
-                    '한국금융지주': '071050',
-                    '티와이홀딩스': '363280',
-                    '미래에셋증권': '006800',
-                    '동부건설': '005960',
-                    '크라운제과': '264900',
-                    '두산': '000150',
-                    '남선알미늄': '008350',
-                    '금호석유': '011780',
-                    '넥센': '005720',
-                    'LX하우시스': '108670',
-                    '삼성화재': '000810',
-                    '대상홀딩스': '084690',
-                    'SK케미칼': '285130',
-                    '소프트센': '032680',
-                    '삼성전기': '009150',
-                    '노루홀딩스': '000320',
-                    'LG': '003550',
-                    '삼성SDI': '006400',
-                    '코오롱인더': '120110',
-                    '대원전선': '006340',
-                    '태영건설': '009410',
-                    '흥국화재': '000540',
-                    '대호특수강': '021040',
-                    '계양전기': '012200',
-                    '한양증권': '001750',
-                    '호텔신라': '008770',
-                    'SK이노베이션': '096770',
-                    '서울식품': '004410',
-                    '현대건설': '000720',
-                    'DL이앤씨': '375500',
-                    'GS': '078930',
-                    '금강공업': '014280',
-                    '대상': '001680',
-                    '금호건설': '002990',
-                    'CJ제일제당': '097950',
-                    'SK디스커버리': '006120',
-                    'DL': '000210',
-                    '노루페인트': '090350',
-                    '동양': '001520',
-                    '한화': '000880',
-                    'CJ': '001040',
-                    '크라운해태홀딩스': '005740',
-                    '롯데칠성': '005300',
-                    'SK': '034730',
-                    '성문전자': '014910',
-                    '일양약품': '007570',
-                    '롯데지주': '004990',
-                    '깨끗한나라': '004540',
-                    '유한양행': '000100',
-                    '부국증권': '001270',
-                    '남양유업': '003920',
-                    '유화증권': '003460',
-                    '삼양사': '145990',
-                    'JW중외제약': '001060',
-                    '하이트진로홀딩스': '000140',
-                    'BYC': '001460',
-                    '삼양홀딩스': '000070'
-                };
-
-                // 정확한 일치 확인
-                if (stockCodeMap[baseName]) {
-                    return stockCodeMap[baseName];
-                }
-
-                // 코드를 찾지 못한 경우 임시 코드 반환
-                return 'unknown';
+        function getStockCodeByName(stockName) {
+            // 아이콘 제거 (있는 경우)
+            let cleanName = stockName;
+            if (cleanName.startsWith('🔴 ') || cleanName.startsWith('🟠 ') ||
+                cleanName.startsWith('🟢 ') || cleanName.startsWith('🔵 ')) {
+                cleanName = cleanName.substring(2).trim();
             }
+
+            // 가중치 형식 처리 (대시 형식이나 괄호 형식 모두 처리)
+            // 예: "삼성전자-0.5-" 또는 "삼성전자 (0.5)"
+            let baseName = cleanName;
+            if (baseName.includes('-')) {
+                baseName = baseName.split('-')[0].trim();
+            } else if (baseName.includes(' (')) {
+                baseName = baseName.split(' (')[0].trim();
+            }
+
+            // 종목 코드 맵핑
+            const stockCodeMap = {
+                '삼성전자': '005930',
+                '코오롱모빌리티그룹': '450140',
+                '태양금속': '004100',
+                'NPC': '004250',
+                '대한제당': '001790',
+                '덕성': '004830',
+                '코리아써키트': '007810',
+                '코오롱': '002020',
+                '현대차': '005380',
+                '대신증권': '003540',
+                '성신양회': '004980',
+                '코오롱글로벌': '003070',
+                'NH투자증권': '005940',
+                '신풍제약': '019170',
+                'LG전자': '066570',
+                '한화솔루션': '009830',
+                '세방': '004360',
+                '한화투자증권': '003530',
+                'LG생활건강': '051900',
+                '아모레퍼시픽': '090430',
+                'LG화학': '051910',
+                '아모레G': '002790',
+                '대한항공': '003490',
+                'S-Oil': '010950',
+                '한진칼': '180640',
+                'SK증권': '001510',
+                '한국금융지주': '071050',
+                '티와이홀딩스': '363280',
+                '미래에셋증권': '006800',
+                '동부건설': '005960',
+                '크라운제과': '264900',
+                '두산': '000150',
+                '남선알미늄': '008350',
+                '금호석유': '011780',
+                '넥센': '005720',
+                'LX하우시스': '108670',
+                '삼성화재': '000810',
+                '대상홀딩스': '084690',
+                'SK케미칼': '285130',
+                '소프트센': '032680',
+                '삼성전기': '009150',
+                '노루홀딩스': '000320',
+                'LG': '003550',
+                '삼성SDI': '006400',
+                '코오롱인더': '120110',
+                '대원전선': '006340',
+                '태영건설': '009410',
+                '흥국화재': '000540',
+                '대호특수강': '021040',
+                '계양전기': '012200',
+                '한양증권': '001750',
+                '호텔신라': '008770',
+                'SK이노베이션': '096770',
+                '서울식품': '004410',
+                '현대건설': '000720',
+                'DL이앤씨': '375500',
+                'GS': '078930',
+                '금강공업': '014280',
+                '대상': '001680',
+                '금호건설': '002990',
+                'CJ제일제당': '097950',
+                'SK디스커버리': '006120',
+                'DL': '000210',
+                '노루페인트': '090350',
+                '동양': '001520',
+                '한화': '000880',
+                'CJ': '001040',
+                '크라운해태홀딩스': '005740',
+                '롯데칠성': '005300',
+                'SK': '034730',
+                '성문전자': '014910',
+                '일양약품': '007570',
+                '롯데지주': '004990',
+                '깨끗한나라': '004540',
+                '유한양행': '000100',
+                '부국증권': '001270',
+                '남양유업': '003920',
+                '유화증권': '003460',
+                '삼양사': '145990',
+                'JW중외제약': '001060',
+                '하이트진로홀딩스': '000140',
+                'BYC': '001460',
+                '삼양홀딩스': '000070'
+            };
+
+            // 정확한 일치 확인
+            if (stockCodeMap[baseName]) {
+                return stockCodeMap[baseName];
+            }
+
+            // 코드를 찾지 못한 경우 임시 코드 반환
+            return 'unknown';
+        }
         // 히스토리 데이터 렌더링 함수 수정 - SZ 값 추이를 더 잘 보여주도록 변경
         function renderHistoryData(filteredHistory = null) {
             const tableBody = document.getElementById('history-table-body');

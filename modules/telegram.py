@@ -24,7 +24,7 @@ class TelegramBot:
             TelegramBot._initialized = True
 
     def _setup_handlers(self):
-        @self.dp.message_handler(commands=['s', 'h'])
+        @self.dp.message_handler(commands=['h'])
         async def send_welcome(message: types.Message):
             await message.reply(
                 "📈 Stock Monitor Bot\n\n"
