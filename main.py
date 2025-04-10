@@ -39,81 +39,65 @@ logger = logging.getLogger(__name__)
 
 def mark_special_stocks(stock_name):
     """
-    특별 관심 종목에 아이콘 표시
-    
+    특별 관심 종목에 아이콘 표시하고 가중치 정보 포함한 종목명 반환
     이 함수는 특별 관심 종목들을 그룹으로 나누어 다른 아이콘으로 표시합니다.
-    종목명에 괄호가 있으면 정확히 비교하고, 없으면 괄호 앞 부분만 비교합니다.
+    또한 가중치 정보를 새로운 형식(-0.5- 등)으로 변환합니다.
     """
-    # 괄호를 대시(-)로 변경하여 표시
-    # 예: '삼성전자 (0.5)' -> '삼성전자 -0.5-'
+    # 종목 기본명과 가중치 추출
+    base_name = stock_name
+    weight_info = None
     
-    # 괄호가 있는 종목명만 포함된 리스트
-    special_stocks_1 = [
-        '삼성전자 -0.5-', '현대차 -0.5-', 'S-Oil -0.5-', '한진칼 -1-', 'SK -0.5-'
-    ]
-    special_stocks_2 = [
-        '한국금융지주 -1-', '티와이홀딩스 -5.25-', '삼성화재 -0.5-', '호텔신라 -3-',
-        'SK이노베이션 -1-', 'GS -1-', 'CJ제일제당 -1-', 'SK디스커버리 -5-', 
-        '롯데지주 -1-', '깨끗한나라 -1.5-', '부국증권 -5-', '하이트진로홀딩스 -5-'
-    ]
-    special_stocks_3 = [
-        '코오롱모빌리티그룹 -4.5-', '태양금속 -5-', '코오롱 -5-', '성신양회 -5-', '코오롱글로벌 -5-',
-        '신풍제약 -1.5-', '한화솔루션 -1-', '한화투자증권 -5-', 'LG화학 -0.5-', '두산 -0.25-', 
-        '남선알미늄 -5-', '대원전선 -5-', '대호특수강 -7-', '한양증권 -0.5-', '노루페인트 -5-', 
-        '크라운해태홀딩스 -5-', '롯데칠성 -1-', '일양약품 -5-', '삼양사 -5-', 
-        'JW중외제약 -5-', '삼양홀딩스 -5-'
-    ]
-    special_stocks_4 = [
-        'NH투자증권 -1-', 'LG전자 -0.5-', 'LG생활건강 -0.5-', '아모레G -0.5-', '대한항공 -0.04-',
-        '미래에셋증권 -1-', '금호석유 -0.5-', 'SK케미칼 -1-', '삼성전기 -0.5-', 'LG -0.5-', 
-        '삼성SDI -0.5-', '코오롱인더 -1-', '현대건설 -0.5-', 'DL이앤씨 -1-', '대상 -1-', 
-        'DL -1-', 'CJ -1-', '유한양행 -1-', 'BYC -0.5-'
-    ]
-     
-    # 종목명 변환 (괄호를 대시로 변경)
-    normalized_stock_name = stock_name
     if ' (' in stock_name and ')' in stock_name:
-        # 괄호를 대시로 변환
         parts = stock_name.split(' (')
         if len(parts) == 2 and ')' in parts[1]:
-            value = parts[1].replace(')', '')
-            normalized_stock_name = f"{parts[0]} -{value}-"
+            base_name = parts[0]
+            weight_info = parts[1].replace(')', '')
     
-    # 변환된 이름으로 비교
-    if normalized_stock_name in special_stocks_1:
-        return f'🔴 {stock_name}'
-    elif normalized_stock_name in special_stocks_2:
-        return f'🟠 {stock_name}'
-    elif normalized_stock_name in special_stocks_3:
-        return f'🟢 {stock_name}'
-    elif normalized_stock_name in special_stocks_4:
-        return f'🔵 {stock_name}'
+    # 특별 관심 종목 그룹 1 (빨간색 아이콘)
+    special_stocks_1 = [
+        '삼성전자', '현대차', 'S-Oil', '한진칼', 'SK'
+    ]
     
-    # 괄호가 없는 경우 종목 기본 이름만 비교
-    stock_base_name = stock_name.split(' (')[0] if ' (' in stock_name else stock_name
+    # 특별 관심 종목 그룹 2 (주황색 아이콘)
+    special_stocks_2 = [
+        '한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션',
+        'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라', 
+        '부국증권', '하이트진로홀딩스'
+    ]
     
-    # 각 리스트의 항목에서 종목 기본 이름만 추출하여 비교
-    for item in special_stocks_1:
-        item_base = item.split(' -')[0]
-        if item_base == stock_base_name:
-            return f'🔴 {stock_name}'
-            
-    for item in special_stocks_2:
-        item_base = item.split(' -')[0]
-        if item_base == stock_base_name:
-            return f'🟠 {stock_name}'
-            
-    for item in special_stocks_3:
-        item_base = item.split(' -')[0]
-        if item_base == stock_base_name:
-            return f'🟢 {stock_name}'
-            
-    for item in special_stocks_4:
-        item_base = item.split(' -')[0]
-        if item_base == stock_base_name:
-            return f'🔵 {stock_name}'
-            
-    return stock_name
+    # 특별 관심 종목 그룹 3 (녹색 아이콘)
+    special_stocks_3 = [
+        '코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌',
+        '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산', 
+        '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트', 
+        '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스'
+    ]
+    
+    # 특별 관심 종목 그룹 4 (파란색 아이콘)
+    special_stocks_4 = [
+        'NH투자증권', 'LG전자', 'LG생활건강', '아모레G', '대한항공',
+        '미래에셋증권', '금호석유', 'SK케미칼', '삼성전기', 'LG', 
+        '삼성SDI', '코오롱인더', '현대건설', 'DL이앤씨', '대상', 
+        'DL', 'CJ', '유한양행', 'BYC'
+    ]
+    
+    # 아이콘 추가 및 가중치 정보 포맷 변경
+    result = base_name
+    if weight_info:
+        # 괄호 대신 대시 형식으로 변경
+        result = f"{base_name}-{weight_info}-"
+    
+    # 기본명으로 종목 확인 및 아이콘 추가
+    if base_name in special_stocks_1:
+        return f'🔴 {result}'
+    elif base_name in special_stocks_2:
+        return f'🟠 {result}'
+    elif base_name in special_stocks_3:
+        return f'🟢 {result}'
+    elif base_name in special_stocks_4:
+        return f'🔵 {result}'
+    else:
+        return result
 
 class StockMonitor:
     def __init__(self):

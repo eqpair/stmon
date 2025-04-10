@@ -123,7 +123,9 @@ class GitHubUpdater:
             try:
                 # 특수 아이콘 처리 - 🔴 🟠 🟢 🔵 같은 아이콘이 앞에 있을 수 있음
                 line = line.strip()
+                icon_prefix = ""
                 if line.startswith('🔴 ') or line.startswith('🟠 ') or line.startswith('🟢 ') or line.startswith('🔵 '):
+                    icon_prefix = line[:2]  # 아이콘 저장
                     line = line[2:].strip()  # 아이콘 제거
                     
                 # 콜론(:) 위치 찾기 (첫 번째 콜론이 아닌 종목명 뒤의 콜론)
@@ -134,6 +136,24 @@ class GitHubUpdater:
                 # 종목명과 신호 부분 분리
                 stock_name = line[:colon_pos].strip()
                 signal_part = line[colon_pos+1:].strip()
+                
+                # 가중치 정보 추출 (괄호 안에 있는 숫자)
+                weight_info = ""
+                if ' (' in stock_name and ')' in stock_name:
+                    parts = stock_name.split(' (')
+                    if len(parts) == 2 and ')' in parts[1]:
+                        weight_info = parts[1].replace(')', '')
+                        base_name = parts[0]
+                        # 웹 표시용 종목명 포맷: 기본명-가중치-
+                        formatted_stock_name = f"{base_name}-{weight_info}-"
+                    else:
+                        formatted_stock_name = stock_name
+                else:
+                    formatted_stock_name = stock_name
+                
+                # 아이콘이 있으면 종목명 앞에 추가
+                if icon_prefix:
+                    formatted_stock_name = f"{icon_prefix} {formatted_stock_name}"
                 
                 # 신호 부분 파싱
                 signal_parts = signal_part.split('/')
@@ -161,9 +181,9 @@ class GitHubUpdater:
                     price_a = None
                     price_b = None
                 
-                # 데이터 구조화 - 원래 종목명 유지
+                # 데이터 구조화 - 아이콘과 가중치가 포함된 종목명 사용
                 signal_data = {
-                    "stock_name": stock_name,
+                    "stock_name": formatted_stock_name,  # 아이콘과 가중치가 포함된 종목명
                     "sz_value": sz_value,
                     "signal": signal,
                     "price_a": price_a,
