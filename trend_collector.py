@@ -108,6 +108,10 @@ class TrendCollector:
         except Exception as e:
             logger.error(f"{pair.A_name} 트렌드 데이터 수집 중 오류: {str(e)}")
             raise
+        finally:
+            # 이 부분이 추가되어야 함: 세션 명시적으로 닫기
+            if session and not session.closed:
+                await session.close()
     
     async def _fetch_stock_history(self, session, stock_code, start_date, days):
         """주식 히스토리 데이터 가져오기 - 1년 데이터용 수정"""

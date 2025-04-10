@@ -36,6 +36,7 @@ class NPPair:
         return self._session
 
     async def fetch_data(self):
+        session = None
         try:
             session = await self._get_session()
             async with session:
@@ -45,6 +46,10 @@ class NPPair:
         except Exception as e:
             logger.error(f"Error fetching data: {str(e)}")
             raise MarketDataError(f"Failed to fetch market data: {str(e)}")
+        finally:
+            # 세션이 닫히지 않았다면 명시적으로 닫기
+            if session and not session.closed:
+                await session.close()
 
     async def _fetch_stock_data(self, session: aiohttp.ClientSession, code: str) -> str:
         yesterday = datetime.now() - timedelta(1)
