@@ -440,60 +440,57 @@
 
             // 현재 종목 정보 업데이트 (최신 데이터 기준)
             async function updateCurrentInfo(trendData, stockName, stockCode) {
-                    try {
-                        // 트렌드 데이터에서 최신 가격 정보 가져오기
-                        const lastIndex = trendData.dates.length - 1;
-                        const latestCommonPrice = trendData.common_prices[lastIndex];
-                        const latestPreferredPrice = trendData.preferred_prices[lastIndex];
+                try {
+                    const lastIndex = trendData.dates.length - 1;
+                    const latestCommonPrice = trendData.common_prices[lastIndex];
+                    const latestPreferredPrice = trendData.preferred_prices[lastIndex];
 
-                        // 현재 가격 정보 업데이트
-                        document.getElementById('current-common-price').textContent = latestCommonPrice.toLocaleString() + ' KRW';
-                        document.getElementById('current-preferred-price').textContent = latestPreferredPrice.toLocaleString() + ' KRW';
+                    document.getElementById('common-price').textContent = latestCommonPrice != null
+                        ? latestCommonPrice.toLocaleString() + ' KRW'
+                        : 'N/A';
+                    document.getElementById('preferred-price').textContent = latestPreferredPrice != null
+                        ? latestPreferredPrice.toLocaleString() + ' KRW'
+                        : 'N/A';
 
-                        // 실시간 데이터에서 SZ 값과 괴리율 가져오기
-                        const stockDataJson = await loadStockDataJson();
+                    const discountRate = (latestCommonPrice - latestPreferredPrice) / latestCommonPrice;
+                    document.getElementById('current-discount-rate').textContent =
+                        (discountRate * 100).toFixed(2) + '%';
 
-                        // 기본 종목명 추출
-                        const getBaseStockName = (name) => {
-                            let cleanName = name.replace(/<[^>]+>/g, '');
-                            cleanName = cleanName.replace(/^[🔴🟠🟢🔵]\s+/, '');
-                            cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '');
-                            return cleanName.trim();
-                        };
+                    const stockDataUrl = `data/stock_data.json?t=${new Date().getTime()}`;
 
-                        const baseStockName = getBaseStockName(stockName);
-
-                        // 일치하는 종목 찾기
-                        const matchedSignal = stockDataJson.all_signals.find(signal => {
-                            const signalBaseName = getBaseStockName(signal.stock_name);
-                            return signalBaseName === baseStockName ||
-                                signalBaseName.includes(baseStockName) ||
-                                baseStockName.includes(signalBaseName);
-                        });
-
-                        if (matchedSignal) {
-                            // SZ 값 표시
-                            const szElement = document.getElementById('current-sz-value');
-                            szElement.textContent = matchedSignal.sz_value.toFixed(2);
-
-                            // SZ 값에 따른 색상 변경
-                            szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
-                            if (matchedSignal.sz_value >= 2.5) {
-                                szElement.classList.add('sz-high');
-                            } else if (matchedSignal.sz_value >= 1.5) {
-                                szElement.classList.add('sz-medium');
-                            } else {
-                                szElement.classList.add('sz-low');
-                            }
-
-                            // 괴리율 계산 및 표시
-                            const discountRate = (latestCommonPrice - latestPreferredPrice) / latestCommonPrice * 100;
-                            document.getElementById('current-discount-rate').textContent = discountRate.toFixed(2) + '%';
-                        }
-                    } catch (error) {
-                        console.error('현재 정보 업데이트 중 오류:', error);
+                    const response = await fetch(stockDataUrl);
+                    if (!response.ok) {
+                        throw new Error(`실시간 데이터를 가져올 수 없습니다 (${response.status})`);
                     }
+
+                    const stockData = await response.json();
+                    const currentSignal = stockData.all_signals.find(s =>
+                        s.stock_name.includes(stockName)
+                    );
+
+                    const szElement = document.getElementById('sz-value');
+                    if (currentSignal) {
+                        szElement.textContent = currentSignal.sz_value.toFixed(2);
+
+                        szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                        if (currentSignal.sz_value >= 2.5) {
+                            szElement.classList.add('sz-high');
+                        } else if (currentSignal.sz_value >= 1.5) {
+                            szElement.classList.add('sz-medium');
+                        } else {
+                            szElement.classList.add('sz-low');
+                        }
+                    } else {
+                        szElement.textContent = 'N/A';
+                    }
+                } catch (error) {
+                    console.error('현재 정보 업데이트 중 오류:', error);
+                    document.getElementById('common-price').textContent = 'N/A';
+                    document.getElementById('preferred-price').textContent = 'N/A';
+                    document.getElementById('sz-value').textContent = 'N/A';
+                    document.getElementById('current-discount-rate').textContent = 'N/A';
                 }
+            }
 
         // 차트 렌더링 함수 (5개월 데이터로 제한)
         function renderCharts(trendData) {
