@@ -117,13 +117,18 @@ class GitHubUpdater:
             logger.warning(f"신호 데이터 없음 또는 divergent pairs 없음")
             return result
             
+        # HTML 태그 제거 헬퍼 함수
+        def strip_html_tags(text):
+            import re
+            return re.sub(r'<[^>]+>', '', text) if text else text
+            
         # 데이터를 올바르게 파싱하기 위해 2줄씩 처리
         lines = signals_text.split('\n')
         i = 0
         
         while i < len(lines) - 1:
             try:
-                stock_name_line = lines[i].strip()
+                stock_name_line = strip_html_tags(lines[i].strip())  # HTML 태그 제거
                 signal_line = lines[i+1].strip() if i+1 < len(lines) else ""
                 
                 if not stock_name_line or not signal_line:

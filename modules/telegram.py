@@ -10,6 +10,11 @@ class TelegramBot:
     _instance = None
     _initialized = False
 
+    def strip_html_tags(text):
+        """HTML 태그 제거 함수"""
+        import re
+        return re.sub(r'<[^>]+>', '', text) if text else text
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(TelegramBot, cls).__new__(cls)
@@ -77,9 +82,12 @@ class TelegramBot:
 
     async def send_message(self, message: str):
         try:
+            # HTML 태그 유지하되, 문제가 되는 태그만 처리
+            cleaned_message = message.replace("<b>", "").replace("</b>", "")
+            
             await self.bot.send_message(
                 chat_id=CHAT_ID,
-                text=message,
+                text=cleaned_message,
                 parse_mode='HTML'
             )
         except Exception as e:

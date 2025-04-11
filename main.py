@@ -170,7 +170,7 @@ class StockMonitor:
 
                         r_message = (
                             f"🚨 <b>R Signal Detected</b>\n"
-                            f"<b>{marked_stock_name}</b>\n"
+                            f"<b>{marked_stock_name.replace('<b>', '').replace('</b>', '')}</b>\n"
                             f"     {signal_info}\n"
                         )
                     
