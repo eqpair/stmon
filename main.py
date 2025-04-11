@@ -212,9 +212,9 @@ class StockMonitor:
                 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
                 message = (
-                    f"🕒 {current_time}\n\n"
-                    f"📊 Current Status\n\n{all_signals}\n\n"
-                    f"🚨 Divergent Pairs\n\n{divergent_signals}"
+                    f"🕒 {current_time}\n"
+                    f"📊 Current Status\n{all_signals}\n\n"
+                    f"🚨 Divergent Pairs\n{divergent_signals}"
                 )
                 
                 await self.telegram_bot.send_message(message)
