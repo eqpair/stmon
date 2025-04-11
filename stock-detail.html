@@ -16,21 +16,21 @@
             height: 300px;
             width: 100%;
         }
-    
+
         .sz-high {
             color: #DC2626;
             font-weight: bold;
         }
-    
+
         .sz-medium {
             color: #EA580C;
             font-weight: bold;
         }
-    
+
         .sz-low {
             color: #16A34A;
         }
-    
+
         .signal-tag {
             display: inline-block;
             padding: 2px 8px;
@@ -39,52 +39,91 @@
             font-weight: 600;
             margin-right: 4px;
         }
-    
+
         .signal-R {
             background-color: #FEE2E2;
             color: #DC2626;
         }
-    
+
         .signal-I {
             background-color: #E0F2FE;
             color: #0284C7;
         }
-    
+
         .signal-O {
             background-color: #DCFCE7;
             color: #16A34A;
         }
-    
-        /* 반응형 디자인 */
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans KR", sans-serif;
+        }
+
+        /* 반응형 디자인 개선 */
         @media (max-width: 1024px) {
             .grid-cols-2 {
                 grid-template-columns: repeat(1, 1fr);
             }
-    
+
             .chart-container {
                 height: 250px;
             }
         }
-    
+
         @media (max-width: 640px) {
             .grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, 1fr) !important;
             }
-    
+
+            .flex.justify-between.items-center {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start !important;
+            }
+
+            #trade-button-container {
+                margin-left: 0 !important;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+
+            #trade-button {
+                width: 100%;
+                text-align: center;
+            }
+
             .chart-container {
                 height: 200px;
             }
-    
+
             .text-3xl {
                 font-size: 1.5rem;
             }
-    
+
             .text-sm {
                 font-size: 0.75rem;
             }
-    
+
             .overflow-x-auto {
                 overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            button,
+            a.px-4 {
+                padding: 0.75rem 1rem;
+                min-height: 44px;
+            }
+
+            .fa-chart-line,
+            .fa-arrow-left {
+                font-size: 1rem;
+            }
+
+            th,
+            td {
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.75rem !important;
             }
         }
     </style>
@@ -350,81 +389,111 @@
             }
 
         // 현재 종목 정보 업데이트 (최신 데이터 기준)
-        async function updateCurrentInfo(trendData, stockName) {
-            try {
-                const lastIndex = trendData.dates.length - 1;
-                const latestCommonPrice = trendData.common_prices[lastIndex];
-                const latestPreferredPrice = trendData.preferred_prices[lastIndex];
+            async function updateCurrentInfo(trendData, stockName) {
+                try {
+                    const lastIndex = trendData.dates.length - 1;
+                    const latestCommonPrice = trendData.common_prices[lastIndex];
+                    const latestPreferredPrice = trendData.preferred_prices[lastIndex];
 
-                // 실시간 데이터에서 SZ 값 가져오기
-                let szValue = 0; // 기본값
-                const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
-                if (stockDataResponse.ok) {
-                    const stockDataText = await stockDataResponse.text();
-                    const cleanedStockDataText = stockDataText.replace(/"NaN"/g, 'null');
-                    const stockData = JSON.parse(cleanedStockDataText);
-                    const latestSignal = stockData.all_signals.find(signal => signal.stock_name === stockName) || {};
-                    szValue = latestSignal.sz_value ?? 0; // null이면 0으로 대체
+                    // 실시간 데이터에서 SZ 값 가져오기
+                    let szValue = 0; // 기본값
+                    let signalData = null;
 
-                    // 매매가능 버튼 항상 표시
-                    const tradeButtonContainer = document.getElementById('trade-button-container');
-                    const tradeButton = document.getElementById('trade-button');
+                    const stockDataResponse = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`);
+                    if (stockDataResponse.ok) {
+                        const stockDataText = await stockDataResponse.text();
+                        const cleanedStockDataText = stockDataText.replace(/"NaN"/g, 'null');
+                        const stockData = JSON.parse(cleanedStockDataText);
 
-                    tradeButtonContainer.classList.remove('hidden');
+                        // HTML 태그 제거 함수
+                        function stripHtmlTags(html) {
+                            if (!html) return '';
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = html;
+                            return tempDiv.textContent || tempDiv.innerText || '';
+                        }
 
-                    // URL에서 stockCode 가져오기
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const stockCode = urlParams.get('code');
+                        // 정확한 종목명 매칭을 위해 HTML 태그 및 특수 문자 제거
+                        const cleanStockName = stripHtmlTags(stockName).trim();
 
-                    // 매매가능 버튼 클릭 시 trade-detail.html로 이동
-                    tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
-                } else {
-                    console.warn(`Failed to load stock data for ${stockName} in updateCurrentInfo`);
+                        // 종목명 매칭 로직 개선
+                        signalData = stockData.all_signals.find(signal => {
+                            const signalName = stripHtmlTags(signal.stock_name).trim();
+                            return signalName === cleanStockName ||
+                                signalName.includes(cleanStockName) ||
+                                cleanStockName.includes(signalName);
+                        });
+
+                        if (signalData) {
+                            console.log("일치하는 신호 데이터 찾음:", signalData);
+                            szValue = signalData.sz_value ?? 0;
+                        } else {
+                            console.warn(`일치하는 종목명을 찾을 수 없음: "${cleanStockName}"`);
+                            console.log("가용한 종목들:", stockData.all_signals.map(s => s.stock_name));
+                        }
+                    } else {
+                        console.warn(`Failed to load stock data for ${stockName} in updateCurrentInfo`);
+                    }
+
+                    // 가격 정보 업데이트
+                    document.getElementById('common-price').textContent = latestCommonPrice != null
+                        ? latestCommonPrice.toLocaleString() + ' KRW'
+                        : 'N/A';
+                    document.getElementById('preferred-price').textContent = latestPreferredPrice != null
+                        ? latestPreferredPrice.toLocaleString() + ' KRW'
+                        : 'N/A';
+
+                    // SZ 값 표시
+                    const szElement = document.getElementById('sz-value');
+                    szElement.textContent = szValue.toFixed(2);
+
+                    // SZ 값에 따른 색상 변경
+                    szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                    if (szValue >= 2.5) {
+                        szElement.classList.add('sz-high');
+                    } else if (szValue >= 1.5) {
+                        szElement.classList.add('sz-medium');
+                    } else {
+                        szElement.classList.add('sz-low');
+                    }
+
+                    // 신호 표시
+                    const signalElement = document.getElementById('current-signal');
+                    let signalHtml = '';
+
+                    if (signalData && signalData.signal) {
+                        // signalData.signal 값 직접 사용
+                        if (signalData.signal.includes('R')) {
+                            signalHtml += '<span class="signal-tag signal-R">R</span>';
+                        }
+                        if (signalData.signal.includes('I')) {
+                            signalHtml += '<span class="signal-tag signal-I">I</span>';
+                        }
+                        if (signalData.signal.includes('O')) {
+                            signalHtml += '<span class="signal-tag signal-O">O</span>';
+                        }
+                    } else {
+                        // SZ 값 기반으로 신호 생성
+                        if (szValue >= 2.0) {
+                            signalHtml += '<span class="signal-tag signal-R">R</span>';
+                        }
+                        if (szValue >= 1.5 && szValue < 2.5) {
+                            signalHtml += '<span class="signal-tag signal-I">I</span>';
+                        }
+                        if (szValue < 0.5) {
+                            signalHtml += '<span class="signal-tag signal-O">O</span>';
+                        }
+                    }
+
+                    signalElement.innerHTML = signalHtml || 'N/A';
+                } catch (error) {
+                    console.error('현재 정보 업데이트 중 오류:', error);
+                    document.getElementById('common-price').textContent = 'N/A';
+                    document.getElementById('preferred-price').textContent = 'N/A';
+                    document.getElementById('sz-value').textContent = '0.00';
+                    document.getElementById('current-signal').textContent = 'N/A';
                 }
-
-                // 가격 정보 업데이트
-                document.getElementById('common-price').textContent = latestCommonPrice != null
-                    ? latestCommonPrice.toLocaleString() + ' KRW'
-                    : 'N/A';
-                document.getElementById('preferred-price').textContent = latestPreferredPrice != null
-                    ? latestPreferredPrice.toLocaleString() + ' KRW'
-                    : 'N/A';
-
-                // SZ 값 표시
-                const szElement = document.getElementById('sz-value');
-                szElement.textContent = szValue.toFixed(2);
-
-                // SZ 값에 따른 색상 변경
-                szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
-                if (szValue >= 2.5) {
-                    szElement.classList.add('sz-high');
-                } else if (szValue >= 1.5) {
-                    szElement.classList.add('sz-medium');
-                } else {
-                    szElement.classList.add('sz-low');
-                }
-
-                // 신호 표시
-                const signalElement = document.getElementById('current-signal');
-                let signalHtml = '';
-                if (szValue >= 2.0) {
-                    signalHtml += '<span class="signal-tag signal-R">R</span>';
-                }
-                if (szValue >= 1.5 && szValue < 2.5) {
-                    signalHtml += '<span class="signal-tag signal-I">I</span>';
-                }
-                if (szValue < 0.5) {
-                    signalHtml += '<span class="signal-tag signal-O">O</span>';
-                }
-                signalElement.innerHTML = signalHtml || 'N/A';
-            } catch (error) {
-                console.error('현재 정보 업데이트 중 오류:', error);
-                document.getElementById('common-price').textContent = 'N/A';
-                document.getElementById('preferred-price').textContent = 'N/A';
-                document.getElementById('sz-value').textContent = '0.00';
-                document.getElementById('current-signal').textContent = 'N/A';
             }
-        }
 
         // 차트 렌더링 함수 (5개월 데이터로 제한)
         function renderCharts(trendData) {

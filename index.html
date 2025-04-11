@@ -13,30 +13,30 @@
         .signal-card {
             transition: all 0.3s ease;
         }
-    
+
         .signal-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-    
+
         .blink {
             animation: blink 2s linear infinite;
         }
-    
+
         @keyframes blink {
             0% {
                 opacity: 1;
             }
-    
+
             50% {
                 opacity: 0.5;
             }
-    
+
             100% {
                 opacity: 1;
             }
         }
-    
+
         .signal-tag {
             display: inline-block;
             padding: 2px 8px;
@@ -45,59 +45,77 @@
             font-weight: 600;
             margin-right: 4px;
         }
-    
+
         .signal-R {
             background-color: #FEE2E2;
             color: #DC2626;
         }
-    
+
         .signal-I {
             background-color: #E0F2FE;
             color: #0284C7;
         }
-    
+
         .signal-O {
             background-color: #DCFCE7;
             color: #16A34A;
         }
-    
+
         .sz-high {
             color: #DC2626;
             font-weight: bold;
         }
-    
+
         .sz-medium {
             color: #EA580C;
             font-weight: bold;
         }
-    
+
         .sz-low {
             color: #16A34A;
         }
-    
-        /* 반응형 디자인 */
+
+        /* 반응형 디자인 개선 */
         @media (max-width: 1024px) {
             .grid-cols-3 {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-    
+
         @media (max-width: 640px) {
             .grid-cols-3 {
                 grid-template-columns: 1fr;
             }
-    
+
             .tab-button {
-                padding: 0.75rem;
-                font-size: 0.875rem;
+                padding: 0.5rem;
+                font-size: 0.75rem;
             }
-    
+
             .signal-card {
                 padding: 0.75rem;
             }
-    
+
             .signal-card h3 {
-                font-size: 1rem;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans KR", sans-serif;
+            }
+
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl {
+                font-size: 1.2rem;
+            }
+
+            button,
+            a {
+                min-height: 44px;
             }
         }
     </style>
