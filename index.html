@@ -605,68 +605,69 @@
 
             return filtered;
         }
+        
         // 신호 데이터 렌더링 함수 - 아이콘과 가중치 정보 표시
-        function renderSignals(signals, containerId) {
-            const container = document.getElementById(containerId);
-            const screenWidth = window.innerWidth;
+            function renderSignals(signals, containerId) {
+                const container = document.getElementById(containerId);
+                const screenWidth = window.innerWidth;
 
-            if (!signals || signals.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No data to display</div>';
-                return;
-            }
+                if (!signals || signals.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No data to display</div>';
+                    return;
+                }
 
-            container.innerHTML = '';
+                container.innerHTML = '';
 
-            signals.forEach(signal => {
-                const card = document.createElement('div');
-                card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
-                
-                // 화면 크기에 따라 카드 배치 조정
-                let cardsPerRow = screenWidth > 1024 ? 3 : (screenWidth > 640 ? 2 : 1);
+                signals.forEach(signal => {
+                    const card = document.createElement('div');
+                    card.className = 'signal-card bg-white rounded-lg shadow-md p-4 transition-all';
 
-                // 신호 태그 생성
-                let signalTags = '';
-                if (signal.signal) {
-                    if (signal.signal.includes('R')) {
-                        signalTags += '<span class="signal-tag signal-R">R</span>';
+                    // 화면 크기에 따라 카드 배치 조정
+                    let cardsPerRow = screenWidth > 1024 ? 3 : (screenWidth > 640 ? 2 : 1);
+
+                    // 신호 태그 생성
+                    let signalTags = '';
+                    if (signal.signal) {
+                        if (signal.signal.includes('R')) {
+                            signalTags += '<span class="signal-tag signal-R">R</span>';
+                        }
+                        if (signal.signal.includes('I')) {
+                            signalTags += '<span class="signal-tag signal-I">I</span>';
+                        }
+                        if (signal.signal.includes('O')) {
+                            signalTags += '<span class="signal-tag signal-O">O</span>';
+                        }
                     }
-                    if (signal.signal.includes('I')) {
-                        signalTags += '<span class="signal-tag signal-I">I</span>';
+
+                    // SZ 값에 따른 클래스
+                    let szClass = 'sz-low';
+                    if (signal.sz_value >= 2.5) {
+                        szClass = 'sz-high';
+                    } else if (signal.sz_value >= 1.5) {
+                        szClass = 'sz-medium';
                     }
-                    if (signal.signal.includes('O')) {
-                        signalTags += '<span class="signal-tag signal-O">O</span>';
+
+                    // 종목명 처리 - 아이콘이 이미 포함된 경우 그대로 사용
+                    let displayStockName = signal.stock_name;
+
+                    // 종목 코드 추출 - 아이콘과 가중치를 고려하여 기본 종목명 추출
+                    let baseStockName = displayStockName;
+
+                    // 아이콘 제거 (있는 경우)
+                    if (baseStockName.startsWith('🔴 ') || baseStockName.startsWith('🟠 ') ||
+                        baseStockName.startsWith('🟢 ') || baseStockName.startsWith('🔵 ')) {
+                        baseStockName = baseStockName.substring(2).trim();
                     }
-                }
 
-                // SZ 값에 따른 클래스
-                let szClass = 'sz-low';
-                if (signal.sz_value >= 2.5) {
-                    szClass = 'sz-high';
-                } else if (signal.sz_value >= 1.5) {
-                    szClass = 'sz-medium';
-                }
+                    // 가중치 정보 제거 (기본명만 남김)
+                    if (baseStockName.includes('-')) {
+                        baseStockName = baseStockName.split('-')[0].trim();
+                    }
 
-                // 종목명 처리 - 아이콘이 이미 포함된 경우 그대로 사용
-                let displayStockName = signal.stock_name;
+                    const stockCode = getStockCodeByName(baseStockName);
 
-                // 종목 코드 추출 - 아이콘과 가중치를 고려하여 기본 종목명 추출
-                let baseStockName = displayStockName;
-
-                // 아이콘 제거 (있는 경우)
-                if (baseStockName.startsWith('🔴 ') || baseStockName.startsWith('🟠 ') ||
-                    baseStockName.startsWith('🟢 ') || baseStockName.startsWith('🔵 ')) {
-                    baseStockName = baseStockName.substring(2).trim();
-                }
-
-                // 가중치 정보 제거 (기본명만 남김)
-                if (baseStockName.includes('-')) {
-                    baseStockName = baseStockName.split('-')[0].trim();
-                }
-
-                const stockCode = getStockCodeByName(baseStockName);
-
-                // 카드 내용 - 종목명에 링크 추가
-                card.innerHTML = `
+                    // 카드 내용 - 종목명에 링크 추가
+                    card.innerHTML = `
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-medium text-gray-900">
                                 <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
@@ -691,19 +692,24 @@
                         </div>
                     `;
 
-                container.appendChild(card);
-            });
-        }
+                    container.appendChild(card);
+                });
+            }
 
         // 종목명으로 종목 코드를 가져오는 함수
         function getStockCodeByName(stockName) {
-            // 아이콘 제거 (시작 부분의 이모지)
-            let cleanName = stockName.replace(/^(🔴|🟠|🟢|🔵)\s*/, '').trim();
+            if (!stockName) return 'unknown';
+
+            // HTML 태그 및 특수 문자 제거
+            let cleanName = stockName.replace(/<\/?[^>]+(>|$)/g, "").trim();
+
+            // 아이콘 제거
+            cleanName = cleanName.replace(/^(🔴|🟠|🟢|🔵)\s*/, '');
 
             // 가중치 및 대시 형식 제거
             cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
 
-            console.log('Clean Stock Name:', cleanName); // 디버깅용 로그 추가
+            console.log(`종목명 정리: "${stockName}" → "${cleanName}"`);
 
             // 종목 코드 맵핑
             const stockCodeMap = {
@@ -792,14 +798,21 @@
                 '삼양홀딩스': '000070'
             };
             
-            const foundCode = stockCodeMap[cleanName];
-
-            if (!foundCode) {
-                console.error(`종목 코드를 찾을 수 없음: ${cleanName}`);
-                return 'unknown';
+            // 정확한 일치
+            if (stockCodeMap[cleanName]) {
+                return stockCodeMap[cleanName];
             }
 
-            return foundCode;
+            // 부분 일치 시도
+            for (const name in stockCodeMap) {
+                if (cleanName.includes(name) || name.includes(cleanName)) {
+                    console.log(`부분 일치 종목 발견: ${name} (${stockCodeMap[name]})`);
+                    return stockCodeMap[name];
+                }
+            }
+
+            console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
+            return 'unknown';
         }
         // 히스토리 데이터 렌더링 함수 수정 - SZ 값 추이를 더 잘 보여주도록 변경
         function renderHistoryData(filteredHistory = null) {

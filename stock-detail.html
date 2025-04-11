@@ -227,12 +227,47 @@
 
         async function loadAndProcessStockData(stockCode, stockName) {
             try {
+                // 코드가 'unknown'인 경우 처리
+                if (stockCode === 'unknown' || !stockCode) {
+                    // 종목명에서 종목 코드 추출 시도
+                    // LG생활건강-0.5- → LG생활건강 → 051900
+                    let baseStockName = stockName;
+                    if (baseStockName.includes('-')) {
+                        baseStockName = baseStockName.split('-')[0].trim();
+                    }
+
+                    stockCode = getStockCodeByName(baseStockName);
+                    console.log(`종목코드 추출: ${baseStockName} → ${stockCode}`);
+
+                    if (stockCode === 'unknown') {
+                        throw new Error(`${stockName}에 대한 종목 코드를 찾을 수 없습니다.`);
+                    }
+                }
+                
                 // 로딩 컨테이너 표시
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
 
+                // 종목명에서 HTML 태그 제거
+                const cleanStockName = stockName.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                document.getElementById('stock-name').textContent = cleanStockName;
+
+                // 기본 URL 설정 (GitHub Pages 환경 고려)
+                const baseUrl = window.location.hostname.includes('github.io')
+                    ? '/stmon'
+                    : '';
+
+                // 데이터 URL 생성 및 로그
+                const trendDataUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
+                console.log(`데이터 요청 URL: ${trendDataUrl}`);
+
                 // 데이터 로드
-                const trendData = await loadStockData(stockCode, stockName);
+                // 데이터 로드
+                const trendDataResponse = await fetch(trendDataUrl);
+                if (!trendDataResponse.ok) {
+                    console.error(`트렌드 데이터 로드 실패: ${trendDataResponse.status}`);
+                    throw new Error(`트렌드 데이터를 로드할 수 없습니다: ${cleanStockName} (${trendDataResponse.status})`);
+                }
 
                 // 데이터 유효성 검사
                 if (!trendData.dates || !trendData.common_prices || !trendData.preferred_prices || !trendData.discount_rates) {
@@ -250,23 +285,27 @@
                 // 로딩 컨테이너 숨기기, 콘텐츠 표시
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
+
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
 
-                // 로딩 컨테이너에 오류 메시지 표시
+                // 오류 메시지 상세화
                 const loadingContainer = document.getElementById('loading-container');
                 loadingContainer.innerHTML = `
                     <div class="text-red-500 text-center">
                         <p>데이터를 로드할 수 없습니다.</p>
                         <p>${error.message}</p>
-                        <button onclick="window.location.reload()" 
-                                class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                            다시 시도
-                        </button>
-                        <button onclick="window.location.href='index.html'" 
-                                class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
-                            메인 페이지로 돌아가기
-                        </button>
+                        <p>종목코드: ${stockCode}, 종목명: ${stockName}</p>
+                        <div class="mt-4 flex justify-center space-x-4">
+                            <button onclick="window.location.reload()" 
+                                    class="px-4 py-2 bg-blue-500 text-white rounded">
+                                다시 시도
+                            </button>
+                            <button onclick="window.location.href='index.html'" 
+                                    class="px-4 py-2 bg-gray-500 text-white rounded">
+                                메인 페이지로 돌아가기
+                            </button>
+                        </div>
                     </div>
                 `;
             }
