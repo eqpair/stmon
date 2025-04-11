@@ -134,16 +134,16 @@ class StockMonitor:
             for pair, result in all_results:
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
-                    all_messages.append(f"{mark_special_stocks(pair.A_name)}\nError - {str(result)}")
+                    all_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    Error - {str(result)}")
                 elif result:
                     signal_info = result
-                    all_messages.append(f"{mark_special_stocks(pair.A_name)}\n{signal_info}")
-                
+                    all_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    {signal_info}")
+                    
                     # sz 값이 2를 넘는지 확인
                     try:
                         sz_value = float(signal_info.split('/')[0].strip())
                         if sz_value >= 2:
-                            divergent_messages.append(f"{mark_special_stocks(pair.A_name)}\n{signal_info}")
+                            divergent_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    {signal_info}")
                     
                         # 'R' 신호 확인
                         if 'R' in signal_info.split('/')[1]:
@@ -151,9 +151,9 @@ class StockMonitor:
                     except (ValueError, IndexError):
                         continue
                 else:
-                    all_messages.append(f"{mark_special_stocks(pair.A_name)}\nNo signal")
+                    all_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    No signal")
             
-            # 'R' 신호 페어에 대한 추가 메시지 처리
+            # 'R' 신호 메시지 처리도 동일하게 수정
             for pair, signal_info in r_signal_pairs:
                 try:
                     # 신호 정보 파싱
@@ -169,9 +169,9 @@ class StockMonitor:
                         marked_stock_name = mark_special_stocks(pair.A_name)
 
                         r_message = (
-                            f"🚨 R Signal Detected\n"
-                            f"{marked_stock_name}\n"
-                            f"{signal_info}\n"
+                            f"🚨 <b>R Signal Detected</b>\n"
+                            f"<b>{marked_stock_name}</b>\n"
+                            f"    {signal_info}\n"
                         )
                     
                         # 텔레그램으로 R 신호 메시지 전송
@@ -187,7 +187,7 @@ class StockMonitor:
             divergent_signals = "\n".join(divergent_messages) if divergent_messages else "No divergent pairs found at the moment."
             
             return all_signals, divergent_signals
-                    
+                        
         except Exception as e:
             logger.error(f"Error in get_signals_with_divergent: {str(e)}")
             raise
