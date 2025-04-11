@@ -204,12 +204,21 @@
     </footer>
 
     <script>
+        // HTML 태그 제거 함수
+            function stripHtmlTags(html) {
+                if (!html) return '';
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                return tempDiv.textContent || tempDiv.innerText || '';
+            }
         // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => {
             // URL에서 종목 정보 추출
             const urlParams = new URLSearchParams(window.location.search);
             const stockCode = urlParams.get('code');
-            const stockName = decodeURIComponent(urlParams.get('name'));
+            let stockName = decodeURIComponent(urlParams.get('name') || '');
+            // HTML 태그 제거
+            stockName = stockName.replace(/<\/?[^>]+(>|$)/g, "");
 
             if (!stockCode || !stockName) {
                 alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
