@@ -737,7 +737,7 @@
             let preferredPct = 0;
 
             // 반복적으로 계산하여 SZ=2.0에 도달하는 가격 변동 찾기
-            for (let i = 1; i <= 50; i++) {
+            for (let i = 0.1; i <= 50; i+= 0.1) {
                 // 보통주 i% 하락, 우선주 i% 상승 시도
                 const commonPrice = stockData.current.commonPrice * (1 - i / 100);
                 const preferredPrice = stockData.current.preferredPrice * (1 + i / 100);
@@ -755,7 +755,7 @@
 
             // 계산 결과가 나오지 않으면 더 큰 범위 시도
             if (commonPct === 0) {
-                for (let i = 1; i <= 30; i++) {
+                for (let i = 0.1; i <= 30; i += 0.1) {
                     // 보통주 2i% 하락, 우선주 i% 상승 시도 (2:1 비율)
                     const commonPrice = stockData.current.commonPrice * (1 - i * 2 / 100);
                     const preferredPrice = stockData.current.preferredPrice * (1 + i / 100);
@@ -795,7 +795,7 @@
             let commonPct = 0;
 
             // 반복적으로 계산하여 SZ=2.0에 도달하는 가격 변동 찾기
-            for (let i = 1; i <= 50; i++) {
+            for (let i = 0.1; i <= 50; i += 0.1) {
                 // 보통주 i% 하락
                 const commonPrice = stockData.current.commonPrice * (1 - i / 100);
                 const preferredPrice = stockData.current.preferredPrice; // 우선주 가격 유지
@@ -833,7 +833,7 @@
             let preferredPct = 0;
 
             // 반복적으로 계산하여 SZ=2.0에 도달하는 가격 변동 찾기
-            for (let i = 1; i <= 50; i++) {
+            for (let i = 0.1; i <= 50; i += 0.1) {
                 // 우선주 i% 상승
                 const commonPrice = stockData.current.commonPrice; // 보통주 가격 유지
                 const preferredPrice = stockData.current.preferredPrice * (1 + i / 100);
