@@ -171,7 +171,7 @@ class StockMonitor:
                         r_message = (
                             f"🚨 <b>R Signal Detected</b>\n"
                             f"<b>{marked_stock_name}</b>\n"
-                            f"    {signal_info}\n"
+                            f"     {signal_info}\n"
                         )
                     
                         # 텔레그램으로 R 신호 메시지 전송
