@@ -605,7 +605,7 @@
 
             return filtered;
         }
-        
+
         // 신호 데이터 렌더링 함수 - 아이콘과 가중치 정보 표시
             function renderSignals(signals, containerId) {
                 const container = document.getElementById(containerId);
@@ -649,19 +649,19 @@
 
                     // 종목명 처리 - 아이콘이 이미 포함된 경우 그대로 사용
                     let displayStockName = signal.stock_name;
-
-                    // 종목 코드 추출 - 아이콘과 가중치를 고려하여 기본 종목명 추출
                     let baseStockName = displayStockName;
 
-                    // 아이콘 제거 (있는 경우)
-                    if (baseStockName.startsWith('🔴 ') || baseStockName.startsWith('🟠 ') ||
-                        baseStockName.startsWith('🟢 ') || baseStockName.startsWith('🔵 ')) {
-                        baseStockName = baseStockName.substring(2).trim();
+                    // 아이콘 제거하지 않고 전체 종목명 사용
+                    // 종목 코드 추출용으로만 아이콘 제거
+                    let codeExtractName = baseStockName;
+                    if (codeExtractName.startsWith('🔴 ') || codeExtractName.startsWith('🟠 ') ||
+                        codeExtractName.startsWith('🟢 ') || codeExtractName.startsWith('🔵 ')) {
+                        codeExtractName = codeExtractName.substring(2).trim();
                     }
 
-                    // 가중치 정보 제거 (기본명만 남김)
-                    if (baseStockName.includes('-')) {
-                        baseStockName = baseStockName.split('-')[0].trim();
+                    // 코드 추출용으로 가중치 정보 제거
+                    if (codeExtractName.includes('-')) {
+                        codeExtractName = codeExtractName.split('-')[0].trim();
                     }
 
                     const stockCode = getStockCodeByName(baseStockName);
@@ -670,7 +670,7 @@
                     card.innerHTML = `
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-medium text-gray-900">
-                                <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
+                                <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(displayStockName)}" 
                                 class="hover:text-blue-600 hover:underline">
                                     ${displayStockName}
                                 </a>
