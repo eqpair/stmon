@@ -266,6 +266,20 @@ class TrendCollector:
         """트렌드 데이터 저장"""
         file_path = TRENDS_DIR / f"{stock_code}.json"
         
+        try:
+            safe_json_dump(data, file_path)
+            logger.info(f"트렌드 데이터 저장 성공: {file_path}")
+            
+            # 파일 존재 및 크기 확인
+            if os.path.exists(file_path):
+                file_size = os.path.getsize(file_path)
+                logger.info(f"파일 크기: {file_size} 바이트")
+            else:
+                logger.warning(f"파일 생성 실패: {file_path}")
+        except Exception as e:
+            logger.error(f"트렌드 데이터 저장 실패 ({stock_code}): {str(e)}")
+            raise
+        
         # utils.py에서 import한 안전한 JSON 저장 함수 사용
         from modules.utils import safe_json_dump
         

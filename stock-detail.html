@@ -274,6 +274,15 @@
 
         async function loadStockData(stockCode, stockName) {
             try {
+                // 종목명에서 아이콘과 가중치 제거
+                const cleanStockName = stockName.replace(/^(🔴|🟠|🟢|🔵)\s*/, '').replace(/-\d+(\.\d+)?-$/, '').trim();
+
+                // 상세 로깅 추가
+                console.log('Processing Stock:', {
+                    originalName: stockName,
+                    cleanName: cleanStockName,
+                    code: stockCode
+                });
                 // 실시간 데이터 로드
                 const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
                 if (!stockDataResponse.ok) {
@@ -344,7 +353,7 @@
 
                 return trendData;
             } catch (error) {
-                console.error('데이터 로드 중 전체 오류:', error);
+                console.error('데이터 로드 및 처리리 오류:', error);
                 throw error;
             }
         }

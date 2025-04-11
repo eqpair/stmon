@@ -697,11 +697,13 @@
 
         // 종목명으로 종목 코드를 가져오는 함수
         function getStockCodeByName(stockName) {
-            // 아이콘 제거
-            let cleanName = stockName.replace(/^(🔴|🟠|🟢|🔵)\s*/, '');
+            // 아이콘 제거 (시작 부분의 이모지)
+            let cleanName = stockName.replace(/^(🔴|🟠|🟢|🔵)\s*/, '').trim();
 
             // 가중치 및 대시 형식 제거
             cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
+
+            console.log('Clean Stock Name:', cleanName); // 디버깅용 로그 추가
 
             // 종목 코드 맵핑
             const stockCodeMap = {
@@ -789,8 +791,15 @@
                 'BYC': '001460',
                 '삼양홀딩스': '000070'
             };
+            
+            const foundCode = stockCodeMap[cleanName];
 
-            return stockCodeMap[cleanName] || 'unknown';
+            if (!foundCode) {
+                console.error(`종목 코드를 찾을 수 없음: ${cleanName}`);
+                return 'unknown';
+            }
+
+            return foundCode;
         }
         // 히스토리 데이터 렌더링 함수 수정 - SZ 값 추이를 더 잘 보여주도록 변경
         function renderHistoryData(filteredHistory = null) {
