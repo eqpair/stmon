@@ -273,90 +273,48 @@
         }
 
         async function loadStockData(stockCode, stockName) {
-            try {
-                // 종목명에서 아이콘과 가중치 제거
-                const cleanStockName = stockName.replace(/^(🔴|🟠|🟢|🔵)\s*/, '').replace(/-\d+(\.\d+)?-$/, '').trim();
-
-                // 상세 로깅 추가
-                console.log('Processing Stock:', {
-                    originalName: stockName,
-                    cleanName: cleanStockName,
-                    code: stockCode
-                });
-                // 실시간 데이터 로드
-                const stockDataResponse = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
-                if (!stockDataResponse.ok) {
-                    throw new Error(`Failed to load stock data for ${stockName}`);
-                }
-
-                const stockDataText = await stockDataResponse.text();
-
-                // JSON 파싱 전에 "NaN" 문자열을 null로 대체
-                const cleanedStockDataText = stockDataText
-                    .replace(/"NaN"/g, 'null')
-                    .replace(/NaN/g, 'null')
-                    .replace(/Infinity/g, 'null')
-                    .replace(/-Infinity/g, 'null');
-
-                let stockData;
                 try {
-                    stockData = JSON.parse(cleanedStockDataText, (key, value) => {
-                        // 파싱 중에 특수값 처리
-                        if (value === null || value === undefined ||
-                            (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
-                            return null;
-                        }
-                        if (typeof value === 'number' && !isFinite(value)) {
-                            return null;
-                        }
-                        return value;
-                    });
-                } catch (parseError) {
-                    console.error('신호 데이터 JSON 파싱 오류:', parseError);
-                    throw new Error(`신호 데이터 JSON 파싱 중 오류 발생: ${parseError.message}`);
+                    // 실시간 데이터 로드 - 캐시 방지를 위한 타임스탬프 추가
+                    const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+
+                    // 응답이 정상이 아닌 경우 확인용 로그 추가
+                    if (!trendDataResponse.ok) {
+                        console.error(`트렌드 데이터 로드 실패: ${trendDataResponse.status} ${trendDataResponse.statusText}`);
+                        throw new Error(`트렌드 데이터를 로드할 수 없습니다: ${stockName} (${trendDataResponse.status})`);
+                    }
+
+                    // 응답 내용 로깅 추가
+                    const trendDataText = await trendDataResponse.text();
+                    console.log('Received data:', trendDataText.substring(0, 100) + '...');
+
+                    // JSON 파싱 전에 "NaN" 및 특수 값들을 null로 대체
+                    const cleanedTrendDataText = trendDataText
+                        .replace(/"NaN"/g, 'null')
+                        .replace(/NaN/g, 'null')
+                        .replace(/Infinity/g, 'null')
+                        .replace(/-Infinity/g, 'null');
+
+                    try {
+                        return JSON.parse(cleanedTrendDataText, (key, value) => {
+                            // 파싱 중에 특수값 처리
+                            if (value === null || value === undefined ||
+                                (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
+                                return null;
+                            }
+                            if (typeof value === 'number' && !isFinite(value)) {
+                                return null;
+                            }
+                            return value;
+                        });
+                    } catch (parseError) {
+                        console.error('JSON 파싱 오류:', parseError, 'Data:', cleanedTrendDataText);
+                        throw new Error(`JSON 파싱 중 오류 발생: ${parseError.message}`);
+                    }
+                } catch (error) {
+                    console.error('데이터 로드 중 오류:', error);
+                    throw error;
                 }
-
-                // 트렌드 데이터에도 동일한 처리 적용
-                const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
-                if (!trendDataResponse.ok) {
-                    throw new Error(`Failed to load trend data for ${stockName}`);
-                }
-
-                const trendDataText = await trendDataResponse.text();
-
-                // JSON 파싱 전에 "NaN" 문자열을 null로 대체
-                const cleanedTrendDataText = trendDataText
-                    .replace(/"NaN"/g, 'null')
-                    .replace(/NaN/g, 'null')
-                    .replace(/Infinity/g, 'null')
-                    .replace(/-Infinity/g, 'null');
-
-                let trendData;
-                try {
-                    trendData = JSON.parse(cleanedTrendDataText, (key, value) => {
-                        // 파싱 중에 특수값 처리
-                        if (value === null || value === undefined ||
-                            (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
-                            return null;
-                        }
-                        if (typeof value === 'number' && !isFinite(value)) {
-                            return null;
-                        }
-                        return value;
-                    });
-                } catch (parseError) {
-                    console.error('트렌드 데이터 JSON 파싱 오류:', parseError);
-                    throw new Error(`트렌드 데이터 JSON 파싱 중 오류 발생: ${parseError.message}`);
-                }
-
-                // 실시간 데이터와 트렌드 데이터 병합...
-
-                return trendData;
-            } catch (error) {
-                console.error('데이터 로드 및 처리리 오류:', error);
-                throw error;
             }
-        }
 
         // 현재 종목 정보 업데이트 (최신 데이터 기준)
         async function updateCurrentInfo(trendData, stockName) {
