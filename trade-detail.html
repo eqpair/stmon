@@ -580,42 +580,68 @@
                 const commonSlider = document.getElementById('common-price-slider');
                 const commonPercent = document.getElementById('common-price-percent');
                 const commonAdjusted = document.getElementById('common-price-adjusted');
+                // 호가 단위에 맞는 스텝 사이즈 계산 함수
+                function calculateStepSize(price) {
+                    if (price < 1000) return 1 / price * 100;  // 1원 단위 (퍼센트로 환산)
+                    if (price < 5000) return 5 / price * 100;  // 5원 단위
+                    if (price < 10000) return 10 / price * 100; // 10원 단위
+                    if (price < 50000) return 50 / price * 100; // 50원 단위
+                    if (price < 100000) return 100 / price * 100; // 100원 단위
+                    if (price < 500000) return 500 / price * 100; // 500원 단위
+                    return 1000 / price * 100; // 1000원 단위
+                }
+
+                // 보통주 슬라이더 스텝 설정
+                const commonStepSize = calculateStepSize(stockData.current.commonPrice);
+                commonSlider.step = commonStepSize.toFixed(4);
 
                 commonSlider.addEventListener('input', function () {
-                    const screenWidth = window.innerWidth;
-                    const stepSize = screenWidth <= 640 ? 1 : 0.5; // 모바일에서 더 큰 스텝
-
                     const percent = parseFloat(this.value);
-                    commonPercent.textContent = `${percent}%`;
+                    commonPercent.textContent = `${percent.toFixed(2)}%`;
 
                     const adjusted = stockData.current.commonPrice * (1 + percent / 100);
-                    commonAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
+                    // 호가 단위에 맞게 반올림
+                    const roundedPrice = roundToTickSize(adjusted);
+                    commonAdjusted.textContent = roundedPrice.toLocaleString() + ' KRW';
                 });
 
-                // 우선주 슬라이더도 동일한 방식으로 수정
+                // 우선주 슬라이더도 동일한 방식 적용
                 const preferredSlider = document.getElementById('preferred-price-slider');
                 const preferredPercent = document.getElementById('preferred-price-percent');
                 const preferredAdjusted = document.getElementById('preferred-price-adjusted');
 
-                preferredSlider.addEventListener('input', function () {
-                    const screenWidth = window.innerWidth;
-                    const stepSize = screenWidth <= 640 ? 1 : 0.5; // 모바일에서 더 큰 스텝
+                // 우선주 슬라이더 스텝 설정
+                const preferredStepSize = calculateStepSize(stockData.current.preferredPrice);
+                preferredSlider.step = preferredStepSize.toFixed(4);
 
+                preferredSlider.addEventListener('input', function () {
                     const percent = parseFloat(this.value);
-                    preferredPercent.textContent = `${percent}%`;
+                    preferredPercent.textContent = `${percent.toFixed(2)}%`;
 
                     const adjusted = stockData.current.preferredPrice * (1 + percent / 100);
-                    preferredAdjusted.textContent = adjusted.toLocaleString() + ' KRW';
+                    // 호가 단위에 맞게 반올림
+                    const roundedPrice = roundToTickSize(adjusted);
+                    preferredAdjusted.textContent = roundedPrice.toLocaleString() + ' KRW';
                 });
             }
+            // 주가 호가 단위에 맞게 반올림하는 함수
+                function roundToTickSize(price) {
+                    if (price < 1000) return Math.round(price);  // 1원 단위
+                    if (price < 5000) return Math.round(price / 5) * 5;  // 5원 단위
+                    if (price < 10000) return Math.round(price / 10) * 10; // 10원 단위
+                    if (price < 50000) return Math.round(price / 50) * 50; // 50원 단위
+                    if (price < 100000) return Math.round(price / 100) * 100; // 100원 단위
+                    if (price < 500000) return Math.round(price / 500) * 500; // 500원 단위
+                    return Math.round(price / 1000) * 1000; // 1000원 단위
+                }
         function calculateManualScenario() {
-            // 슬라이더에서 값 가져오기 - parseInt() 대신 parseFloat() 사용
+            // 슬라이더에서 값 가져오기
             const commonPct = parseFloat(document.getElementById('common-price-slider').value);
             const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
 
-            // 조정된 가격 계산
-            const adjustedCommon = stockData.current.commonPrice * (1 + commonPct / 100);
-            const adjustedPreferred = stockData.current.preferredPrice * (1 + preferredPct / 100);
+            // 조정된 가격 계산 (호가 단위에 맞게 반올림)
+            const adjustedCommon = roundToTickSize(stockData.current.commonPrice * (1 + commonPct / 100));
+            const adjustedPreferred = roundToTickSize(stockData.current.preferredPrice * (1 + preferredPct / 100));
 
             // 조정된 괴리율 계산
             const adjustedDiscountRate = (adjustedCommon - adjustedPreferred) / adjustedCommon;
