@@ -135,6 +135,8 @@
             <div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Stock Details</h1>
                 <p class="text-sm text-gray-600">Recent 5 month trend overview</p>
+                <!-- 업데이트 정보 추가 -->
+                <p class="text-xs text-gray-500 mt-1">Last Updated: <span id="last-updated-time">Loading...</span></p>
             </div>
             <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 md:mt-0 w-full md:w-auto">
                 <div id="trade-button-container" class="w-full md:w-auto">
@@ -160,21 +162,22 @@
         <div id="content-container" class="hidden">
             <!-- Stock Info Card -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="p-4 bg-blue-50 rounded-lg">
-                        <div class="text-blue-700 text-sm font-medium mb-1">Common Stock Price</div>
+                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격</div>
                         <div class="text-xl font-bold" id="common-price">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">Preferred Stock Price</div>
+                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격</div>
                         <div class="text-xl font-bold" id="preferred-price">-</div>
                     </div>
                     <div class="p-4 bg-green-50 rounded-lg">
-                        <div class="text-green-700 text-sm font-medium mb-1">Current SZ Value</div>
+                        <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
                         <div class="text-xl font-bold" id="sz-value">-</div>
                     </div>
                     <div class="p-4 bg-yellow-50 rounded-lg">
-                        <div class="text-yellow-700 text-sm font-medium mb-1">Current Signal</div>
+                        <div class="text-yellow-700 text-sm font-medium mb-1">현재 시그널</div>
                         <div class="text-xl font-bold" id="current-signal">-</div>
                     </div>
                 </div>
@@ -243,6 +246,37 @@
     </footer>
 
     <script>
+        // 마지막 업데이트 시간을 가져와 표시하는 함수
+            async function fetchLastUpdateTime() {
+                try {
+                    const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                    const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+
+                    const response = await fetch(stockDataUrl);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch update time (${response.status})`);
+                    }
+
+                    const data = await response.json();
+
+                    // 타임스탬프 가져오기
+                    const updateTime = data.timestamp || data.last_updated || new Date().toLocaleString();
+
+                    // 한국어 날짜 포맷팅
+                    let formattedDate;
+                    try {
+                        const date = new Date(updateTime);
+                        formattedDate = date.toLocaleString();
+                    } catch (e) {
+                        formattedDate = updateTime; // 변환 실패시 원본 사용
+                    }
+
+                    document.getElementById('last-updated-time').textContent = formattedDate;
+                } catch (error) {
+                    console.error('업데이트 시간 가져오기 실패:', error);
+                    document.getElementById('last-updated-time').textContent = 'Unknown';
+                }
+            }
         // HTML 태그 제거 함수
         function stripHtmlTags(html) {
             if (!html) return '';
@@ -297,6 +331,8 @@
                 // 로딩 표시
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
+                // 마지막 업데이트 시간 가져오기
+                fetchLastUpdateTime();
 
                 // 트레이드 버튼 항상 표시
                 const tradeButtonContainer = document.getElementById('trade-button-container');

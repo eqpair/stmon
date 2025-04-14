@@ -185,6 +185,8 @@
             <div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Scenario Analysis</h1>
                 <p class="text-sm text-gray-600">SZ 2.0 target: Price fluctuations</p>
+                <!-- 업데이트 정보 추가 -->
+                <p class="text-xs text-gray-500 mt-1">Last Updated: <span id="last-updated-time">Loading...</span></p>
             </div>
             <div class="flex space-x-2">
                 <a href="index.html"
@@ -324,6 +326,37 @@
         </div>
     </footer>
     <script>
+        // 마지막 업데이트 시간을 가져와 표시하는 함수
+            async function fetchLastUpdateTime() {
+                try {
+                    const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                    const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+
+                    const response = await fetch(stockDataUrl);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch update time (${response.status})`);
+                    }
+
+                    const data = await response.json();
+
+                    // 타임스탬프 가져오기
+                    const updateTime = data.timestamp || data.last_updated || new Date().toLocaleString();
+
+                    // 한국어 날짜 포맷팅
+                    let formattedDate;
+                    try {
+                        const date = new Date(updateTime);
+                        formattedDate = date.toLocaleString();
+                    } catch (e) {
+                        formattedDate = updateTime; // 변환 실패시 원본 사용
+                    }
+
+                    document.getElementById('last-updated-time').textContent = formattedDate;
+                } catch (error) {
+                    console.error('업데이트 시간 가져오기 실패:', error);
+                    document.getElementById('last-updated-time').textContent = 'Unknown';
+                }
+            }
         // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => {
             // URL에서 종목 정보 추출
@@ -373,6 +406,8 @@
                 // 로딩 컨테이너 표시
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
+                // 마지막 업데이트 시간 가져오기
+                fetchLastUpdateTime();
 
                 // 데이터 로드
                 const trendData = await loadStockData(stockCode, stockName);
