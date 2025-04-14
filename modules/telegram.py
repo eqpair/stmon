@@ -45,7 +45,10 @@ class TelegramBot:
             from main import StockMonitor
             monitor = StockMonitor()
             status = await monitor.get_all_signals()
-            await message.reply(f"📊 Current Status\n{status}")
+            await message.reply(
+                f"📊 Current Status\n{status}", 
+                parse_mode='HTML'  # HTML 파싱 모드 추가
+            )
 
         @self.dp.message_handler(commands=['d'])
         async def divergence_command(message: types.Message):
@@ -54,7 +57,10 @@ class TelegramBot:
             monitor = StockMonitor()
             all_signals = await monitor.get_all_signals(divergence_only=True)
             if all_signals:
-                await message.reply(f"📊 Divergent Pairs\n{all_signals}")
+                await message.reply(
+                    f"📊 Divergent Pairs\n{all_signals}", 
+                    parse_mode='HTML'  # HTML 파싱 모드 추가
+                )
             else:
                 await message.reply("No divergent pairs found at the moment.")
 
