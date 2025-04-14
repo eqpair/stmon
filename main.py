@@ -132,18 +132,24 @@ class StockMonitor:
             r_signal_pairs = []  # 'R' 신호 페어 추적
             
             for pair, result in all_results:
+                # 종목명에 HTML 태그가 없도록 깨끗하게 추출
+                clean_name = mark_special_stocks(pair.A_name)
+                
+                # 깨끗한 종목명을 <b> 태그로 감싸기
+                formatted_name = f"<b>{clean_name}</b>"
+                
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
-                    all_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    Error - {str(result)}")
+                    all_messages.append(f"{formatted_name}\n    Error - {str(result)}")
                 elif result:
                     signal_info = result
-                    all_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    {signal_info}")
+                    all_messages.append(f"{formatted_name}\n    {signal_info}")
                     
                     # sz 값이 2를 넘는지 확인
                     try:
                         sz_value = float(signal_info.split('/')[0].strip())
                         if sz_value >= 2:
-                            divergent_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    {signal_info}")
+                            divergent_messages.append(f"{formatted_name}\n    {signal_info}")
                     
                         # 'R' 신호 확인
                         if 'R' in signal_info.split('/')[1]:
@@ -151,7 +157,7 @@ class StockMonitor:
                     except (ValueError, IndexError):
                         continue
                 else:
-                    all_messages.append(f"<b>{mark_special_stocks(pair.A_name)}</b>\n    No signal")
+                    all_messages.append(f"{formatted_name}\n    No signal")
             
             # 'R' 신호 메시지 처리도 동일하게 수정
             for pair, signal_info in r_signal_pairs:
@@ -165,12 +171,13 @@ class StockMonitor:
                     last_signal_time = self.last_r_signal_time.get(pair.A_name)
                     # 마지막 신호 시간이 없거나 1시간 이상 지났다면 메시지 전송
                     if (not last_signal_time) or (current_time - last_signal_time > timedelta(hours=1)):
-                        # mark_special_stocks 함수를 사용하여 종목명에 아이콘 추가
-                        marked_stock_name = mark_special_stocks(pair.A_name)
+                        # 깨끗한 종목명 추출
+                        clean_name = mark_special_stocks(pair.A_name)
+                        formatted_name = f"<b>{clean_name}</b>"
 
                         r_message = (
                             f"🚨 <b>R Signal Detected</b>\n"
-                            f"<b>{marked_stock_name.replace('<b>', '').replace('</b>', '')}</b>\n"
+                            f"{formatted_name}\n"
                             f"     {signal_info}\n"
                         )
                     
