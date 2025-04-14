@@ -82,12 +82,10 @@ class TelegramBot:
 
     async def send_message(self, message: str):
         try:
-            # HTML 태그 유지하되, 문제가 되는 태그만 처리
-            cleaned_message = message.replace("<b>", "").replace("</b>", "")
-            
+            # HTML 태그 제거 코드 삭제
             await self.bot.send_message(
                 chat_id=CHAT_ID,
-                text=cleaned_message,
+                text=message,  # 원본 메시지 그대로 사용
                 parse_mode='HTML'
             )
         except Exception as e:
