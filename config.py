@@ -89,7 +89,7 @@ TICK_PAIRS = [
     ('014820', '014825', 2.3, 0.3, -5, -10, 249), #동원
 ]
 
-WAIT_TIME = 1800 
+WAIT_TIME = 600 
 
 def add_weight_info(stock_code, stock_name):
     """

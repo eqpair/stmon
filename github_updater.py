@@ -112,6 +112,7 @@ class GitHubUpdater:
             logger.error(f"데이터 업데이트 오류: {str(e)}")
     
     def _parse_signals(self, signals_text: str) -> List[Dict[str, Any]]:
+        """텔레그램 신호 메시지 텍스트를 파싱하여 구조화된 데이터로 변환"""
         result = []
         if not signals_text or "No divergent pairs" in signals_text:
             logger.warning(f"신호 데이터 없음 또는 divergent pairs 없음")
@@ -128,6 +129,7 @@ class GitHubUpdater:
         
         while i < len(lines) - 1:
             try:
+                # 종목명 라인과 신호 라인 추출
                 stock_name_line = strip_html_tags(lines[i].strip())  # HTML 태그 제거
                 signal_line = lines[i+1].strip() if i+1 < len(lines) else ""
                 
@@ -135,23 +137,33 @@ class GitHubUpdater:
                     i += 2
                     continue
                     
-                # 종목명 처리
+                # 종목명에서 아이콘 처리 (🔴 🟠 🟢 🔵)
+                icon_prefix = ""
+                base_name = stock_name_line
+                
                 if stock_name_line.startswith('🔴 ') or stock_name_line.startswith('🟠 ') or stock_name_line.startswith('🟢 ') or stock_name_line.startswith('🔵 '):
                     icon_prefix = stock_name_line[:2]  # 아이콘 저장
-                    stock_name = stock_name_line[2:].strip()  # 아이콘 제거
-                else:
-                    icon_prefix = ""
-                    stock_name = stock_name_line
-                    
-                # 가중치 정보 추출
-                formatted_stock_name = stock_name
+                    base_name = stock_name_line[2:].strip()  # 아이콘 제거
+                
+                # 가중치 정보 추출 (괄호 형식 또는 대시 형식)
                 weight_info = ""
-                if ' (' in stock_name and ')' in stock_name:
-                    parts = stock_name.split(' (')
+                formatted_stock_name = base_name
+                
+                # 괄호 형식 (예: "삼성전자 (0.5)")
+                if ' (' in base_name and ')' in base_name:
+                    parts = base_name.split(' (')
                     if len(parts) == 2 and ')' in parts[1]:
                         weight_info = parts[1].replace(')', '')
                         base_name = parts[0]
                         # 웹 표시용 종목명 포맷: 기본명-가중치-
+                        formatted_stock_name = f"{base_name}-{weight_info}-"
+                
+                # 대시 형식 (예: "삼성전자-0.5-")
+                elif '-' in base_name and base_name.endswith('-'):
+                    parts = base_name.split('-')
+                    if len(parts) >= 3 and parts[-2].replace('.', '', 1).isdigit():
+                        weight_info = parts[-2]
+                        base_name = '-'.join(parts[:-2])
                         formatted_stock_name = f"{base_name}-{weight_info}-"
                 
                 # 아이콘이 있으면 종목명 앞에 추가
@@ -168,19 +180,39 @@ class GitHubUpdater:
                 # SZ 값 추출
                 sz_value = 0.0
                 try:
-                    sz_value = float(signal_parts[0].strip())
+                    sz_part = signal_parts[0].strip()
+                    sz_value = float(sz_part)
                 except ValueError:
                     sz_value = 0.0
                     
-                # 신호 추출
+                # 신호 추출 (R, I, O)
                 signal = ""
                 if len(signal_parts) > 1:
                     signal_info = signal_parts[1].strip()
+                    # 원래 형식 처리 (공백으로 구분된 문자열)
                     if 'R' in signal_info:
                         signal += 'R'
                     if 'I' in signal_info:
                         signal += 'I'
                     if 'O' in signal_info:
+                        signal += 'O'
+                    
+                    # 대체 형식 처리 (R__, _I_, __O 형식)
+                    if not signal and signal_info:
+                        if signal_info[0] == 'R':
+                            signal += 'R'
+                        if len(signal_info) > 1 and signal_info[1] == 'I':
+                            signal += 'I'
+                        if len(signal_info) > 2 and signal_info[2] == 'O':
+                            signal += 'O'
+                
+                # SZ 값에 따른 신호 자동 계산 (신호가 누락된 경우)
+                if not signal and sz_value > 0:
+                    if sz_value >= 2.0:
+                        signal += 'R'
+                    if sz_value >= 1.5 and sz_value < 2.5:
+                        signal += 'I'
+                    if sz_value < 0.5:
                         signal += 'O'
                         
                 # 가격 추출
@@ -191,12 +223,12 @@ class GitHubUpdater:
                     price_items = price_part.split(',')
                     if len(price_items) > 0:
                         try:
-                            price_a = float(price_items[0].strip())
+                            price_a = float(price_items[0].strip().replace(',', ''))
                         except ValueError:
                             pass
                     if len(price_items) > 1:
                         try:
-                            price_b = float(price_items[1].strip())
+                            price_b = float(price_items[1].strip().replace(',', ''))
                         except ValueError:
                             pass
                 
@@ -338,9 +370,9 @@ async def start_github_updater(daily_run=False):
         except Exception as e:
             logger.error(f"업데이트 오류: {str(e)}")
     
-        # 30분 대기
-        logger.info("다음 업데이트까지 30분 대기 중...")
-        await asyncio.sleep(1800)  # 30분마다 업데이트
+        # 10분 대기
+        logger.info("다음 업데이트까지 10분 대기 중...")
+        await asyncio.sleep(600)  # 10분마다 업데이트
 
 # 메인 함수
 if __name__ == "__main__":

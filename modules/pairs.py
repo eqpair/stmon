@@ -151,17 +151,26 @@ class NPPair:
                         last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * self.LS_in_val))
             }
             
-            if any(signal_conditions.values()):
-                signal_info = f"{'R' if signal_conditions['SL_R'] else '_'}"
-                signal_info += f"{'I' if signal_conditions['SL_I'] else '_'}"
-                signal_info += f"{'O' if signal_conditions['SL_O'] else '_'} / "
+            # 이 부분을 수정: 신호 생성 방식 통일
+            signal_parts = []
+            if signal_conditions['SL_R'] or signal_conditions['LS_R']:
+                signal_parts.append('R')
+            if signal_conditions['SL_I'] or signal_conditions['LS_I']:
+                signal_parts.append('I')
+            if signal_conditions['SL_O'] or signal_conditions['LS_O']:
+                signal_parts.append('O')
                 
-                price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
-                ratio_info = f"{sz:.2f} / "
-                
-                return f"{ratio_info}{signal_info}{price_info}"
+            signal_info = ''.join(signal_parts)
+            price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
+            ratio_info = f"{sz:.2f}"
             
-            return None
+            # 포맷 수정: sz/신호/가격 형식으로 통일
+            if signal_info:
+                return f"{ratio_info} / {signal_info} / {price_info}"
+            
+            # 신호가 없더라도 SZ 값만 반환
+            return f"{ratio_info} / / {price_info}"
+            
         except Exception as e:
             logger.error(f"Error generating signal: {str(e)}")
             raise
