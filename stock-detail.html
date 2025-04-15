@@ -524,39 +524,10 @@
         // loadAndProcessStockData 함수 수정
         async function loadAndProcessStockData(stockCode, stockName) {
             try {
-                // 로딩 컨테이너 표시
-                document.getElementById('loading-container').style.display = 'flex';
-                document.getElementById('content-container').classList.add('hidden');
-
-                // 마지막 업데이트 시간 가져오기
-                fetchLastUpdateTime();
-
-                // 코드가 'unknown'인 경우 종목명에서 코드 추출 시도
-                if (stockCode === 'unknown' || !stockCode) {
-                    // 기존 코드에 있던 종목 코드 추출 로직 유지
-                    let baseStockName = stockName;
-                    if (baseStockName.includes('-')) {
-                        baseStockName = baseStockName.split('-')[0].trim();
-                    }
-                    stockCode = getStockCodeByName(baseStockName);
-                }
-
-                // 데이터 URL 생성 - 타임스탬프 추가
-                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
-                const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
-
-                // 동시에 데이터 로드
+                // 실시간 stock_data.json 파일과 트렌드 데이터 동시 로드
                 const [stockDataResponse, trendDataResponse] = await Promise.all([
-                    fetch(stockDataUrl),
-                    fetch(trendUrl, {
-                        cache: 'no-store',
-                        headers: {
-                            'Cache-Control': 'no-cache, no-store, must-revalidate',
-                            'Pragma': 'no-cache',
-                            'Expires': '0'
-                        }
-                    })
+                    fetch(`data/stock_data.json?t=${new Date().getTime()}`),
+                    fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`)
                 ]);
 
                 if (!stockDataResponse.ok || !trendDataResponse.ok) {
@@ -576,7 +547,7 @@
                     stockCode
                 );
 
-                // 현재 데이터 업데이트 (각 페이지의 기존 updateCurrentInfo 함수 사용)
+                // 현재 데이터 업데이트
                 await updateCurrentInfo(trendData, stockName, stockCode, matchedSignal);
 
                 // 차트 렌더링
@@ -584,10 +555,6 @@
 
                 // 히스토리 데이터 렌더링
                 renderHistoryData(trendData);
-
-                // 로딩 완료
-                document.getElementById('loading-container').style.display = 'none';
-                document.getElementById('content-container').classList.remove('hidden');
 
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
@@ -620,15 +587,15 @@
                     const latestCommonPrice = trendData.common_prices[lastIndex];
                     const latestPreferredPrice = trendData.preferred_prices[lastIndex];
 
-            // 가격 정보 업데이트
-                document.getElementById('common-price').textContent = latestCommonPrice != null
-                    ? latestCommonPrice.toLocaleString() + ' KRW'
-                    : 'N/A';
-                document.getElementById('preferred-price').textContent = latestPreferredPrice != null
-                    ? latestPreferredPrice.toLocaleString() + ' KRW'
-                    : 'N/A';
+                    // 가격 정보 업데이트
+                    document.getElementById('common-price').textContent = latestCommonPrice != null
+                        ? latestCommonPrice.toLocaleString() + ' KRW'
+                        : 'N/A';
+                    document.getElementById('preferred-price').textContent = latestPreferredPrice != null
+                        ? latestPreferredPrice.toLocaleString() + ' KRW'
+                        : 'N/A';
 
-                    // SZ 값과 신호 정보 가져오기
+                    // 실시간 데이터에서 신호 정보 추출
                     let szValue = 0;
                     let signalText = '';
 
@@ -640,7 +607,7 @@
                     } else {
                         // 매칭되는 종목이 없을 경우 트렌드 데이터 사용
                         console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
-                        szValue = trendData.current_sz || trendData.sz_values[lastIndex] || 0;
+                        szValue = trendData.current_sz || trendData.sz_values[trendData.sz_values.length - 1] || 0;
 
                         // SZ 값에 따라 신호 생성
                         if (szValue >= 2.0) signalText += 'R';
