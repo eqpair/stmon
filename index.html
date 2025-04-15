@@ -725,12 +725,17 @@
         function getStockCodeByName(stockName) {
             if (!stockName) return 'unknown';
 
-            // HTML 태그 및 이모지 제거
+            // HTML 태그 제거
             let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
-            cleanName = cleanName.replace(/^[^\w\s가-힣]+ /, '').trim();  // 이모지 제거
 
-            // 가중치 및 대시 형식 제거
+            // 이모지 제거 (🔴 🟠 🟢 🔵)
+            cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '').trim();
+
+            // 가중치 형식 제거 (대시 형식)
             cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
+
+            // 가중치 형식 제거 (괄호 형식)
+            cleanName = cleanName.replace(/\s*\(\d+(\.\d+)?\)$/, '').trim();
 
             console.log(`종목명 변환: "${stockName}" → "${cleanName}"`);
 
@@ -837,6 +842,7 @@
             console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
             return 'unknown';
         }
+        
         // 히스토리 데이터 렌더링 함수 수정 - SZ 값 추이를 더 잘 보여주도록 변경
         function renderHistoryData(filteredHistory = null) {
             const tableBody = document.getElementById('history-table-body');
