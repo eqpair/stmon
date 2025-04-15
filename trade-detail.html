@@ -326,6 +326,10 @@
         </div>
     </footer>
     <script>
+            // 2분마다 페이지 자동 새로고침 - script 태그 맨 위에 추가
+                setTimeout(function () {
+                    window.location.reload();
+                }, 120000); // 120초 = 2분
             // 종목명으로 종목 코드를 가져오는 함수
             function getStockCodeByName(stockName) {
                 if (!stockName) return 'unknown';
@@ -680,7 +684,14 @@
             const trendDataUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
             console.log(`트렌드 데이터 요청 URL: ${trendDataUrl}`);
 
-            const trendDataResponse = await fetch(trendDataUrl);
+            const trendDataResponse = await fetch(trendDataUrl, {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
             if (!trendDataResponse.ok) {
                 throw new Error(`트렌드 데이터 요청 실패 (${trendDataResponse.status}): ${stockName}`);
             }
@@ -710,7 +721,14 @@
 
         async function loadStockDataJson() {
             const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-            const response = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`);
+            const response = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`, {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
             if (!response.ok) {
                 throw new Error('신호 데이터를 로드할 수 없습니다.');
             }
