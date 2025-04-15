@@ -246,6 +246,26 @@
     </footer>
 
     <script>
+        // 페이지 로드 시 캐시 비우기 시도
+            window.addEventListener('load', function () {
+                // ServiceWorker 등록 해제
+                if (navigator.serviceWorker) {
+                    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    });
+                }
+
+                // 캐시 스토리지 비우기 
+                if ('caches' in window) {
+                    caches.keys().then(function (names) {
+                        for (let name of names) {
+                            caches.delete(name);
+                        }
+                    });
+                }
+            });
         // 2분마다 페이지 자동 새로고침 - script 태그 맨 위에 추가
             setTimeout(function () {
                 window.location.reload();
