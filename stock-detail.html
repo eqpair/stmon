@@ -579,7 +579,7 @@
 
                 // 트렌드 데이터 가져오기
                 const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
-                let trendData = { dates: [], common_prices: [], preferred_prices: [], sz_values: [], discount_rates: [] };
+                let trendData = { dates: [], preferred_prices: [], common_prices: [], sz_values: [], discount_rates: [] };
                 try {
                     const trendDataResponse = await fetch(trendUrl, {
                         cache: 'no-store',
@@ -614,8 +614,8 @@
                         const today = new Date().toISOString().split('T')[0];
                         if (!trendData.dates.includes(today)) {
                             trendData.dates.push(today);
-                            trendData.common_prices.push(matchedSignal.price_a || trendData.common_prices[trendData.common_prices.length - 1]);
                             trendData.preferred_prices.push(matchedSignal.price_b || trendData.preferred_prices[trendData.preferred_prices.length - 1]);
+                            trendData.common_prices.push(matchedSignal.price_a || trendData.common_prices[trendData.common_prices.length - 1]);
                             trendData.sz_values.push(matchedSignal.sz_value || trendData.sz_values[trendData.sz_values.length - 1]);
                             trendData.discount_rates.push(
                                 matchedSignal.price_a && matchedSignal.price_b
@@ -714,8 +714,8 @@
                 signalElement.innerHTML = signalHtml;
             } catch (error) {
                 console.error('현재 정보 업데이트 중 오류:', error);
-                document.getElementById('common-price').textContent = 'N/A';
                 document.getElementById('preferred-price').textContent = 'N/A';
+                document.getElementById('common-price').textContent = 'N/A';
                 document.getElementById('sz-value').textContent = '0.00';
                 document.getElementById('current-signal').textContent = 'N/A';
             }
@@ -731,8 +731,8 @@
 
                 // 최근 5개월 데이터
                 let recentDates = trendData.dates.slice(-150);
-                let recentCommonPrices = trendData.common_prices.slice(-150);
                 let recentPreferredPrices = trendData.preferred_prices.slice(-150);
+                let recentCommonPrices = trendData.common_prices.slice(-150);
                 let recentSZValues = trendData.sz_values.slice(-150);
                 let recentDiscountRates = trendData.discount_rates.slice(-150);
 
@@ -1049,8 +1049,8 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue ? szValue.toFixed(2) : '-'}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
             `;
 
                     tableBody.appendChild(row);
