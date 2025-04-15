@@ -246,152 +246,6 @@
     </footer>
 
     <script>
-        // 페이지 로드 시 캐시 비우기 시도
-        window.addEventListener('load', function () {
-            // ServiceWorker 등록 해제
-            if (navigator.serviceWorker) {
-                navigator.serviceWorker.getRegistrations().then(function (registrations) {
-                    for (let registration of registrations) {
-                        registration.unregister();
-                    }
-                });
-            }
-
-            // 캐시 스토리지 비우기 
-            if ('caches' in window) {
-                caches.keys().then(function (names) {
-                    for (let name of names) {
-                        caches.delete(name);
-                    }
-                });
-            }
-        });
-        // 2분마다 페이지 자동 새로고침 - script 태그 맨 위에 추가
-        setTimeout(function () {
-            window.location.reload();
-        }, 120000); // 120초 = 2분
-        // 종목명으로 종목 코드를 가져오는 함수
-        function getStockCodeByName(stockName) {
-            if (!stockName) return 'unknown';
-
-            // HTML 태그 제거
-            let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
-
-            // 이모지 제거 (🔴 🟠 🟢 🔵)
-            cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '').trim();
-
-            // 가중치 형식 제거 (대시 형식)
-            cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
-
-            // 가중치 형식 제거 (괄호 형식)
-            cleanName = cleanName.replace(/\s*\(\d+(\.\d+)?\)$/, '').trim();
-
-            console.log(`종목명 변환: "${stockName}" → "${cleanName}"`);
-
-            // 종목 코드 맵핑
-            const stockCodeMap = {
-                '삼성전자': '005930',
-                '코오롱모빌리티그룹': '450140',
-                '태양금속': '004100',
-                'NPC': '004250',
-                '대한제당': '001790',
-                '덕성': '004830',
-                '코리아써키트': '007810',
-                '코오롱': '002020',
-                '현대차': '005380',
-                '대신증권': '003540',
-                '성신양회': '004980',
-                '코오롱글로벌': '003070',
-                'NH투자증권': '005940',
-                '신풍제약': '019170',
-                'LG전자': '066570',
-                '한화솔루션': '009830',
-                '세방': '004360',
-                '한화투자증권': '003530',
-                'LG생활건강': '051900',
-                '아모레퍼시픽': '090430',
-                'LG화학': '051910',
-                '아모레G': '002790',
-                '대한항공': '003490',
-                'S-Oil': '010950',
-                '한진칼': '180640',
-                'SK증권': '001510',
-                '한국금융지주': '071050',
-                '티와이홀딩스': '363280',
-                '미래에셋증권': '006800',
-                '동부건설': '005960',
-                '크라운제과': '264900',
-                '두산': '000150',
-                '남선알미늄': '008350',
-                '금호석유': '011780',
-                '넥센': '005720',
-                'LX하우시스': '108670',
-                '삼성화재': '000810',
-                '대상홀딩스': '084690',
-                'SK케미칼': '285130',
-                '소프트센': '032680',
-                '삼성전기': '009150',
-                '노루홀딩스': '000320',
-                'LG': '003550',
-                '삼성SDI': '006400',
-                '코오롱인더': '120110',
-                '대원전선': '006340',
-                '태영건설': '009410',
-                '흥국화재': '000540',
-                '대호특수강': '021040',
-                '계양전기': '012200',
-                '한양증권': '001750',
-                '호텔신라': '008770',
-                'SK이노베이션': '096770',
-                '서울식품': '004410',
-                '현대건설': '000720',
-                'DL이앤씨': '375500',
-                'GS': '078930',
-                '금강공업': '014280',
-                '대상': '001680',
-                '금호건설': '002990',
-                'CJ제일제당': '097950',
-                'SK디스커버리': '006120',
-                'DL': '000210',
-                '노루페인트': '090350',
-                '동양': '001520',
-                '한화': '000880',
-                'CJ': '001040',
-                '크라운해태홀딩스': '005740',
-                '롯데칠성': '005300',
-                'SK': '034730',
-                '성문전자': '014910',
-                '일양약품': '007570',
-                '롯데지주': '004990',
-                '깨끗한나라': '004540',
-                '유한양행': '000100',
-                '부국증권': '001270',
-                '남양유업': '003920',
-                '유화증권': '003460',
-                '삼양사': '145990',
-                'JW중외제약': '001060',
-                '하이트진로홀딩스': '000140',
-                'BYC': '001460',
-                '삼양홀딩스': '000070'
-            };
-
-            // 정확한 일치
-            if (stockCodeMap[cleanName]) {
-                return stockCodeMap[cleanName];
-            }
-
-            // 부분 일치 시도
-            for (const name in stockCodeMap) {
-                if (cleanName.includes(name) || name.includes(cleanName)) {
-                    console.log(`부분 일치 종목: ${name} (${stockCodeMap[name]})`);
-                    return stockCodeMap[name];
-                }
-            }
-
-            console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
-            return 'unknown';
-        }
-
         // 마지막 업데이트 시간을 가져와 표시하는 함수
         async function fetchLastUpdateTime() {
             try {
@@ -408,7 +262,7 @@
                 // 타임스탬프 가져오기
                 const updateTime = data.timestamp || data.last_updated || new Date().toLocaleString();
 
-                // 날짜 포맷팅
+                // 한국어 날짜 포맷팅
                 let formattedDate;
                 try {
                     const date = new Date(updateTime);
@@ -423,7 +277,6 @@
                 document.getElementById('last-updated-time').textContent = 'Unknown';
             }
         }
-
         // HTML 태그 제거 함수
         function stripHtmlTags(html) {
             if (!html) return '';
@@ -431,7 +284,6 @@
             tempDiv.innerHTML = html;
             return tempDiv.textContent || tempDiv.innerText || '';
         }
-
         // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => {
             // URL에서 종목 정보 추출
@@ -455,216 +307,173 @@
             loadAndProcessStockData(stockCode, stockName);
         });
 
-        // 종목명 정규화 함수
-        function normalizeStockName(name) {
-            if (!name) return '';
+        // loadAndProcessStockData 함수 수정
+        async function loadAndProcessStockData(stockCode, stockName) {
+            console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
 
-            // HTML 태그 제거
-            let normalizedName = name.replace(/<[^>]+>/g, '');
-
-            // 이모지 아이콘 제거 (🔴 🟠 🟢 🔵)
-            normalizedName = normalizedName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
-
-            // 가중치 형식 제거 (대시 형식)
-            if (normalizedName.includes('-')) {
-                const parts = normalizedName.split('-');
-                if (parts.length >= 3 && parts[parts.length - 2].replace('.', '', 1).match(/^\d+$/) && parts[parts.length - 1] === '') {
-                    return parts.slice(0, parts.length - 2).join('-');
-                }
-            }
-
-            // 가중치 형식 제거 (괄호 형식)
-            if (normalizedName.includes(' (') && normalizedName.endsWith(')')) {
-                return normalizedName.split(' (')[0];
-            }
-
-            return normalizedName.trim();
-        }
-        async function loadStockDataJson() {
             try {
-                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-                const response = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
+                // 코드가 'unknown'인 경우 종목명에서 코드 추출 시도
+                if (stockCode === 'unknown' || !stockCode) {
+                    // 종목 코드 추출 로직 (기존 코드 유지)
+                    console.log(`종목코드 추출 필요 - 종목명: ${stockName}`);
+                    // 가중치 정보 제거
+                    let baseStockName = stockName;
+                    if (baseStockName.includes('-')) {
+                        baseStockName = baseStockName.split('-')[0].trim();
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error('신호 데이터를 로드할 수 없습니다.');
+                    stockCode = getStockCodeByName(baseStockName);
+                    console.log(`추출된 종목코드: ${stockCode} (종목: ${baseStockName})`);
                 }
 
-                const dataText = await response.text();
+                document.getElementById('stock-name').textContent = stockName;
 
-                // 특수값 처리
-                const cleanedDataText = dataText
+                // 로딩 표시
+                document.getElementById('loading-container').style.display = 'flex';
+                document.getElementById('content-container').classList.add('hidden');
+                // 마지막 업데이트 시간 가져오기
+                fetchLastUpdateTime();
+
+                // 트레이드 버튼 항상 표시
+                const tradeButtonContainer = document.getElementById('trade-button-container');
+                if (tradeButtonContainer) {
+                    tradeButtonContainer.classList.remove('hidden');
+                    const tradeButton = document.getElementById('trade-button');
+                    tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
+                }
+
+                // 데이터 URL 생성
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
+                console.log(`트렌드 데이터 요청 URL: ${trendUrl}`);
+
+                // 트렌드 데이터 요청
+                const trendDataResponse = await fetch(trendUrl);
+                console.log(`트렌드 데이터 응답 상태: ${trendDataResponse.status}`);
+
+                if (!trendDataResponse.ok) {
+                    throw new Error(`트렌드 데이터 요청 실패 (${trendDataResponse.status}): ${stockName}`);
+                }
+
+                const trendDataText = await trendDataResponse.text();
+                console.log(`트렌드 데이터 길이: ${trendDataText.length} 바이트`);
+
+                // 데이터 파싱 시도
+                let trendData;
+                try {
+                    // 특수값 대체 및 파싱
+                    const cleanedText = trendDataText
+                        .replace(/"NaN"/g, 'null')
+                        .replace(/NaN/g, 'null')
+                        .replace(/Infinity/g, 'null')
+                        .replace(/-Infinity/g, 'null');
+
+                    trendData = JSON.parse(cleanedText);
+                    console.log(`트렌드 데이터 파싱 성공 - 날짜 수: ${trendData.dates ? trendData.dates.length : 0}`);
+                } catch (parseError) {
+                    console.error('트렌드 데이터 파싱 오류:', parseError);
+                    console.log('파싱 실패 데이터 샘플:', trendDataText.substring(0, 200));
+                    throw new Error(`JSON 파싱 오류: ${parseError.message}`);
+                }
+
+                // 데이터 검증
+                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
+                    throw new Error(`${stockName}에 대한 유효한 트렌드 데이터가 없습니다.`);
+                }
+
+                // 현재 데이터 업데이트
+                await updateCurrentInfo(trendData, stockName, stockCode);
+
+                // 차트 렌더링
+                renderCharts(trendData);
+
+                // 히스토리 데이터 렌더링
+                renderHistoryData(trendData);
+
+                // 로딩 완료
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
+
+                console.log('데이터 로드 및 처리 완료');
+
+            } catch (error) {
+                console.error('데이터 로드 및 처리 오류:', error);
+
+                // 오류 메시지 표시
+                const loadingContainer = document.getElementById('loading-container');
+                loadingContainer.innerHTML = `
+                            <div class="text-red-500 text-center">
+                                <p>데이터를 로드할 수 없습니다.</p>
+                                <p>${error.message}</p>
+                                <p>종목코드: ${stockCode}, 종목명: ${stockName}</p>
+                                <div class="mt-4 flex justify-center space-x-4">
+                                    <button onclick="window.location.reload()" 
+                                            class="px-4 py-2 bg-blue-500 text-white rounded">
+                                        다시 시도
+                                    </button>
+                                    <button onclick="window.location.href='index.html'" 
+                                            class="px-4 py-2 bg-gray-500 text-white rounded">
+                                        메인 페이지로 돌아가기
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            }
+        }
+
+        // loadStockData 함수 수정
+        async function loadStockData(stockCode, stockName) {
+            try {
+                // 기본 URL 설정 (GitHub Pages 환경 고려)
+                const baseUrl = window.location.hostname.includes('github.io')
+                    ? '/stmon'
+                    : '';
+
+                // 데이터 요청 URL
+                const trendDataUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
+                console.log(`데이터 요청 URL: ${trendDataUrl}`);
+
+                const trendDataResponse = await fetch(trendDataUrl);
+                if (!trendDataResponse.ok) {
+                    console.error(`트렌드 데이터 요청 실패: ${trendDataResponse.status}`);
+                    throw new Error(`트렌드 데이터를 로드할 수 없습니다: ${stockName} (${trendDataResponse.status})`);
+                }
+
+                const trendDataText = await trendDataResponse.text();
+                console.log(`응답 데이터 샘플: ${trendDataText.substring(0, 100)}...`);
+
+                // JSON 파싱 전에 "NaN" 문자열을 null로 대체
+                const cleanedTrendDataText = trendDataText
                     .replace(/"NaN"/g, 'null')
                     .replace(/NaN/g, 'null')
                     .replace(/Infinity/g, 'null')
                     .replace(/-Infinity/g, 'null');
 
-                return JSON.parse(cleanedDataText);
+                // 안전한 JSON 파싱
+                try {
+                    return JSON.parse(cleanedTrendDataText, (key, value) => {
+                        // 파싱 중에 특수값 처리
+                        if (value === null || value === undefined ||
+                            (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
+                            return null;
+                        }
+                        if (typeof value === 'number' && !isFinite(value)) {
+                            return null;
+                        }
+                        return value;
+                    });
+                } catch (parseError) {
+                    console.error('트렌드 데이터 JSON 파싱 오류:', parseError);
+                    throw new Error(`JSON 파싱 중 오류 발생: ${parseError.message}`);
+                }
             } catch (error) {
-                console.error('데이터 로드 중 오류:', error);
+                console.error('데이터 로드 중 전체 오류:', error);
                 throw error;
             }
         }
-        // 일치하는 종목 찾기 함수
-        function findMatchingStock(signals, normalizedName, stockCode) {
-            // 1. 정확한 종목 코드 매칭 (가장 우선)
-            const codeMatch = signals.find(signal => {
-                const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
-                return signalCode === stockCode;
-            });
-            if (codeMatch) return codeMatch;
-
-            // 2. 정규화된 이름 매칭
-            const nameMatch = signals.find(signal =>
-                normalizeStockName(signal.stock_name) === normalizedName
-            );
-            if (nameMatch) return nameMatch;
-
-            // 3. 부분 일치 매칭
-            return signals.find(signal => {
-                const normalizedSignalName = normalizeStockName(signal.stock_name);
-                return normalizedSignalName.includes(normalizedName) ||
-                    normalizedName.includes(normalizedSignalName);
-            });
-        }
-
-        // loadAndProcessStockData 함수 수정
-        async function loadAndProcessStockData(stockCode, stockName) {
-            try {
-                // 기존 로딩 로직 그대로 유지
-                document.getElementById('loading-container').style.display = 'flex';
-                document.getElementById('content-container').classList.add('hidden');
-
-                fetchLastUpdateTime();
-
-                // 여기부터 앞서 제안한 개선된 로직으로 대체
-                if (stockCode === 'unknown' || !stockCode) {
-                    let baseStockName = stockName;
-
-                    // 기존 코드의 코드 추출 로직 그대로 유지
-                    if (baseStockName.includes('-')) {
-                        baseStockName = baseStockName.split('-')[0].trim();
-                    }
-
-                    if (baseStockName.includes('(')) {
-                        baseStockName = baseStockName.split('(')[0].trim();
-                    }
-
-                    stockCode = getStockCodeByName(baseStockName);
-                }
-
-                // 실시간 데이터 로드
-                const stockDataJson = await loadStockDataJson();
-
-                // 종목명 정규화 및 매칭
-                const normalizedStockName = normalizeStockName(stockName);
-                let matchedSignal = findMatchingStock(
-                    stockDataJson.all_signals,
-                    normalizedStockName,
-                    stockCode
-                );
-
-                // 트렌드 데이터 로드
-                const trendData = await loadStockData(stockCode, stockName);
-
-                const lastIndex = trendData.dates.length - 1;
-
-                // 현재 데이터 병합 로직 개선
-                stockData.current.commonPrice = matchedSignal?.price_a || trendData.common_prices[lastIndex];
-                stockData.current.preferredPrice = matchedSignal?.price_b || trendData.preferred_prices[lastIndex];
-
-                // SZ 값과 괴리율 계산 로직 개선
-                stockData.current.szValue = matchedSignal?.sz_value ||
-                    trendData.current_sz ||
-                    trendData.sz_values[lastIndex] || 0;
-
-                stockData.current.discountRate = matchedSignal
-                    ? (matchedSignal.price_a - matchedSignal.price_b) / matchedSignal.price_a
-                    : trendData.discount_rates[lastIndex] ||
-                    (stockData.current.commonPrice - stockData.current.preferredPrice) / stockData.current.commonPrice;
-
-                // 나머지 기존 로직 그대로 유지
-                stockData.history.dates = trendData.dates.slice(-150);
-                stockData.history.discountRates = trendData.discount_rates.slice(-150);
-
-                const windowData = trendData.discount_rates.slice(-250, -1);
-                stockData.history.mean = calculateMean(windowData);
-                stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
-
-                stockData.history.szValues = trendData.sz_values
-                    ? trendData.sz_values.slice(-150)
-                    : calculateSZValues(
-                        trendData.discount_rates,
-                        stockData.history.mean,
-                        stockData.history.stdDev
-                    ).slice(-150);
-
-                // 기존 UI 업데이트 로직
-                updateCurrentInfo();
-                renderSZChart();
-
-                // 로딩 완료 로직
-                document.getElementById('loading-container').style.display = 'none';
-                document.getElementById('content-container').classList.remove('hidden');
-
-            } catch (error) {
-                // 기존 오류 처리 로직 그대로 유지
-                console.error('데이터 로드 및 처리 오류:', error);
-
-                const loadingContainer = document.getElementById('loading-container');
-                loadingContainer.innerHTML = `
-                <div class="text-red-500 text-center">
-                    <p>데이터를 로드할 수 없습니다.</p>
-                    <p>${error.message}</p>
-                    <button onclick="window.location.reload()" 
-                            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                        다시 시도
-                    </button>
-                    <button onclick="window.location.href='index.html'" 
-                            class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
-                        메인 페이지로 돌아가기
-                    </button>
-                </div>
-            `;
-            }
-        }
-            // 추가: 더 강력한 데이터 매칭 함수
-            function findMatchingStock(signals, normalizedName, stockCode) {
-                // 1. 정확한 종목 코드 매칭 (가장 우선)
-                const codeMatch = signals.find(signal => {
-                    const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
-                    return signalCode === stockCode;
-                });
-                if (codeMatch) return codeMatch;
-
-                // 2. 정규화된 이름 매칭
-                const nameMatch = signals.find(signal =>
-                    normalizeStockName(signal.stock_name) === normalizedName
-                );
-                if (nameMatch) return nameMatch;
-
-                // 3. 부분 일치 매칭
-                return signals.find(signal => {
-                    const normalizedSignalName = normalizeStockName(signal.stock_name);
-                    return normalizedSignalName.includes(normalizedName) ||
-                        normalizedName.includes(normalizedSignalName);
-                });
-            }
-
-            // 추가: 안전한 데이터 변환 함수
-            function safeConvert(value, defaultValue = 0) {
-                if (value == null || isNaN(value)) return defaultValue;
-                return Number(value);
-            }
 
         // 현재 종목 정보 업데이트 함수 수정
-        async function updateCurrentInfo(trendData, stockName, stockCode, matchedSignal) {
+        async function updateCurrentInfo(trendData, stockName, stockCode) {
             try {
                 // 기존 마지막 가격 정보 로직 유지
                 const lastIndex = trendData.dates.length - 1;
@@ -679,24 +488,80 @@
                     ? latestPreferredPrice.toLocaleString() + ' KRW'
                     : 'N/A';
 
+                // 실시간 데이터에서 SZ 값과 신호 가져오기
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+
+                const response = await fetch(stockDataUrl);
+                if (!response.ok) {
+                    throw new Error(`실시간 데이터를 가져올 수 없습니다 (${response.status})`);
+                }
+
+                const stockData = await response.json();
+
+                // 종목명 정규화 함수 - HTML 태그, 아이콘, 가중치 정보 모두 제거
+                const normalizeStockName = (name) => {
+                    // HTML 태그 제거
+                    let cleanName = name.replace(/<[^>]+>/g, '');
+                    // 이모지 아이콘 제거 (🔴 🟠 🟢 🔵)
+                    cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
+                    // 가중치 형식 제거 (예: -0.5- 또는 (0.5))
+                    cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
+                    return cleanName.trim();
+                };
+
+                // 현재 종목에 대한 정규화된 이름
+                const normalizedCurrentName = normalizeStockName(stockName);
+                console.log("정규화된 현재 종목명:", normalizedCurrentName);
+
+                // 일치하는 종목 찾기 - 다양한 방식으로 시도
+                let matchedSignal = null;
+
+                // 1. 정규화된 이름으로 정확히 일치하는 항목 찾기
+                for (const signal of stockData.all_signals) {
+                    const normalizedSignalName = normalizeStockName(signal.stock_name);
+                    if (normalizedSignalName === normalizedCurrentName) {
+                        matchedSignal = signal;
+                        console.log("정확히 일치하는 종목 발견:", normalizedSignalName);
+                        break;
+                    }
+                }
+
+                // 2. 포함 관계로 찾기
+                if (!matchedSignal) {
+                    for (const signal of stockData.all_signals) {
+                        const normalizedSignalName = normalizeStockName(signal.stock_name);
+                        if (normalizedSignalName.includes(normalizedCurrentName) ||
+                            normalizedCurrentName.includes(normalizedSignalName)) {
+                            matchedSignal = signal;
+                            console.log("부분 일치하는 종목 발견:", normalizedSignalName);
+                            break;
+                        }
+                    }
+                }
+
+                // 3. 종목 코드로 검색 (마지막 시도)
+                if (!matchedSignal && stockCode !== 'unknown') {
+                    for (const signal of stockData.all_signals) {
+                        const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
+                        if (signalCode === stockCode) {
+                            matchedSignal = signal;
+                            console.log("종목 코드로 일치하는 항목 발견:", signalCode);
+                            break;
+                        }
+                    }
+                }
+
                 // SZ 값과 신호 정보 가져오기
                 let szValue = 0;
                 let signalText = '';
 
                 if (matchedSignal) {
-                    // 실시간 데이터 사용 (좀 더 정확)
                     szValue = matchedSignal.sz_value || 0;
                     signalText = matchedSignal.signal || '';
-                    console.log("매칭된 신호 정보:", { szValue, signalText, stockName: matchedSignal.stock_name });
+                    console.log("매칭된 신호 정보:", { szValue, signalText });
                 } else {
-                    // 매칭되는 종목이 없을 경우 트렌드 데이터 사용
                     console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
-                    szValue = trendData.current_sz || trendData.sz_values[lastIndex] || 0;
-
-                    // SZ 값에 따라 신호 생성
-                    if (szValue >= 2.0) signalText += 'R';
-                    if (szValue >= 1.5 && szValue < 2.5) signalText += 'I';
-                    if (szValue < 0.5) signalText += 'O';
                 }
 
                 // SZ 값 표시
@@ -717,7 +582,6 @@
                 const signalElement = document.getElementById('current-signal');
                 let signalHtml = '';
 
-                // 신호 태그 처리
                 if (signalText) {
                     if (signalText.includes('R')) {
                         signalHtml += '<span class="signal-tag signal-R">R</span>';
@@ -726,17 +590,6 @@
                         signalHtml += '<span class="signal-tag signal-I">I</span>';
                     }
                     if (signalText.includes('O')) {
-                        signalHtml += '<span class="signal-tag signal-O">O</span>';
-                    }
-                } else if (szValue) {
-                    // 신호가 없을 경우 SZ 값에 따라 신호 자동 생성
-                    if (szValue >= 2.0) {
-                        signalHtml += '<span class="signal-tag signal-R">R</span>';
-                    }
-                    if (szValue >= 1.5 && szValue < 2.5) {
-                        signalHtml += '<span class="signal-tag signal-I">I</span>';
-                    }
-                    if (szValue < 0.5) {
                         signalHtml += '<span class="signal-tag signal-O">O</span>';
                     }
                 }
@@ -774,7 +627,7 @@
                 }
 
                 // SZ 값 차트 렌더링
-                renderSZChart(trendData.dates, trendData.discount_rates, trendData.sz_values, chartHeight, pointRadius);
+                renderSZChart(trendData.dates, trendData.discount_rates, chartHeight, pointRadius);
 
                 // 가격 차트 렌더링
                 renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices, chartHeight, pointRadius);
@@ -825,30 +678,53 @@
             return result;
         }
 
+        function processSignals(signals) {
+            return signals.map(signal => {
+                const processedSignal = { ...signal };
+                let newSignal = '';
+
+                // R 신호 (SZ 값이 2.0 이상)
+                if (signal.sz_value >= 2.0) {
+                    newSignal += 'R';
+                }
+
+                // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
+                if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
+                    newSignal += 'I';
+                }
+
+                // O 신호 (SZ 값이 0.5 미만)
+                if (signal.sz_value < 0.5) {
+                    newSignal += 'O';
+                }
+
+                // 새로 계산된 신호 할당
+                processedSignal.signal = newSignal;
+                return processedSignal;
+            });
+        }
+
         // SZ 차트 렌더링 함수 수정
-        function renderSZChart(dates, discountRates, szValues, chartHeight, pointRadius) {
+        function renderSZChart(dates, discountRates, chartHeight, pointRadius) {
             const ctx = document.getElementById('sz-chart').getContext('2d');
             const screenWidth = window.innerWidth;
             const isMobile = screenWidth <= 640;
 
-            // SZ 값 데이터 처리
-            let chartValues = [];
+            // 기존 SZ 값 계산 로직 유지
+            const calculatedSZ = calculateSZValues(discountRates);
+            const fiveMonthsInDays = 150;
+            const startIndex = Math.max(0, discountRates.length - fiveMonthsInDays);
+            const recentSZ = calculatedSZ.filter(item => item.index >= startIndex);
 
-            // szValues가 있으면 그대로 사용, 없으면 계산
-            if (szValues && szValues.length > 0) {
-                chartValues = szValues.slice(-150); // 5개월 데이터만
-            } else {
-                // 기존 SZ 값 계산 로직
-                const calculatedSZ = calculateSZValues(discountRates);
-                const fiveMonthsInDays = 150;
-                const startIndex = Math.max(0, discountRates.length - fiveMonthsInDays);
-                const recentSZ = calculatedSZ.filter(item => item.index >= startIndex);
+            const chartLabels = [];
+            const chartValues = [];
 
-                chartValues = recentSZ.map(sz => sz.value);
+            for (const sz of recentSZ) {
+                if (sz.index < dates.length) {
+                    chartLabels.push(dates[sz.index]);
+                    chartValues.push(sz.value);
+                }
             }
-
-            // 날짜 라벨도 동일하게 최근 5개월만
-            const chartLabels = dates.slice(-150);
 
             // 기존 차트 제거
             if (window.szChart) {
@@ -868,15 +744,6 @@
                         borderWidth: 2,
                         pointRadius: pointRadius,
                         tension: 0.1
-                    },
-                    {
-                        label: 'SZ = 2.0 Threshold',
-                        data: Array(chartLabels.length).fill(2.0),
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1,
-                        borderDash: [5, 5],
-                        pointRadius: 0
                     }]
                 },
                 options: {
@@ -887,7 +754,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function (context) {
-                                    return `SZ Value: ${context.raw ? context.raw.toFixed(2) : 'N/A'}`;
+                                    return `SZ Value: ${context.raw.toFixed(2)}`;
                                 }
                             },
                             bodyFont: {
@@ -1028,16 +895,12 @@
             });
         }
 
-        // 히스토리 데이터 렌더링 - 5개월 제한 적용 (개선된 버전)
+        // 히스토리 데이터 렌더링 - 5개월 제한 적용 (완전히 개선된 버전)
         function renderHistoryData(trendData) {
             try {
                 const tableBody = document.getElementById('signals-table-body');
                 const fiveMonthsInDays = 150;
-
-                // 최근 데이터 추출
                 const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-
-                // 역순 인덱스 (최신 데이터부터)
                 const displayDates = [];
                 for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
                     displayDates.push(i);
@@ -1050,20 +913,16 @@
 
                 tableBody.innerHTML = '';
 
-                // SZ 값 - 이미 있는 값 사용 또는 계산
-                let szValues = trendData.sz_values;
-                if (!szValues || szValues.length === 0) {
-                    const calculatedSZ = calculateSZValues(trendData.discount_rates);
-                    szValues = trendData.dates.map((date, idx) => {
-                        const szItem = calculatedSZ.find(item => item.index === idx);
-                        return szItem ? szItem.value : null;
-                    });
-                }
+                const calculatedSZ = calculateSZValues(trendData.discount_rates);
+                const szValueMap = {};
+                calculatedSZ.forEach(item => {
+                    szValueMap[item.index] = item.value ?? 0; // null을 0으로 대체
+                });
 
                 for (const i of displayDates) {
                     const row = document.createElement('tr');
                     const date = trendData.dates[i];
-                    const szValue = szValues[i];
+                    const szValue = szValueMap[i] ?? 0; // null을 0으로 대체
 
                     if (szValue === undefined) continue;
 
@@ -1077,7 +936,7 @@
                     let trendIcon = '-';
                     if (displayDates.indexOf(i) < displayDates.length - 1) {
                         const prevIndex = displayDates[displayDates.indexOf(i) + 1];
-                        const prevSZ = szValues[prevIndex] ?? 0;
+                        const prevSZ = szValueMap[prevIndex] ?? 0; // null을 0으로 대체
 
                         if (szValue > prevSZ) {
                             trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
@@ -1089,12 +948,12 @@
                     }
 
                     row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue ? szValue.toFixed(2) : '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
-            `;
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+                    `;
 
                     tableBody.appendChild(row);
                 }
