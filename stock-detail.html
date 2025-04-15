@@ -484,114 +484,166 @@
             }
         }
 
-        // 현재 종목 정보 업데이트 함수 수정
-            async function updateCurrentInfo(trendData, stockName, stockCode) {
-                try {
-                    // 기존 마지막 가격 정보 로직 유지
-                    const lastIndex = trendData.dates.length - 1;
-                    const latestCommonPrice = trendData.common_prices[lastIndex];
-                    const latestPreferredPrice = trendData.preferred_prices[lastIndex];
+            // 현재 종목 정보 업데이트 함수 수정
+        async function updateCurrentInfo(trendData, stockName, stockCode) {
+            try {
+                // 기존 마지막 가격 정보 로직 유지
+                const lastIndex = trendData.dates.length - 1;
+                const latestCommonPrice = trendData.common_prices[lastIndex];
+                const latestPreferredPrice = trendData.preferred_prices[lastIndex];
 
-                    // 가격 정보 업데이트
-                    document.getElementById('common-price').textContent = latestCommonPrice != null
-                        ? latestCommonPrice.toLocaleString() + ' KRW'
-                        : 'N/A';
-                    document.getElementById('preferred-price').textContent = latestPreferredPrice != null
-                        ? latestPreferredPrice.toLocaleString() + ' KRW'
-                        : 'N/A';
+                // 가격 정보 업데이트
+                document.getElementById('common-price').textContent = latestCommonPrice != null
+                    ? latestCommonPrice.toLocaleString() + ' KRW'
+                    : 'N/A';
+                document.getElementById('preferred-price').textContent = latestPreferredPrice != null
+                    ? latestPreferredPrice.toLocaleString() + ' KRW'
+                    : 'N/A';
 
-                    // 실시간 데이터에서 SZ 값과 신호 가져오기
-                    const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-                    const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+                // 실시간 데이터에서 SZ 값과 신호 가져오기
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
 
-                    // const response = await fetch(stockDataUrl);
-                    const response = await fetchWithNoCache(stockDataUrl);
-                    if (!response.ok) {
-                        throw new Error(`실시간 데이터를 가져올 수 없습니다 (${response.status})`);
-                    }
+                // const response = await fetch(stockDataUrl);
+                const response = await fetchWithNoCache(stockDataUrl);
+                if (!response.ok) {
+                    throw new Error(`실시간 데이터를 가져올 수 없습니다 (${response.status})`);
+                }
 
-                    const stockData = await response.json();
+                const stockData = await response.json();
 
-                    // 원본 텍스트에서 직접 정보 검색
-                    if (stockData.all_signals_raw) {
-                        const lines = stockData.all_signals_raw.split('\n');
-                        let matchedLine = null;
-                        let matchedSignalLine = null;
+                // 원본 텍스트에서 직접 정보 검색
+                if (stockData.all_signals_raw) {
+                    const lines = stockData.all_signals_raw.split('\n');
+                    let matchedLine = null;
+                    let matchedSignalLine = null;
 
-                        // 정규화된 이름으로 검색
-                        const normalizedCurrentName = stockName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '')
+                    // 정규화된 이름으로 검색
+                    const normalizedCurrentName = stockName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '')
+                        .replace(/-\d+(\.\d+)?-$/, '')
+                        .trim();
+
+                    // 원본 데이터에서 해당 종목 찾기
+                    for (let i = 0; i < lines.length - 1; i++) {
+                        const normalizedLineName = lines[i].replace(/<[^>]+>/g, '')
+                            .replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '')
                             .replace(/-\d+(\.\d+)?-$/, '')
                             .trim();
 
-                        // 원본 데이터에서 해당 종목 찾기
-                        for (let i = 0; i < lines.length - 1; i++) {
-                            const normalizedLineName = lines[i].replace(/<[^>]+>/g, '')
-                                .replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '')
-                                .replace(/-\d+(\.\d+)?-$/, '')
-                                .trim();
-
-                            if (normalizedLineName === normalizedCurrentName ||
-                                normalizedLineName.includes(normalizedCurrentName) ||
-                                normalizedCurrentName.includes(normalizedLineName)) {
-                                matchedLine = lines[i];
-                                matchedSignalLine = lines[i + 1];
-                                break;
-                            }
-                        }
-
-                        if (matchedLine && matchedSignalLine) {
-                            // 시그널 라인에서 SZ 값과 신호 추출
-                            const signalParts = matchedSignalLine.trim().split('/');
-                            if (signalParts.length > 0) {
-                                // SZ 값 추출
-                                const szValue = parseFloat(signalParts[0].trim());
-
-                                // 신호 추출
-                                let signal = '';
-                                if (signalParts.length > 1) {
-                                    const signalInfo = signalParts[1].trim();
-                                    if (signalInfo.includes('R')) signal += 'R';
-                                    if (signalInfo.includes('I')) signal += 'I';
-                                    if (signalInfo.includes('O')) signal += 'O';
-                                }
-
-                                // SZ 값 표시
-                                const szElement = document.getElementById('current-sz-value');
-                                szElement.textContent = szValue.toFixed(2);
-
-                                // SZ 값에 따른 색상 변경
-                                szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
-                                if (szValue >= 2.5) {
-                                    szElement.classList.add('sz-high');
-                                } else if (szValue >= 1.5) {
-                                    szElement.classList.add('sz-medium');
-                                } else {
-                                    szElement.classList.add('sz-low');
-                                }
-
-                                // 신호 표시
-                                const signalElement = document.getElementById('current-signal');
-                                let signalHtml = '';
-
-                                if (signal) {
-                                    if (signal.includes('R')) {
-                                        signalHtml += '<span class="signal-tag signal-R">R</span>';
-                                    }
-                                    if (signal.includes('I')) {
-                                        signalHtml += '<span class="signal-tag signal-I">I</span>';
-                                    }
-                                    if (signal.includes('O')) {
-                                        signalHtml += '<span class="signal-tag signal-O">O</span>';
-                                    }
-                                }
-
-                                signalElement.innerHTML = signalHtml || 'N/A';
-
-                                // 성공적으로 찾았으면 여기서 함수 종료
-                                return;
-                            }
+                        if (normalizedLineName === normalizedCurrentName ||
+                            normalizedLineName.includes(normalizedCurrentName) ||
+                            normalizedCurrentName.includes(normalizedLineName)) {
+                            matchedLine = lines[i];
+                            matchedSignalLine = lines[i + 1];
+                            break;
                         }
                     }
+
+                    if (matchedLine && matchedSignalLine) {
+                        // 시그널 라인에서 SZ 값과 신호 추출
+                        const signalParts = matchedSignalLine.trim().split('/');
+                        if (signalParts.length > 0) {
+                            // SZ 값 추출
+                            const szValue = parseFloat(signalParts[0].trim());
+
+                            // 신호 추출
+                            let signal = '';
+                            if (signalParts.length > 1) {
+                                const signalInfo = signalParts[1].trim();
+                                if (signalInfo.includes('R')) signal += 'R';
+                                if (signalInfo.includes('I')) signal += 'I';
+                                if (signalInfo.includes('O')) signal += 'O';
+                            }
+
+                            // SZ 값 표시
+                            const szElement = document.getElementById('current-sz-value');
+                            szElement.textContent = szValue.toFixed(2);
+
+                            // SZ 값에 따른 색상 변경
+                            szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                            if (szValue >= 2.5) {
+                                szElement.classList.add('sz-high');
+                            } else if (szValue >= 1.5) {
+                                szElement.classList.add('sz-medium');
+                            } else {
+                                szElement.classList.add('sz-low');
+                            }
+
+                            // 신호 표시
+                            const signalElement = document.getElementById('current-signal');
+                            let signalHtml = '';
+
+                            if (signal) {
+                                if (signal.includes('R')) {
+                                    signalHtml += '<span class="signal-tag signal-R">R</span>';
+                                }
+                                if (signal.includes('I')) {
+                                    signalHtml += '<span class="signal-tag signal-I">I</span>';
+                                }
+                                if (signal.includes('O')) {
+                                    signalHtml += '<span class="signal-tag signal-O">O</span>';
+                                }
+                            }
+
+                            signalElement.innerHTML = signalHtml || 'N/A';
+
+                            // 성공적으로 찾았으면 여기서 함수 종료
+                            return;
+                        }
+                    }
+                }
+
+                // 원본 텍스트에서 찾지 못했을 경우 기존 방식으로 fallback
+                // 종목명에 맞는 신호 찾기
+                const matchedSignal = stockData.all_signals.find(s =>
+                    s.stock_name.includes(stockName) ||
+                    stockName.includes(s.stock_name)
+                );
+
+                if (matchedSignal) {
+                    // SZ 값 표시
+                    const szElement = document.getElementById('current-sz-value');
+                    szElement.textContent = matchedSignal.sz_value.toFixed(2);
+
+                    // SZ 값에 따른 색상 변경
+                    szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                    if (matchedSignal.sz_value >= 2.5) {
+                        szElement.classList.add('sz-high');
+                    } else if (matchedSignal.sz_value >= 1.5) {
+                        szElement.classList.add('sz-medium');
+                    } else {
+                        szElement.classList.add('sz-low');
+                    }
+
+                    // 신호 표시
+                    const signalElement = document.getElementById('current-signal');
+                    let signalHtml = '';
+
+                    if (matchedSignal.signal) {
+                        if (matchedSignal.signal.includes('R')) {
+                            signalHtml += '<span class="signal-tag signal-R">R</span>';
+                        }
+                        if (matchedSignal.signal.includes('I')) {
+                            signalHtml += '<span class="signal-tag signal-I">I</span>';
+                        }
+                        if (matchedSignal.signal.includes('O')) {
+                            signalHtml += '<span class="signal-tag signal-O">O</span>';
+                        }
+                    }
+
+                    signalElement.innerHTML = signalHtml || 'N/A';
+                } else {
+                    // 매칭되는 신호를 찾지 못한 경우
+                    document.getElementById('current-sz-value').textContent = '0.00';
+                    document.getElementById('current-signal').textContent = 'N/A';
+                }
+
+            } catch (error) {
+                console.error('현재 정보 업데이트 중 오류:', error);
+                document.getElementById('current-sz-value').textContent = '0.00';
+                document.getElementById('current-signal').textContent = 'N/A';
+            }
+        }
 
         // 원본 텍스트에서 찾지 못했을 경우 기존 방식으로 fallback
         // 기존 코드 계속 실행...
@@ -630,6 +682,7 @@
                     '최초 날짜': trendData.dates[0],
                     '최근 날짜': trendData.dates[trendData.dates.length - 1]
                 });
+                
             } catch (error) {
                 console.error('차트 렌더링 오류:', error);
                 document.getElementById('sz-chart').parentElement.innerHTML = '<p class="text-red-500 text-center">차트 데이터를 로드할 수 없습니다.</p>';
