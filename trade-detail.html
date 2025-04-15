@@ -212,13 +212,13 @@
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-blue-50 rounded-lg">
-                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격</div>
-                        <div class="text-xl font-bold" id="current-common-price">-</div>
-                    </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격</div>
+                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격 [Long]</div>
                         <div class="text-xl font-bold" id="current-preferred-price">-</div>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
+                        <div class="text-xl font-bold" id="current-common-price">-</div>
                     </div>
                     <div class="p-4 bg-green-50 rounded-lg">
                         <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
@@ -239,10 +239,27 @@
                     <div class="bg-gray-50 rounded-lg p-6">
                         <h3 class="text-lg font-medium text-gray-800 mb-4"><strong class="text-xl">Price
                                 Control</strong></h3>
-
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                보통주 가격 조정
+                                우선주 [Long] ▶ 가격 조정
+                                <span class="text-xs text-gray-500">(현재 가격: <span id="preferred-base-price">-</span>원)</span>
+                            </label>
+                            <div class="slider-wrapper">
+                                <input type="range" id="preferred-price-slider" class="slider mb-2" min="-5" max="5" step="0.1" value="0">
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>-5%</span>
+                                <span id="preferred-price-percent">0%</span>
+                                <span>+5%</span>
+                            </div>
+                            <div class="mt-2 text-sm">
+                                <span class="font-medium">변경된 가격:</span>
+                                <span id="preferred-price-adjusted" class="font-bold text-blue-600">-</span>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                보통주 [Short] ◀ 가격 조정
                                 <span class="text-xs text-gray-500">(현재 가격: <span
                                         id="common-base-price">-</span>원)</span>
                             </label>
@@ -258,26 +275,6 @@
                             <div class="mt-2 text-sm">
                                 <span class="font-medium">변경된 가격:</span>
                                 <span id="common-price-adjusted" class="font-bold text-blue-600">-</span>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                우선주 가격 조정
-                                <span class="text-xs text-gray-500">(현재 가격: <span
-                                        id="preferred-base-price">-</span>원)</span>
-                            </label>
-                            <div class="slider-wrapper">
-                                <input type="range" id="preferred-price-slider" class="slider mb-2" min="-5" max="5"
-                                    step="0.1" value="0">
-                            </div>
-                            <div class="flex justify-between text-xs text-gray-500">
-                                <span>-5%</span>
-                                <span id="preferred-price-percent">0%</span>
-                                <span>+5%</span>
-                            </div>
-                            <div class="mt-2 text-sm">
-                                <span class="font-medium">변경된 가격:</span>
-                                <span id="preferred-price-adjusted" class="font-bold text-blue-600">-</span>
                             </div>
                         </div>
                         <div class="mt-6">
@@ -535,8 +532,8 @@
         // 전역 변수 설정
         let stockData = {
             current: {
-                commonPrice: 0,
                 preferredPrice: 0,
+                commonPrice: 0,
                 szValue: 0,
                 discountRate: 0
             },
@@ -615,16 +612,16 @@
 
                 // 현재 데이터 설정
                 if (matchedSignal) {
-                    stockData.current.commonPrice = matchedSignal.price_a || 0;
                     stockData.current.preferredPrice = matchedSignal.price_b || 0;
+                    stockData.current.commonPrice = matchedSignal.price_a || 0;
                     stockData.current.szValue = matchedSignal.sz_value || 0;
                     stockData.current.discountRate = matchedSignal.price_a && matchedSignal.price_b
                         ? (matchedSignal.price_a - matchedSignal.price_b) / matchedSignal.price_a
                         : 0;
                 } else {
                     const lastIndex = trendData.dates.length - 1;
-                    stockData.current.commonPrice = trendData.common_prices[lastIndex] || 0;
                     stockData.current.preferredPrice = trendData.preferred_prices[lastIndex] || 0;
+                    stockData.current.commonPrice = trendData.common_prices[lastIndex] || 0;
                     stockData.current.szValue = trendData.current_sz || trendData.sz_values[lastIndex] || 0;
                     stockData.current.discountRate = trendData.discount_rates[lastIndex] || 0;
                 }
@@ -817,11 +814,11 @@
 
         function updateCurrentInfo() {
             // 현재 가격 정보 업데이트
-            document.getElementById('current-common-price').textContent = stockData.current.commonPrice
-                ? stockData.current.commonPrice.toLocaleString() + ' KRW'
-                : 'N/A';
             document.getElementById('current-preferred-price').textContent = stockData.current.preferredPrice
                 ? stockData.current.preferredPrice.toLocaleString() + ' KRW'
+                : 'N/A';
+            document.getElementById('current-common-price').textContent = stockData.current.commonPrice
+                ? stockData.current.commonPrice.toLocaleString() + ' KRW'
                 : 'N/A';
 
             // SZ 값 표시
@@ -846,20 +843,21 @@
             discountElement.textContent = discountPercent;
 
             // 슬라이더 기본 가격 업데이트
-            document.getElementById('common-base-price').textContent = stockData.current.commonPrice
-                ? stockData.current.commonPrice.toLocaleString()
-                : 'N/A';
             document.getElementById('preferred-base-price').textContent = stockData.current.preferredPrice
                 ? stockData.current.preferredPrice.toLocaleString()
                 : 'N/A';
+            document.getElementById('common-base-price').textContent = stockData.current.commonPrice
+                ? stockData.current.commonPrice.toLocaleString()
+                : 'N/A';
 
             // 조정된 가격 초기화
-            document.getElementById('common-price-adjusted').textContent = stockData.current.commonPrice
-                ? stockData.current.commonPrice.toLocaleString() + ' KRW'
-                : 'N/A';
             document.getElementById('preferred-price-adjusted').textContent = stockData.current.preferredPrice
                 ? stockData.current.preferredPrice.toLocaleString() + ' KRW'
                 : 'N/A';
+            document.getElementById('common-price-adjusted').textContent = stockData.current.commonPrice
+                ? stockData.current.commonPrice.toLocaleString() + ' KRW'
+                : 'N/A';
+
         }
 
         function renderSZChart() {
@@ -1048,12 +1046,12 @@
 
         function calculateManualScenario() {
             // 슬라이더에서 값 가져오기
-            const commonPct = parseFloat(document.getElementById('common-price-slider').value);
             const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
+            const commonPct = parseFloat(document.getElementById('common-price-slider').value);
 
             // 조정된 가격 계산 (호가 단위에 맞게 반올림)
-            const adjustedCommon = roundToTickSize(stockData.current.commonPrice * (1 + commonPct / 100));
             const adjustedPreferred = roundToTickSize(stockData.current.preferredPrice * (1 + preferredPct / 100));
+            const adjustedCommon = roundToTickSize(stockData.current.commonPrice * (1 + commonPct / 100));
 
             // 조정된 괴리율 계산
             const adjustedDiscountRate = (adjustedCommon - adjustedPreferred) / adjustedCommon;

@@ -164,13 +164,13 @@
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-blue-50 rounded-lg">
-                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격</div>
-                        <div class="text-xl font-bold" id="common-price">-</div>
-                    </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격</div>
+                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격 [Long]</div>
                         <div class="text-xl font-bold" id="preferred-price">-</div>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
+                        <div class="text-xl font-bold" id="common-price">-</div>
                     </div>
                     <div class="p-4 bg-green-50 rounded-lg">
                         <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
@@ -656,25 +656,25 @@
         async function updateCurrentInfo(trendData, stockName, stockCode, matchedSignal) {
             try {
                 // 기본값 설정
-                let commonPrice = 0;
                 let preferredPrice = 0;
+                let commonPrice = 0;
                 let szValue = 0;
                 let signalText = '';
 
                 if (matchedSignal) {
                     // 실시간 데이터 사용
-                    commonPrice = matchedSignal.price_a || 0;
                     preferredPrice = matchedSignal.price_b || 0;
+                    commonPrice = matchedSignal.price_a || 0;
                     szValue = matchedSignal.sz_value || 0;
                     signalText = matchedSignal.signal || '';
 
-                    console.log("실시간 데이터 사용:", { commonPrice, preferredPrice, szValue, signalText });
+                    console.log("실시간 데이터 사용:", {  preferredPrice, commonPrice, szValue, signalText });
                 } else {
                     // 실시간 데이터가 없는 경우에만 트렌드 데이터 사용
                     console.warn("실시간 데이터 없음, 트렌드 데이터 사용:", stockName, stockCode);
                     const lastIndex = trendData.dates.length - 1;
-                    commonPrice = trendData.common_prices[lastIndex] || 0;
                     preferredPrice = trendData.preferred_prices[lastIndex] || 0;
+                    commonPrice = trendData.common_prices[lastIndex] || 0;
                     szValue = trendData.current_sz || trendData.sz_values[lastIndex] || 0;
 
                     // SZ 값에 따라 신호 생성
@@ -684,8 +684,8 @@
                 }
 
                 // 가격 정보 업데이트
-                document.getElementById('common-price').textContent = commonPrice ? commonPrice.toLocaleString() + ' KRW' : 'N/A';
                 document.getElementById('preferred-price').textContent = preferredPrice ? preferredPrice.toLocaleString() + ' KRW' : 'N/A';
+                document.getElementById('common-price').textContent = commonPrice ? commonPrice.toLocaleString() + ' KRW' : 'N/A';
 
                 // SZ 값 표시
                 const szElement = document.getElementById('sz-value');
@@ -894,7 +894,7 @@
         }
 
         // 가격 차트 렌더링 함수도 유사하게 수정
-        function renderPriceChart(dates, commonPrices, preferredPrices, chartHeight, pointRadius) {
+        function renderPriceChart(dates, preferredPrices, commonPrices, chartHeight, pointRadius) {
             const ctx = document.getElementById('price-chart').getContext('2d');
             const screenWidth = window.innerWidth;
             const isMobile = screenWidth <= 640;
@@ -906,19 +906,19 @@
                     labels: dates,
                     datasets: [
                         {
-                            label: 'Common Stock Price',
-                            data: commonPrices.map(val => val ?? 0),
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
+                            label: 'Preferred Stock Price',
+                            data: preferredPrices.map(val => val ?? 0),
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 2,
                             pointRadius: pointRadius,
                             tension: 0.2
                         },
                         {
-                            label: 'Preferred Stock Price',
-                            data: preferredPrices.map(val => val ?? 0),
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
+                            label: 'Common Stock Price',
+                            data: commonPrices.map(val => val ?? 0),
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
                             borderWidth: 2,
                             pointRadius: pointRadius,
                             tension: 0.2

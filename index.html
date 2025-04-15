@@ -709,11 +709,11 @@
                         </div>
                         <div>
                             <span class="text-gray-500">Price:</span>
-                            <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
+                            <span>${signal.price_b ? signal.price_b.toLocaleString() : '-'}</span>
                         </div>
                     </div>
                     <div class="text-xs text-gray-500 mt-2">
-                        Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
+                        Pair Price: ${signal.price_a ? signal.price_a.toLocaleString() : '-'}
                     </div>
                 `;
 
@@ -955,8 +955,8 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
-                        ${item.price_b ? item.price_b.toLocaleString() : '-'}
+                        ${item.price_b ? item.price_b.toLocaleString() : '-'} / 
+                        ${item.price_a ? item.price_a.toLocaleString() : '-'}
                     </td>
                 `;
 
