@@ -243,10 +243,12 @@
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 보통주 가격 조정
-                                <span class="text-xs text-gray-500">(현재 가격: <span id="common-base-price">-</span>원)</span>
+                                <span class="text-xs text-gray-500">(현재 가격: <span
+                                        id="common-base-price">-</span>원)</span>
                             </label>
                             <div class="slider-wrapper">
-                                <input type="range" id="common-price-slider" class="slider mb-2" min="-5" max="5" step="0.1" value="0">
+                                <input type="range" id="common-price-slider" class="slider mb-2" min="-5" max="5"
+                                    step="0.1" value="0">
                             </div>
                             <div class="flex justify-between text-xs text-gray-500">
                                 <span>-5%</span>
@@ -261,10 +263,12 @@
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 우선주 가격 조정
-                                <span class="text-xs text-gray-500">(현재 가격: <span id="preferred-base-price">-</span>원)</span>
+                                <span class="text-xs text-gray-500">(현재 가격: <span
+                                        id="preferred-base-price">-</span>원)</span>
                             </label>
                             <div class="slider-wrapper">
-                                <input type="range" id="preferred-price-slider" class="slider mb-2" min="-5" max="5" step="0.1" value="0">
+                                <input type="range" id="preferred-price-slider" class="slider mb-2" min="-5" max="5"
+                                    step="0.1" value="0">
                             </div>
                             <div class="flex justify-between text-xs text-gray-500">
                                 <span>-5%</span>
@@ -307,7 +311,7 @@
                             </div>
                         </div>
                     </div>
-                </div>                
+                </div>
             </div>
 
             <!-- Historical SZ Value Chart -->
@@ -326,152 +330,152 @@
         </div>
     </footer>
     <script>
-            // 페이지 로드 시 캐시 비우기 시도
-                window.addEventListener('load', function () {
-                    // ServiceWorker 등록 해제
-                    if (navigator.serviceWorker) {
-                        navigator.serviceWorker.getRegistrations().then(function (registrations) {
-                            for (let registration of registrations) {
-                                registration.unregister();
-                            }
-                        });
-                    }
-
-                    // 캐시 스토리지 비우기 
-                    if ('caches' in window) {
-                        caches.keys().then(function (names) {
-                            for (let name of names) {
-                                caches.delete(name);
-                            }
-                        });
+        // 페이지 로드 시 캐시 비우기 시도
+        window.addEventListener('load', function () {
+            // ServiceWorker 등록 해제
+            if (navigator.serviceWorker) {
+                navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                    for (let registration of registrations) {
+                        registration.unregister();
                     }
                 });
-            // 2분마다 페이지 자동 새로고침 - script 태그 맨 위에 추가
-                setTimeout(function () {
-                    window.location.reload();
-                }, 120000); // 120초 = 2분
-            // 종목명으로 종목 코드를 가져오는 함수
-            function getStockCodeByName(stockName) {
-                if (!stockName) return 'unknown';
-
-                // HTML 태그 제거
-                let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
-
-                // 이모지 제거 (🔴 🟠 🟢 🔵)
-                cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '').trim();
-
-                // 가중치 형식 제거 (대시 형식)
-                cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
-
-                // 가중치 형식 제거 (괄호 형식)
-                cleanName = cleanName.replace(/\s*\(\d+(\.\d+)?\)$/, '').trim();
-
-                console.log(`종목명 변환: "${stockName}" → "${cleanName}"`);
-
-                // 종목 코드 맵핑
-                const stockCodeMap = {
-                    '삼성전자': '005930',
-                    '코오롱모빌리티그룹': '450140',
-                    '태양금속': '004100',
-                    'NPC': '004250',
-                    '대한제당': '001790',
-                    '덕성': '004830',
-                    '코리아써키트': '007810',
-                    '코오롱': '002020',
-                    '현대차': '005380',
-                    '대신증권': '003540',
-                    '성신양회': '004980',
-                    '코오롱글로벌': '003070',
-                    'NH투자증권': '005940',
-                    '신풍제약': '019170',
-                    'LG전자': '066570',
-                    '한화솔루션': '009830',
-                    '세방': '004360',
-                    '한화투자증권': '003530',
-                    'LG생활건강': '051900',
-                    '아모레퍼시픽': '090430',
-                    'LG화학': '051910',
-                    '아모레G': '002790',
-                    '대한항공': '003490',
-                    'S-Oil': '010950',
-                    '한진칼': '180640',
-                    'SK증권': '001510',
-                    '한국금융지주': '071050',
-                    '티와이홀딩스': '363280',
-                    '미래에셋증권': '006800',
-                    '동부건설': '005960',
-                    '크라운제과': '264900',
-                    '두산': '000150',
-                    '남선알미늄': '008350',
-                    '금호석유': '011780',
-                    '넥센': '005720',
-                    'LX하우시스': '108670',
-                    '삼성화재': '000810',
-                    '대상홀딩스': '084690',
-                    'SK케미칼': '285130',
-                    '소프트센': '032680',
-                    '삼성전기': '009150',
-                    '노루홀딩스': '000320',
-                    'LG': '003550',
-                    '삼성SDI': '006400',
-                    '코오롱인더': '120110',
-                    '대원전선': '006340',
-                    '태영건설': '009410',
-                    '흥국화재': '000540',
-                    '대호특수강': '021040',
-                    '계양전기': '012200',
-                    '한양증권': '001750',
-                    '호텔신라': '008770',
-                    'SK이노베이션': '096770',
-                    '서울식품': '004410',
-                    '현대건설': '000720',
-                    'DL이앤씨': '375500',
-                    'GS': '078930',
-                    '금강공업': '014280',
-                    '대상': '001680',
-                    '금호건설': '002990',
-                    'CJ제일제당': '097950',
-                    'SK디스커버리': '006120',
-                    'DL': '000210',
-                    '노루페인트': '090350',
-                    '동양': '001520',
-                    '한화': '000880',
-                    'CJ': '001040',
-                    '크라운해태홀딩스': '005740',
-                    '롯데칠성': '005300',
-                    'SK': '034730',
-                    '성문전자': '014910',
-                    '일양약품': '007570',
-                    '롯데지주': '004990',
-                    '깨끗한나라': '004540',
-                    '유한양행': '000100',
-                    '부국증권': '001270',
-                    '남양유업': '003920',
-                    '유화증권': '003460',
-                    '삼양사': '145990',
-                    'JW중외제약': '001060',
-                    '하이트진로홀딩스': '000140',
-                    'BYC': '001460',
-                    '삼양홀딩스': '000070'
-                };
-
-                // 정확한 일치
-                if (stockCodeMap[cleanName]) {
-                    return stockCodeMap[cleanName];
-                }
-
-                // 부분 일치 시도
-                for (const name in stockCodeMap) {
-                    if (cleanName.includes(name) || name.includes(cleanName)) {
-                        console.log(`부분 일치 종목: ${name} (${stockCodeMap[name]})`);
-                        return stockCodeMap[name];
-                    }
-                }
-
-                console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
-                return 'unknown';
             }
-            
+
+            // 캐시 스토리지 비우기 
+            if ('caches' in window) {
+                caches.keys().then(function (names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+        });
+        // 2분마다 페이지 자동 새로고침 - script 태그 맨 위에 추가
+        setTimeout(function () {
+            window.location.reload();
+        }, 120000); // 120초 = 2분
+        // 종목명으로 종목 코드를 가져오는 함수
+        function getStockCodeByName(stockName) {
+            if (!stockName) return 'unknown';
+
+            // HTML 태그 제거
+            let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
+
+            // 이모지 제거 (🔴 🟠 🟢 🔵)
+            cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '').trim();
+
+            // 가중치 형식 제거 (대시 형식)
+            cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
+
+            // 가중치 형식 제거 (괄호 형식)
+            cleanName = cleanName.replace(/\s*\(\d+(\.\d+)?\)$/, '').trim();
+
+            console.log(`종목명 변환: "${stockName}" → "${cleanName}"`);
+
+            // 종목 코드 맵핑
+            const stockCodeMap = {
+                '삼성전자': '005930',
+                '코오롱모빌리티그룹': '450140',
+                '태양금속': '004100',
+                'NPC': '004250',
+                '대한제당': '001790',
+                '덕성': '004830',
+                '코리아써키트': '007810',
+                '코오롱': '002020',
+                '현대차': '005380',
+                '대신증권': '003540',
+                '성신양회': '004980',
+                '코오롱글로벌': '003070',
+                'NH투자증권': '005940',
+                '신풍제약': '019170',
+                'LG전자': '066570',
+                '한화솔루션': '009830',
+                '세방': '004360',
+                '한화투자증권': '003530',
+                'LG생활건강': '051900',
+                '아모레퍼시픽': '090430',
+                'LG화학': '051910',
+                '아모레G': '002790',
+                '대한항공': '003490',
+                'S-Oil': '010950',
+                '한진칼': '180640',
+                'SK증권': '001510',
+                '한국금융지주': '071050',
+                '티와이홀딩스': '363280',
+                '미래에셋증권': '006800',
+                '동부건설': '005960',
+                '크라운제과': '264900',
+                '두산': '000150',
+                '남선알미늄': '008350',
+                '금호석유': '011780',
+                '넥센': '005720',
+                'LX하우시스': '108670',
+                '삼성화재': '000810',
+                '대상홀딩스': '084690',
+                'SK케미칼': '285130',
+                '소프트센': '032680',
+                '삼성전기': '009150',
+                '노루홀딩스': '000320',
+                'LG': '003550',
+                '삼성SDI': '006400',
+                '코오롱인더': '120110',
+                '대원전선': '006340',
+                '태영건설': '009410',
+                '흥국화재': '000540',
+                '대호특수강': '021040',
+                '계양전기': '012200',
+                '한양증권': '001750',
+                '호텔신라': '008770',
+                'SK이노베이션': '096770',
+                '서울식품': '004410',
+                '현대건설': '000720',
+                'DL이앤씨': '375500',
+                'GS': '078930',
+                '금강공업': '014280',
+                '대상': '001680',
+                '금호건설': '002990',
+                'CJ제일제당': '097950',
+                'SK디스커버리': '006120',
+                'DL': '000210',
+                '노루페인트': '090350',
+                '동양': '001520',
+                '한화': '000880',
+                'CJ': '001040',
+                '크라운해태홀딩스': '005740',
+                '롯데칠성': '005300',
+                'SK': '034730',
+                '성문전자': '014910',
+                '일양약품': '007570',
+                '롯데지주': '004990',
+                '깨끗한나라': '004540',
+                '유한양행': '000100',
+                '부국증권': '001270',
+                '남양유업': '003920',
+                '유화증권': '003460',
+                '삼양사': '145990',
+                'JW중외제약': '001060',
+                '하이트진로홀딩스': '000140',
+                'BYC': '001460',
+                '삼양홀딩스': '000070'
+            };
+
+            // 정확한 일치
+            if (stockCodeMap[cleanName]) {
+                return stockCodeMap[cleanName];
+            }
+
+            // 부분 일치 시도
+            for (const name in stockCodeMap) {
+                if (cleanName.includes(name) || name.includes(cleanName)) {
+                    console.log(`부분 일치 종목: ${name} (${stockCodeMap[name]})`);
+                    return stockCodeMap[name];
+                }
+            }
+
+            console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
+            return 'unknown';
+        }
+
         // 마지막 업데이트 시간을 가져와 표시하는 함수
         async function fetchLastUpdateTime() {
             try {
@@ -547,92 +551,83 @@
 
         async function loadAndProcessStockData(stockCode, stockName) {
             try {
-                // 로딩 컨테이너 표시
-                document.getElementById('loading-container').style.display = 'flex';
-                document.getElementById('content-container').classList.add('hidden');
+                // 1. 실시간 데이터 먼저 로드
+                const stockDataJson = await loadStockDataJson();
 
-                // 마지막 업데이트 시간 가져오기
-                fetchLastUpdateTime();
-
-                // 코드가 'unknown'인 경우 종목명에서 코드 추출 시도
-                if (stockCode === 'unknown' || !stockCode) {
-                    // 기존 코드에 있던 종목 코드 추출 로직 유지
-                    let baseStockName = stockName;
-                    if (baseStockName.includes('-')) {
-                        baseStockName = baseStockName.split('-')[0].trim();
-                    }
-                    stockCode = getStockCodeByName(baseStockName);
-                }
-
-                // 데이터 URL 생성 - 타임스탬프 추가
-                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
-                const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
-
-                // 동시에 데이터 로드
-                const [stockDataResponse, trendDataResponse] = await Promise.all([
-                    fetch(stockDataUrl),
-                    fetch(trendUrl, {
-                        cache: 'no-store',
-                        headers: {
-                            'Cache-Control': 'no-cache, no-store, must-revalidate',
-                            'Pragma': 'no-cache',
-                            'Expires': '0'
-                        }
-                    })
-                ]);
-
-                if (!stockDataResponse.ok || !trendDataResponse.ok) {
-                    throw new Error('데이터를 로드할 수 없습니다.');
-                }
-
-                const stockData = await stockDataResponse.json();
-                const trendData = await trendDataResponse.json();
-
-                // 종목명 정규화
+                // 2. 정규화된 종목명으로 정확한 매칭
                 const normalizedStockName = normalizeStockName(stockName);
-
-                // 실시간 데이터에서 매칭되는 종목 찾기
-                const matchedSignal = findMatchingStock(
-                    stockData.all_signals || [],
+                let matchedSignal = findMatchingStock(
+                    stockDataJson.all_signals,
                     normalizedStockName,
                     stockCode
                 );
 
-                // 현재 데이터 업데이트 (각 페이지의 기존 updateCurrentInfo 함수 사용)
-                await updateCurrentInfo(trendData, stockName, stockCode, matchedSignal);
+                // 3. 트렌드 데이터 로드
+                const trendData = await loadStockData(stockCode, stockName);
 
-                // 차트 렌더링
-                renderCharts(trendData);
+                // 4. 현재 데이터 병합 로직 개선
+                const lastIndex = trendData.dates.length - 1;
 
-                // 히스토리 데이터 렌더링
-                renderHistoryData(trendData);
+                // 실시간 데이터 우선 적용
+                stockData.current = {
+                    commonPrice: matchedSignal?.price_a || trendData.common_prices[lastIndex],
+                    preferredPrice: matchedSignal?.price_b || trendData.preferred_prices[lastIndex],
+                    szValue: matchedSignal?.sz_value || trendData.current_sz || trendData.sz_values[lastIndex],
+                    discountRate: matchedSignal
+                        ? (matchedSignal.price_a - matchedSignal.price_b) / matchedSignal.price_a
+                        : trendData.discount_rates[lastIndex]
+                };
 
-                // 로딩 완료
-                document.getElementById('loading-container').style.display = 'none';
-                document.getElementById('content-container').classList.remove('hidden');
-
+                // 5. 디버그 로깅 (운영 중에는 제거 가능)
+                console.log('최종 현재 데이터:', stockData.current);
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
+
+                // 로딩 컨테이너에 오류 메시지 표시
                 const loadingContainer = document.getElementById('loading-container');
                 loadingContainer.innerHTML = `
                 <div class="text-red-500 text-center">
                     <p>데이터를 로드할 수 없습니다.</p>
                     <p>${error.message}</p>
-                    <p>종목코드: ${stockCode}, 종목명: ${stockName}</p>
-                    <div class="mt-4 flex justify-center space-x-4">
-                        <button onclick="window.location.reload()" 
-                                class="px-4 py-2 bg-blue-500 text-white rounded">
-                            다시 시도
-                        </button>
-                        <button onclick="window.location.href='index.html'" 
-                                class="px-4 py-2 bg-gray-500 text-white rounded">
-                            메인 페이지로 돌아가기
-                        </button>
-                    </div>
+                    <button onclick="window.location.reload()" 
+                            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                        다시 시도
+                    </button>
+                    <button onclick="window.location.href='index.html'" 
+                            class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                        메인 페이지로 돌아가기
+                    </button>
                 </div>
             `;
             }
+        }
+        // 추가: 더 강력한 데이터 매칭 함수
+        function findMatchingStock(signals, normalizedName, stockCode) {
+                // 1. 정확한 종목 코드 매칭 (가장 우선)
+                const codeMatch = signals.find(signal => {
+                    const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
+                    return signalCode === stockCode;
+                });
+                if (codeMatch) return codeMatch;
+
+                // 2. 정규화된 이름 매칭
+                const nameMatch = signals.find(signal =>
+                    normalizeStockName(signal.stock_name) === normalizedName
+                );
+                if (nameMatch) return nameMatch;
+
+                // 3. 부분 일치 매칭
+                return signals.find(signal => {
+                    const normalizedSignalName = normalizeStockName(signal.stock_name);
+                    return normalizedSignalName.includes(normalizedName) ||
+                        normalizedName.includes(normalizedSignalName);
+                });
+            }
+
+        // 추가: 안전한 데이터 변환 함수
+        function safeConvert(value, defaultValue = 0) {
+            if (value == null || isNaN(value)) return defaultValue;
+            return Number(value);
         }
         // 종목명 정규화 함수
         function normalizeStockName(name) {
