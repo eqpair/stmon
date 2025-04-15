@@ -480,45 +480,58 @@
 
             return normalizedName.trim();
         }
-
-        // 일치하는 종목 찾기 함수
-        function findMatchingStock(signals, normalizedName, stockCode) {
-            // 1. 종목 코드로 검색 (가장 신뢰할 수 있는 방법)
-            if (stockCode !== 'unknown') {
-                const codeMatch = signals.find(signal => {
-                    const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
-                    return signalCode === stockCode;
+        async function loadStockDataJson() {
+            try {
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const response = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
                 });
 
-                if (codeMatch) {
-                    console.log("종목 코드로 일치하는 항목 발견:", stockCode);
-                    return codeMatch;
+                if (!response.ok) {
+                    throw new Error('신호 데이터를 로드할 수 없습니다.');
                 }
-            }
 
-            // 2. 정규화된 이름으로 정확한 일치 검색
-            const exactMatch = signals.find(signal => {
-                return normalizeStockName(signal.stock_name) === normalizedName;
+                const dataText = await response.text();
+
+                // 특수값 처리
+                const cleanedDataText = dataText
+                    .replace(/"NaN"/g, 'null')
+                    .replace(/NaN/g, 'null')
+                    .replace(/Infinity/g, 'null')
+                    .replace(/-Infinity/g, 'null');
+
+                return JSON.parse(cleanedDataText);
+            } catch (error) {
+                console.error('데이터 로드 중 오류:', error);
+                throw error;
+            }
+        }
+        // 일치하는 종목 찾기 함수
+        function findMatchingStock(signals, normalizedName, stockCode) {
+            // 1. 정확한 종목 코드 매칭 (가장 우선)
+            const codeMatch = signals.find(signal => {
+                const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
+                return signalCode === stockCode;
             });
+            if (codeMatch) return codeMatch;
 
-            if (exactMatch) {
-                console.log("정확히 일치하는 종목 발견:", normalizeStockName(exactMatch.stock_name));
-                return exactMatch;
-            }
+            // 2. 정규화된 이름 매칭
+            const nameMatch = signals.find(signal =>
+                normalizeStockName(signal.stock_name) === normalizedName
+            );
+            if (nameMatch) return nameMatch;
 
-            // 3. 부분 일치 검색
-            const partialMatch = signals.find(signal => {
+            // 3. 부분 일치 매칭
+            return signals.find(signal => {
                 const normalizedSignalName = normalizeStockName(signal.stock_name);
                 return normalizedSignalName.includes(normalizedName) ||
                     normalizedName.includes(normalizedSignalName);
             });
-
-            if (partialMatch) {
-                console.log("부분 일치하는 종목 발견:", normalizeStockName(partialMatch.stock_name));
-                return partialMatch;
-            }
-
-            return null;
         }
 
         // loadAndProcessStockData 함수 수정

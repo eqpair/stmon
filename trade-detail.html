@@ -773,29 +773,35 @@
         }
 
         async function loadStockDataJson() {
-            const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-            const response = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`, {
-                cache: 'no-store',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
+            try {
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const response = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('신호 데이터를 로드할 수 없습니다.');
                 }
-            });
-            if (!response.ok) {
-                throw new Error('신호 데이터를 로드할 수 없습니다.');
+
+                const dataText = await response.text();
+
+                // 특수값 처리
+                const cleanedDataText = dataText
+                    .replace(/"NaN"/g, 'null')
+                    .replace(/NaN/g, 'null')
+                    .replace(/Infinity/g, 'null')
+                    .replace(/-Infinity/g, 'null');
+
+                return JSON.parse(cleanedDataText);
+            } catch (error) {
+                console.error('데이터 로드 중 오류:', error);
+                throw error;
             }
-
-            const dataText = await response.text();
-
-            // 특수값 처리
-            const cleanedDataText = dataText
-                .replace(/"NaN"/g, 'null')
-                .replace(/NaN/g, 'null')
-                .replace(/Infinity/g, 'null')
-                .replace(/-Infinity/g, 'null');
-
-            return JSON.parse(cleanedDataText);
         }
 
         function calculateMean(data) {
