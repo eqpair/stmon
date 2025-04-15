@@ -556,89 +556,80 @@
 
                 // 코드가 'unknown'인 경우 종목명에서 코드 추출 시도
                 if (stockCode === 'unknown' || !stockCode) {
-                    console.log(`종목코드 추출 필요 - 종목명: ${stockName}`);
-                    // 가중치 정보 제거하고 기본명만 추출
+                    // 기존 코드에 있던 종목 코드 추출 로직 유지
                     let baseStockName = stockName;
-
-                    // 대시 형식 처리
                     if (baseStockName.includes('-')) {
                         baseStockName = baseStockName.split('-')[0].trim();
                     }
-
-                    // 괄호 형식 처리
-                    if (baseStockName.includes('(')) {
-                        baseStockName = baseStockName.split('(')[0].trim();
-                    }
-
                     stockCode = getStockCodeByName(baseStockName);
-                    console.log(`추출된 종목코드: ${stockCode} (종목: ${baseStockName})`);
                 }
 
-                // 데이터 로드 - stock_data.json 먼저 로드
-                const stockDataJson = await loadStockDataJson();
+                // 데이터 URL 생성 - 타임스탬프 추가
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+                const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
 
-                // 현재 신호 찾기
+                // 동시에 데이터 로드
+                const [stockDataResponse, trendDataResponse] = await Promise.all([
+                    fetch(stockDataUrl),
+                    fetch(trendUrl, {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
+                        }
+                    })
+                ]);
+
+                if (!stockDataResponse.ok || !trendDataResponse.ok) {
+                    throw new Error('데이터를 로드할 수 없습니다.');
+                }
+
+                const stockData = await stockDataResponse.json();
+                const trendData = await trendDataResponse.json();
+
+                // 종목명 정규화
                 const normalizedStockName = normalizeStockName(stockName);
-                let matchedSignal = findMatchingStock(stockDataJson.all_signals, normalizedStockName, stockCode);
 
-                console.log("매칭된 종목 신호:", matchedSignal ? matchedSignal.stock_name : "매칭 없음");
+                // 실시간 데이터에서 매칭되는 종목 찾기
+                const matchedSignal = findMatchingStock(
+                    stockData.all_signals || [],
+                    normalizedStockName,
+                    stockCode
+                );
 
-                // 트렌드 데이터 로드
-                const trendData = await loadStockData(stockCode, stockName);
+                // 현재 데이터 업데이트 (각 페이지의 기존 updateCurrentInfo 함수 사용)
+                await updateCurrentInfo(trendData, stockName, stockCode, matchedSignal);
 
-                // 현재 주가 데이터 저장
-                const lastIndex = trendData.dates.length - 1;
-                stockData.current.commonPrice = trendData.common_prices[lastIndex];
-                stockData.current.preferredPrice = trendData.preferred_prices[lastIndex];
+                // 차트 렌더링
+                renderCharts(trendData);
 
-                // SZ 값과 괴리율 저장 - 실시간 데이터 우선
-                if (matchedSignal) {
-                    // 실시간 데이터 사용 (좀 더 정확)
-                    stockData.current.szValue = matchedSignal.sz_value;
-                    // 괴리율은 트렌드 데이터에서 계산
-                    stockData.current.discountRate = (stockData.current.commonPrice - stockData.current.preferredPrice) / stockData.current.commonPrice;
-                } else {
-                    // 매칭되는 종목이 없을 경우 트렌드 데이터 사용
-                    console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
-                    stockData.current.szValue = trendData.current_sz || trendData.sz_values[lastIndex] || 0;
-                    stockData.current.discountRate = trendData.discount_rates[lastIndex] || (stockData.current.commonPrice - stockData.current.preferredPrice) / stockData.current.commonPrice;
-                }
+                // 히스토리 데이터 렌더링
+                renderHistoryData(trendData);
 
-                // 히스토리 데이터 저장
-                stockData.history.dates = trendData.dates.slice(-150); // 최근 5개월만
-                stockData.history.discountRates = trendData.discount_rates.slice(-150);
-
-                // SZ 값 계산을 위한 통계 데이터
-                const windowData = trendData.discount_rates.slice(-250, -1); // 최근 250일(약 1년) 데이터로 계산
-                stockData.history.mean = calculateMean(windowData);
-                stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
-                stockData.history.szValues = trendData.sz_values ? trendData.sz_values.slice(-150) :
-                    calculateSZValues(trendData.discount_rates, stockData.history.mean, stockData.history.stdDev).slice(-150);
-
-                // UI 업데이트
-                updateCurrentInfo();
-                renderSZChart();
-
-                // 로딩 컨테이너 숨기기, 콘텐츠 표시
+                // 로딩 완료
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
+
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
-
-                // 로딩 컨테이너에 오류 메시지 표시
                 const loadingContainer = document.getElementById('loading-container');
                 loadingContainer.innerHTML = `
                 <div class="text-red-500 text-center">
                     <p>데이터를 로드할 수 없습니다.</p>
                     <p>${error.message}</p>
-                    <button onclick="window.location.reload()" 
-                            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                        다시 시도
-                    </button>
-                    <button onclick="window.location.href='index.html'" 
-                            class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
-                        메인 페이지로 돌아가기
-                    </button>
+                    <p>종목코드: ${stockCode}, 종목명: ${stockName}</p>
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <button onclick="window.location.reload()" 
+                                class="px-4 py-2 bg-blue-500 text-white rounded">
+                            다시 시도
+                        </button>
+                        <button onclick="window.location.href='index.html'" 
+                                class="px-4 py-2 bg-gray-500 text-white rounded">
+                            메인 페이지로 돌아가기
+                        </button>
+                    </div>
                 </div>
             `;
             }

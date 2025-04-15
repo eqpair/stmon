@@ -523,103 +523,60 @@
 
         // loadAndProcessStockData 함수 수정
         async function loadAndProcessStockData(stockCode, stockName) {
-            console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
-
             try {
-                // 코드가 'unknown'인 경우 종목명에서 코드 추출 시도
-                if (stockCode === 'unknown' || !stockCode) {
-                    // 종목 코드 추출 로직
-                    console.log(`종목코드 추출 필요 - 종목명: ${stockName}`);
-                    // 가중치 정보 제거
-                    let baseStockName = stockName;
-                    if (baseStockName.includes('-')) {
-                        baseStockName = baseStockName.split('-')[0].trim();
-                    }
-
-                    stockCode = getStockCodeByName(baseStockName);
-                    console.log(`추출된 종목코드: ${stockCode} (종목: ${baseStockName})`);
-                }
-
-                document.getElementById('stock-name').textContent = stockName;
-
-                // 로딩 표시
+                // 로딩 컨테이너 표시
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
 
                 // 마지막 업데이트 시간 가져오기
                 fetchLastUpdateTime();
 
-                // 트레이드 버튼 항상 표시
-                const tradeButtonContainer = document.getElementById('trade-button-container');
-                if (tradeButtonContainer) {
-                    tradeButtonContainer.classList.remove('hidden');
-                    const tradeButton = document.getElementById('trade-button');
-                    tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
+                // 코드가 'unknown'인 경우 종목명에서 코드 추출 시도
+                if (stockCode === 'unknown' || !stockCode) {
+                    // 기존 코드에 있던 종목 코드 추출 로직 유지
+                    let baseStockName = stockName;
+                    if (baseStockName.includes('-')) {
+                        baseStockName = baseStockName.split('-')[0].trim();
+                    }
+                    stockCode = getStockCodeByName(baseStockName);
                 }
 
-                // 데이터 URL 생성
+                // 데이터 URL 생성 - 타임스탬프 추가
                 const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-
-                // 먼저 stock_data.json 데이터 가져오기
                 const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
-                console.log(`실시간 데이터 요청 URL: ${stockDataUrl}`);
+                const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
 
-                const stockDataResponse = await fetch(stockDataUrl);
-                if (!stockDataResponse.ok) {
-                    throw new Error(`실시간 데이터 요청 실패 (${stockDataResponse.status})`);
+                // 동시에 데이터 로드
+                const [stockDataResponse, trendDataResponse] = await Promise.all([
+                    fetch(stockDataUrl),
+                    fetch(trendUrl, {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
+                        }
+                    })
+                ]);
+
+                if (!stockDataResponse.ok || !trendDataResponse.ok) {
+                    throw new Error('데이터를 로드할 수 없습니다.');
                 }
 
                 const stockData = await stockDataResponse.json();
+                const trendData = await trendDataResponse.json();
 
-                // 현재 종목에 대한 정규화된 이름
-                const normalizedName = normalizeStockName(stockName);
-                console.log("정규화된 현재 종목명:", normalizedName);
+                // 종목명 정규화
+                const normalizedStockName = normalizeStockName(stockName);
 
-                // 일치하는 종목 찾기
-                const matchedSignal = findMatchingStock(stockData.all_signals, normalizedName, stockCode);
+                // 실시간 데이터에서 매칭되는 종목 찾기
+                const matchedSignal = findMatchingStock(
+                    stockData.all_signals || [],
+                    normalizedStockName,
+                    stockCode
+                );
 
-                // 트렌드 데이터 요청
-                const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
-                const trendDataResponse = await fetch(trendUrl, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-
-                if (!trendDataResponse.ok) {
-                    throw new Error(`트렌드 데이터 요청 실패 (${trendDataResponse.status}): ${stockName}`);
-                }
-
-                const trendDataText = await trendDataResponse.text();
-                console.log(`트렌드 데이터 길이: ${trendDataText.length} 바이트`);
-
-                // 데이터 파싱 시도
-                let trendData;
-                try {
-                    // 특수값 대체 및 파싱
-                    const cleanedText = trendDataText
-                        .replace(/"NaN"/g, 'null')
-                        .replace(/NaN/g, 'null')
-                        .replace(/Infinity/g, 'null')
-                        .replace(/-Infinity/g, 'null');
-
-                    trendData = JSON.parse(cleanedText);
-                    console.log(`트렌드 데이터 파싱 성공 - 날짜 수: ${trendData.dates ? trendData.dates.length : 0}`);
-                } catch (parseError) {
-                    console.error('트렌드 데이터 파싱 오류:', parseError);
-                    console.log('파싱 실패 데이터 샘플:', trendDataText.substring(0, 200));
-                    throw new Error(`JSON 파싱 오류: ${parseError.message}`);
-                }
-
-                // 데이터 검증
-                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
-                    throw new Error(`${stockName}에 대한 유효한 트렌드 데이터가 없습니다.`);
-                }
-
-                // 현재 데이터 업데이트 - 실시간 데이터와 트렌드 데이터 결합
+                // 현재 데이터 업데이트 (각 페이지의 기존 updateCurrentInfo 함수 사용)
                 await updateCurrentInfo(trendData, stockName, stockCode, matchedSignal);
 
                 // 차트 렌더링
@@ -632,12 +589,8 @@
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
 
-                console.log('데이터 로드 및 처리 완료');
-
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
-
-                // 오류 메시지 표시
                 const loadingContainer = document.getElementById('loading-container');
                 loadingContainer.innerHTML = `
                 <div class="text-red-500 text-center">
