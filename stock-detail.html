@@ -522,43 +522,90 @@
         }
 
         // loadAndProcessStockData 함수 수정
-            async function loadAndProcessStockData(stockCode, stockName) {
-                try {
-                    // 1. 실시간 데이터 먼저 로드
-                    const stockDataJson = await loadStockDataJson();
+        async function loadAndProcessStockData(stockCode, stockName) {
+            try {
+                // 기존 로딩 로직 그대로 유지
+                document.getElementById('loading-container').style.display = 'flex';
+                document.getElementById('content-container').classList.add('hidden');
 
-                    // 2. 정규화된 종목명으로 정확한 매칭
-                    const normalizedStockName = normalizeStockName(stockName);
-                    let matchedSignal = findMatchingStock(
-                        stockDataJson.all_signals,
-                        normalizedStockName,
-                        stockCode
-                    );
+                fetchLastUpdateTime();
 
-                    // 3. 트렌드 데이터 로드
-                    const trendData = await loadStockData(stockCode, stockName);
+                // 여기부터 앞서 제안한 개선된 로직으로 대체
+                if (stockCode === 'unknown' || !stockCode) {
+                    let baseStockName = stockName;
 
-                    // 4. 현재 데이터 병합 로직 개선
-                    const lastIndex = trendData.dates.length - 1;
+                    // 기존 코드의 코드 추출 로직 그대로 유지
+                    if (baseStockName.includes('-')) {
+                        baseStockName = baseStockName.split('-')[0].trim();
+                    }
 
-                    // 실시간 데이터 우선 적용
-                    stockData.current = {
-                        commonPrice: matchedSignal?.price_a || trendData.common_prices[lastIndex],
-                        preferredPrice: matchedSignal?.price_b || trendData.preferred_prices[lastIndex],
-                        szValue: matchedSignal?.sz_value || trendData.current_sz || trendData.sz_values[lastIndex],
-                        discountRate: matchedSignal
-                            ? (matchedSignal.price_a - matchedSignal.price_b) / matchedSignal.price_a
-                            : trendData.discount_rates[lastIndex]
-                    };
+                    if (baseStockName.includes('(')) {
+                        baseStockName = baseStockName.split('(')[0].trim();
+                    }
 
-                    // 5. 디버그 로깅 (운영 중에는 제거 가능)
-                    console.log('최종 현재 데이터:', stockData.current);
-                } catch (error) {
-                    console.error('데이터 로드 및 처리 오류:', error);
+                    stockCode = getStockCodeByName(baseStockName);
+                }
 
-                    // 로딩 컨테이너에 오류 메시지 표시
-                    const loadingContainer = document.getElementById('loading-container');
-                    loadingContainer.innerHTML = `
+                // 실시간 데이터 로드
+                const stockDataJson = await loadStockDataJson();
+
+                // 종목명 정규화 및 매칭
+                const normalizedStockName = normalizeStockName(stockName);
+                let matchedSignal = findMatchingStock(
+                    stockDataJson.all_signals,
+                    normalizedStockName,
+                    stockCode
+                );
+
+                // 트렌드 데이터 로드
+                const trendData = await loadStockData(stockCode, stockName);
+
+                const lastIndex = trendData.dates.length - 1;
+
+                // 현재 데이터 병합 로직 개선
+                stockData.current.commonPrice = matchedSignal?.price_a || trendData.common_prices[lastIndex];
+                stockData.current.preferredPrice = matchedSignal?.price_b || trendData.preferred_prices[lastIndex];
+
+                // SZ 값과 괴리율 계산 로직 개선
+                stockData.current.szValue = matchedSignal?.sz_value ||
+                    trendData.current_sz ||
+                    trendData.sz_values[lastIndex] || 0;
+
+                stockData.current.discountRate = matchedSignal
+                    ? (matchedSignal.price_a - matchedSignal.price_b) / matchedSignal.price_a
+                    : trendData.discount_rates[lastIndex] ||
+                    (stockData.current.commonPrice - stockData.current.preferredPrice) / stockData.current.commonPrice;
+
+                // 나머지 기존 로직 그대로 유지
+                stockData.history.dates = trendData.dates.slice(-150);
+                stockData.history.discountRates = trendData.discount_rates.slice(-150);
+
+                const windowData = trendData.discount_rates.slice(-250, -1);
+                stockData.history.mean = calculateMean(windowData);
+                stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
+
+                stockData.history.szValues = trendData.sz_values
+                    ? trendData.sz_values.slice(-150)
+                    : calculateSZValues(
+                        trendData.discount_rates,
+                        stockData.history.mean,
+                        stockData.history.stdDev
+                    ).slice(-150);
+
+                // 기존 UI 업데이트 로직
+                updateCurrentInfo();
+                renderSZChart();
+
+                // 로딩 완료 로직
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
+
+            } catch (error) {
+                // 기존 오류 처리 로직 그대로 유지
+                console.error('데이터 로드 및 처리 오류:', error);
+
+                const loadingContainer = document.getElementById('loading-container');
+                loadingContainer.innerHTML = `
                 <div class="text-red-500 text-center">
                     <p>데이터를 로드할 수 없습니다.</p>
                     <p>${error.message}</p>
@@ -572,8 +619,8 @@
                     </button>
                 </div>
             `;
-                }
             }
+        }
             // 추가: 더 강력한 데이터 매칭 함수
             function findMatchingStock(signals, normalizedName, stockCode) {
                 // 1. 정확한 종목 코드 매칭 (가장 우선)
