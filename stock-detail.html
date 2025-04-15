@@ -246,13 +246,25 @@
     </footer>
 
     <script>
+        // 스크립트 시작 부분에 추가
+            // 캐시 방지를 위한 함수
+            function getNoCacheUrl(url) {
+                return `${url}${url.includes('?') ? '&' : '?'}t=${new Date().getTime()}`;
+            }
+
+            // 데이터를 가져올 때 항상 이 함수 사용
+            async function fetchWithNoCache(url) {
+                const noCacheUrl = getNoCacheUrl(url);
+                return await fetch(noCacheUrl);
+            }
         // 마지막 업데이트 시간을 가져와 표시하는 함수
             async function fetchLastUpdateTime() {
                 try {
                     const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
                     const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
 
-                    const response = await fetch(stockDataUrl);
+                    // const response = await fetch(stockDataUrl);
+                    const response = await fetchWithNoCache(stockDataUrl);
                     if (!response.ok) {
                         throw new Error(`Failed to fetch update time (${response.status})`);
                     }
@@ -492,118 +504,97 @@
                     const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
                     const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
 
-                    const response = await fetch(stockDataUrl);
+                    // const response = await fetch(stockDataUrl);
+                    const response = await fetchWithNoCache(stockDataUrl);
                     if (!response.ok) {
                         throw new Error(`실시간 데이터를 가져올 수 없습니다 (${response.status})`);
                     }
 
                     const stockData = await response.json();
 
-                    // 종목명 정규화 함수 - HTML 태그, 아이콘, 가중치 정보 모두 제거
-                    const normalizeStockName = (name) => {
-                        // HTML 태그 제거
-                        let cleanName = name.replace(/<[^>]+>/g, '');
-                        // 이모지 아이콘 제거 (🔴 🟠 🟢 🔵)
-                        cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
-                        // 가중치 형식 제거 (예: -0.5- 또는 (0.5))
-                        cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
-                        return cleanName.trim();
-                    };
+                    // 원본 텍스트에서 직접 정보 검색
+                    if (stockData.all_signals_raw) {
+                        const lines = stockData.all_signals_raw.split('\n');
+                        let matchedLine = null;
+                        let matchedSignalLine = null;
 
-                    // 현재 종목에 대한 정규화된 이름
-                    const normalizedCurrentName = normalizeStockName(stockName);
-                    console.log("정규화된 현재 종목명:", normalizedCurrentName);
+                        // 정규화된 이름으로 검색
+                        const normalizedCurrentName = stockName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '')
+                            .replace(/-\d+(\.\d+)?-$/, '')
+                            .trim();
 
-                    // 일치하는 종목 찾기 - 다양한 방식으로 시도
-                    let matchedSignal = null;
+                        // 원본 데이터에서 해당 종목 찾기
+                        for (let i = 0; i < lines.length - 1; i++) {
+                            const normalizedLineName = lines[i].replace(/<[^>]+>/g, '')
+                                .replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '')
+                                .replace(/-\d+(\.\d+)?-$/, '')
+                                .trim();
 
-                    // 1. 정규화된 이름으로 정확히 일치하는 항목 찾기
-                    for (const signal of stockData.all_signals) {
-                        const normalizedSignalName = normalizeStockName(signal.stock_name);
-                        if (normalizedSignalName === normalizedCurrentName) {
-                            matchedSignal = signal;
-                            console.log("정확히 일치하는 종목 발견:", normalizedSignalName);
-                            break;
-                        }
-                    }
-
-                    // 2. 포함 관계로 찾기
-                    if (!matchedSignal) {
-                        for (const signal of stockData.all_signals) {
-                            const normalizedSignalName = normalizeStockName(signal.stock_name);
-                            if (normalizedSignalName.includes(normalizedCurrentName) ||
-                                normalizedCurrentName.includes(normalizedSignalName)) {
-                                matchedSignal = signal;
-                                console.log("부분 일치하는 종목 발견:", normalizedSignalName);
+                            if (normalizedLineName === normalizedCurrentName ||
+                                normalizedLineName.includes(normalizedCurrentName) ||
+                                normalizedCurrentName.includes(normalizedLineName)) {
+                                matchedLine = lines[i];
+                                matchedSignalLine = lines[i + 1];
                                 break;
+                            }
+                        }
+
+                        if (matchedLine && matchedSignalLine) {
+                            // 시그널 라인에서 SZ 값과 신호 추출
+                            const signalParts = matchedSignalLine.trim().split('/');
+                            if (signalParts.length > 0) {
+                                // SZ 값 추출
+                                const szValue = parseFloat(signalParts[0].trim());
+
+                                // 신호 추출
+                                let signal = '';
+                                if (signalParts.length > 1) {
+                                    const signalInfo = signalParts[1].trim();
+                                    if (signalInfo.includes('R')) signal += 'R';
+                                    if (signalInfo.includes('I')) signal += 'I';
+                                    if (signalInfo.includes('O')) signal += 'O';
+                                }
+
+                                // SZ 값 표시
+                                const szElement = document.getElementById('current-sz-value');
+                                szElement.textContent = szValue.toFixed(2);
+
+                                // SZ 값에 따른 색상 변경
+                                szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+                                if (szValue >= 2.5) {
+                                    szElement.classList.add('sz-high');
+                                } else if (szValue >= 1.5) {
+                                    szElement.classList.add('sz-medium');
+                                } else {
+                                    szElement.classList.add('sz-low');
+                                }
+
+                                // 신호 표시
+                                const signalElement = document.getElementById('current-signal');
+                                let signalHtml = '';
+
+                                if (signal) {
+                                    if (signal.includes('R')) {
+                                        signalHtml += '<span class="signal-tag signal-R">R</span>';
+                                    }
+                                    if (signal.includes('I')) {
+                                        signalHtml += '<span class="signal-tag signal-I">I</span>';
+                                    }
+                                    if (signal.includes('O')) {
+                                        signalHtml += '<span class="signal-tag signal-O">O</span>';
+                                    }
+                                }
+
+                                signalElement.innerHTML = signalHtml || 'N/A';
+
+                                // 성공적으로 찾았으면 여기서 함수 종료
+                                return;
                             }
                         }
                     }
 
-                    // 3. 종목 코드로 검색 (마지막 시도)
-                    if (!matchedSignal && stockCode !== 'unknown') {
-                        for (const signal of stockData.all_signals) {
-                            const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
-                            if (signalCode === stockCode) {
-                                matchedSignal = signal;
-                                console.log("종목 코드로 일치하는 항목 발견:", signalCode);
-                                break;
-                            }
-                        }
-                    }
-
-                    // SZ 값과 신호 정보 가져오기
-                    let szValue = 0;
-                    let signalText = '';
-
-                    if (matchedSignal) {
-                        szValue = matchedSignal.sz_value || 0;
-                        signalText = matchedSignal.signal || '';
-                        console.log("매칭된 신호 정보:", { szValue, signalText });
-                    } else {
-                        console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
-                    }
-
-                    // SZ 값 표시
-                    const szElement = document.getElementById('sz-value');
-                    szElement.textContent = szValue.toFixed(2);
-
-                    // SZ 값에 따른 색상 변경
-                    szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
-                    if (szValue >= 2.5) {
-                        szElement.classList.add('sz-high');
-                    } else if (szValue >= 1.5) {
-                        szElement.classList.add('sz-medium');
-                    } else {
-                        szElement.classList.add('sz-low');
-                    }
-
-                    // 신호 표시
-                    const signalElement = document.getElementById('current-signal');
-                    let signalHtml = '';
-
-                    if (signalText) {
-                        if (signalText.includes('R')) {
-                            signalHtml += '<span class="signal-tag signal-R">R</span>';
-                        }
-                        if (signalText.includes('I')) {
-                            signalHtml += '<span class="signal-tag signal-I">I</span>';
-                        }
-                        if (signalText.includes('O')) {
-                            signalHtml += '<span class="signal-tag signal-O">O</span>';
-                        }
-                    }
-
-                    signalElement.innerHTML = signalHtml || 'N/A';
-
-                } catch (error) {
-                    console.error('현재 정보 업데이트 중 오류:', error);
-                    document.getElementById('common-price').textContent = 'N/A';
-                    document.getElementById('preferred-price').textContent = 'N/A';
-                    document.getElementById('sz-value').textContent = '0.00';
-                    document.getElementById('current-signal').textContent = 'N/A';
-                }
-            }
+        // 원본 텍스트에서 찾지 못했을 경우 기존 방식으로 fallback
+        // 기존 코드 계속 실행...
 
         // 차트 렌더링 함수 (5개월 데이터로 제한)
         function renderCharts(trendData) {
