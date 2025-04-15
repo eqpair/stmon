@@ -499,56 +499,71 @@
 
                 const stockData = await response.json();
 
-                // 종목명 정규화 함수 - HTML 태그, 아이콘, 가중치 정보 모두 제거
+                // 종목명 정규화 함수
                 const normalizeStockName = (name) => {
+                    if (!name) return '';
+
                     // HTML 태그 제거
-                    let cleanName = name.replace(/<[^>]+>/g, '');
+                    let normalizedName = name.replace(/<[^>]+>/g, '');
+
                     // 이모지 아이콘 제거 (🔴 🟠 🟢 🔵)
-                    cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
-                    // 가중치 형식 제거 (예: -0.5- 또는 (0.5))
-                    cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
-                    return cleanName.trim();
+                    normalizedName = normalizedName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
+
+                    // 가중치 형식 제거 (대시 형식)
+                    if (normalizedName.includes('-')) {
+                        const parts = normalizedName.split('-');
+                        if (parts.length >= 3 && parts[parts.length - 2].replace('.', '', 1).match(/^\d+$/) && parts[parts.length - 1] === '') {
+                            return parts.slice(0, parts.length - 2).join('-');
+                        }
+                    }
+
+                    // 가중치 형식 제거 (괄호 형식)
+                    if (normalizedName.includes(' (') && normalizedName.endsWith(')')) {
+                        return normalizedName.split(' (')[0];
+                    }
+
+                    return normalizedName.trim();
                 };
 
-                // 현재 종목에 대한 정규화된 이름
+                // 현재 종목을 stock_data.json에서 찾기 위한 정규화된 이름
                 const normalizedCurrentName = normalizeStockName(stockName);
                 console.log("정규화된 현재 종목명:", normalizedCurrentName);
 
-                // 일치하는 종목 찾기 - 다양한 방식으로 시도
+                // 3가지 방법으로 일치하는 종목 찾기
                 let matchedSignal = null;
 
-                // 1. 정규화된 이름으로 정확히 일치하는 항목 찾기
-                for (const signal of stockData.all_signals) {
-                    const normalizedSignalName = normalizeStockName(signal.stock_name);
-                    if (normalizedSignalName === normalizedCurrentName) {
-                        matchedSignal = signal;
-                        console.log("정확히 일치하는 종목 발견:", normalizedSignalName);
-                        break;
-                    }
-                }
-
-                // 2. 포함 관계로 찾기
-                if (!matchedSignal) {
-                    for (const signal of stockData.all_signals) {
-                        const normalizedSignalName = normalizeStockName(signal.stock_name);
-                        if (normalizedSignalName.includes(normalizedCurrentName) ||
-                            normalizedCurrentName.includes(normalizedSignalName)) {
-                            matchedSignal = signal;
-                            console.log("부분 일치하는 종목 발견:", normalizedSignalName);
-                            break;
-                        }
-                    }
-                }
-
-                // 3. 종목 코드로 검색 (마지막 시도)
-                if (!matchedSignal && stockCode !== 'unknown') {
-                    for (const signal of stockData.all_signals) {
+                // 1. 종목 코드로 검색 (가장 신뢰할 수 있는 방법)
+                if (stockCode !== 'unknown') {
+                    matchedSignal = stockData.all_signals.find(signal => {
                         const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
-                        if (signalCode === stockCode) {
-                            matchedSignal = signal;
-                            console.log("종목 코드로 일치하는 항목 발견:", signalCode);
-                            break;
-                        }
+                        return signalCode === stockCode;
+                    });
+
+                    if (matchedSignal) {
+                        console.log("종목 코드로 일치하는 항목 발견:", stockCode);
+                    }
+                }
+
+                // 2. 정규화된 이름으로 정확한 일치 검색
+                if (!matchedSignal) {
+                    matchedSignal = stockData.all_signals.find(signal => {
+                        return normalizeStockName(signal.stock_name) === normalizedCurrentName;
+                    });
+
+                    if (matchedSignal) {
+                        console.log("정확히 일치하는 종목 발견:", normalizeStockName(matchedSignal.stock_name));
+                    }
+                }
+
+                // 3. 부분 일치 검색
+                if (!matchedSignal) {
+                    matchedSignal = stockData.all_signals.find(signal => {
+                        const normalizedSignalName = normalizeStockName(signal.stock_name);
+                        return normalizedSignalName.includes(normalizedCurrentName) || normalizedCurrentName.includes(normalizedSignalName);
+                    });
+
+                    if (matchedSignal) {
+                        console.log("부분 일치하는 종목 발견:", normalizeStockName(matchedSignal.stock_name));
                     }
                 }
 
@@ -561,7 +576,14 @@
                     signalText = matchedSignal.signal || '';
                     console.log("매칭된 신호 정보:", { szValue, signalText });
                 } else {
+                    // 매칭되는 종목이 없으면 trend 데이터의 current_sz 값 사용
                     console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
+                    szValue = trendData.current_sz || trendData.sz_values[lastIndex] || 0;
+
+                    // SZ 값 기준으로 신호 자동 생성
+                    if (szValue >= 2.0) signalText += 'R';
+                    if (szValue >= 1.5 && szValue < 2.5) signalText += 'I';
+                    if (szValue < 0.5) signalText += 'O';
                 }
 
                 // SZ 값 표시
@@ -582,6 +604,7 @@
                 const signalElement = document.getElementById('current-signal');
                 let signalHtml = '';
 
+                // 신호 태그 처리
                 if (signalText) {
                     if (signalText.includes('R')) {
                         signalHtml += '<span class="signal-tag signal-R">R</span>';
@@ -590,6 +613,17 @@
                         signalHtml += '<span class="signal-tag signal-I">I</span>';
                     }
                     if (signalText.includes('O')) {
+                        signalHtml += '<span class="signal-tag signal-O">O</span>';
+                    }
+                } else if (szValue) {
+                    // 신호가 없을 경우 SZ 값에 따라 신호 자동 생성
+                    if (szValue >= 2.0) {
+                        signalHtml += '<span class="signal-tag signal-R">R</span>';
+                    }
+                    if (szValue >= 1.5 && szValue < 2.5) {
+                        signalHtml += '<span class="signal-tag signal-I">I</span>';
+                    }
+                    if (szValue < 0.5) {
                         signalHtml += '<span class="signal-tag signal-O">O</span>';
                     }
                 }

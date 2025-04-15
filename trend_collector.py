@@ -151,18 +151,24 @@ class TrendCollector:
             # NaN 값 처리 - 평균값으로 대체
             merged_df['dr'] = merged_df['dr'].fillna(merged_df['dr'].mean())
             
-            # 이동평균 및 표준편차 계산 (NaN 처리 포함)
-            merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period, min_periods=1).mean().shift(1)
-            merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period, min_periods=1).std().shift(1)
+            # 이동평균 및 표준편차 계산 (main.py와 동일한 방식으로)
+            window_size = pair.avg_period
+            
+            # 이동평균 계산 시 shift(1) 적용하여 main.py와 일치시킴
+            merged_df['dr_avg'] = merged_df['dr'].rolling(window=window_size, min_periods=1).mean().shift(1)
+            merged_df['std'] = merged_df['dr'].rolling(window=window_size, min_periods=1).std().shift(1)
             
             # 0으로 나누는 경우 방지 (표준편차가 0인 경우)
             merged_df['std'] = merged_df['std'].replace(0, np.nan)
             merged_df['std'] = merged_df['std'].fillna(merged_df['std'].mean() if not pd.isna(merged_df['std'].mean()) else 0.001)
             
-            # SZ 값 계산 (NaN 값 안전하게 처리)
+            # SZ 값 계산 (main.py의 방식과 일치시킴)
             merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
             merged_df['sz'] = merged_df['sz'].replace([np.inf, -np.inf], np.nan)
             merged_df['sz'] = merged_df['sz'].fillna(0)
+            
+            # 최근 메인 신호 확인을 위해 실시간 데이터 가져오기
+            latest_sz = merged_df['sz'].iloc[-1] if not merged_df.empty else 0
             
             # 결과 데이터 생성 시 직접 NaN 값을 변환
             result = {
@@ -174,7 +180,8 @@ class TrendCollector:
                 'discount_rates': [None if pd.isna(x) else float(x) for x in merged_df['dr'].tolist()],
                 'sz_values': [None if pd.isna(x) else float(x) for x in merged_df['sz'].tolist()],
                 'signals': self._generate_signals(merged_df, pair),
-                'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'current_sz': float(latest_sz) if not pd.isna(latest_sz) else 0.0
             }
             
             return result
