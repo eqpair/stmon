@@ -227,6 +227,11 @@ class StockMonitor:
                 await self.telegram_bot.send_message(message)
                 logger.info("Periodic update sent successfully")
                 
+                # 텔레그램 메시지 전송 후 GitHub 업데이터 즉시 실행
+                from github_updater import GitHubUpdater
+                updater = GitHubUpdater(self)
+                await updater.update_data()
+                
                 await asyncio.sleep(WAIT_TIME)
             except Exception as e:
                 logger.error(f"Error in periodic update: {str(e)}")
