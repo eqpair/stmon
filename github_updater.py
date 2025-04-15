@@ -84,12 +84,11 @@ class GitHubUpdater:
             # 기존 코드: 모니터링 데이터 가져오기
             all_signals, divergent_signals = await self.monitor.get_signals_with_divergent()
             
-            # 변경: 원본 텍스트도 저장
+            # 데이터 구조화
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             data = {
                 "timestamp": current_time,
                 "last_updated": current_time,
-                "all_signals_raw": all_signals,  # 텔레그램에 보내는 원본 텍스트
                 "all_signals": self._parse_signals(all_signals),
                 "divergent_signals": self._parse_signals(divergent_signals)
             }
@@ -99,7 +98,12 @@ class GitHubUpdater:
             with open(data_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             
-            # 나머지 코드는 그대로 유지
+            # 히스토리 데이터the same time, 트렌드 데이터도 업데이트
+            from trend_collector import TrendCollector
+            collector = TrendCollector()
+            await collector.collect_all_trends()  # 트렌드 데이터 업데이트
+            
+            # 기존 코드: 히스토리 데이터 업데이트 및 커밋
             await self._update_history_data(data)
             self._commit_and_push()
             
@@ -154,25 +158,21 @@ class GitHubUpdater:
                 if icon_prefix:
                     formatted_stock_name = f"{icon_prefix} {formatted_stock_name}"
                     
-                # 신호 라인 파싱 (더 엄격하게)
+                # 신호 라인 파싱
                 if '/' not in signal_line:
                     i += 2
                     continue
                     
                 signal_parts = signal_line.split('/')
                 
-                # SZ 값 추출 - 정확히 처리
+                # SZ 값 추출
                 sz_value = 0.0
                 try:
-                    sz_part = signal_parts[0].strip()
-                    sz_value = float(sz_part)
-                    # 파싱 중간 결과 기록 
-                    logger.debug(f"Parsed SZ value: {sz_value} from '{sz_part}'")
+                    sz_value = float(signal_parts[0].strip())
                 except ValueError:
-                    logger.warning(f"SZ 값 파싱 실패: '{signal_parts[0].strip()}'")
                     sz_value = 0.0
                     
-                # 신호 추출 (R, I, O 정확히 확인)
+                # 신호 추출
                 signal = ""
                 if len(signal_parts) > 1:
                     signal_info = signal_parts[1].strip()
@@ -183,7 +183,7 @@ class GitHubUpdater:
                     if 'O' in signal_info:
                         signal += 'O'
                         
-                # 가격 추출 (더 엄격하게)
+                # 가격 추출
                 price_a = None
                 price_b = None
                 if len(signal_parts) > 2:
@@ -191,28 +191,22 @@ class GitHubUpdater:
                     price_items = price_part.split(',')
                     if len(price_items) > 0:
                         try:
-                            price_str = price_items[0].strip()
-                            price_a = float(price_str.replace(',', ''))
-                            logger.debug(f"Parsed price A: {price_a} from '{price_str}'")
+                            price_a = float(price_items[0].strip())
                         except ValueError:
-                            logger.warning(f"가격 A 파싱 실패: '{price_items[0].strip()}'")
+                            pass
                     if len(price_items) > 1:
                         try:
-                            price_str = price_items[1].strip()
-                            price_b = float(price_str.replace(',', ''))
-                            logger.debug(f"Parsed price B: {price_b} from '{price_str}'")
+                            price_b = float(price_items[1].strip())
                         except ValueError:
-                            logger.warning(f"가격 B 파싱 실패: '{price_items[1].strip()}'")
+                            pass
                 
                 # 데이터 구조화
                 signal_data = {
                     "stock_name": formatted_stock_name,
-                    "stock_name_original": stock_name_line,  # 원본 종목명도 저장
                     "sz_value": sz_value,
                     "signal": signal,
                     "price_a": price_a,
                     "price_b": price_b,
-                    "raw_signal_line": signal_line,  # 원본 시그널 라인도 저장
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
                 
@@ -344,9 +338,9 @@ async def start_github_updater(daily_run=False):
         except Exception as e:
             logger.error(f"업데이트 오류: {str(e)}")
     
-        # 5분 대기 (원래 30분이었음)
-        logger.info("다음 업데이트까지 5분 대기 중...")
-        await asyncio.sleep(300)  # 5분마다 업데이트
+        # 30분 대기
+        logger.info("다음 업데이트까지 30분 대기 중...")
+        await asyncio.sleep(1800)  # 30분마다 업데이트
 
 # 메인 함수
 if __name__ == "__main__":
