@@ -79,39 +79,40 @@ class TrendCollector:
         logger.info(f"트렌드 데이터 수집 완료: 성공 {success_count}개, 실패 {error_count}개")
         
     async def collect_trend_data(self, pair):
-        """특정 종목 페어의 트렌드 데이터 수집"""
-        try:
-            # 세션 가져오기
-            session = await self._get_session()
+            """특정 종목 페어의 트렌드 데이터 수집"""
+            session = None
+            try:
+                # 세션 가져오기
+                session = await self._get_session()
+                
+                # 1년(365일) 데이터 가져오기로 수정
+                days_to_fetch = 365
+                end_date = datetime.now()
+                start_date = end_date - timedelta(days=days_to_fetch)
+                
+                # A 종목(보통주) 데이터 가져오기
+                a_data = await self._fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30)
+                
+                # B 종목(우선주) 데이터 가져오기
+                b_data = await self._fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
+                
+                # 데이터 처리 및 저장
+                result = self._process_trend_data(pair, a_data, b_data)
+                if result:
+                    self._save_trend_data(pair.A_code, result)
+                    logger.info(f"{pair.A_name} 트렌드 데이터 수집 완료 (1년치)")
+                    return True
+                else:
+                    logger.warning(f"{pair.A_name} 트렌드 데이터 처리 실패")
+                    return False
             
-            # 1년(365일) 데이터 가져오기로 수정
-            days_to_fetch = 365
-            end_date = datetime.now()
-            start_date = end_date - timedelta(days=days_to_fetch)
-            
-            # A 종목(보통주) 데이터 가져오기
-            a_data = await self._fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30)
-            
-            # B 종목(우선주) 데이터 가져오기
-            b_data = await self._fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
-            
-            # 데이터 처리 및 저장
-            result = self._process_trend_data(pair, a_data, b_data)
-            if result:
-                self._save_trend_data(pair.A_code, result)
-                logger.info(f"{pair.A_name} 트렌드 데이터 수집 완료 (1년치)")
-                return True
-            else:
-                logger.warning(f"{pair.A_name} 트렌드 데이터 처리 실패")
-                return False
-        
-        except Exception as e:
-            logger.error(f"{pair.A_name} 트렌드 데이터 수집 중 오류: {str(e)}")
-            raise
-        finally:
-            # 이 부분이 추가되어야 함: 세션 명시적으로 닫기
-            if session and not session.closed:
-                await session.close()
+            except Exception as e:
+                logger.error(f"{pair.A_name} 트렌드 데이터 수집 중 오류: {str(e)}")
+                raise
+            finally:
+                # 세션이 열려있다면 명시적으로 닫기
+                if session and not session.closed:
+                    await session.close()
     
     async def _fetch_stock_history(self, session, stock_code, start_date, days):
         """주식 히스토리 데이터 가져오기 - 1년 데이터용 수정"""
@@ -274,6 +275,7 @@ class TrendCollector:
         file_path = TRENDS_DIR / f"{stock_code}.json"
         
         try:
+            # JSON 저장 함수 사용 (중복 호출 방지)
             safe_json_dump(data, file_path)
             logger.info(f"트렌드 데이터 저장 성공: {file_path}")
             
@@ -283,14 +285,12 @@ class TrendCollector:
                 logger.info(f"파일 크기: {file_size} 바이트")
             else:
                 logger.warning(f"파일 생성 실패: {file_path}")
+        
         except Exception as e:
             logger.error(f"트렌드 데이터 저장 실패 ({stock_code}): {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             raise
-        
-        # utils.py에서 import한 안전한 JSON 저장 함수 사용
-        from modules.utils import safe_json_dump
-        
-        safe_json_dump(data, file_path)
             
     def _generate_unique_dummy_data(self, pair):
         """종목별 고유한 더미 데이터 생성"""
