@@ -668,7 +668,7 @@
                     szValue = matchedSignal.sz_value || 0;
                     signalText = matchedSignal.signal || '';
 
-                    console.log("실시간 데이터 사용:", {  preferredPrice, commonPrice, szValue, signalText });
+                    console.log("실시간 데이터 사용:", { preferredPrice, commonPrice, szValue, signalText });
                 } else {
                     // 실시간 데이터가 없는 경우에만 트렌드 데이터 사용
                     console.warn("실시간 데이터 없음, 트렌드 데이터 사용:", stockName, stockCode);
@@ -989,29 +989,15 @@
         function renderHistoryData(trendData) {
             try {
                 const tableBody = document.getElementById('signals-table-body');
+                const fiveMonthsInDays = 150;
 
-                // 전체 원본 데이터 확인
-                console.log("=== 디버깅 정보 ===");
-                console.log("trendData 전체:", trendData);
-                console.log("날짜 데이터:", trendData.dates);
-                console.log("SZ 값 데이터:", trendData.sz_values);
-                console.log("우선주 가격:", trendData.preferred_prices);
-                console.log("보통주 가격:", trendData.common_prices);
+                // 최근 데이터 추출
+                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
 
-                // 날짜 데이터 분석
-                if (trendData.dates && trendData.dates.length > 0) {
-                    // 최근 10개 날짜 확인
-                    const recentDates = trendData.dates.slice(-10);
-                    console.log("최근 10개 날짜:", recentDates);
-
-                    // 날짜 간격 확인
-                    for (let i = 1; i < recentDates.length; i++) {
-                        const prevDate = new Date(recentDates[i - 1]);
-                        const currDate = new Date(recentDates[i]);
-                        const diffTime = Math.abs(currDate - prevDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        console.log(`날짜 간격: ${recentDates[i - 1]} → ${recentDates[i]}, ${diffDays}일`);
-                    }
+                // 역순 인덱스 (최신 데이터부터)
+                const displayDates = [];
+                for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
+                    displayDates.push(i);
                 }
 
                 if (!trendData || !trendData.dates || trendData.dates.length === 0) {
@@ -1019,84 +1005,62 @@
                     return;
                 }
 
-                // 이 부분에서 모든 날짜를 표시하도록 코드를 수정
-                // 원본 데이터의 날짜는 오래된 순서대로 정렬되어 있을 가능성이 높음
-                // 최신 날짜를 먼저 표시하려면 역순으로 처리해야 함
+                tableBody.innerHTML = '';
 
-                // 표로 표시할 모든 데이터 생성
-                const displayData = [];
-
-                // 날짜 배열을 역순으로 처리 (최신 날짜가 먼저 오도록)
-                // 이 때 인덱스를 유지하여 다른 배열에서 해당하는 데이터를 가져올 수 있게 함
-                const fiveMonthsInDays = 150; // 최대 150일 데이터
-                const startIdx = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-
-                for (let i = trendData.dates.length - 1; i >= startIdx; i--) {
-                    displayData.push({
-                        date: trendData.dates[i],
-                        szValue: trendData.sz_values ? trendData.sz_values[i] : null,
-                        preferredPrice: trendData.preferred_prices ? trendData.preferred_prices[i] : null,
-                        commonPrice: trendData.common_prices ? trendData.common_prices[i] : null
+                // SZ 값 - 이미 있는 값 사용 또는 계산
+                let szValues = trendData.sz_values;
+                if (!szValues || szValues.length === 0) {
+                    const calculatedSZ = calculateSZValues(trendData.discount_rates);
+                    szValues = trendData.dates.map((date, idx) => {
+                        const szItem = calculatedSZ.find(item => item.index === idx);
+                        return szItem ? szItem.value : null;
                     });
                 }
 
-                // 테이블 내용 초기화
-                tableBody.innerHTML = '';
-
-                // 디버깅: 표시될 데이터 확인
-                console.log("표시될 데이터:", displayData);
-
-                // 테이블에 모든 데이터 추가
-                for (let i = 0; i < displayData.length; i++) {
-                    const item = displayData[i];
-
-                    // 행 생성
+                for (const i of displayDates) {
                     const row = document.createElement('tr');
+                    const date = trendData.dates[i];
+                    const szValue = szValues[i];
 
-                    // SZ 값에 따른 클래스 설정
+                    if (szValue === undefined) continue;
+
                     let szClass = 'text-green-600';
-                    if (item.szValue >= 2.5) {
+                    if (szValue >= 2.5) {
                         szClass = 'text-red-600 font-bold';
-                    } else if (item.szValue >= 1.5) {
+                    } else if (szValue >= 1.5) {
                         szClass = 'text-orange-600 font-bold';
                     }
 
-                    // 트렌드 화살표 설정
                     let trendIcon = '-';
-                    if (i < displayData.length - 1) {
-                        const nextItem = displayData[i + 1];
-                        const currentSZ = item.szValue !== null ? item.szValue : 0;
-                        const nextSZ = nextItem.szValue !== null ? nextItem.szValue : 0;
+                    if (displayDates.indexOf(i) < displayDates.length - 1) {
+                        const prevIndex = displayDates[displayDates.indexOf(i) + 1];
+                        const prevSZ = szValues[prevIndex] ?? 0;
 
-                        if (currentSZ > nextSZ) {
+                        if (szValue > prevSZ) {
                             trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                        } else if (currentSZ < nextSZ) {
+                        } else if (szValue < prevSZ) {
                             trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
                         } else {
                             trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
                         }
                     }
 
-                    // 행 내용 설정
                     row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.szValue !== null && item.szValue !== undefined ? item.szValue.toFixed(2) : '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(item.preferredPrice || 0).toLocaleString()} KRW</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(item.commonPrice || 0).toLocaleString()} KRW</td>
-                `;
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue ? szValue.toFixed(2) : '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+            `;
 
-                    // 행 추가
                     tableBody.appendChild(row);
                 }
 
                 if (tableBody.children.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
                 }
-
             } catch (error) {
                 console.error('히스토리 데이터 렌더링 오류:', error);
-                console.error('오류 상세 정보:', error.stack);
                 const tableBody = document.getElementById('signals-table-body');
                 tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
             }
