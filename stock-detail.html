@@ -989,20 +989,20 @@
         function renderHistoryData(trendData) {
             try {
                 const tableBody = document.getElementById('signals-table-body');
-                const fiveMonthsInDays = 150;
-
-                // 최근 데이터 추출
-                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-
-                // 역순 인덱스 (최신 데이터부터)
-                const displayDates = [];
-                for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
-                    displayDates.push(i);
-                }
 
                 if (!trendData || !trendData.dates || trendData.dates.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
                     return;
+                }
+
+                // 최근 5개월 데이터만 사용
+                const fiveMonthsInDays = 150;
+                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
+
+                // 역순으로 인덱스 배열 생성 (최신 데이터가 먼저 표시되도록)
+                const displayDates = [];
+                for (let i = trendData.dates.length - 1; i >= startIndex; i--) {
+                    displayDates.push(i);
                 }
 
                 tableBody.innerHTML = '';
@@ -1019,12 +1019,13 @@
 
                 for (const i of displayDates) {
                     const row = document.createElement('tr');
-
                     const date = trendData.dates[i];
                     const szValue = szValues[i];
 
-                    if (!date || szValue === undefined) continue;
+                    // 여기가 문제의 원인: undefined 값이 있는 날짜를 건너뛰게 됨
+                    // if (szValue === undefined) continue; <- 이 조건문 제거
 
+                    // SZ 값에 따른 클래스 설정
                     let szClass = 'text-green-600';
                     if (szValue >= 2.5) {
                         szClass = 'text-red-600 font-bold';
@@ -1047,12 +1048,12 @@
                     }
 
                     row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue ? szValue.toFixed(2) : '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
-                    `;
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue !== undefined && szValue !== null ? szValue.toFixed(2) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+                `;
 
                     tableBody.appendChild(row);
                 }
