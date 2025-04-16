@@ -995,78 +995,56 @@
                     return;
                 }
 
+                // 디버깅을 위해 원본 데이터 로깅
+                console.log("디버깅: 전체 날짜 데이터", trendData.dates);
+                console.log("디버깅: 전체 SZ 값 데이터", trendData.sz_values);
+
                 // 최근 5개월 데이터만 사용
                 const fiveMonthsInDays = 150;
-                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
 
-                // 역순으로 인덱스 배열 생성 (최신 데이터가 먼저 표시되도록)
-                const displayDates = [];
-                for (let i = trendData.dates.length - 1; i >= startIndex; i--) {
-                    displayDates.push(i);
-                }
-
-                tableBody.innerHTML = '';
-
-                // SZ 값 - 이미 있는 값 사용 또는 계산
-                let szValues = trendData.sz_values;
-                if (!szValues || szValues.length === 0) {
-                    const calculatedSZ = calculateSZValues(trendData.discount_rates);
-                    szValues = trendData.dates.map((date, idx) => {
-                        const szItem = calculatedSZ.find(item => item.index === idx);
-                        return szItem ? szItem.value : null;
+                // 데이터를 모두 객체로 변환 (인덱스도 함께 저장)
+                const allData = [];
+                for (let i = 0; i < trendData.dates.length; i++) {
+                    allData.push({
+                        index: i,
+                        date: trendData.dates[i],
+                        szValue: trendData.sz_values ? trendData.sz_values[i] : null,
+                        preferredPrice: trendData.preferred_prices ? trendData.preferred_prices[i] : null,
+                        commonPrice: trendData.common_prices ? trendData.common_prices[i] : null
                     });
                 }
 
-                // 데이터 디버깅을 위한 로그
-                console.log('dates 데이터 확인:', trendData.dates);
-                console.log('szValues 데이터 확인:', szValues);
+                // 날짜순으로 정렬 (내림차순 - 최신이 먼저)
+                allData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                // 날짜를 가져와서 최신 날짜 순으로 정렬
-                const allDates = trendData.dates.map((date, index) => ({
-                    index: index,
-                    date: date,
-                    szValue: szValues[index],
-                    preferredPrice: trendData.preferred_prices[index],
-                    commonPrice: trendData.common_prices[index]
-                }));
+                // 최근 5개월 데이터만 선택
+                const recentData = allData.slice(0, fiveMonthsInDays);
 
-                // 날짜 순으로 정렬 (최신 날짜가 먼저 오도록)
-                allDates.sort((a, b) => {
-                    const dateA = new Date(a.date);
-                    const dateB = new Date(b.date);
-                    return dateB - dateA;  // 내림차순 정렬
-                });
+                // 디버깅: 정렬된 데이터 확인
+                console.log("디버깅: 정렬된 최근 데이터", recentData.map(item => item.date));
 
-                // 최근 150일 데이터만 사용
-                const recentDates = allDates.slice(0, fiveMonthsInDays);
+                tableBody.innerHTML = '';
 
-                // 모든 날짜 표시 (null/undefined 값이 있어도 표시)
-                for (const item of recentDates) {
-                    const { date, szValue, preferredPrice, commonPrice } = item;
-
-                    // 날짜가 유효한지 확인
-                    if (!date) continue;
-
+                // 테이블에 데이터 추가
+                for (let i = 0; i < recentData.length; i++) {
+                    const item = recentData[i];
                     const row = document.createElement('tr');
 
-                    // SZ 값에 따른 클래스 설정
+                    // 모든 날짜 표시 (SZ 값이 없어도 표시)
+                    // SZ 값 스타일 설정
                     let szClass = 'text-green-600';
-                    if (szValue >= 2.5) {
+                    if (item.szValue >= 2.5) {
                         szClass = 'text-red-600 font-bold';
-                    } else if (szValue >= 1.5) {
+                    } else if (item.szValue >= 1.5) {
                         szClass = 'text-orange-600 font-bold';
                     }
 
-                    // 이전 날짜와 비교하여 트렌드 아이콘 결정
+                    // 트렌드 아이콘 설정
                     let trendIcon = '-';
-                    const currentIndex = recentDates.indexOf(item);
-                    if (currentIndex < recentDates.length - 1) {
-                        const prevItem = recentDates[currentIndex + 1];
-                        const prevSZ = prevItem.szValue ?? 0;
-
-                        if (szValue > prevSZ) {
+                    if (i < recentData.length - 1 && item.szValue !== null && recentData[i + 1].szValue !== null) {
+                        if (item.szValue > recentData[i + 1].szValue) {
                             trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                        } else if (szValue < prevSZ) {
+                        } else if (item.szValue < recentData[i + 1].szValue) {
                             trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
                         } else {
                             trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
@@ -1074,11 +1052,11 @@
                     }
 
                     row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue !== undefined && szValue !== null ? szValue.toFixed(2) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.szValue !== null && item.szValue !== undefined ? item.szValue.toFixed(2) : '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(preferredPrice ?? 0).toLocaleString()} KRW</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(commonPrice ?? 0).toLocaleString()} KRW</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(item.preferredPrice || 0).toLocaleString()} KRW</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(item.commonPrice || 0).toLocaleString()} KRW</td>
                 `;
 
                     tableBody.appendChild(row);
@@ -1087,6 +1065,7 @@
                 if (tableBody.children.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
                 }
+
             } catch (error) {
                 console.error('히스토리 데이터 렌더링 오류:', error);
                 const tableBody = document.getElementById('signals-table-body');
