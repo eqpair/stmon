@@ -855,7 +855,11 @@
 
         // 시나리오 계산
         function calculateManualScenario() {
-            // 슬라이더에서 값 가져오기
+            // 기존 계산 로직은 유지하되, 다음 변수들 추가
+            const clampedDiscountRate = Math.max(Math.min(adjustedDiscountRate, 1), -1);
+            const clampedSZValue = Math.max(Math.min(adjustedSZValue, 5), -5);
+            
+            // 슬라이더에서 값 가져오기     
             const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
             const commonPct = parseFloat(document.getElementById('common-price-slider').value);
 
