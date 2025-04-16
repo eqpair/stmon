@@ -1019,10 +1019,11 @@
 
                 for (const i of displayDates) {
                     const row = document.createElement('tr');
+
                     const date = trendData.dates[i];
                     const szValue = szValues[i];
 
-                    if (szValue === undefined) continue;
+                    if (!date || szValue === undefined) continue;
 
                     let szClass = 'text-green-600';
                     if (szValue >= 2.5) {
@@ -1046,12 +1047,12 @@
                     }
 
                     row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue ? szValue.toFixed(2) : '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
-            `;
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue ? szValue.toFixed(2) : '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+                    `;
 
                     tableBody.appendChild(row);
                 }
