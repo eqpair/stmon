@@ -1056,8 +1056,14 @@
             // 조정된 괴리율 계산
             const adjustedDiscountRate = (adjustedCommon - adjustedPreferred) / adjustedCommon;
 
-            // 조정된 SZ 값 계산 - 역사적 평균과 표준편차를 사용하여 계산
-            const adjustedSZValue = calculateSZValue(adjustedDiscountRate);
+            // 1년치 데이터의 평균, 표준편차 그대로 사용
+            const windowData = [...stockData.history.discountRates.slice(0, -1), adjustedDiscountRate];
+
+            const newMean = calculateMean(windowData);
+            const newStdDev = calculateStdDev(windowData, newMean);
+
+            // 새로운 평균, 표준편차로 SZ 값 계산
+            const adjustedSZValue = (adjustedDiscountRate - newMean) / newStdDev;
 
             // UI 업데이트
             const discountRateEl = document.getElementById('adjusted-discount-rate');
