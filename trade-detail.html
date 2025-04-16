@@ -855,25 +855,25 @@
 
         // 시나리오 계산
         function calculateManualScenario() {
+            // 슬라이더에서 값 가져오기
             const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
             const commonPct = parseFloat(document.getElementById('common-price-slider').value);
 
-            const adjustedPreferred = roundToTickSize(stockData.original.preferredPrice * (1 + preferredPct / 100));
-            const adjustedCommon = roundToTickSize(stockData.original.commonPrice * (1 + commonPct / 100));
+            // 슬라이더로 조정된 가격
+            const adjustedPreferred = roundToTickSize(stockData.current.preferredPrice * (1 + preferredPct / 100));
+            const adjustedCommon = roundToTickSize(stockData.current.commonPrice * (1 + commonPct / 100));
 
-            const adjustedDiscountRate = adjustedCommon !== 0
-                ? (adjustedCommon - adjustedPreferred) / adjustedCommon
-                : 0;
+            // 슬라이더로 조정된 할인율
+            const adjustedDiscountRate = (adjustedCommon - adjustedPreferred) / adjustedCommon;
 
-            // 극단적인 값 제한 (괴리율 -500%~500% 사이)
-            const clampedDiscountRate = Math.max(Math.min(adjustedDiscountRate, 5), -5);
+            // 1년치 데이터의 평균, 표준편차 그대로 사용
+            const windowData = [...stockData.history.discountRates.slice(0, -1), adjustedDiscountRate];
 
-            const adjustedSZValue = stockData.history.stdDev !== 0
-                ? (clampedDiscountRate - stockData.history.mean) / stockData.history.stdDev
-                : 0;
+            const newMean = calculateMean(windowData);
+            const newStdDev = calculateStdDev(windowData, newMean);
 
-            // SZ 값도 적절한 범위로 제한 (-10~10)
-            const clampedSZValue = Math.max(Math.min(adjustedSZValue, 10), -10);
+            // 새로운 평균, 표준편차로 SZ 값 계산
+            const adjustedSZValue = (adjustedDiscountRate - newMean) / newStdDev;
 
             // UI 업데이트
             document.getElementById('adjusted-discount-rate').textContent = (clampedDiscountRate * 100).toFixed(2) + '%';
