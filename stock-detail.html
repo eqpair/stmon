@@ -1017,13 +1017,37 @@
                     });
                 }
 
-                for (const i of displayDates) {
-                    const row = document.createElement('tr');
-                    const date = trendData.dates[i];
-                    const szValue = szValues[i];
+                // 데이터 디버깅을 위한 로그
+                console.log('dates 데이터 확인:', trendData.dates);
+                console.log('szValues 데이터 확인:', szValues);
 
-                    // 여기가 문제의 원인: undefined 값이 있는 날짜를 건너뛰게 됨
-                    // if (szValue === undefined) continue; <- 이 조건문 제거
+                // 날짜를 가져와서 최신 날짜 순으로 정렬
+                const allDates = trendData.dates.map((date, index) => ({
+                    index: index,
+                    date: date,
+                    szValue: szValues[index],
+                    preferredPrice: trendData.preferred_prices[index],
+                    commonPrice: trendData.common_prices[index]
+                }));
+
+                // 날짜 순으로 정렬 (최신 날짜가 먼저 오도록)
+                allDates.sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return dateB - dateA;  // 내림차순 정렬
+                });
+
+                // 최근 150일 데이터만 사용
+                const recentDates = allDates.slice(0, fiveMonthsInDays);
+
+                // 모든 날짜 표시 (null/undefined 값이 있어도 표시)
+                for (const item of recentDates) {
+                    const { date, szValue, preferredPrice, commonPrice } = item;
+
+                    // 날짜가 유효한지 확인
+                    if (!date) continue;
+
+                    const row = document.createElement('tr');
 
                     // SZ 값에 따른 클래스 설정
                     let szClass = 'text-green-600';
@@ -1033,10 +1057,12 @@
                         szClass = 'text-orange-600 font-bold';
                     }
 
+                    // 이전 날짜와 비교하여 트렌드 아이콘 결정
                     let trendIcon = '-';
-                    if (displayDates.indexOf(i) < displayDates.length - 1) {
-                        const prevIndex = displayDates[displayDates.indexOf(i) + 1];
-                        const prevSZ = szValues[prevIndex] ?? 0;
+                    const currentIndex = recentDates.indexOf(item);
+                    if (currentIndex < recentDates.length - 1) {
+                        const prevItem = recentDates[currentIndex + 1];
+                        const prevSZ = prevItem.szValue ?? 0;
 
                         if (szValue > prevSZ) {
                             trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
@@ -1051,8 +1077,8 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue !== undefined && szValue !== null ? szValue.toFixed(2) : '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(preferredPrice ?? 0).toLocaleString()} KRW</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(commonPrice ?? 0).toLocaleString()} KRW</td>
                 `;
 
                     tableBody.appendChild(row);
