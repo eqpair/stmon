@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import logging
 from bs4 import BeautifulSoup
 import json
+import asyncio  # asyncio.sleep에 필요
 from .exceptions import MarketDataError
 from .utils import add_weight_info  # add_weight_info 함수 임포트 추가
 from bs4 import XMLParsedAsHTMLWarning
@@ -65,12 +66,23 @@ class NPPair:
             raise
 
     def _process_data(self, a_data: str, b_data: str):
-        a_df = self._parse_stock_data(a_data, self.A_code)
-        b_df = self._parse_stock_data(b_data, self.B_code)
-        self.data = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
-        self._calculate_metrics()
-        self.A_name = a_df.name
-        self.B_name = b_df.name
+        try:
+            a_df = self._parse_stock_data(a_data, self.A_code)
+            b_df = self._parse_stock_data(b_data, self.B_code)
+            
+            # None 또는 빈 DataFrame 확인 및 처리
+            if a_df is None or b_df is None or a_df.empty or b_df.empty:
+                logger.error(f"데이터 프레임 생성 실패: a_df={a_df is not None}, b_df={b_df is not None}")
+                self.data = pd.DataFrame()  # 빈 데이터 프레임 설정
+                return
+                
+            self.data = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
+            self._calculate_metrics()
+            self.A_name = a_df.name
+            self.B_name = b_df.name
+        except Exception as e:
+            logger.error(f"데이터 처리 중 오류: {str(e)}")
+            self.data = pd.DataFrame()  # 오류 발생 시 빈 데이터 프레임으로 설정
 
     def _parse_stock_data(self, data: str, code: str) -> pd.DataFrame:
         try:
@@ -151,31 +163,156 @@ class NPPair:
                         last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * self.LS_in_val))
             }
             
-            if any(signal_conditions.values()):
-                signal_info = f"{'R' if signal_conditions['SL_R'] else '_'}"
-                signal_info += f"{'I' if signal_conditions['SL_I'] else '_'}"
-                signal_info += f"{'O' if signal_conditions['SL_O'] else '_'} / "
+            # 이 부분을 수정: 신호 생성 방식 통일
+            signal_parts = []
+            if signal_conditions['SL_R'] or signal_conditions['LS_R']:
+                signal_parts.append('R')
+            if signal_conditions['SL_I'] or signal_conditions['LS_I']:
+                signal_parts.append('I')
+            if signal_conditions['SL_O'] or signal_conditions['LS_O']:
+                signal_parts.append('O')
                 
-                price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
-                ratio_info = f"{sz:.2f} / "
-                
-                return f"{ratio_info}{signal_info}{price_info}"
+            signal_info = ''.join(signal_parts)
+            price_info = f"{last_row['close_B']:.0f}, {last_row['close_A']:.0f}"
+            ratio_info = f"{sz:.2f}"
             
-            return None
+            # 포맷 수정: sz/신호/가격 형식으로 통일
+            if signal_info:
+                return f"{ratio_info} / {signal_info} / {price_info}"
+            
+            # 신호가 없더라도 SZ 값만 반환
+            return f"{ratio_info} / / {price_info}"
+            
         except Exception as e:
             logger.error(f"Error generating signal: {str(e)}")
             raise
 
     async def get_current_prices(self) -> Tuple[float, float]:
-        session = await self._get_session()
-        async with session:
-            a_price = await self._fetch_current_price(session, self.A_code)
-            b_price = await self._fetch_current_price(session, self.B_code)
-        return a_price, b_price
+        """현재 주가를 가져오는 함수 - 개선된 버전으로 여러 번 재시도"""
+        max_retries = 3
+        backoff_time = 1  # 초 단위로 대기 시간
+        
+        for attempt in range(max_retries):
+            try:
+                session = await self._get_session()
+                async with session:
+                    a_price = await self._fetch_current_price(session, self.A_code)
+                    b_price = await self._fetch_current_price(session, self.B_code)
+                    
+                    # 가격 데이터가 유효한지 확인
+                    if a_price is not None and b_price is not None:
+                        logger.info(f"현재 가격 성공적으로 가져옴: {self.A_name}({self.A_code}): {a_price}, {self.B_code}: {b_price}")
+                        return a_price, b_price
+                    
+                    logger.warning(f"현재 가격 데이터가 없음, 재시도 {attempt+1}/{max_retries}: {self.A_name}")
+                    
+            except Exception as e:
+                logger.error(f"현재 가격 가져오기 오류, 재시도 {attempt+1}/{max_retries}: {self.A_name} - {str(e)}")
+                
+            # 마지막 시도가 아니면 대기 후 재시도
+            if attempt < max_retries - 1:
+                await asyncio.sleep(backoff_time)
+                backoff_time *= 2  # 지수 백오프
+        
+        # 모든 재시도 실패 시, 저장된 데이터 반환 시도
+        try:
+            return await self._get_fallback_prices()
+        except Exception as fallback_error:
+            logger.error(f"가격 폴백 조회 실패: {self.A_name} - {str(fallback_error)}")
+            # 데이터가 없는 경우 기본값 반환 - 0 대신 None을 반환하면 호출자가 알아서 처리 가능
+            return None, None
+        
+    async def _get_fallback_prices(self) -> Tuple[float, float]:
+        """API 호출 실패 시 데이터 폴백 - 저장된 데이터에서 최신 가격 가져오기"""
+        try:
+            from pathlib import Path
+            import json
+            import os
+            
+            # 트렌드 파일 경로
+            data_dir = Path(f"{os.environ.get('GITHUB_REPO_PATH', '/home/pi/work/m5000')}/data")
+            trends_dir = data_dir / "trends"
+            trend_file = trends_dir / f"{self.A_code}.json"
+            
+            # 파일이 존재하는지 확인
+            if not os.path.exists(trend_file):
+                logger.warning(f"트렌드 파일 없음: {trend_file}")
+                raise FileNotFoundError(f"트렌드 파일 없음: {trend_file}")
+                
+            # 파일 데이터 읽기
+            with open(trend_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+            # 최신 가격 가져오기
+            if data and 'common_prices' in data and 'preferred_prices' in data:
+                common_prices = data['common_prices']
+                preferred_prices = data['preferred_prices']
+                
+                if common_prices and preferred_prices:
+                    # 마지막 값 가져오기
+                    last_common = common_prices[-1]
+                    last_preferred = preferred_prices[-1]
+                    
+                    if last_common is not None and last_preferred is not None:
+                        logger.info(f"폴백 가격 사용: {self.A_name} - 보통주:{last_common}, 우선주:{last_preferred}")
+                        return float(last_common), float(last_preferred)
+            
+            # 데이터가 없으면 예외 발생
+            logger.warning(f"폴백 데이터 없음: {self.A_name}")
+            raise ValueError(f"폴백 데이터 없음: {self.A_name}")
+            
+        except Exception as e:
+            logger.error(f"폴백 가격 가져오기 오류: {self.A_name} - {str(e)}")
+            raise
 
     async def _fetch_current_price(self, session: aiohttp.ClientSession, code: str) -> float:
+        """현재 주가를 API에서 가져오는 함수 - 오류 처리 강화"""
         url = f'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:{code}'
-        async with session.get(url) as response:
-            data = await response.text()
-        json_data = json.loads(data)
-        return json_data['result']['areas'][0]['datas'][0]['nv']
+        try:
+            async with session.get(url, timeout=5) as response:
+                if response.status != 200:
+                    logger.warning(f"가격 API 응답 오류 ({code}): HTTP {response.status}")
+                    return None
+                    
+                data = await response.text()
+                
+                # JSON 파싱
+                try:
+                    json_data = json.loads(data)
+                    
+                    # 데이터 구조 확인
+                    if not json_data or 'result' not in json_data or 'areas' not in json_data['result']:
+                        logger.warning(f"API 응답 형식 오류 ({code}): {data[:100]}...")
+                        return None
+                        
+                    areas = json_data['result']['areas']
+                    if not areas or not areas[0].get('datas'):
+                        logger.warning(f"API 응답에 데이터 없음 ({code})")
+                        return None
+                        
+                    # 가격 추출
+                    price = areas[0]['datas'][0].get('nv')
+                    
+                    # 가격이 숫자인지 확인
+                    if price is None or (isinstance(price, str) and not price.isdigit()):
+                        logger.warning(f"유효하지 않은 가격 ({code}): {price}")
+                        return None
+                        
+                    return float(price)
+                    
+                except json.JSONDecodeError as json_err:
+                    logger.error(f"JSON 파싱 오류 ({code}): {str(json_err)}")
+                    return None
+                except Exception as parse_err:
+                    logger.error(f"가격 데이터 처리 오류 ({code}): {str(parse_err)}")
+                    return None
+                    
+        except aiohttp.ClientError as http_err:
+            logger.error(f"HTTP 요청 오류 ({code}): {str(http_err)}")
+            return None
+        except asyncio.TimeoutError:
+            logger.error(f"가격 요청 타임아웃 ({code})")
+            return None
+        except Exception as e:
+            logger.error(f"가격 요청 중 예상치 못한 오류 ({code}): {str(e)}")
+            return None

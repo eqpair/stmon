@@ -361,12 +361,16 @@
                 document.getElementById('last-updated-time').textContent = 'Unknown';
             }
         }
-        // 페이지 로드 이벤트
+
+        // 페이지 로드 이벤트 리스너 개선
         document.addEventListener('DOMContentLoaded', () => {
             // URL에서 종목 정보 추출
             const urlParams = new URLSearchParams(window.location.search);
             const stockCode = urlParams.get('code');
-            const stockName = decodeURIComponent(urlParams.get('name'));
+            let stockName = decodeURIComponent(urlParams.get('name') || '');
+
+            // HTML 태그 제거
+            stockName = stockName.replace(/<\/?[^>]+(>|$)/g, "");
 
             if (!stockCode || !stockName) {
                 alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
@@ -405,79 +409,189 @@
             }
         };
 
+        // loadAndProcessStockData 함수 개선 - 실시간 데이터 활용
         async function loadAndProcessStockData(stockCode, stockName) {
+            console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
             try {
-                // 로딩 컨테이너 표시
+                // 로딩 표시
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
+
                 // 마지막 업데이트 시간 가져오기
                 fetchLastUpdateTime();
 
-                // 데이터 로드
+                // 1. 트렌드 데이터 로드
                 const trendData = await loadStockData(stockCode, stockName);
-                const stockDataJson = await loadStockDataJson();
 
-                // 현재 신호 데이터 추출 - 수정된 부분
-                const currentSignal = stockDataJson.all_signals.find(s =>
-                    s.stock_name.includes(stockName) || // 부분 일치 검색
-                    s.stock_name.split('-')[0] === stockName // 대시 형식 처리
+                // 2. 실시간 데이터 로드 - stock_data.json에서 현재 종목 정보 가져오기
+                const realtimeData = await fetchRealtimeData(stockCode, stockName);
+
+                // 3. 두 데이터 통합 처리
+                stockData.current = {
+                    // 실시간 데이터 우선 사용, 없으면 트렌드 데이터의 마지막 값 사용
+                    commonPrice: realtimeData.commonPrice ||
+                        (trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
+                    preferredPrice: realtimeData.preferredPrice ||
+                        (trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
+                    szValue: realtimeData.szValue || 0,
+                    signal: realtimeData.signal || ''
+                };
+
+                // 4. 괴리율 계산
+                stockData.current.discountRate = calculateDiscountRate(
+                    stockData.current.commonPrice,
+                    stockData.current.preferredPrice
                 );
 
-                if (!currentSignal) {
-                    // 더 상세한 디버깅 정보 로깅
-                    console.error('현재 신호 데이터를 찾을 수 없음', {
-                        stockName: stockName,
-                        availableSignals: stockDataJson.all_signals.map(s => s.stock_name)
-                    });
-                    throw new Error(`${stockName}에 대한 신호 데이터를 찾을 수 없습니다.`);
-                }
-
-                // 현재 주가 데이터 저장
-                const lastIndex = trendData.dates.length - 1;
-                stockData.current.commonPrice = trendData.common_prices[lastIndex];
-                stockData.current.preferredPrice = trendData.preferred_prices[lastIndex];
-                stockData.current.szValue = currentSignal.sz_value;
-                stockData.current.discountRate = (stockData.current.commonPrice - stockData.current.preferredPrice) / stockData.current.commonPrice;
-
-                // 히스토리 데이터 저장
+                // 5. 히스토리 데이터 처리
                 stockData.history.dates = trendData.dates.slice(-150); // 최근 5개월만
                 stockData.history.discountRates = trendData.discount_rates.slice(-150);
 
-                // SZ 값 계산을 위한 통계 데이터
+                // 6. SZ 값 계산을 위한 통계 데이터
                 const windowData = trendData.discount_rates.slice(-250, -1); // 최근 250일(약 1년) 데이터로 계산
                 stockData.history.mean = calculateMean(windowData);
                 stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
                 stockData.history.szValues = trendData.sz_values ? trendData.sz_values.slice(-150) :
                     calculateSZValues(trendData.discount_rates, stockData.history.mean, stockData.history.stdDev).slice(-150);
 
-                // UI 업데이트
+                // 7. UI 업데이트
                 updateCurrentInfo();
                 renderSZChart();
 
-                // 로딩 컨테이너 숨기기, 콘텐츠 표시
+                // 8. 로딩 완료 처리
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
 
-                // 로딩 컨테이너에 오류 메시지 표시
+                // 오류 메시지 표시
                 const loadingContainer = document.getElementById('loading-container');
                 loadingContainer.innerHTML = `
-                        <div class="text-red-500 text-center">
-                            <p>데이터를 로드할 수 없습니다.</p>
-                            <p>${error.message}</p>
-                            <button onclick="window.location.reload()" 
-                                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                                다시 시도
-                            </button>
-                            <button onclick="window.location.href='index.html'" 
-                                    class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
-                                메인 페이지로 돌아가기
-                            </button>
-                        </div>
-                    `;
+                <div class="text-red-500 text-center">
+                    <p>데이터를 로드할 수 없습니다.</p>
+                    <p>${error.message}</p>
+                    <button onclick="window.location.reload()" 
+                            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                        다시 시도
+                    </button>
+                    <button onclick="window.location.href='index.html'" 
+                            class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                        메인 페이지로 돌아가기
+                    </button>
+                </div>
+            `;
             }
         }
+
+        // 실시간 데이터 가져오기 함수
+        async function fetchRealtimeData(stockCode, stockName) {
+            try {
+                // 기본 URL 설정 (GitHub Pages 환경 고려)
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+
+                // 캐시 방지 옵션으로 데이터 요청
+                const response = await fetch(stockDataUrl, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`실시간 데이터를 가져올 수 없습니다: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 종목명 정규화 함수
+                const normalizeStockName = (name) => {
+                    if (!name) return '';
+                    // HTML 태그 제거
+                    let cleanName = name.replace(/<[^>]+>/g, '');
+                    // 이모지 아이콘 제거 (🔴 🟠 🟢 🔵)
+                    cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
+                    // 가중치 형식 제거 (예: -0.5- 또는 (0.5))
+                    cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
+                    return cleanName.trim();
+                };
+
+                // 현재 종목 정규화
+                const normalizedCurrentName = normalizeStockName(stockName);
+
+                // 다양한 방법으로 일치하는 종목 찾기
+                let matchedSignal = null;
+
+                // 1. 정확한 이름 일치
+                for (const signal of data.all_signals) {
+                    const normalizedSignalName = normalizeStockName(signal.stock_name);
+                    if (normalizedSignalName === normalizedCurrentName) {
+                        matchedSignal = signal;
+                        console.log("정확히 일치하는 종목 발견:", normalizedSignalName);
+                        break;
+                    }
+                }
+
+                // 2. 부분 일치 검색
+                if (!matchedSignal) {
+                    for (const signal of data.all_signals) {
+                        const normalizedSignalName = normalizeStockName(signal.stock_name);
+                        if (normalizedSignalName.includes(normalizedCurrentName) ||
+                            normalizedCurrentName.includes(normalizedSignalName)) {
+                            matchedSignal = signal;
+                            console.log("부분 일치하는 종목 발견:", normalizedSignalName);
+                            break;
+                        }
+                    }
+                }
+
+                // 3. 종목 코드로 검색
+                if (!matchedSignal && stockCode !== 'unknown') {
+                    for (const signal of data.all_signals) {
+                        // 종목 코드 추출 시도
+                        try {
+                            const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
+                            if (signalCode === stockCode) {
+                                matchedSignal = signal;
+                                console.log("종목 코드로 일치하는 항목 발견:", signalCode);
+                                break;
+                            }
+                        } catch (codeError) {
+                            console.warn("종목 코드 추출 실패:", codeError);
+                        }
+                    }
+                }
+
+                // 일치하는 종목이 없으면 빈 객체 반환
+                if (!matchedSignal) {
+                    console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
+                    return {};
+                }
+
+                // 결과 반환
+                return {
+                    commonPrice: matchedSignal.price_a || null,
+                    preferredPrice: matchedSignal.price_b || null,
+                    szValue: matchedSignal.sz_value || 0,
+                    signal: matchedSignal.signal || ''
+                };
+
+            } catch (error) {
+                console.error('실시간 데이터 가져오기 오류:', error);
+                return {}; // 오류 발생 시 빈 객체 반환
+            }
+        }
+
+        // 괴리율 계산 함수
+        function calculateDiscountRate(commonPrice, preferredPrice) {
+            if (!commonPrice || !preferredPrice || commonPrice === 0) {
+                return 0;
+            }
+            return (commonPrice - preferredPrice) / commonPrice;
+        }
+
         async function loadStockData(stockCode, stockName) {
             const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
             if (!trendDataResponse.ok) {
@@ -556,10 +670,13 @@
             return (discountRate - stockData.history.mean) / stockData.history.stdDev;
         }
 
+        // updateCurrentInfo 함수 개선 - 실시간 데이터 반영
         function updateCurrentInfo() {
             // 현재 가격 정보 업데이트
-            document.getElementById('current-common-price').textContent = stockData.current.commonPrice.toLocaleString() + ' KRW';
-            document.getElementById('current-preferred-price').textContent = stockData.current.preferredPrice.toLocaleString() + ' KRW';
+            document.getElementById('current-common-price').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() + ' KRW' : 'N/A';
+            document.getElementById('current-preferred-price').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() + ' KRW' : 'N/A';
 
             // SZ 값 표시
             const szElement = document.getElementById('current-sz-value');
@@ -581,13 +698,24 @@
             discountElement.textContent = discountPercent + '%';
 
             // 슬라이더 기본 가격 업데이트
-            document.getElementById('common-base-price').textContent = stockData.current.commonPrice.toLocaleString();
-            document.getElementById('preferred-base-price').textContent = stockData.current.preferredPrice.toLocaleString();
+            document.getElementById('common-base-price').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() : 'N/A';
+            document.getElementById('preferred-base-price').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() : 'N/A';
 
             // 조정된 가격 초기화
-            document.getElementById('common-price-adjusted').textContent = stockData.current.commonPrice.toLocaleString() + ' KRW';
-            document.getElementById('preferred-price-adjusted').textContent = stockData.current.preferredPrice.toLocaleString() + ' KRW';
+            document.getElementById('common-price-adjusted').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() + ' KRW' : 'N/A';
+            document.getElementById('preferred-price-adjusted').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() + ' KRW' : 'N/A';
+
+            // 슬라이더 초기화 (0% 위치로)
+            document.getElementById('common-price-slider').value = 0;
+            document.getElementById('preferred-price-slider').value = 0;
+            document.getElementById('common-price-percent').textContent = '0%';
+            document.getElementById('preferred-price-percent').textContent = '0%';
         }
+
         function renderSZChart() {
             const ctx = document.getElementById('sz-chart').getContext('2d');
             const screenWidth = window.innerWidth;
