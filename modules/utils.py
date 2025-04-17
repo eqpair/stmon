@@ -187,24 +187,38 @@ def clean_data(data):
     else:
         return data
 
+# utils.py의 safe_json_dump 함수 수정
 def safe_json_dump(data, file_path):
-    """
-    데이터를 안전하게 JSON 파일로 저장
-    """
-    # 데이터 정리
-    cleaned_data = clean_data(data)
-    
-    # JSON 문자열로 변환
-    json_str = json.dumps(
-        cleaned_data, 
-        ensure_ascii=False,
-        indent=2,
-        cls=ImprovedNpEncoder
-    )
-    
-    # NaN 문자열 명시적으로 replace
-    json_str = json_str.replace('"NaN"', 'null').replace('NaN', 'null')
-    
-    # 파일로 저장
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(json_str)
+    """데이터를 안전하게 JSON 파일로 저장 - 개선된 오류 처리"""
+    try:
+        # 데이터 정리
+        cleaned_data = clean_data(data)
+        
+        # JSON 문자열로 변환
+        json_str = json.dumps(
+            cleaned_data, 
+            ensure_ascii=False,
+            indent=2,
+            cls=ImprovedNpEncoder
+        )
+        
+        # 안전하게 파일 저장 (임시 파일 사용)
+        temp_file = f"{file_path}.tmp"
+        with open(temp_file, 'w', encoding='utf-8') as f:
+            f.write(json_str)
+            f.flush()
+            os.fsync(f.fileno())  # 확실한 디스크 동기화
+        
+        # 임시 파일을 실제 파일로 이름 변경 (원자적 연산)
+        os.replace(temp_file, file_path)
+        
+        return True
+    except Exception as e:
+        logger.error(f"JSON 저장 오류 ({file_path}): {str(e)}")
+        # 임시 파일이 존재하면 제거
+        try:
+            if os.path.exists(f"{file_path}.tmp"):
+                os.remove(f"{file_path}.tmp")
+        except:
+            pass
+        return False

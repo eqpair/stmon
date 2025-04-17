@@ -65,12 +65,23 @@ class NPPair:
             raise
 
     def _process_data(self, a_data: str, b_data: str):
-        a_df = self._parse_stock_data(a_data, self.A_code)
-        b_df = self._parse_stock_data(b_data, self.B_code)
-        self.data = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
-        self._calculate_metrics()
-        self.A_name = a_df.name
-        self.B_name = b_df.name
+        try:
+            a_df = self._parse_stock_data(a_data, self.A_code)
+            b_df = self._parse_stock_data(b_data, self.B_code)
+            
+            # None 또는 빈 DataFrame 확인 및 처리
+            if a_df is None or b_df is None or a_df.empty or b_df.empty:
+                logger.error(f"데이터 프레임 생성 실패: a_df={a_df is not None}, b_df={b_df is not None}")
+                self.data = pd.DataFrame()  # 빈 데이터 프레임 설정
+                return
+                
+            self.data = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
+            self._calculate_metrics()
+            self.A_name = a_df.name
+            self.B_name = b_df.name
+        except Exception as e:
+            logger.error(f"데이터 처리 중 오류: {str(e)}")
+            self.data = pd.DataFrame()  # 오류 발생 시 빈 데이터 프레임으로 설정
 
     def _parse_stock_data(self, data: str, code: str) -> pd.DataFrame:
         try:
