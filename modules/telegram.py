@@ -1,3 +1,5 @@
+import sys
+import os
 from aiogram import Bot, Dispatcher, types
 from config import TELEGRAM_TOKEN, CHAT_ID
 import logging
