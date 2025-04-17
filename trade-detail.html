@@ -280,7 +280,11 @@
                                 <span id="preferred-price-adjusted" class="font-bold text-blue-600">-</span>
                             </div>
                         </div>
-                        <div class="mt-6">
+                        <div class="mt-6 flex space-x-2">
+                            <button id="reset-sliders-button"
+                                class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                                초기화
+                            </button>
                             <button id="calculate-button"
                                 class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                 계산하기
@@ -361,6 +365,28 @@
                 document.getElementById('last-updated-time').textContent = 'Unknown';
             }
         }
+        // 슬라이더 초기화 함수
+        function resetSliders() {
+            // 슬라이더 값 초기화
+            document.getElementById('common-price-slider').value = 0;
+            document.getElementById('preferred-price-slider').value = 0;
+
+            // 퍼센트 표시 초기화
+            document.getElementById('common-price-percent').textContent = '0%';
+            document.getElementById('preferred-price-percent').textContent = '0%';
+
+            // 조정된 가격 초기화
+            document.getElementById('common-price-adjusted').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() + ' KRW' : 'N/A';
+            document.getElementById('preferred-price-adjusted').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() + ' KRW' : 'N/A';
+
+            // 결과 값도 초기화
+            document.getElementById('adjusted-discount-rate').textContent = '-';
+            document.getElementById('adjusted-sz-value').textContent = '-';
+            document.getElementById('scenario-interpretation').textContent = '가격을 조정하여 시나리오를 계산하세요.';
+        }
+
 
         // 페이지 로드 이벤트 리스너 개선
         document.addEventListener('DOMContentLoaded', () => {
@@ -387,6 +413,9 @@
 
             // 슬라이더 이벤트 리스너 설정
             setupSliderListeners();
+
+            // 슬라이더 초기화 버튼에 이벤트 리스너 추가
+            document.getElementById('reset-sliders-button').addEventListener('click', resetSliders);
 
             // 계산 버튼 이벤트 리스너
             document.getElementById('calculate-button').addEventListener('click', calculateManualScenario);
