@@ -317,6 +317,10 @@
                 // 마지막 업데이트 시간 가져오기
                 fetchLastUpdateTime();
 
+                // Marketability 버튼 링크 설정
+                document.getElementById('trade-button').href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
+                console.log("Trade button href updated:", document.getElementById('trade-button').href);
+
                 // 트렌드 데이터 로드
                 const trendData = await loadStockData(stockCode, stockName);
 
@@ -347,7 +351,7 @@
             `;
             }
         }
-        
+
         // loadStockData 함수 수정
         async function loadStockData(stockCode, stockName) {
             try {
