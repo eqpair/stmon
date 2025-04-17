@@ -1,0 +1,29 @@
+name: Update Trade Data
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # 수동 트리거 허용
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Configure Git
+      run: |
+        git config --global user.name 'eqpair'
+        git config --global user.email 'frmn3962@gmail.com'
+    
+    - name: Update Trades JSON
+      run: |
+        # 현재 시간 기록
+        echo "{\"last_updated\": \"$(date '+%Y-%m-%d %H:%M:%S')\"}" > data/trades.json
+    
+    - name: Commit Changes
+      run: |
+        git add data/trades.json
+        git commit -m "Update trades data via GitHub Actions"
+        git push
