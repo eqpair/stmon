@@ -48,7 +48,7 @@ class TrendCollector:
         logger.info("트렌드 데이터 수집 시작...")
         
         # 배치 크기 정의
-        batch_size = 2  # 한 번에 2개씩만 처리하여 부하 감소
+        batch_size = 3  # 한 번에 3개씩 처리
         success_count = 0
         error_count = 0
         
@@ -61,47 +61,39 @@ class TrendCollector:
                 task = asyncio.create_task(self.collect_trend_data(pair))
                 batch_tasks.append(task)
             
-            try:
-                # 현재 배치 실행
-                batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
-                
-                # 결과 처리
-                for pair, result in zip(batch, batch_results):
-                    if isinstance(result, Exception):
-                        logger.error(f"배치 처리 오류 ({pair.A_name}): {str(result)}")
-                        error_count += 1
-                    elif result is True:
-                        success_count += 1
-                    else:
-                        error_count += 1
-                
-                # 다음 배치 전 대기 시간 늘리기
-                if i + batch_size < len(self.pairs):
-                    logger.info(f"배치 처리 완료: {i+1}~{i+len(batch)} / {len(self.pairs)}")
-                    await asyncio.sleep(10)  # 배치 사이 10초 대기 (더 길게)
-            except Exception as e:
-                logger.error(f"배치 처리 중 예외 발생: {str(e)}")
-                error_count += len(batch)
+            # 현재 배치 실행
+            batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+            
+            # 결과 처리
+            batch_success = sum(1 for r in batch_results if not isinstance(r, Exception))
+            batch_error = len(batch_results) - batch_success
+            
+            success_count += batch_success
+            error_count += batch_error
+            
+            # 다음 배치 전 대기
+            if i + batch_size < len(self.pairs):
+                logger.info(f"배치 처리 완료: {i+1}~{i+len(batch)} / {len(self.pairs)}")
+                await asyncio.sleep(5)  # 배치 사이 5초 대기
         
         logger.info(f"트렌드 데이터 수집 완료: 성공 {success_count}개, 실패 {error_count}개")
         
     async def collect_trend_data(self, pair):
         """특정 종목 페어의 트렌드 데이터 수집"""
-        session = None
         try:
-            # 새로운 세션 생성 (매번 새로 생성하여 세션 닫힘 문제 방지)
-            session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30))
+            # 세션 가져오기
+            session = await self._get_session()
             
             # 1년(365일) 데이터 가져오기로 수정
             days_to_fetch = 365
             end_date = datetime.now()
             start_date = end_date - timedelta(days=days_to_fetch)
             
-            # 코드별 데이터 수집 (재시도 로직 포함)
-            a_data = await self._fetch_stock_history_with_retry(session, pair.A_code, start_date, days_to_fetch+30)
+            # A 종목(보통주) 데이터 가져오기
+            a_data = await self._fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30)
             
             # B 종목(우선주) 데이터 가져오기
-            b_data = await self._fetch_stock_history_with_retry(session, pair.B_code, start_date, days_to_fetch+30)
+            b_data = await self._fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
             
             # 데이터 처리 및 저장
             result = self._process_trend_data(pair, a_data, b_data)
@@ -117,40 +109,27 @@ class TrendCollector:
             logger.error(f"{pair.A_name} 트렌드 데이터 수집 중 오류: {str(e)}")
             raise
         finally:
-            # 세션 명시적으로 닫기
+            # 이 부분이 추가되어야 함: 세션 명시적으로 닫기
             if session and not session.closed:
                 await session.close()
     
-    # 새로운 메서드 추가: 재시도 로직이 있는 주식 데이터 가져오기
-    async def _fetch_stock_history_with_retry(self, session, stock_code, start_date, days, max_retries=3):
-        """주식 히스토리 데이터 가져오기 - 재시도 로직 포함"""
-        for attempt in range(max_retries):
-            try:
-                # 네이버 금융 API URL (일별 차트 데이터)
-                url = f"https://fchart.stock.naver.com/sise.nhn?symbol={stock_code}&timeframe=day&startTime={start_date.strftime('%Y%m%d')}&count={days}&requestType=0"
-                
-                async with session.get(url, timeout=10) as response:
-                    if response.status != 200:
-                        logger.error(f"API 응답 오류 ({stock_code}): HTTP {response.status}")
-                        if attempt < max_retries - 1:
-                            logger.info(f"재시도 중 ({attempt+1}/{max_retries}): {stock_code}")
-                            await asyncio.sleep(2)  # 재시도 전 2초 대기
-                            continue
-                        return None
-                    
-                    return await response.text()
-                    
-            except (aiohttp.ClientError, asyncio.TimeoutError) as e:
-                logger.error(f"네트워크 오류 ({stock_code}), 재시도 {attempt+1}/{max_retries}: {str(e)}")
-                if attempt < max_retries - 1:
-                    await asyncio.sleep(2)  # 오류 후 재시도 전 더 오래 대기
-                    continue
-                else:
-                    logger.error(f"최대 재시도 횟수 초과 ({stock_code})")
+    async def _fetch_stock_history(self, session, stock_code, start_date, days):
+        """주식 히스토리 데이터 가져오기 - 1년 데이터용 수정"""
+        # 네이버 금융 API URL (일별 차트 데이터)
+        # 1년치 데이터를 위해 충분한 수의 데이터 요청
+        url = f"https://fchart.stock.naver.com/sise.nhn?symbol={stock_code}&timeframe=day&startTime={start_date.strftime('%Y%m%d')}&count={days}&requestType=0"
+        
+        try:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    logger.error(f"API 응답 오류 ({stock_code}): HTTP {response.status}")
                     return None
-            except Exception as e:
-                logger.error(f"데이터 요청 중 오류 ({stock_code}): {str(e)}")
-                return None
+                
+                return await response.text()
+        
+        except Exception as e:
+            logger.error(f"데이터 요청 중 오류 ({stock_code}): {str(e)}")
+            return None
     
     def _process_trend_data(self, pair, a_data, b_data):
         try:
@@ -172,24 +151,18 @@ class TrendCollector:
             # NaN 값 처리 - 평균값으로 대체
             merged_df['dr'] = merged_df['dr'].fillna(merged_df['dr'].mean())
             
-            # 이동평균 및 표준편차 계산 (main.py와 동일한 방식으로)
-            window_size = pair.avg_period
-            
-            # 이동평균 계산 시 shift(1) 적용하여 main.py와 일치시킴
-            merged_df['dr_avg'] = merged_df['dr'].rolling(window=window_size, min_periods=1).mean().shift(1)
-            merged_df['std'] = merged_df['dr'].rolling(window=window_size, min_periods=1).std().shift(1)
+            # 이동평균 및 표준편차 계산 (NaN 처리 포함)
+            merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period, min_periods=1).mean().shift(1)
+            merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period, min_periods=1).std().shift(1)
             
             # 0으로 나누는 경우 방지 (표준편차가 0인 경우)
             merged_df['std'] = merged_df['std'].replace(0, np.nan)
             merged_df['std'] = merged_df['std'].fillna(merged_df['std'].mean() if not pd.isna(merged_df['std'].mean()) else 0.001)
             
-            # SZ 값 계산 (main.py의 방식과 일치시킴)
+            # SZ 값 계산 (NaN 값 안전하게 처리)
             merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
             merged_df['sz'] = merged_df['sz'].replace([np.inf, -np.inf], np.nan)
             merged_df['sz'] = merged_df['sz'].fillna(0)
-            
-            # 최근 메인 신호 확인을 위해 실시간 데이터 가져오기
-            latest_sz = merged_df['sz'].iloc[-1] if not merged_df.empty else 0
             
             # 결과 데이터 생성 시 직접 NaN 값을 변환
             result = {
@@ -201,8 +174,7 @@ class TrendCollector:
                 'discount_rates': [None if pd.isna(x) else float(x) for x in merged_df['dr'].tolist()],
                 'sz_values': [None if pd.isna(x) else float(x) for x in merged_df['sz'].tolist()],
                 'signals': self._generate_signals(merged_df, pair),
-                'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'current_sz': float(latest_sz) if not pd.isna(latest_sz) else 0.0
+                'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             
             return result
@@ -244,11 +216,7 @@ class TrendCollector:
         return signals
     
     def _parse_stock_data(self, data, code):
-        """주식 데이터 파싱 - 안전한 방식으로 개선"""
-        if data is None:
-            logger.warning(f"{code} 데이터가 None입니다.")
-            return None
-            
+        """주식 데이터 파싱"""
         try:
             soup = BeautifulSoup(data, 'html.parser')
             chartdata = soup.find('chartdata')
@@ -273,29 +241,11 @@ class TrendCollector:
                 if 'data' not in item.attrs:
                     continue
                     
-                item_data = item['data'].split('|')
-                if len(item_data) >= 5:  # 데이터가 충분한지 확인
+                data = item['data'].split('|')
+                if len(data) >= 5:  # 데이터가 충분한지 확인
                     try:
-                        date_str = item_data[0].strip()
-                        if not date_str:
-                            continue
-                            
-                        # 날짜 변환 오류 처리
-                        try:
-                            date = pd.to_datetime(date_str)
-                        except:
-                            logger.warning(f"{code} 날짜 변환 실패: {date_str}")
-                            continue
-                        
-                        # 종가 변환 오류 처리
-                        try:
-                            close = float(item_data[4])
-                        except:
-                            logger.warning(f"{code} 종가 변환 실패: {item_data[4]}")
-                            continue
-                            
-                        dates.append(date)
-                        closes.append(close)
+                        dates.append(pd.to_datetime(data[0]))
+                        closes.append(float(data[4]))
                     except (ValueError, IndexError) as e:
                         logger.warning(f"{code} 잘못된 데이터 형식 무시: {str(e)}")
                         continue
@@ -304,15 +254,12 @@ class TrendCollector:
                 logger.warning(f"{code} 유효한 데이터 없음")
                 return None
                 
-            # 데이터 프레임 생성
             df = pd.DataFrame({'close': closes}, index=dates)
             df.name = name
             return df
             
         except Exception as e:
             logger.error(f"{code} 데이터 파싱 중 오류: {str(e)}")
-            import traceback
-            logger.error(traceback.format_exc())
             return None
     
     def _save_trend_data(self, stock_code, data):
@@ -320,8 +267,6 @@ class TrendCollector:
         file_path = TRENDS_DIR / f"{stock_code}.json"
         
         try:
-            # modules.utils에서 가져온 함수 사용
-            from modules.utils import safe_json_dump
             safe_json_dump(data, file_path)
             logger.info(f"트렌드 데이터 저장 성공: {file_path}")
             
@@ -333,15 +278,6 @@ class TrendCollector:
                 logger.warning(f"파일 생성 실패: {file_path}")
         except Exception as e:
             logger.error(f"트렌드 데이터 저장 실패 ({stock_code}): {str(e)}")
-            
-            # 직접 JSON 저장 구현 (백업으로)
-            try:
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    json.dump(data, f, ensure_ascii=False, indent=2, 
-                            default=lambda o: None if isinstance(o, (float, np.floating)) and (np.isnan(o) or np.isinf(o)) else o)
-                logger.info(f"직접 저장 성공: {file_path}")
-            except Exception as backup_err:
-                logger.error(f"직접 저장도 실패 ({stock_code}): {str(backup_err)}")
             raise
         
         # utils.py에서 import한 안전한 JSON 저장 함수 사용

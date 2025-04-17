@@ -3,7 +3,6 @@ import logging
 import json
 import numpy as np
 import math  # math.isnan() 및 math.isinf() 함수 사용을 위해 추가
-import os 
 
 logger = logging.getLogger(__name__)
 
@@ -188,62 +187,24 @@ def clean_data(data):
     else:
         return data
 
-# utils.py의 safe_json_dump 함수 수정
-# modules/utils.py 파일에 추가/수정
 def safe_json_dump(data, file_path):
-    """데이터를 안전하게 JSON 파일로 저장"""
-    import json
-    import numpy as np
-    import os
+    """
+    데이터를 안전하게 JSON 파일로 저장
+    """
+    # 데이터 정리
+    cleaned_data = clean_data(data)
     
-    try:
-        # 데이터 정리 - NaN, 무한대 값 처리
-        def clean_value(v):
-            if isinstance(v, (float, np.floating)) and (np.isnan(v) or np.isinf(v)):
-                return None
-            elif isinstance(v, dict):
-                return {k: clean_value(val) for k, val in v.items()}
-            elif isinstance(v, list):
-                return [clean_value(item) for item in v]
-            return v
-        
-        # 데이터 정리
-        cleaned_data = clean_value(data)
-        
-        # 디렉토리 확인 및 생성
-        directory = os.path.dirname(file_path)
-        if directory and not os.path.exists(directory):
-            os.makedirs(directory, exist_ok=True)
-        
-        # 임시 파일에 먼저 저장
-        temp_file = f"{file_path}.tmp"
-        with open(temp_file, 'w', encoding='utf-8') as f:
-            json.dump(cleaned_data, f, ensure_ascii=False, indent=2, 
-                     default=lambda o: None if isinstance(o, (float, np.floating)) and (np.isnan(o) or np.isinf(o)) else o)
-            f.flush()
-            os.fsync(f.fileno())  # 디스크에 확실히 쓰기
-        
-        # 원자적으로 파일 교체
-        os.replace(temp_file, file_path)
-        return True
-    except Exception as e:
-        import logging
-        logging.getLogger(__name__).error(f"JSON 저장 오류 ({file_path}): {str(e)}")
-        # 임시 파일 정리
-        try:
-            if os.path.exists(f"{file_path}.tmp"):
-                os.remove(f"{file_path}.tmp")
-        except:
-            pass
-        
-        # 기본 방식으로 저장 시도 (폴백)
-        try:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                json_str = json.dumps(data, ensure_ascii=False, indent=2, 
-                                     default=lambda o: None if isinstance(o, (float, np.floating)) and (np.isnan(o) or np.isinf(o)) else o)
-                json_str = json_str.replace('"NaN"', 'null').replace('NaN', 'null')
-                f.write(json_str)
-            return True
-        except Exception as backup_err:
-            logging.getLogger(__name__).error(f"기본 JSON 저장도 실패 ({file_path}): {str(backup_err)}")
-            return False
+    # JSON 문자열로 변환
+    json_str = json.dumps(
+        cleaned_data, 
+        ensure_ascii=False,
+        indent=2,
+        cls=ImprovedNpEncoder
+    )
+    
+    # NaN 문자열 명시적으로 replace
+    json_str = json_str.replace('"NaN"', 'null').replace('NaN', 'null')
+    
+    # 파일로 저장
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(json_str)

@@ -116,7 +116,7 @@ class StockMonitor:
             for i in range(0, len(self.pairs), batch_size):
                 logger.info(f"처리 중인 배치: {i+1}~{min(i+batch_size, len(self.pairs))} / {len(self.pairs)}")
                 batch_pairs = self.pairs[i:i+batch_size]
-                batch_tasks = [asyncio.create_task(self._get_signal_with_retry(pair)) for pair in batch_pairs]
+                batch_tasks = [asyncio.create_task(pair.get_signal_now()) for pair in batch_pairs]
                 batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
                 
                 # 결과 처리
@@ -198,19 +198,6 @@ class StockMonitor:
         except Exception as e:
             logger.error(f"Error in get_signals_with_divergent: {str(e)}")
             raise
-    # 재시도 로직을 가진 새로운 메서드 추가
-    async def _get_signal_with_retry(self, pair, max_retries=3):
-        """재시도 로직이 포함된 신호 수집 함수"""
-        for attempt in range(max_retries):
-            try:
-                return await pair.get_signal_now()
-            except Exception as e:
-                logger.warning(f"신호 수집 실패 ({pair.A_name}), 재시도 {attempt+1}/{max_retries}: {str(e)}")
-                if attempt < max_retries - 1:
-                    await asyncio.sleep(2)  # 재시도 전 2초 대기
-                else:
-                    logger.error(f"최대 재시도 횟수 초과: {pair.A_name}")
-                    return None
 
     async def get_all_signals(self, divergence_only: bool = False) -> str:
         try:
@@ -239,11 +226,6 @@ class StockMonitor:
                 
                 await self.telegram_bot.send_message(message)
                 logger.info("Periodic update sent successfully")
-                
-                # 텔레그램 메시지 전송 후 GitHub 업데이터 즉시 실행
-                from github_updater import GitHubUpdater
-                updater = GitHubUpdater(self)
-                await updater.update_data()
                 
                 await asyncio.sleep(WAIT_TIME)
             except Exception as e:

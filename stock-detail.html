@@ -307,89 +307,117 @@
             loadAndProcessStockData(stockCode, stockName);
         });
 
-        // 트렌드 데이터 로드 함수 수정
+        // loadAndProcessStockData 함수 수정
         async function loadAndProcessStockData(stockCode, stockName) {
             console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
+
             try {
+                // 코드가 'unknown'인 경우 종목명에서 코드 추출 시도
+                if (stockCode === 'unknown' || !stockCode) {
+                    // 종목 코드 추출 로직 (기존 코드 유지)
+                    console.log(`종목코드 추출 필요 - 종목명: ${stockName}`);
+                    // 가중치 정보 제거
+                    let baseStockName = stockName;
+                    if (baseStockName.includes('-')) {
+                        baseStockName = baseStockName.split('-')[0].trim();
+                    }
+
+                    stockCode = getStockCodeByName(baseStockName);
+                    console.log(`추출된 종목코드: ${stockCode} (종목: ${baseStockName})`);
+                }
+
+                document.getElementById('stock-name').textContent = stockName;
+
                 // 로딩 표시
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
+                // 마지막 업데이트 시간 가져오기
+                fetchLastUpdateTime();
 
-                // 데이터 로드 재시도 로직
-                let trendData = null;
-                let retryCount = 0;
-                const maxRetries = 3;
-
-                while (retryCount < maxRetries && !trendData) {
-                    try {
-                        // 트렌드 데이터 가져오기 시도
-                        const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
-                        const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
-
-                        const trendDataResponse = await fetch(trendUrl, {
-                            cache: 'no-store',
-                            headers: {
-                                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                                'Pragma': 'no-cache',
-                                'Expires': '0'
-                            },
-                            timeout: 10000 // 10초 타임아웃
-                        });
-
-                        if (trendDataResponse.ok) {
-                            const trendDataText = await trendDataResponse.text();
-                            // 특수 값 처리
-                            const cleanedText = trendDataText
-                                .replace(/"NaN"/g, 'null')
-                                .replace(/NaN/g, 'null')
-                                .replace(/Infinity/g, 'null')
-                                .replace(/-Infinity/g, 'null');
-
-                            try {
-                                trendData = JSON.parse(cleanedText);
-                            } catch (jsonError) {
-                                console.error('JSON 파싱 오류:', jsonError);
-                                retryCount++;
-                                await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
-                                continue;
-                            }
-                        } else {
-                            throw new Error(`트렌드 데이터 요청 실패 (${trendDataResponse.status})`);
-                        }
-                    } catch (fetchError) {
-                        console.warn(`트렌드 데이터 로드 실패 (시도 ${retryCount + 1}/${maxRetries}):`, fetchError);
-                        retryCount++;
-                        await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
-                    }
+                // 트레이드 버튼 항상 표시
+                const tradeButtonContainer = document.getElementById('trade-button-container');
+                if (tradeButtonContainer) {
+                    tradeButtonContainer.classList.remove('hidden');
+                    const tradeButton = document.getElementById('trade-button');
+                    tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
                 }
 
-                // 트렌드 데이터가 없으면 기본값 사용
-                if (!trendData) {
-                    trendData = {
-                        dates: [],
-                        preferred_prices: [],
-                        common_prices: [],
-                        sz_values: [],
-                        discount_rates: []
-                    };
-                    console.warn("트렌드 데이터를 로드할 수 없어 기본값을 사용합니다.");
+                // 데이터 URL 생성
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const trendUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
+                console.log(`트렌드 데이터 요청 URL: ${trendUrl}`);
+
+                // 트렌드 데이터 요청
+                const trendDataResponse = await fetch(trendUrl);
+                console.log(`트렌드 데이터 응답 상태: ${trendDataResponse.status}`);
+
+                if (!trendDataResponse.ok) {
+                    throw new Error(`트렌드 데이터 요청 실패 (${trendDataResponse.status}): ${stockName}`);
                 }
 
-                // 차트 렌더링 및 데이터 표시 코드...
+                const trendDataText = await trendDataResponse.text();
+                console.log(`트렌드 데이터 길이: ${trendDataText.length} 바이트`);
+
+                // 데이터 파싱 시도
+                let trendData;
+                try {
+                    // 특수값 대체 및 파싱
+                    const cleanedText = trendDataText
+                        .replace(/"NaN"/g, 'null')
+                        .replace(/NaN/g, 'null')
+                        .replace(/Infinity/g, 'null')
+                        .replace(/-Infinity/g, 'null');
+
+                    trendData = JSON.parse(cleanedText);
+                    console.log(`트렌드 데이터 파싱 성공 - 날짜 수: ${trendData.dates ? trendData.dates.length : 0}`);
+                } catch (parseError) {
+                    console.error('트렌드 데이터 파싱 오류:', parseError);
+                    console.log('파싱 실패 데이터 샘플:', trendDataText.substring(0, 200));
+                    throw new Error(`JSON 파싱 오류: ${parseError.message}`);
+                }
+
+                // 데이터 검증
+                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
+                    throw new Error(`${stockName}에 대한 유효한 트렌드 데이터가 없습니다.`);
+                }
+
+                // 현재 데이터 업데이트
+                await updateCurrentInfo(trendData, stockName, stockCode);
+
+                // 차트 렌더링
+                renderCharts(trendData);
+
+                // 히스토리 데이터 렌더링
+                renderHistoryData(trendData);
+
+                // 로딩 완료
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
+
+                console.log('데이터 로드 및 처리 완료');
 
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
+
                 // 오류 메시지 표시
-                document.getElementById('loading-container').innerHTML = `
-                <div class="text-red-500 text-center">
-                    <p>데이터를 로드할 수 없습니다.</p>
-                    <p>${error.message}</p>
-                    <div class="mt-4 flex justify-center space-x-4">
-                        <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-500 text-white rounded">다시 시도</button>
-                        <button onclick="window.location.href='index.html'" class="px-4 py-2 bg-gray-500 text-white rounded">메인 페이지로 돌아가기</button>
-                    </div>
-                </div>
-            `;
+                const loadingContainer = document.getElementById('loading-container');
+                loadingContainer.innerHTML = `
+                            <div class="text-red-500 text-center">
+                                <p>데이터를 로드할 수 없습니다.</p>
+                                <p>${error.message}</p>
+                                <p>종목코드: ${stockCode}, 종목명: ${stockName}</p>
+                                <div class="mt-4 flex justify-center space-x-4">
+                                    <button onclick="window.location.reload()" 
+                                            class="px-4 py-2 bg-blue-500 text-white rounded">
+                                        다시 시도
+                                    </button>
+                                    <button onclick="window.location.href='index.html'" 
+                                            class="px-4 py-2 bg-gray-500 text-white rounded">
+                                        메인 페이지로 돌아가기
+                                    </button>
+                                </div>
+                            </div>
+                        `;
             }
         }
 

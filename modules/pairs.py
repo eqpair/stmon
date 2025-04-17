@@ -65,23 +65,12 @@ class NPPair:
             raise
 
     def _process_data(self, a_data: str, b_data: str):
-        try:
-            a_df = self._parse_stock_data(a_data, self.A_code)
-            b_df = self._parse_stock_data(b_data, self.B_code)
-            
-            # None 또는 빈 DataFrame 확인 및 처리
-            if a_df is None or b_df is None or a_df.empty or b_df.empty:
-                logger.error(f"데이터 프레임 생성 실패: a_df={a_df is not None}, b_df={b_df is not None}")
-                self.data = pd.DataFrame()  # 빈 데이터 프레임 설정
-                return
-                
-            self.data = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
-            self._calculate_metrics()
-            self.A_name = a_df.name
-            self.B_name = b_df.name
-        except Exception as e:
-            logger.error(f"데이터 처리 중 오류: {str(e)}")
-            self.data = pd.DataFrame()  # 오류 발생 시 빈 데이터 프레임으로 설정
+        a_df = self._parse_stock_data(a_data, self.A_code)
+        b_df = self._parse_stock_data(b_data, self.B_code)
+        self.data = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
+        self._calculate_metrics()
+        self.A_name = a_df.name
+        self.B_name = b_df.name
 
     def _parse_stock_data(self, data: str, code: str) -> pd.DataFrame:
         try:
@@ -162,26 +151,17 @@ class NPPair:
                         last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * self.LS_in_val))
             }
             
-            # 이 부분을 수정: 신호 생성 방식 통일
-            signal_parts = []
-            if signal_conditions['SL_R'] or signal_conditions['LS_R']:
-                signal_parts.append('R')
-            if signal_conditions['SL_I'] or signal_conditions['LS_I']:
-                signal_parts.append('I')
-            if signal_conditions['SL_O'] or signal_conditions['LS_O']:
-                signal_parts.append('O')
+            if any(signal_conditions.values()):
+                signal_info = f"{'R' if signal_conditions['SL_R'] else '_'}"
+                signal_info += f"{'I' if signal_conditions['SL_I'] else '_'}"
+                signal_info += f"{'O' if signal_conditions['SL_O'] else '_'} / "
                 
-            signal_info = ''.join(signal_parts)
-            price_info = f"{last_row['close_B']:.0f}, {last_row['close_A']:.0f}"
-            ratio_info = f"{sz:.2f}"
+                price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
+                ratio_info = f"{sz:.2f} / "
+                
+                return f"{ratio_info}{signal_info}{price_info}"
             
-            # 포맷 수정: sz/신호/가격 형식으로 통일
-            if signal_info:
-                return f"{ratio_info} / {signal_info} / {price_info}"
-            
-            # 신호가 없더라도 SZ 값만 반환
-            return f"{ratio_info} / / {price_info}"
-            
+            return None
         except Exception as e:
             logger.error(f"Error generating signal: {str(e)}")
             raise
