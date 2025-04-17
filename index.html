@@ -271,12 +271,12 @@
     </footer>
     <script>
         // HTML 태그 제거 함수
-            function stripHtmlTags(html) {
-                if (!html) return '';
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-                return tempDiv.textContent || tempDiv.innerText || '';
-            }
+        function stripHtmlTags(html) {
+            if (!html) return '';
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            return tempDiv.textContent || tempDiv.innerText || '';
+        }
         // 데이터 URL
         const DATA_URL = 'data/stock_data.json';
         const HISTORY_URL = 'data/history.json';
@@ -852,7 +852,7 @@
                 'BYC': '001460',
                 '삼양홀딩스': '000070'
             };
-            
+
             // 정확한 일치
             if (stockCodeMap[cleanName]) {
                 return stockCodeMap[cleanName];
@@ -869,7 +869,7 @@
             console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
             return 'unknown';
         }
-        
+
         // 히스토리 데이터 렌더링 함수 수정 - SZ 값 추이를 더 잘 보여주도록 변경
         function renderHistoryData(filteredHistory = null) {
             const tableBody = document.getElementById('history-table-body');
