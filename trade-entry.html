@@ -474,50 +474,41 @@
         // 거래 데이터 저장
         async function saveTradeData(newTrade) {
             try {
-                // 기존 거래 데이터 로드
+                // 기본 URL 설정 (GitHub Pages 환경 고려)
                 const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+
+                // 기존 거래 데이터 로드
+                const response = await fetch(`${baseUrl}/data/trades.json`);
                 let tradesData = [];
-                
-                try {
-                    const response = await fetch(`${baseUrl}/data/trades.json`);
-                    if (response.ok) {
-                        tradesData = await response.json();
-                    }
-                } catch (error) {
-                    console.warn('Failed to load existing trades, starting new data file:', error);
+
+                if (response.ok) {
+                    tradesData = await response.json();
                 }
-                
+
                 // 새 거래 추가
                 tradesData.push(newTrade);
-                
-                // 데이터 저장 시도
-                try {
-                    const saveResponse = await fetch(`${baseUrl}/data/trades.json`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(tradesData)
+
+                // GitHub Pages에 저장 시도
+                const saveResponse = await fetch(`${baseUrl}/data/trades.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(tradesData)
+                });
+
+                if (saveResponse.ok) {
+                    // 성공적으로 저장된 경우
+                    showModal('success', '거래가 성공적으로 저장되었습니다.', () => {
+                        window.location.href = 'trades.html';
                     });
-                    
-                    if (saveResponse.ok) {
-                        showModal('success', '거래가 성공적으로 저장되었습니다.', () => {
-                            window.location.href = 'trades.html';
-                        });
-                    } else {
-                        // GitHub Pages에서는 PUT 요청이 실패할 수 있음
-                        // 로컬 스토리지에 백업
-                        localStorage.setItem('lastTradeEntry', JSON.stringify(newTrade));
-                        showModal('warning', '주의: 서버에 저장할 수 없습니다. 로컬 스토리지에 임시 저장되었습니다. 거래 목록으로 이동하시겠습니까?', () => {
-                            window.location.href = 'trades.html';
-                        });
-                    }
-                } catch (error) {
-                    console.error('Failed to save trade data:', error);
+                } else {
+                    // GitHub Pages에서 PUT 요청 실패 시 로컬 스토리지에 백업
                     localStorage.setItem('lastTradeEntry', JSON.stringify(newTrade));
-                    showModal('warning', '주의: 서버에 저장할 수 없습니다. 로컬 스토리지에 임시 저장되었습니다.');
+                    showModal('warning', '주의: 서버에 저장할 수 없습니다. 로컬 스토리지에 임시 저장되었습니다.', () => {
+                        window.location.href = 'trades.html';
+                    });
                 }
-                
             } catch (error) {
                 console.error('Error saving trade data:', error);
                 showModal('error', '오류가 발생했습니다: ' + error.message);
