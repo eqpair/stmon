@@ -488,6 +488,9 @@
                 // 새 거래 추가
                 tradesData.push(newTrade);
 
+                // 로컬 스토리지에 백업
+                localStorage.setItem('lastTradeEntry', JSON.stringify(newTrade));
+
                 // GitHub Pages에 저장 시도
                 const saveResponse = await fetch(`${baseUrl}/data/trades.json`, {
                     method: 'PUT',
