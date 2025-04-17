@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS  # 추가된 라인
 import os
 import json
 
 app = Flask(__name__, static_url_path='', static_folder='templates')
+CORS(app)  # 추가된 라인: 모든 출처 허용
 DATA_FILE = os.path.join('data', 'trades.json')
 
 # 기본 HTML 페이지
