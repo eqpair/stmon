@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <title>New Trade Entry - EQ Pairs Monitoring System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans KR", sans-serif;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input-help {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: #6B7280;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            font-size: 0.875rem;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .submit-button {
+            background-color: #2563EB;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #1D4ED8;
+        }
+
+        .cancel-button {
+            background-color: #F3F4F6;
+            color: #4B5563;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .cancel-button:hover {
+            background-color: #E5E7EB;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl {
+                font-size: 1.2rem;
+            }
+
+            .py-6 {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .px-8 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">New Trade Entry</h1>
+            <p class="text-sm text-gray-600">Add a new pair trading position</p>
+        </header>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <form id="trade-entry-form" class="space-y-6">
+                <!-- Basic Trade Information -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Basic Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 form-grid">
+                        <div class="input-group">
+                            <label class="input-label" for="stock-name">Stock Name</label>
+                            <select id="stock-name" class="form-select" required>
+                                <option value="" disabled selected>Select a stock...</option>
+                                <option value="LG생활건강">LG생활건강</option>
+                                <option value="삼성전자">삼성전자</option>
+                                <option value="LG화학">LG화학</option>
+                                <option value="현대차">현대차</option>
+                                <option value="SK하이닉스">SK하이닉스</option>
+                                <option value="POSCO홀딩스">POSCO홀딩스</option>
+                                <option value="기아">기아</option>
+                                <option value="삼성바이오로직스">삼성바이오로직스</option>
+                                <option value="삼성SDI">삼성SDI</option>
+                                <option value="현대모비스">현대모비스</option>
+                                <option value="LG전자">LG전자</option>
+                                <option value="네이버">네이버</option>
+                                <option value="카카오">카카오</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="entry-date">Entry Date</label>
+                            <input type="date" id="entry-date" class="form-input" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Long Position (우선주) -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Long Position (우선주)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 form-grid">
+                        <div class="input-group">
+                            <label class="input-label" for="long-entry-price">Entry Price (KRW)</label>
+                            <input type="number" id="long-entry-price" class="form-input" required min="1">
+                            <span class="input-help">우선주 매수 가격</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="long-quantity">Quantity</label>
+                            <input type="number" id="long-quantity" class="form-input" required min="1">
+                            <span class="input-help">매수 수량</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="long-fee">Fee Rate (%)</label>
+                            <input type="number" id="long-fee" class="form-input" required step="0.001" min="0"
+                                value="0.015">
+                            <span class="input-help">매매 수수료율</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Short Position (보통주) -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Short Position (보통주)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 form-grid">
+                        <div class="input-group">
+                            <label class="input-label" for="short-entry-price">Entry Price (KRW)</label>
+                            <input type="number" id="short-entry-price" class="form-input" required min="1">
+                            <span class="input-help">보통주 매도 가격</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="short-quantity">Quantity</label>
+                            <input type="number" id="short-quantity" class="form-input" required min="1">
+                            <span class="input-help">매도 수량</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="short-fee">Fee Rate (%)</label>
+                            <input type="number" id="short-fee" class="form-input" required step="0.001" min="0"
+                                value="0.015">
+                            <span class="input-help">매매 수수료율</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Additional Information</h2>
+                    <div class="input-group">
+                        <label class="input-label" for="notes">Notes</label>
+                        <textarea id="notes" class="form-input" rows="3"
+                            placeholder="매매 근거 및 참고사항을 입력하세요..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex justify-end space-x-4 pt-4">
+                    <a href="trades.html" class="cancel-button">Cancel</a>
+                    <button type="submit" class="submit-button">Create Trade</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success/Error Modal -->
+    <div id="result-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg max-w-md mx-4 p-6">
+            <div id="modal-content" class="text-center"></div>
+            <div class="mt-6 flex justify-center">
+                <button id="modal-close" class="px-4 py-2 bg-blue-600 text-white rounded-lg">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2025 EQ Pair Monitoring System.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 종목 코드 매핑
+        const stockCodeMap = {
+            '삼성전자': { code: '005930', preferredCode: '005935' },
+            '코오롱모빌리티그룹': { code: '450140', preferredCode: '45014K' },
+            '태양금속': { code: '004100', preferredCode: '004105' },
+            'NPC': { code: '004250', preferredCode: '004255' },
+            '대한제당': { code: '001790', preferredCode: '001795' },
+            '덕성': { code: '004830', preferredCode: '004835' },
+            '코리아써키트': { code: '007810', preferredCode: '007815' },
+            '코오롱': { code: '002020', preferredCode: '002025' },
+            '현대차': { code: '005380', preferredCode: '005385' },
+            '대신증권': { code: '003540', preferredCode: '003545' },
+            '성신양회': { code: '004980', preferredCode: '004985' },
+            '코오롱글로벌': { code: '003070', preferredCode: '003075' },
+            'NH투자증권': { code: '005940', preferredCode: '005945' },
+            '신풍제약': { code: '019170', preferredCode: '019175' },
+            'LG전자': { code: '066570', preferredCode: '066575' },
+            '한화솔루션': { code: '009830', preferredCode: '009835' },
+            '세방': { code: '004360', preferredCode: '004365' },
+            '한화투자증권': { code: '003530', preferredCode: '003535' },
+            'LG생활건강': { code: '051900', preferredCode: '051905' },
+            '아모레퍼시픽': { code: '090430', preferredCode: '090435' },
+            'LG화학': { code: '051910', preferredCode: '051915' },
+            '아모레G': { code: '002790', preferredCode: '002795' },
+            '대한항공': { code: '003490', preferredCode: '003495' },
+            'S-Oil': { code: '010950', preferredCode: '010955' },
+            '한진칼': { code: '180640', preferredCode: '18064K' },
+            'SK증권': { code: '001510', preferredCode: '001515' },
+            '한국금융지주': { code: '071050', preferredCode: '071055' },
+            '티와이홀딩스': { code: '363280', preferredCode: '36328K' },
+            '미래에셋증권': { code: '006800', preferredCode: '006805' },
+            '동부건설': { code: '005960', preferredCode: '005965' },
+            '크라운제과': { code: '264900', preferredCode: '26490K' },
+            '두산': { code: '000150', preferredCode: '000155' },
+            '남선알미늄': { code: '008350', preferredCode: '008355' },
+            '금호석유': { code: '011780', preferredCode: '011785' },
+            '넥센': { code: '005720', preferredCode: '005725' },
+            'LX하우시스': { code: '108670', preferredCode: '108675' },
+            '삼성화재': { code: '000810', preferredCode: '000815' },
+            '대상홀딩스': { code: '084690', preferredCode: '084695' },
+            'SK케미칼': { code: '285130', preferredCode: '28513K' },
+            '소프트센': { code: '032680', preferredCode: '032685' },
+            '삼성전기': { code: '009150', preferredCode: '009155' },
+            '노루홀딩스': { code: '000320', preferredCode: '000325' },
+            'LG': { code: '003550', preferredCode: '003555' },
+            '삼성SDI': { code: '006400', preferredCode: '006405' },
+            '코오롱인더': { code: '120110', preferredCode: '120115' },
+            '대원전선': { code: '006340', preferredCode: '006345' },
+            '태영건설': { code: '009410', preferredCode: '009415' },
+            '흥국화재': { code: '000540', preferredCode: '000545' },
+            '대호특수강': { code: '021040', preferredCode: '021045' },
+            '계양전기': { code: '012200', preferredCode: '012205' },
+            '한양증권': { code: '001750', preferredCode: '001755' },
+            '호텔신라': { code: '008770', preferredCode: '008775' },
+            'SK이노베이션': { code: '096770', preferredCode: '096775' },
+            '서울식품': { code: '004410', preferredCode: '004415' },
+            '현대건설': { code: '000720', preferredCode: '000725' },
+            'DL이앤씨': { code: '375500', preferredCode: '37550K' },
+            'GS': { code: '078930', preferredCode: '078935' },
+            '금강공업': { code: '014280', preferredCode: '014285' },
+            '대상': { code: '001680', preferredCode: '001685' },
+            '금호건설': { code: '002990', preferredCode: '002995' },
+            'CJ제일제당': { code: '097950', preferredCode: '097955' },
+            'SK디스커버리': { code: '006120', preferredCode: '006125' },
+            'DL': { code: '000210', preferredCode: '000215' },
+            '노루페인트': { code: '090350', preferredCode: '090355' },
+            '동양': { code: '001520', preferredCode: '001525' },
+            '한화': { code: '000880', preferredCode: '000885' },
+            'CJ': { code: '001040', preferredCode: '001045' },
+            '크라운해태홀딩스': { code: '005740', preferredCode: '005745' },
+            '롯데칠성': { code: '005300', preferredCode: '005305' },
+            'SK': { code: '034730', preferredCode: '03473K' },
+            '성문전자': { code: '014910', preferredCode: '014915' },
+            '일양약품': { code: '007570', preferredCode: '007575' },
+            '롯데지주': { code: '004990', preferredCode: '00499K' },
+            '깨끗한나라': { code: '004540', preferredCode: '004545' },
+            '유한양행': { code: '000100', preferredCode: '000105' },
+            '부국증권': { code: '001270', preferredCode: '001275' },
+            '남양유업': { code: '003920', preferredCode: '003925' },
+            '유화증권': { code: '003460', preferredCode: '003465' },
+            '삼양사': { code: '145990', preferredCode: '145995' },
+            'JW중외제약': { code: '001060', preferredCode: '001065' },
+            '하이트진로홀딩스': { code: '000140', preferredCode: '000145' },
+            'BYC': { code: '001460', preferredCode: '001465' },
+            '삼양홀딩스': { code: '000070', preferredCode: '000075' },
+            '동원': { code: '014820', preferredCode: '014825' }
+        };
+
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            setupForm();
+            document.getElementById('modal-close').addEventListener('click', hideModal);
+        });
+
+        // 폼 설정
+        function setupForm() {
+            const form = document.getElementById('trade-entry-form');
+            
+            // 현재 날짜 기본값 설정
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('entry-date').value = today;
+            
+            // 폼 제출 이벤트
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // 폼 데이터 수집
+                const tradeData = collectFormData();
+                
+                // 데이터 유효성 검사
+                if (!validateFormData(tradeData)) {
+                    return;
+                }
+                
+                // 거래 데이터 저장
+                await saveTradeData(tradeData);
+            });
+        }
+
+        // 폼 데이터 수집
+        function collectFormData() {
+            const stockName = document.getElementById('stock-name').value;
+            const stockInfo = stockCodeMap[stockName] || { code: '', preferredCode: '' };
+            
+            return {
+                id: Date.now(), // 고유 ID 생성
+                stockName: stockName,
+                stockCode: stockInfo.code,
+                preferredCode: stockInfo.preferredCode,
+                entryDate: document.getElementById('entry-date').value,
+                status: 'active',
+                longEntry: {
+                    price: parseInt(document.getElementById('long-entry-price').value),
+                    quantity: parseInt(document.getElementById('long-quantity').value),
+                    fee: parseFloat(document.getElementById('long-fee').value)
+                },
+                shortEntry: {
+                    price: parseInt(document.getElementById('short-entry-price').value),
+                    quantity: parseInt(document.getElementById('short-quantity').value),
+                    fee: parseFloat(document.getElementById('short-fee').value)
+                },
+                exitDate: null,
+                exitLongPrice: null,
+                exitShortPrice: null,
+                notes: document.getElementById('notes').value
+            };
+        }
+
+        // 폼 데이터 유효성 검사
+        function validateFormData(data) {
+            // 기본 필드 검증
+            if (!data.stockName || !data.entryDate) {
+                showModal('error', '필수 필드를 모두 입력해주세요.');
+                return false;
+            }
+            
+            // 롱/숏 수량 일치 검사
+            if (data.longEntry.quantity !== data.shortEntry.quantity) {
+                const result = confirm('롱 포지션과 숏 포지션의 수량이 다릅니다. 계속 진행하시겠습니까?');
+                if (!result) {
+                    return false;
+                }
+            }
+            
+            // 매매 가격 검증
+            if (data.longEntry.price <= 0 || data.shortEntry.price <= 0) {
+                showModal('error', '가격은 0보다 커야 합니다.');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 거래 데이터 저장
+        async function saveTradeData(newTrade) {
+            try {
+                // 기존 거래 데이터 로드
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                let tradesData = [];
+                
+                try {
+                    const response = await fetch(`${baseUrl}/data/trades.json`);
+                    if (response.ok) {
+                        tradesData = await response.json();
+                    }
+                } catch (error) {
+                    console.warn('Failed to load existing trades, starting new data file:', error);
+                }
+                
+                // 새 거래 추가
+                tradesData.push(newTrade);
+                
+                // 데이터 저장 시도
+                try {
+                    const saveResponse = await fetch(`${baseUrl}/data/trades.json`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(tradesData)
+                    });
+                    
+                    if (saveResponse.ok) {
+                        showModal('success', '거래가 성공적으로 저장되었습니다.', () => {
+                            window.location.href = 'trades.html';
+                        });
+                    } else {
+                        // GitHub Pages에서는 PUT 요청이 실패할 수 있음
+                        // 로컬 스토리지에 백업
+                        localStorage.setItem('lastTradeEntry', JSON.stringify(newTrade));
+                        showModal('warning', '주의: 서버에 저장할 수 없습니다. 로컬 스토리지에 임시 저장되었습니다. 거래 목록으로 이동하시겠습니까?', () => {
+                            window.location.href = 'trades.html';
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to save trade data:', error);
+                    localStorage.setItem('lastTradeEntry', JSON.stringify(newTrade));
+                    showModal('warning', '주의: 서버에 저장할 수 없습니다. 로컬 스토리지에 임시 저장되었습니다.');
+                }
+                
+            } catch (error) {
+                console.error('Error saving trade data:', error);
+                showModal('error', '오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 결과 모달 표시
+        function showModal(type, message, callback) {
+            const modal = document.getElementById('result-modal');
+            const content = document.getElementById('modal-content');
+            
+            // 아이콘 및 메시지 스타일 설정
+            let icon = '';
+            let textColor = '';
+            
+            switch (type) {
+                case 'success':
+                    icon = '<i class="fas fa-check-circle text-green-500 text-5xl mb-4"></i>';
+                    textColor = 'text-green-700';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-times-circle text-red-500 text-5xl mb-4"></i>';
+                    textColor = 'text-red-700';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle text-yellow-500 text-5xl mb-4"></i>';
+                    textColor = 'text-yellow-700';
+                    break;
+            }
+            
+            // 내용 설정
+            content.innerHTML = `
+                ${icon}
+                <p class="${textColor} text-lg">${message}</p>
+            `;
+            
+            // 콜백 설정
+            if (callback) {
+                document.getElementById('modal-close').onclick = () => {
+                    hideModal();
+                    callback();
+                };
+            } else {
+                document.getElementById('modal-close').onclick = hideModal;
+            }
+            
+            // 모달 표시
+            modal.classList.remove('hidden');
+        }
+
+        // 모달 숨기기
+        function hideModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>

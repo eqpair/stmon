@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <title>Close Trade - EQ Pairs Monitoring System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans KR", sans-serif;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input-help {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: #6B7280;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            font-size: 0.875rem;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .submit-button {
+            background-color: #2563EB;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #1D4ED8;
+        }
+
+        .cancel-button {
+            background-color: #F3F4F6;
+            color: #4B5563;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .cancel-button:hover {
+            background-color: #E5E7EB;
+        }
+
+        .profit {
+            color: #16A34A;
+            font-weight: bold;
+        }
+
+        .loss {
+            color: #DC2626;
+            font-weight: bold;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl {
+                font-size: 1.2rem;
+            }
+
+            .py-6 {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .px-8 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Close Trade</h1>
+            <p class="text-sm text-gray-600">Close and record the result of your pair trade</p>
+        </header>
+
+        <div id="loading-container" class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <p class="text-gray-600">Loading trade data...</p>
+        </div>
+
+        <div id="content-container" class="hidden">
+            <!-- Trade Summary -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Trade Summary</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-blue-700 text-sm font-medium mb-1">Stock</div>
+                        <div class="text-xl font-bold" id="trade-stock-name">-</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-purple-700 text-sm font-medium mb-1">Entry Date</div>
+                        <div class="text-xl font-bold" id="trade-entry-date">-</div>
+                    </div>
+                    <div class="p-4 bg-indigo-50 rounded-lg">
+                        <div class="text-indigo-700 text-sm font-medium mb-1">Duration</div>
+                        <div class="text-xl font-bold" id="trade-duration">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Position Details -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Position Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Long Position -->
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <h3 class="text-lg font-medium text-green-800 mb-3">Long Position (우선주)</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <div class="text-sm text-gray-600">Entry Price:</div>
+                                <div class="text-base font-semibold" id="long-entry-price">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600">Quantity:</div>
+                                <div class="text-base font-semibold" id="long-quantity">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600">Current Price:</div>
+                                <div class="text-base font-semibold" id="long-current-price">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600">Current P/L:</div>
+                                <div class="text-base font-semibold" id="long-current-pnl">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Short Position -->
+                    <div class="p-4 bg-red-50 rounded-lg">
+                        <h3 class="text-lg font-medium text-red-800 mb-3">Short Position (보통주)</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <div class="text-sm text-gray-600">Entry Price:</div>
+                                <div class="text-base font-semibold" id="short-entry-price">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600">Quantity:</div>
+                                <div class="text-base font-semibold" id="short-quantity">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600">Current Price:</div>
+                                <div class="text-base font-semibold" id="short-current-price">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600">Current P/L:</div>
+                                <div class="text-base font-semibold" id="short-current-pnl">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Trade Form -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <form id="close-trade-form" class="space-y-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Close Trade</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
+                        <div class="input-group">
+                            <label class="input-label" for="exit-date">Exit Date</label>
+                            <input type="date" id="exit-date" class="form-input" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="exit-reason">Exit Reason</label>
+                            <select id="exit-reason" class="form-select" required>
+                                <option value="" disabled selected>Select a reason...</option>
+                                <option value="profit_target">Profit Target Reached</option>
+                                <option value="stop_loss">Stop Loss Triggered</option>
+                                <option value="time_limit">Time Limit Reached</option>
+                                <option value="technical">Technical Signal</option>
+                                <option value="fundamental">Fundamental Change</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
+                        <div class="input-group">
+                            <label class="input-label" for="long-exit-price">Long Exit Price (KRW)</label>
+                            <input type="number" id="long-exit-price" class="form-input" required min="1">
+                            <span class="input-help">우선주 매도 가격</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="short-exit-price">Short Exit Price (KRW)</label>
+                            <input type="number" id="short-exit-price" class="form-input" required min="1">
+                            <span class="input-help">보통주 매수 가격</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="exit-notes">Notes</label>
+                        <textarea id="exit-notes" class="form-input" rows="3"
+                            placeholder="거래 종료 관련 참고사항을 입력하세요..."></textarea>
+                    </div>
+
+                    <!-- Result Preview -->
+                    <div id="result-preview" class="p-4 bg-gray-50 rounded-lg hidden">
+                        <h3 class="text-lg font-medium text-gray-800 mb-3">Result Preview</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm text-gray-600">Long P/L:</div>
+                                <div class="text-base font-semibold" id="preview-long-pnl">-</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600">Short P/L:</div>
+                                <div class="text-base font-semibold" id="preview-short-pnl">-</div>
+                            </div>
+                            <div class="col-span-2">
+                                <div class="text-sm text-gray-600">Total P/L:</div>
+                                <div class="text-lg font-bold" id="preview-total-pnl">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" id="preview-button" class="cancel-button">Preview Result</button>
+                        <a href="trades.html" class="cancel-button">Cancel</a>
+                        <button type="submit" class="submit-button">Close Trade</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Modal -->
+    <div id="result-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg max-w-md mx-4 p-6">
+            <div id="modal-content" class="text-center"></div>
+            <div class="mt-6 flex justify-center">
+                <button id="modal-close" class="px-4 py-2 bg-blue-600 text-white rounded-lg">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2025 EQ Pair Monitoring System.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 전역 변수
+        let tradeData = null;
+        let tradesData = [];
+
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', async () => {
+            // URL에서 거래 ID 추출
+            const urlParams = new URLSearchParams(window.location.search);
+            const tradeId = urlParams.get('id');
+            
+            if (!tradeId) {
+                showModal('error', '거래 ID가 제공되지 않았습니다.', () => {
+                    window.location.href = 'trades.html';
+                });
+                return;
+            }
+            
+            // 로딩 표시
+            document.getElementById('loading-container').style.display = 'flex';
+            document.getElementById('content-container').classList.add('hidden');
+            
+            // 거래 데이터 로드
+            await loadTradeData(tradeId);
+            
+            // 이벤트 리스너 설정
+            setupEventListeners();
+            
+            // 현재 날짜 기본값 설정
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('exit-date').value = today;
+            
+            // 로딩 완료
+            document.getElementById('loading-container').style.display = 'none';
+            document.getElementById('content-container').classList.remove('hidden');
+        });
+
+        // 거래 데이터 로드
+        async function loadTradeData(tradeId) {
+            try {
+                // 베이스 URL 설정 (GitHub Pages 환경 고려)
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                
+                // 거래 데이터 가져오기
+                const response = await fetch(`${baseUrl}/data/trades.json?t=${new Date().getTime()}`);
+                
+                if (!response.ok) {
+                    throw new Error(`거래 데이터를 가져올 수 없습니다: ${response.status}`);
+                }
+                
+                // 모든 거래 데이터 파싱
+                tradesData = await response.json();
+                
+                // ID로 현재 거래 찾기
+                tradeData = tradesData.find(trade => trade.id.toString() === tradeId.toString());
+                
+                if (!tradeData) {
+                    throw new Error(`ID ${tradeId}에 해당하는 거래를 찾을 수 없습니다.`);
+                }
+                
+                // 이미 종료된 거래인지 확인
+                if (tradeData.status === 'closed') {
+                    showModal('error', '이 거래는 이미 종료되었습니다.', () => {
+                        window.location.href = 'trades.html';
+                    });
+                    return;
+                }
+                
+                // 현재 가격 가져오기
+                await updateCurrentPrices();
+                
+                // 거래 정보 화면에 표시
+                displayTradeInfo();
+                
+                // 최신 가격으로 종료 가격 입력 필드 기본값 설정
+                document.getElementById('long-exit-price').value = tradeData.currentLongPrice || tradeData.longEntry.price;
+                document.getElementById('short-exit-price').value = tradeData.currentShortPrice || tradeData.shortEntry.price;
+                
+            } catch (error) {
+                console.error('거래 데이터 로드 오류:', error);
+                showModal('error', `오류: ${error.message}`, () => {
+                    window.location.href = 'trades.html';
+                });
+            }
+        }
+
+        // 현재 주가 데이터 업데이트
+        async function updateCurrentPrices() {
+            try {
+                if (!tradeData) return;
+                
+                // 베이스 URL 설정
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                
+                // stock_data.json에서 현재 가격 정보 가져오기
+                const response = await fetch(`${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`);
+                
+                if (!response.ok) {
+                    throw new Error(`현재 가격을 가져올 수 없습니다: ${response.status}`);
+                }
+                
+                const stockData = await response.json();
+                const allSignals = stockData.all_signals || [];
+                
+                // 종목 코드로 찾기
+                const commonStock = allSignals.find(signal => {
+                    const signalCode = getStockCodeByName(signal.stock_name);
+                    return signalCode === tradeData.stockCode;
+                });
+                
+                const preferredStock = allSignals.find(signal => {
+                    const signalCode = getStockCodeByName(signal.stock_name);
+                    return signalCode === tradeData.preferredCode;
+                });
+                
+                // 현재 가격 업데이트
+                if (commonStock && commonStock.price_a) {
+                    tradeData.currentShortPrice = commonStock.price_a;
+                }
+                
+                if (preferredStock && preferredStock.price_b) {
+                    tradeData.currentLongPrice = preferredStock.price_b;
+                }
+                
+                // 현재 가격이 없으면 대체 방법 시도
+                if (!tradeData.currentShortPrice && commonStock && commonStock.price_b) {
+                    tradeData.currentShortPrice = commonStock.price_b;
+                }
+                
+                if (!tradeData.currentLongPrice && preferredStock && preferredStock.price_a) {
+                    tradeData.currentLongPrice = preferredStock.price_a;
+                }
+                
+                // 시뮬레이션용: 샘플 데이터를 위한 임시 현재 가격 설정
+                if (!tradeData.currentLongPrice || !tradeData.currentShortPrice) {
+                    if (tradeData.stockName === 'LG생활건강') {
+                        tradeData.currentLongPrice = tradeData.currentLongPrice || 280000;
+                        tradeData.currentShortPrice = tradeData.currentShortPrice || 350000;
+                    } else if (tradeData.stockName === '삼성전자') {
+                        tradeData.currentLongPrice = tradeData.currentLongPrice || 62000;
+                        tradeData.currentShortPrice = tradeData.currentShortPrice || 74800;
+                    } else if (tradeData.stockName === 'LG화학') {
+                        tradeData.currentLongPrice = tradeData.currentLongPrice || 350000;
+                        tradeData.currentShortPrice = tradeData.currentShortPrice || 420000;
+                    } else if (tradeData.stockName === '현대차') {
+                        tradeData.currentLongPrice = tradeData.currentLongPrice || 150000;
+                        tradeData.currentShortPrice = tradeData.currentShortPrice || 180000;
+                    }
+                }
+                
+                // 손익 계산
+                calculateCurrentProfitLoss();
+            } catch (error) {
+                console.error('현재 가격 업데이트 오류:', error);
+            }
+        }
+
+        // 종목명으로 종목 코드를 가져오는 함수
+        function getStockCodeByName(stockName) {
+            if (!stockName) return 'unknown';
+
+            // HTML 태그 및 이모지 제거
+            let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
+            cleanName = cleanName.replace(/^[^\w\s가-힣]+ /, '').trim();  // 이모지 제거
+
+            // 가중치 및 대시 형식 제거
+            cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
+
+            // 종목 코드 맵핑
+            const stockCodeMap = {
+                '삼성전자': '005930',
+                '코오롱모빌리티그룹': '450140',
+                '태양금속': '004100',
+                'NPC': '004250',
+                '대한제당': '001790',
+                '덕성': '004830',
+                '코리아써키트': '007810',
+                '코오롱': '002020',
+                '현대차': '005380',
+                '대신증권': '003540',
+                '성신양회': '004980',
+                '코오롱글로벌': '003070',
+                'NH투자증권': '005940',
+                '신풍제약': '019170',
+                'LG전자': '066570',
+                '한화솔루션': '009830',
+                '세방': '004360',
+                '한화투자증권': '003530',
+                'LG생활건강': '051900',
+                '아모레퍼시픽': '090430',
+                'LG화학': '051910',
+                '아모레G': '002790',
+                '대한항공': '003490',
+                'S-Oil': '010950',
+                '한진칼': '180640',
+                'SK증권': '001510',
+                '한국금융지주': '071050',
+                '티와이홀딩스': '363280',
+                '미래에셋증권': '006800',
+                '동부건설': '005960',
+                '크라운제과': '264900',
+                '두산': '000150',
+                '남선알미늄': '008350',
+                '금호석유': '011780',
+                '넥센': '005720',
+                'LX하우시스': '108670',
+                '삼성화재': '000810',
+                '대상홀딩스': '084690',
+                'SK케미칼': '285130',
+                '소프트센': '032680',
+                '삼성전기': '009150',
+                '노루홀딩스': '000320',
+                'LG': '003550',
+                '삼성SDI': '006400',
+                '코오롱인더': '120110',
+                '대원전선': '006340',
+                '태영건설': '009410',
+                '흥국화재': '000540',
+                '대호특수강': '021040',
+                '계양전기': '012200',
+                '한양증권': '001750',
+                '호텔신라': '008770',
+                'SK이노베이션': '096770',
+                '서울식품': '004410',
+                '현대건설': '000720',
+                'DL이앤씨': '375500',
+                'GS': '078930',
+                '금강공업': '014280',
+                '대상': '001680',
+                '금호건설': '002990',
+                'CJ제일제당': '097950',
+                'SK디스커버리': '006120',
+                'DL': '000210',
+                '노루페인트': '090350',
+                '동양': '001520',
+                '한화': '000880',
+                'CJ': '001040',
+                '크라운해태홀딩스': '005740',
+                '롯데칠성': '005300',
+                'SK': '034730',
+                '성문전자': '014910',
+                '일양약품': '007570',
+                '롯데지주': '004990',
+                '깨끗한나라': '004540',
+                '유한양행': '000100',
+                '부국증권': '001270',
+                '남양유업': '003920',
+                '유화증권': '003460',
+                '삼양사': '145990',
+                'JW중외제약': '001060',
+                '하이트진로홀딩스': '000140',
+                'BYC': '001460',
+                '삼양홀딩스': '000070'
+            };
+
+            // 정확한 일치
+            if (stockCodeMap[cleanName]) {
+                return stockCodeMap[cleanName];
+            }
+
+            // 부분 일치 시도
+            for (const name in stockCodeMap) {
+                if (cleanName.includes(name) || name.includes(cleanName)) {
+                    return stockCodeMap[name];
+                }
+            }
+
+            return 'unknown';
+        }
+
+        // 현재 거래 손익 계산
+        function calculateCurrentProfitLoss() {
+            if (!tradeData) return;
+            
+            // 롱 포지션 손익
+            const longEntry = tradeData.longEntry.price * tradeData.longEntry.quantity;
+            const longFee = longEntry * (tradeData.longEntry.fee / 100);
+            const longCurrent = (tradeData.currentLongPrice || tradeData.longEntry.price) * tradeData.longEntry.quantity;
+            const longPnL = longCurrent - longEntry - longFee;
+            
+            // 숏 포지션 손익
+            const shortEntry = tradeData.shortEntry.price * tradeData.shortEntry.quantity;
+            const shortFee = shortEntry * (tradeData.shortEntry.fee / 100);
+            const shortCurrent = (tradeData.currentShortPrice || tradeData.shortEntry.price) * tradeData.shortEntry.quantity;
+            const shortPnL = shortEntry - shortCurrent - shortFee;
+            
+            // 전체 손익 및 손익률
+            tradeData.currentPnL = longPnL + shortPnL;
+            tradeData.currentPnLPercent = (tradeData.currentPnL / (longEntry + shortEntry)) * 100;
+            
+            // 개별 포지션 손익 저장
+            tradeData.longPnL = longPnL;
+            tradeData.shortPnL = shortPnL;
+        }
+
+        // 거래 종료 시 손익 계산
+        function calculateClosingProfitLoss(exitLongPrice, exitShortPrice) {
+            if (!tradeData) return { totalPnL: 0, longPnL: 0, shortPnL: 0 };
+            
+            // 롱 포지션 손익
+            const longEntry = tradeData.longEntry.price * tradeData.longEntry.quantity;
+            const longExit = exitLongPrice * tradeData.longEntry.quantity;
+            const longFee = (longEntry + longExit) * (tradeData.longEntry.fee / 100);
+            const longPnL = longExit - longEntry - longFee;
+            
+            // 숏 포지션 손익
+            const shortEntry = tradeData.shortEntry.price * tradeData.shortEntry.quantity;
+            const shortExit = exitShortPrice * tradeData.shortEntry.quantity;
+            const shortFee = (shortEntry + shortExit) * (tradeData.shortEntry.fee / 100);
+            const shortPnL = shortEntry - shortExit - shortFee;
+            
+            // 전체 손익
+            const totalPnL = longPnL + shortPnL;
+            
+            return {
+                totalPnL,
+                longPnL,
+                shortPnL,
+                totalPnLPercent: (totalPnL / (longEntry + shortEntry)) * 100
+            };
+        }
+
+        // 거래 정보 화면에 표시
+        function displayTradeInfo() {
+            if (!tradeData) return;
+            
+            // 기본 정보
+            document.getElementById('trade-stock-name').textContent = tradeData.stockName;
+            document.getElementById('trade-entry-date').textContent = formatDate(tradeData.entryDate);
+            
+            // 거래 기간 계산
+            const entryDate = new Date(tradeData.entryDate);
+            const today = new Date();
+            const diffTime = Math.abs(today - entryDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('trade-duration').textContent = `${diffDays}일`;
+            
+            // 롱 포지션 정보
+            document.getElementById('long-entry-price').textContent = tradeData.longEntry.price.toLocaleString() + ' KRW';
+            document.getElementById('long-quantity').textContent = tradeData.longEntry.quantity;
+            document.getElementById('long-current-price').textContent = (tradeData.currentLongPrice || tradeData.longEntry.price).toLocaleString() + ' KRW';
+            
+            // 숏 포지션 정보
+            document.getElementById('short-entry-price').textContent = tradeData.shortEntry.price.toLocaleString() + ' KRW';
+            document.getElementById('short-quantity').textContent = tradeData.shortEntry.quantity;
+            document.getElementById('short-current-price').textContent = (tradeData.currentShortPrice || tradeData.shortEntry.price).toLocaleString() + ' KRW';
+            
+            // 현재 손익 정보
+            const longPnLElement = document.getElementById('long-current-pnl');
+            longPnLElement.textContent = formatCurrency(tradeData.longPnL || 0);
+            longPnLElement.className = (tradeData.longPnL || 0) >= 0 ? 'text-base font-semibold profit' : 'text-base font-semibold loss';
+            
+            const shortPnLElement = document.getElementById('short-current-pnl');
+            shortPnLElement.textContent = formatCurrency(tradeData.shortPnL || 0);
+            shortPnLElement.className = (tradeData.shortPnL || 0) >= 0 ? 'text-base font-semibold profit' : 'text-base font-semibold loss';
+        }
+
+        // 이벤트 리스너 설정
+        function setupEventListeners() {
+            // 결과 미리보기 버튼
+            document.getElementById('preview-button').addEventListener('click', previewResult);
+            
+            // 모달 닫기 버튼
+            document.getElementById('modal-close').addEventListener('click', hideModal);
+            
+            // 폼 제출
+            document.getElementById('close-trade-form').addEventListener('submit', closeTrade);
+        }
+
+        // 결과 미리보기
+        function previewResult() {
+            const longExitPrice = parseInt(document.getElementById('long-exit-price').value);
+            const shortExitPrice = parseInt(document.getElementById('short-exit-price').value);
+            
+            if (!longExitPrice || !shortExitPrice) {
+                showModal('error', '종료 가격을 모두 입력해주세요.');
+                return;
+            }
+            
+            // 손익 계산
+            const result = calculateClosingProfitLoss(longExitPrice, shortExitPrice);
+            
+            // 결과 표시
+            const longPnLElement = document.getElementById('preview-long-pnl');
+            longPnLElement.textContent = formatCurrency(result.longPnL);
+            longPnLElement.className = result.longPnL >= 0 ? 'text-base font-semibold profit' : 'text-base font-semibold loss';
+            
+            const shortPnLElement = document.getElementById('preview-short-pnl');
+            shortPnLElement.textContent = formatCurrency(result.shortPnL);
+            shortPnLElement.className = result.shortPnL >= 0 ? 'text-base font-semibold profit' : 'text-base font-semibold loss';
+            
+            const totalPnLElement = document.getElementById('preview-total-pnl');
+            totalPnLElement.textContent = `${ formatCurrency(result.totalPnL) } (${ result.totalPnLPercent.toFixed(2) }%)`;
+            totalPnLElement.className = result.totalPnL >= 0 ? 'text-lg font-bold profit' : 'text-lg font-bold loss';
+            
+            // 미리보기 섹션 표시
+            document.getElementById('result-preview').classList.remove('hidden');
+        }
+
+        // 거래 종료 및 저장
+        async function closeTrade(event) {
+            event.preventDefault();
+            
+            try {
+                if (!tradeData) {
+                    throw new Error('거래 데이터를 찾을 수 없습니다.');
+                }
+                
+                // 폼 데이터 수집
+                const exitDate = document.getElementById('exit-date').value;
+                const exitReason = document.getElementById('exit-reason').value;
+                const exitLongPrice = parseInt(document.getElementById('long-exit-price').value);
+                const exitShortPrice = parseInt(document.getElementById('short-exit-price').value);
+                const exitNotes = document.getElementById('exit-notes').value;
+                
+                // 유효성 검사
+                if (!exitDate || !exitReason || !exitLongPrice || !exitShortPrice) {
+                    showModal('error', '모든 필수 필드를 입력해주세요.');
+                    return;
+                }
+                
+                // 거래 업데이트
+                const updatedTrade = {
+                    ...tradeData,
+                    status: 'closed',
+                    exitDate: exitDate,
+                    exitReason: exitReason,
+                    exitLongPrice: exitLongPrice,
+                    exitShortPrice: exitShortPrice,
+                    exitNotes: exitNotes
+                };
+                
+                // 손익 계산
+                const result = calculateClosingProfitLoss(exitLongPrice, exitShortPrice);
+                updatedTrade.realizedPnL = result.totalPnL;
+                updatedTrade.realizedPnLPercent = result.totalPnLPercent;
+                
+                // 전체 거래 데이터에서 해당 거래 업데이트
+                const updatedTradesData = tradesData.map(trade => 
+                    trade.id === updatedTrade.id ? updatedTrade : trade
+                );
+                
+                // 데이터 저장
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const saveResponse = await fetch(`${ baseUrl } /data/trades.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedTradesData)
+                });
+                
+                if (saveResponse.ok) {
+                    showModal('success', `거래가 성공적으로 종료되었습니다.총 손익: ${ formatCurrency(result.totalPnL) } `, () => {
+                        window.location.href = 'trades.html';
+                    });
+                } else {
+                    // GitHub Pages에서는 PUT 요청이 실패할 수 있음
+                    showModal('warning', '서버에 저장할 수 없습니다. 로컬 스토리지에 임시 저장되었습니다.', () => {
+                        window.location.href = 'trades.html';
+                    });
+                }
+            } catch (error) {
+                console.error('거래 종료 오류:', error);
+                showModal('error', `오류: ${ error.message } `);
+            }
+        }
+
+        // 금액 포맷팅
+        function formatCurrency(amount) {
+            const absAmount = Math.abs(amount);
+            const formattedAmount = absAmount.toLocaleString() + ' KRW';
+            return amount >= 0 ? '+' + formattedAmount : '-' + formattedAmount;
+        }
+
+        // 날짜 포맷팅
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString();
+        }
+
+        // 결과 모달 표시
+        function showModal(type, message, callback) {
+            const modal = document.getElementById('result-modal');
+            const content = document.getElementById('modal-content');
+            
+            // 아이콘 및 메시지 스타일 설정
+            let icon = '';
+            let textColor = '';
+            
+            switch (type) {
+                case 'success':
+                    icon = '<i class="fas fa-check-circle text-green-500 text-5xl mb-4"></i>';
+                    textColor = 'text-green-700';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-times-circle text-red-500 text-5xl mb-4"></i>';
+                    textColor = 'text-red-700';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle text-yellow-500 text-5xl mb-4"></i>';
+                    textColor = 'text-yellow-700';
+                    break;
+            }
+            
+            // 내용 설정
+            content.innerHTML = `
+                ${ icon }
+            <p class="${textColor} text-lg">${message}</p>
+            `;
+
+            // 콜백 설정
+            if (callback) {
+                document.getElementById('modal-close').onclick = () => {
+                    hideModal();
+                    callback();
+                };
+            } else {
+                document.getElementById('modal-close').onclick = hideModal;
+            }
+
+            // 모달 표시
+            modal.classList.remove('hidden');
+        }
+
+        // 모달 숨기기
+        function hideModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+</script>
+    </body>
+    
+    </html>

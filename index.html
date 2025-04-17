@@ -124,7 +124,12 @@
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Monitoring System</h1>
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Monitoring System</h1>
+                <a href="trades.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-chart-line mr-2"></i> Trading Reports
+                </a>
+            </div>
             <div class="flex items-center text-sm text-gray-600">
                 <span class="mr-2">Last Update:</span>
                 <span id="lastUpdated" class="font-medium"></span>
