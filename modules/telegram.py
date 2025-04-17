@@ -1,11 +1,15 @@
-import sys
-import os
 from aiogram import Bot, Dispatcher, types
-from config import TELEGRAM_TOKEN, CHAT_ID
 import logging
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import TELEGRAM_TOKEN, CHAT_ID
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import asyncio
 
+# 로깅 설정
+logging.basicConfig(level=logging.INFO,
+                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 class TelegramBot:
