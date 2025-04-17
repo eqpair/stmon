@@ -1,29 +1,35 @@
 name: Update Trade Data
-
 on:
+  workflow_dispatch:  # 수동 트리거
   push:
-    branches: [ main ]
-  workflow_dispatch:  # 수동 트리거 허용
-
+    paths:
+      - 'data/trades.json'  # trades.json 변경 시 트리거
 jobs:
   update-data:
     runs-on: ubuntu-latest
-    
+   
     steps:
-    - uses: actions/checkout@v2
-    
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GH_PAT }}  # secrets.GH_PAT로 변경
+
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+   
     - name: Configure Git
       run: |
         git config --global user.name 'eqpair'
         git config --global user.email 'frmn3962@gmail.com'
-    
-    - name: Update Trades JSON
+   
+    - name: Update Timestamp
       run: |
-        # 현재 시간 기록
-        echo "{\"last_updated\": \"$(date '+%Y-%m-%d %H:%M:%S')\"}" > data/trades.json
-    
+        # jq를 사용해 JSON 파일의 타임스탬프 업데이트
+        jq --arg time "$(date '+%Y-%m-%d %H:%M:%S')" '.last_updated = $time' data/trades.json > temp.json
+        mv temp.json data/trades.json
+   
     - name: Commit Changes
       run: |
         git add data/trades.json
-        git commit -m "Update trades data via GitHub Actions"
+        git commit -m "Auto-update trades data: $(date '+%Y-%m-%d %H:%M:%S'))"
         git push
