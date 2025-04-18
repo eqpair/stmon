@@ -9,7 +9,8 @@ from flask import Flask
 import argparse
 
 app = Flask(__name__)
-CORS(app)  # 모든 도메인에서의 접근 허용
+# 모든 도메인에서의 접근 허용
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=False)
 
 # 저장소 경로 설정
 REPO_PATH = '/home/eq/stmon'
