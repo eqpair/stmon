@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>트레이드 엔트리 관리</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .entries {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>트레이드 엔트리 관리</h1>
+        
+        <div id="message" style="display: none;" class="message"></div>
+        
+        <form id="entryForm">
+            <div class="form-group">
+                <label for="symbol">종목명</label>
+                <input type="text" id="symbol" name="symbol" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="type">유형</label>
+                <select id="type" name="type" required>
+                    <option value="매수">매수</option>
+                    <option value="매도">매도</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="price">가격</label>
+                <input type="number" id="price" name="price" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="quantity">수량</label>
+                <input type="number" id="quantity" name="quantity" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reason">사유</label>
+                <textarea id="reason" name="reason" rows="3"></textarea>
+            </div>
+            
+            <button type="submit">저장</button>
+        </form>
+        
+        <div class="entries">
+            <h2>트레이드 엔트리 목록</h2>
+            <table id="entriesTable">
+                <thead>
+                    <tr>
+                        <th>날짜/시간</th>
+                        <th>종목명</th>
+                        <th>유형</th>
+                        <th>가격</th>
+                        <th>수량</th>
+                        <th>사유</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 여기에 데이터가 동적으로 추가됩니다 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 폼 제출 이벤트 처리
+            const form = document.getElementById('entryForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 폼 데이터 수집
+                const entryData = {
+                    symbol: document.getElementById('symbol').value,
+                    type: document.getElementById('type').value,
+                    price: parseInt(document.getElementById('price').value),
+                    quantity: parseInt(document.getElementById('quantity').value),
+                    reason: document.getElementById('reason').value
+                };
+                
+                // API 호출
+                fetch('/api/trade-entry', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(entryData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showMessage(data.message, 'success');
+                        form.reset();
+                        loadEntries();
+                    } else {
+                        showMessage(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage('오류가 발생했습니다: ' + error, 'error');
+                });
+            });
+            
+            // 메시지 표시 함수
+            function showMessage(message, type) {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = message;
+                messageDiv.className = 'message ' + type;
+                messageDiv.style.display = 'block';
+                
+                // 3초 후 메시지 숨기기
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 3000);
+            }
+            
+            // 트레이드 엔트리 목록 로드 함수
+            function loadEntries() {
+                fetch('/api/trade-entries')
+                .then(response => response.json())
+                .then(entries => {
+                    const tableBody = document.querySelector('#entriesTable tbody');
+                    tableBody.innerHTML = '';
+                    
+                    entries.forEach(entry => {
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${entry.timestamp || '-'}</td>
+                            <td>${entry.symbol || '-'}</td>
+                            <td>${entry.type || '-'}</td>
+                            <td>${entry.price || '-'}</td>
+                            <td>${entry.quantity || '-'}</td>
+                            <td>${entry.reason || '-'}</td>
+                        `;
+                        
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('트레이드 엔트리 로드 오류:', error);
+                });
+            }
+            
+            // 페이지 로드 시 트레이드 엔트리 목록 로드
+            loadEntries();
+        });
+    </script>
+</body>
+</html>
