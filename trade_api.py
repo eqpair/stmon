@@ -10,7 +10,8 @@ import argparse
 
 app = Flask(__name__)
 # 모든 도메인에서의 접근 허용
-CORS(app, resources={r"/*": {"origins": "https://eqpair.github.io"}})
+# CORS(app, resources={r"/*": {"origins": "https://eqpair.github.io"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # 저장소 경로 설정
 REPO_PATH = '/home/eq/stmon'
