@@ -71,7 +71,13 @@ class GitHubUpdater:
     def run_command(self, command):
         """Shell 명령어 실행"""
         logger.debug(f"명령어 실행: {command}")
-        process = subprocess.run(command, shell=True, capture_output=True, text=True)
+        process = subprocess.run(
+            command, 
+            shell=True, 
+            capture_output=True, 
+            text=True,
+            cwd="/home/eq/stmon"  # 작업 디렉토리 명시적 지정
+        )
         
         if process.returncode != 0:
             logger.error(f"명령어 실패: {process.stderr}")
