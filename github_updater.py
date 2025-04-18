@@ -23,7 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # GitHub 저장소 정보
-GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/pi/work/m5000')
+GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/m5000')
 GITHUB_USERNAME = os.environ.get('GITHUB_USERNAME', 'eqpair')
 GITHUB_EMAIL = os.environ.get('GITHUB_EMAIL', 'frmn3962@gmail.com')
 # SSH 방식으로 변경
