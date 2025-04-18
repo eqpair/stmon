@@ -29,7 +29,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # 기본 데이터 디렉토리
-DATA_DIR = Path("data")
+GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/stmon')
+DATA_DIR = Path(f"{GITHUB_REPO_PATH}/data")
 TRENDS_DIR = DATA_DIR / "trends"
 os.makedirs(TRENDS_DIR, exist_ok=True)
 

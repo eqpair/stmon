@@ -76,7 +76,7 @@ class GitHubUpdater:
             shell=True, 
             capture_output=True, 
             text=True,
-            cwd="/home/eq/stmon"  # 작업 디렉토리 명시적 지정
+            cwd=GITHUB_REPO_PATH  # 작업 디렉토리 명시적 지정
         )
         
         if process.returncode != 0:
