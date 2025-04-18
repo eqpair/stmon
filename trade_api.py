@@ -84,7 +84,7 @@ def save_trade_entry(entry_data):
         return False
 
 # API 엔드포인트 - 트레이드 엔트리 저장
-@app.route('/api/trade-entry', methods=['POST'])
+@app.route('/api/trade-entry', methods=['GET', 'POST'])
 def add_trade_entry():
     try:
         # 요청 데이터 가져오기

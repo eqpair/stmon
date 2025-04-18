@@ -490,19 +490,23 @@
                 fetch('http://192.168.0.51:5002/api/trade-entry', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(formData)  // 데이터를 JSON 문자열로 변환
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Success:', data);
-                        // 성공 처리
+                        if (data.status === 'success') {
+                            // 성공 처리
+                            console.log('저장 성공:', data.message);
+                        } else {
+                            // 오류 처리
+                            console.error('저장 실패:', data.message);
+                        }
                     })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        // 오류 처리 - 로컬 스토리지에 임시 저장
+                    .catch(error => {
+                        console.error('API 요청 오류:', error);
+                        // 로컬 스토리지에 임시 저장
                     });
             });
         });
