@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import json
 import os
 import subprocess
 from datetime import datetime
 
-app = Flask(__name__, static_url_path='', static_folder='static')
+app = Flask(__name__)
+CORS(app)  # 모든 도메인에서의 접근 허용
 
 # 저장소 경로 설정
 REPO_PATH = '/home/eq/stmon'
@@ -76,11 +78,6 @@ def save_trade_entry(entry_data):
         print(f"트레이드 엔트리 저장 오류: {str(e)}")
         return False
 
-# 루트 경로 - 메인 페이지
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
-
 # API 엔드포인트 - 트레이드 엔트리 저장
 @app.route('/api/trade-entry', methods=['POST'])
 def add_trade_entry():
@@ -114,8 +111,4 @@ def get_trade_entries():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    # 정적 파일 디렉토리 생성
-    os.makedirs(f"{REPO_PATH}/static", exist_ok=True)
-    
-    # 개발 서버 실행 (실제 운영 환경에서는 Gunicorn이나 uWSGI 사용 권장)
     app.run(debug=True, host='0.0.0.0', port=5000)
