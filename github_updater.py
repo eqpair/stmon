@@ -23,7 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # GitHub 저장소 정보
-GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/m5000')
+GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/stmon')
 GITHUB_USERNAME = os.environ.get('GITHUB_USERNAME', 'eqpair')
 GITHUB_EMAIL = os.environ.get('GITHUB_EMAIL', 'frmn3962@gmail.com')
 # SSH 방식으로 변경
@@ -346,7 +346,7 @@ async def start_github_updater(daily_run=False):
     
         # 30분 대기
         logger.info("다음 업데이트까지 30분 대기 중...")
-        await asyncio.sleep(1800)  # 30분마다 업데이트
+        await asyncio.sleep(600)  # 30분마다 업데이트
 
 # 메인 함수
 if __name__ == "__main__":
