@@ -4,6 +4,9 @@ import json
 import os
 import subprocess
 from datetime import datetime
+import argparse
+from flask import Flask
+import argparse
 
 app = Flask(__name__)
 CORS(app)  # 모든 도메인에서의 접근 허용
@@ -111,4 +114,5 @@ def get_trade_entries():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)
+
