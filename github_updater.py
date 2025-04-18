@@ -299,40 +299,6 @@ class GitHubUpdater:
         
         except Exception as e:
             logger.error(f"트렌드 데이터 업데이트 오류: {str(e)}")
-    def save_trade_entry(self, entry_data):
-        """트레이드 엔트리 데이터를 trades.json 파일에 저장"""
-        try:
-            # 데이터 파일 경로 설정
-            trades_file = f"{self.repo_path}/data/trades.json"
-            
-            # 기존 데이터 로드 (파일이 없으면 빈 리스트 생성)
-            try:
-                with open(trades_file, 'r', encoding='utf-8') as f:
-                    trades = json.load(f)
-            except (FileNotFoundError, json.JSONDecodeError):
-                trades = []
-            
-            # 새 엔트리에 타임스탬프 추가
-            entry_data['timestamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            
-            # 새 엔트리 추가
-            trades.append(entry_data)
-            
-            # 데이터 저장
-            with open(trades_file, 'w', encoding='utf-8') as f:
-                json.dump(trades, f, ensure_ascii=False, indent=2)
-            
-            logger.info(f"트레이드 엔트리 저장 성공: {trades_file}")
-            
-            # GitHub에 변경사항 커밋 및 푸시
-            self._commit_and_push()
-            
-            return True
-        except Exception as e:
-            logger.error(f"트레이드 엔트리 저장 오류: {str(e)}")
-            import traceback
-            logger.error(traceback.format_exc())
-            return False
 
     def _commit_and_push(self):
         """변경사항 커밋 및 GitHub 저장소에 푸시"""
