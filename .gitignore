@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 가상환경
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# 환경변수
+.env
+.env.local
+
+# 데이터베이스
+*.db
+*.sqlite3

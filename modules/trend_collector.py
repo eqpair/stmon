@@ -39,9 +39,13 @@ class TrendCollector:
         self._session = None
 
     async def _get_session(self):
-        if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession()
-        return self._session
+        connector = aiohttp.TCPConnector(ssl=False)  # SSL 검증 비활성화
+        return aiohttp.ClientSession(connector=connector)
+
+#    async def _get_session(self):
+#        if self._session is None or self._session.closed:
+#            self._session = aiohttp.ClientSession()
+#        return self._session
 
     async def collect_all_trends(self):
         """모든 종목의 트렌드 데이터 수집"""
@@ -81,20 +85,24 @@ class TrendCollector:
         """특정 종목 페어의 트렌드 데이터 수집"""
         session = None
         try:
-            # 세션 가져오기
+            # 세션 가져오기 (SSL 검증 비활성화)
             session = await self._get_session()
             
-            # 1년(365일) 데이터 가져오기로 수정
             days_to_fetch = 365
             end_date = datetime.now()
             start_date = end_date - timedelta(days=days_to_fetch)
             
-            # A 종목(보통주) 데이터 가져오기
-            a_data = await self._fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30)
+            # A/B 종목 데이터 수집 (병렬 처리)
+            a_data, b_data = await asyncio.gather(
+                self._fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30),
+                self._fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
+            )
             
-            # B 종목(우선주) 데이터 가져오기
-            b_data = await self._fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
-            
+            # 데이터 유효성 검사 강화
+            if not a_data or not b_data:
+                logger.error(f"데이터 수신 실패: A={bool(a_data)}, B={bool(b_data)}")
+                return False
+                
             # 데이터 처리 및 저장
             result = self._process_trend_data(pair, a_data, b_data)
             
@@ -102,36 +110,42 @@ class TrendCollector:
                 self._save_trend_data(pair.A_code, result)
                 logger.info(f"{pair.A_name} 트렌드 데이터 수집 완료 (1년치)")
                 return True
-            else:
-                logger.warning(f"{pair.A_name} 트렌드 데이터 처리 실패")
-                return False
                 
         except Exception as e:
             logger.error(f"{pair.A_name} 트렌드 데이터 수집 중 오류: {str(e)}")
-            raise
+            import traceback
+            logger.error(traceback.format_exc())
             
         finally:
-            # 이 부분이 추가되어야 함: 세션 명시적으로 닫기
             if session and not session.closed:
                 await session.close()
+        return False
+
 
     async def _fetch_stock_history(self, session, stock_code, start_date, days):
-        """주식 히스토리 데이터 가져오기 - 1년 데이터용 수정"""
-        # 네이버 금융 API URL (일별 차트 데이터)
-        # 1년치 데이터를 위해 충분한 수의 데이터 요청
         url = f"https://fchart.stock.naver.com/sise.nhn?symbol={stock_code}&timeframe=day&startTime={start_date.strftime('%Y%m%d')}&count={days}&requestType=0"
         
-        try:
-            async with session.get(url) as response:
-                if response.status != 200:
-                    logger.error(f"API 응답 오류 ({stock_code}): HTTP {response.status}")
+        # 재시도 로직 추가
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                    if response.status != 200:
+                        logger.error(f"API 응답 오류 ({stock_code}): HTTP {response.status}")
+                        return None
+                    
+                    content = await response.text()
+                    if not content:
+                        logger.warning(f"빈 응답 수신 ({stock_code})")
+                        return None
+                    
+                    return content
+                    
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    logger.error(f"최종 시도 실패 ({stock_code}): {str(e)}")
                     return None
-                
-                return await response.text()
-                
-        except Exception as e:
-            logger.error(f"데이터 요청 중 오류 ({stock_code}): {str(e)}")
-            return None
+                await asyncio.sleep(2 ** attempt)  # 지수 백오프
 
     def _process_trend_data(self, pair, a_data, b_data):
         try:

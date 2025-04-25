@@ -198,3 +198,544 @@
 2025-04-25 14:03:23,609 - __main__ - ERROR - 45014K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
 2025-04-25 14:03:23,609 - __main__ - WARNING -  데이터 파싱 실패
 2025-04-25 14:03:23,610 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:05:49,039 - __main__ - INFO - 트렌드 데이터 수집 시작...
+2025-04-25 14:05:50,623 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005930.json
+2025-04-25 14:05:50,623 - __main__ - INFO - 파일 크기: 57184 바이트
+2025-04-25 14:05:50,624 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:05:50,627 - __main__ - ERROR - 데이터 요청 중 오류 (45014K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:05:51,159 - __main__ - ERROR - 45014K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:05:51,160 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:05:51,160 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:05:51,161 - __main__ - ERROR - 데이터 요청 중 오류 (004105): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:05:51,694 - __main__ - ERROR - 004105 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:05:51,695 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:05:51,695 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:05:51,696 - __main__ - INFO - 배치 처리 완료: 1~3 / 84
+2025-04-25 14:05:57,773 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004830.json
+2025-04-25 14:05:57,773 - __main__ - INFO - 파일 크기: 50581 바이트
+2025-04-25 14:05:57,774 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:05:57,777 - __main__ - ERROR - 데이터 요청 중 오류 (004255): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:05:58,310 - __main__ - ERROR - 004255 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:05:58,311 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:05:58,312 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:05:58,312 - __main__ - ERROR - 데이터 요청 중 오류 (001795): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:05:58,843 - __main__ - ERROR - 001795 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:05:58,844 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:05:58,844 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:05:58,845 - __main__ - INFO - 배치 처리 완료: 4~6 / 84
+2025-04-25 14:06:05,083 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/007810.json
+2025-04-25 14:06:05,084 - __main__ - INFO - 파일 크기: 56020 바이트
+2025-04-25 14:06:05,084 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:06:05,086 - __main__ - ERROR - 데이터 요청 중 오류 (005385): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:06:05,561 - __main__ - ERROR - 005385 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:06:05,562 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:06:05,562 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:06:05,562 - __main__ - ERROR - 데이터 요청 중 오류 (002025): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:06:06,081 - __main__ - ERROR - 002025 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:06:06,081 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:06:06,082 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:06:06,082 - __main__ - INFO - 배치 처리 완료: 7~9 / 84
+2025-04-25 14:06:12,481 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003070.json
+2025-04-25 14:06:12,482 - __main__ - INFO - 파일 크기: 57435 바이트
+2025-04-25 14:06:12,482 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:11:11,514 - __main__ - ERROR - 데이터 요청 중 오류 (003545): 
+2025-04-25 14:11:11,980 - __main__ - ERROR - 003545 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:11,980 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:11,980 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:11,981 - __main__ - ERROR - 데이터 요청 중 오류 (004985): 
+2025-04-25 14:11:12,394 - __main__ - ERROR - 004985 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:12,394 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:12,394 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:12,395 - __main__ - INFO - 배치 처리 완료: 10~12 / 84
+2025-04-25 14:11:18,493 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005940.json
+2025-04-25 14:11:18,493 - __main__ - INFO - 파일 크기: 46410 바이트
+2025-04-25 14:11:18,493 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:11:18,496 - __main__ - ERROR - 데이터 요청 중 오류 (066575): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:18,909 - __main__ - ERROR - 066575 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:18,909 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:18,909 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:18,910 - __main__ - ERROR - 데이터 요청 중 오류 (019175): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:19,335 - __main__ - ERROR - 019175 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:19,335 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:19,335 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:19,336 - __main__ - INFO - 배치 처리 완료: 13~15 / 84
+2025-04-25 14:11:25,443 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/009830.json
+2025-04-25 14:11:25,444 - __main__ - INFO - 파일 크기: 57520 바이트
+2025-04-25 14:11:25,444 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:11:25,447 - __main__ - ERROR - 데이터 요청 중 오류 (003535): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:25,869 - __main__ - ERROR - 003535 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:25,869 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:25,869 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:25,870 - __main__ - ERROR - 데이터 요청 중 오류 (004365): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:26,300 - __main__ - ERROR - 004365 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:26,301 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:26,301 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:26,301 - __main__ - INFO - 배치 처리 완료: 16~18 / 84
+2025-04-25 14:11:32,447 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/051900.json
+2025-04-25 14:11:32,448 - __main__ - INFO - 파일 크기: 49445 바이트
+2025-04-25 14:11:32,448 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:11:32,449 - __main__ - ERROR - 데이터 요청 중 오류 (090435): Session is closed
+2025-04-25 14:11:32,872 - __main__ - ERROR - 090435 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:32,873 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:32,873 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:32,875 - __main__ - ERROR - 데이터 요청 중 오류 (051915): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:33,295 - __main__ - ERROR - 051915 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:33,296 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:33,296 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:33,296 - __main__ - INFO - 배치 처리 완료: 19~21 / 84
+2025-04-25 14:11:39,710 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/002790.json
+2025-04-25 14:11:39,711 - __main__ - INFO - 파일 크기: 56813 바이트
+2025-04-25 14:11:39,711 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:11:39,713 - __main__ - ERROR - 데이터 요청 중 오류 (010955): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:40,135 - __main__ - ERROR - 010955 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:40,135 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:40,135 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:40,136 - __main__ - ERROR - 데이터 요청 중 오류 (003495): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:40,564 - __main__ - ERROR - 003495 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:40,565 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:40,565 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:40,565 - __main__ - INFO - 배치 처리 완료: 22~24 / 84
+2025-04-25 14:11:46,645 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/071050.json
+2025-04-25 14:11:46,645 - __main__ - INFO - 파일 크기: 52262 바이트
+2025-04-25 14:11:46,645 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:11:46,648 - __main__ - ERROR - 데이터 요청 중 오류 (18064K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:47,062 - __main__ - ERROR - 18064K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:47,063 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:47,063 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:47,064 - __main__ - ERROR - 데이터 요청 중 오류 (001515): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:47,559 - __main__ - ERROR - 001515 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:47,560 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:47,560 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:47,561 - __main__ - INFO - 배치 처리 완료: 25~27 / 84
+2025-04-25 14:11:53,658 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/363280.json
+2025-04-25 14:11:53,658 - __main__ - INFO - 파일 크기: 52296 바이트
+2025-04-25 14:11:53,658 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:11:53,661 - __main__ - ERROR - 데이터 요청 중 오류 (006805): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:54,075 - __main__ - ERROR - 006805 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:54,076 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:54,076 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:54,076 - __main__ - ERROR - 데이터 요청 중 오류 (005965): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:11:54,509 - __main__ - ERROR - 005965 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:11:54,510 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:11:54,510 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:11:54,511 - __main__ - INFO - 배치 처리 완료: 28~30 / 84
+2025-04-25 14:12:00,564 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/008350.json
+2025-04-25 14:12:00,564 - __main__ - INFO - 파일 크기: 44744 바이트
+2025-04-25 14:12:00,564 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:12:00,567 - __main__ - ERROR - 데이터 요청 중 오류 (26490K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:00,985 - __main__ - ERROR - 26490K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:00,986 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:00,986 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:00,986 - __main__ - ERROR - 데이터 요청 중 오류 (000155): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:01,411 - __main__ - ERROR - 000155 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:01,411 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:01,411 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:01,412 - __main__ - INFO - 배치 처리 완료: 31~33 / 84
+2025-04-25 14:12:07,472 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/011780.json
+2025-04-25 14:12:07,472 - __main__ - INFO - 파일 크기: 48104 바이트
+2025-04-25 14:12:07,472 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:12:07,475 - __main__ - ERROR - 데이터 요청 중 오류 (108675): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:07,941 - __main__ - ERROR - 108675 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:07,942 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:07,942 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:07,942 - __main__ - ERROR - 데이터 요청 중 오류 (005725): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:08,406 - __main__ - ERROR - 005725 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:08,407 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:08,407 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:08,408 - __main__ - INFO - 배치 처리 완료: 34~36 / 84
+2025-04-25 14:12:14,609 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000810.json
+2025-04-25 14:12:14,609 - __main__ - INFO - 파일 크기: 53239 바이트
+2025-04-25 14:12:14,610 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:12:14,612 - __main__ - ERROR - 데이터 요청 중 오류 (28513K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:15,027 - __main__ - ERROR - 28513K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:15,028 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:15,028 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:15,028 - __main__ - ERROR - 데이터 요청 중 오류 (084695): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:15,450 - __main__ - ERROR - 084695 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:15,451 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:15,451 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:15,452 - __main__ - INFO - 배치 처리 완료: 37~39 / 84
+2025-04-25 14:12:21,508 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/032680.json
+2025-04-25 14:12:21,508 - __main__ - INFO - 파일 크기: 56015 바이트
+2025-04-25 14:12:21,509 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:12:21,511 - __main__ - ERROR - 데이터 요청 중 오류 (000325): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:21,922 - __main__ - ERROR - 000325 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:21,922 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:21,923 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:21,923 - __main__ - ERROR - 데이터 요청 중 오류 (009155): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:22,355 - __main__ - ERROR - 009155 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:22,355 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:22,355 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:22,356 - __main__ - INFO - 배치 처리 완료: 40~42 / 84
+2025-04-25 14:12:28,469 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/120110.json
+2025-04-25 14:12:28,470 - __main__ - INFO - 파일 크기: 55156 바이트
+2025-04-25 14:12:28,470 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:12:28,472 - __main__ - ERROR - 데이터 요청 중 오류 (006405): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 14:12:28,900 - __main__ - ERROR - 006405 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 14:12:28,900 - __main__ - WARNING -  데이터 파싱 실패
+2025-04-25 14:12:28,901 - __main__ - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 14:12:57,466 - __main__ - INFO - 트렌드 데이터 수집 시작...
+2025-04-25 14:12:59,071 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/450140.json
+2025-04-25 14:12:59,072 - __main__ - INFO - 파일 크기: 43508 바이트
+2025-04-25 14:12:59,072 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:00,440 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005930.json
+2025-04-25 14:13:00,441 - __main__ - INFO - 파일 크기: 57182 바이트
+2025-04-25 14:13:00,442 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:01,907 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004100.json
+2025-04-25 14:13:01,908 - __main__ - INFO - 파일 크기: 39158 바이트
+2025-04-25 14:13:01,908 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:01,911 - __main__ - INFO - 배치 처리 완료: 1~3 / 84
+2025-04-25 14:13:08,284 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004830.json
+2025-04-25 14:13:08,285 - __main__ - INFO - 파일 크기: 50583 바이트
+2025-04-25 14:13:08,285 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:09,731 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004250.json
+2025-04-25 14:13:09,732 - __main__ - INFO - 파일 크기: 52068 바이트
+2025-04-25 14:13:09,732 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:11,151 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001790.json
+2025-04-25 14:13:11,152 - __main__ - INFO - 파일 크기: 42229 바이트
+2025-04-25 14:13:11,152 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:11,155 - __main__ - INFO - 배치 처리 완료: 4~6 / 84
+2025-04-25 14:13:17,763 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005380.json
+2025-04-25 14:13:17,763 - __main__ - INFO - 파일 크기: 58509 바이트
+2025-04-25 14:13:17,764 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:19,293 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/007810.json
+2025-04-25 14:13:19,294 - __main__ - INFO - 파일 크기: 56020 바이트
+2025-04-25 14:13:19,294 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:20,727 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/002020.json
+2025-04-25 14:13:20,727 - __main__ - INFO - 파일 크기: 57049 바이트
+2025-04-25 14:13:20,728 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:20,730 - __main__ - INFO - 배치 처리 완료: 7~9 / 84
+2025-04-25 14:13:27,808 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003540.json
+2025-04-25 14:13:27,808 - __main__ - INFO - 파일 크기: 54934 바이트
+2025-04-25 14:13:27,809 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:29,135 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004980.json
+2025-04-25 14:13:29,136 - __main__ - INFO - 파일 크기: 47679 바이트
+2025-04-25 14:13:29,136 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:30,408 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003070.json
+2025-04-25 14:13:30,408 - __main__ - INFO - 파일 크기: 57435 바이트
+2025-04-25 14:13:30,408 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:30,410 - __main__ - INFO - 배치 처리 완료: 10~12 / 84
+2025-04-25 14:13:36,849 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/019170.json
+2025-04-25 14:13:36,849 - __main__ - INFO - 파일 크기: 41724 바이트
+2025-04-25 14:13:36,849 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:38,114 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005940.json
+2025-04-25 14:13:38,114 - __main__ - INFO - 파일 크기: 46410 바이트
+2025-04-25 14:13:38,114 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:39,300 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/066570.json
+2025-04-25 14:13:39,301 - __main__ - INFO - 파일 크기: 57111 바이트
+2025-04-25 14:13:39,301 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:39,303 - __main__ - INFO - 배치 처리 완료: 13~15 / 84
+2025-04-25 14:13:45,643 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003530.json
+2025-04-25 14:13:45,644 - __main__ - INFO - 파일 크기: 42442 바이트
+2025-04-25 14:13:45,644 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:46,952 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004360.json
+2025-04-25 14:13:46,952 - __main__ - INFO - 파일 크기: 56934 바이트
+2025-04-25 14:13:46,953 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:48,232 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/009830.json
+2025-04-25 14:13:48,233 - __main__ - INFO - 파일 크기: 57520 바이트
+2025-04-25 14:13:48,233 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:48,235 - __main__ - INFO - 배치 처리 완료: 16~18 / 84
+2025-04-25 14:13:54,790 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/051910.json
+2025-04-25 14:13:54,790 - __main__ - INFO - 파일 크기: 56600 바이트
+2025-04-25 14:13:54,791 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:56,051 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/090430.json
+2025-04-25 14:13:56,051 - __main__ - INFO - 파일 크기: 56527 바이트
+2025-04-25 14:13:56,051 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:57,290 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/051900.json
+2025-04-25 14:13:57,290 - __main__ - INFO - 파일 크기: 49445 바이트
+2025-04-25 14:13:57,291 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:13:57,293 - __main__ - INFO - 배치 처리 완료: 19~21 / 84
+2025-04-25 14:14:03,671 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003490.json
+2025-04-25 14:14:03,672 - __main__ - INFO - 파일 크기: 51660 바이트
+2025-04-25 14:14:03,672 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:04,939 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/002790.json
+2025-04-25 14:14:04,939 - __main__ - INFO - 파일 크기: 56813 바이트
+2025-04-25 14:14:04,940 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:06,375 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/010950.json
+2025-04-25 14:14:06,375 - __main__ - INFO - 파일 크기: 49830 바이트
+2025-04-25 14:14:06,376 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:06,379 - __main__ - INFO - 배치 처리 완료: 22~24 / 84
+2025-04-25 14:14:12,832 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/180640.json
+2025-04-25 14:14:12,832 - __main__ - INFO - 파일 크기: 36927 바이트
+2025-04-25 14:14:12,833 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:14,266 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/071050.json
+2025-04-25 14:14:14,267 - __main__ - INFO - 파일 크기: 52262 바이트
+2025-04-25 14:14:14,267 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:15,710 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001510.json
+2025-04-25 14:14:15,710 - __main__ - INFO - 파일 크기: 50292 바이트
+2025-04-25 14:14:15,711 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:15,714 - __main__ - INFO - 배치 처리 완료: 25~27 / 84
+2025-04-25 14:14:22,255 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/363280.json
+2025-04-25 14:14:22,255 - __main__ - INFO - 파일 크기: 52296 바이트
+2025-04-25 14:14:22,256 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:23,687 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005960.json
+2025-04-25 14:14:23,687 - __main__ - INFO - 파일 크기: 56538 바이트
+2025-04-25 14:14:23,688 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:24,978 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/006800.json
+2025-04-25 14:14:24,979 - __main__ - INFO - 파일 크기: 51361 바이트
+2025-04-25 14:14:24,979 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:24,981 - __main__ - INFO - 배치 처리 완료: 28~30 / 84
+2025-04-25 14:14:31,582 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/264900.json
+2025-04-25 14:14:31,583 - __main__ - INFO - 파일 크기: 49778 바이트
+2025-04-25 14:14:31,583 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:32,882 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/008350.json
+2025-04-25 14:14:32,883 - __main__ - INFO - 파일 크기: 44755 바이트
+2025-04-25 14:14:32,883 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:34,138 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000150.json
+2025-04-25 14:14:34,139 - __main__ - INFO - 파일 크기: 44728 바이트
+2025-04-25 14:14:34,139 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:34,141 - __main__ - INFO - 배치 처리 완료: 31~33 / 84
+2025-04-25 14:14:40,554 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/108670.json
+2025-04-25 14:14:40,554 - __main__ - INFO - 파일 크기: 57296 바이트
+2025-04-25 14:14:40,554 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:41,815 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005720.json
+2025-04-25 14:14:41,815 - __main__ - INFO - 파일 크기: 52565 바이트
+2025-04-25 14:14:41,816 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:43,055 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/011780.json
+2025-04-25 14:14:43,055 - __main__ - INFO - 파일 크기: 48104 바이트
+2025-04-25 14:14:43,056 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:43,058 - __main__ - INFO - 배치 처리 완료: 34~36 / 84
+2025-04-25 14:14:49,376 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/084690.json
+2025-04-25 14:14:49,376 - __main__ - INFO - 파일 크기: 45298 바이트
+2025-04-25 14:14:49,377 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:50,692 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/285130.json
+2025-04-25 14:14:50,692 - __main__ - INFO - 파일 크기: 53204 바이트
+2025-04-25 14:14:50,692 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:51,950 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000810.json
+2025-04-25 14:14:51,951 - __main__ - INFO - 파일 크기: 53239 바이트
+2025-04-25 14:14:51,951 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:51,953 - __main__ - INFO - 배치 처리 완료: 37~39 / 84
+2025-04-25 14:14:58,309 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/009150.json
+2025-04-25 14:14:58,309 - __main__ - INFO - 파일 크기: 49872 바이트
+2025-04-25 14:14:58,309 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:14:59,556 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000320.json
+2025-04-25 14:14:59,557 - __main__ - INFO - 파일 크기: 35514 바이트
+2025-04-25 14:14:59,557 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:00,804 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/032680.json
+2025-04-25 14:15:00,805 - __main__ - INFO - 파일 크기: 56015 바이트
+2025-04-25 14:15:00,805 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:00,807 - __main__ - INFO - 배치 처리 완료: 40~42 / 84
+2025-04-25 14:15:07,236 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003550.json
+2025-04-25 14:15:07,237 - __main__ - INFO - 파일 크기: 56864 바이트
+2025-04-25 14:15:07,237 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:08,502 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/006400.json
+2025-04-25 14:15:08,503 - __main__ - INFO - 파일 크기: 56473 바이트
+2025-04-25 14:15:08,503 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:09,929 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/120110.json
+2025-04-25 14:15:09,929 - __main__ - INFO - 파일 크기: 55157 바이트
+2025-04-25 14:15:09,930 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:09,932 - __main__ - INFO - 배치 처리 완료: 43~45 / 84
+2025-04-25 14:15:16,010 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/006340.json
+2025-04-25 14:15:16,010 - __main__ - INFO - 파일 크기: 37653 바이트
+2025-04-25 14:15:16,011 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:17,023 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000540.json
+2025-04-25 14:15:17,023 - __main__ - INFO - 파일 크기: 50173 바이트
+2025-04-25 14:15:17,024 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:18,026 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/009410.json
+2025-04-25 14:15:18,026 - __main__ - INFO - 파일 크기: 56614 바이트
+2025-04-25 14:15:18,026 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:18,029 - __main__ - INFO - 배치 처리 완료: 46~48 / 84
+2025-04-25 14:15:24,120 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001750.json
+2025-04-25 14:15:24,120 - __main__ - INFO - 파일 크기: 36854 바이트
+2025-04-25 14:15:24,120 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:25,122 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/012200.json
+2025-04-25 14:15:25,122 - __main__ - INFO - 파일 크기: 52953 바이트
+2025-04-25 14:15:25,122 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:26,126 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/021040.json
+2025-04-25 14:15:26,126 - __main__ - INFO - 파일 크기: 41557 바이트
+2025-04-25 14:15:26,126 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:26,128 - __main__ - INFO - 배치 처리 완료: 49~51 / 84
+2025-04-25 14:15:32,269 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/096770.json
+2025-04-25 14:15:32,269 - __main__ - INFO - 파일 크기: 51075 바이트
+2025-04-25 14:15:32,270 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:33,372 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/008770.json
+2025-04-25 14:15:33,372 - __main__ - INFO - 파일 크기: 53216 바이트
+2025-04-25 14:15:33,373 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:34,392 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004410.json
+2025-04-25 14:15:34,392 - __main__ - INFO - 파일 크기: 43216 바이트
+2025-04-25 14:15:34,393 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:34,396 - __main__ - INFO - 배치 처리 완료: 52~54 / 84
+2025-04-25 14:15:40,532 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/375500.json
+2025-04-25 14:15:40,532 - __main__ - INFO - 파일 크기: 50454 바이트
+2025-04-25 14:15:40,532 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:41,558 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/078930.json
+2025-04-25 14:15:41,558 - __main__ - INFO - 파일 크기: 57677 바이트
+2025-04-25 14:15:41,558 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:42,578 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000720.json
+2025-04-25 14:15:42,578 - __main__ - INFO - 파일 크기: 52017 바이트
+2025-04-25 14:15:42,579 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:42,581 - __main__ - INFO - 배치 처리 완료: 55~57 / 84
+2025-04-25 14:15:48,800 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001680.json
+2025-04-25 14:15:48,800 - __main__ - INFO - 파일 크기: 48315 바이트
+2025-04-25 14:15:48,800 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:49,815 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/002990.json
+2025-04-25 14:15:49,815 - __main__ - INFO - 파일 크기: 56820 바이트
+2025-04-25 14:15:49,816 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:50,821 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/014280.json
+2025-04-25 14:15:50,822 - __main__ - INFO - 파일 크기: 48150 바이트
+2025-04-25 14:15:50,822 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:50,824 - __main__ - INFO - 배치 처리 완료: 58~60 / 84
+2025-04-25 14:15:57,136 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/006120.json
+2025-04-25 14:15:57,136 - __main__ - INFO - 파일 크기: 57343 바이트
+2025-04-25 14:15:57,136 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:58,141 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/097950.json
+2025-04-25 14:15:58,141 - __main__ - INFO - 파일 크기: 58290 바이트
+2025-04-25 14:15:58,141 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:59,198 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000210.json
+2025-04-25 14:15:59,198 - __main__ - INFO - 파일 크기: 57364 바이트
+2025-04-25 14:15:59,198 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:15:59,200 - __main__ - INFO - 배치 처리 완료: 61~63 / 84
+2025-04-25 14:16:05,384 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000880.json
+2025-04-25 14:16:05,385 - __main__ - INFO - 파일 크기: 56996 바이트
+2025-04-25 14:16:05,385 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:06,381 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/090350.json
+2025-04-25 14:16:06,382 - __main__ - INFO - 파일 크기: 52277 바이트
+2025-04-25 14:16:06,382 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:07,379 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001520.json
+2025-04-25 14:16:07,380 - __main__ - INFO - 파일 크기: 52248 바이트
+2025-04-25 14:16:07,380 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:07,382 - __main__ - INFO - 배치 처리 완료: 64~66 / 84
+2025-04-25 14:16:13,576 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005740.json
+2025-04-25 14:16:13,577 - __main__ - INFO - 파일 크기: 36814 바이트
+2025-04-25 14:16:13,577 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:14,576 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001040.json
+2025-04-25 14:16:14,576 - __main__ - INFO - 파일 크기: 56900 바이트
+2025-04-25 14:16:14,577 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:15,578 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005300.json
+2025-04-25 14:16:15,578 - __main__ - INFO - 파일 크기: 57962 바이트
+2025-04-25 14:16:15,578 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:15,581 - __main__ - INFO - 배치 처리 완료: 67~69 / 84
+2025-04-25 14:16:21,810 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/034730.json
+2025-04-25 14:16:21,811 - __main__ - INFO - 파일 크기: 58063 바이트
+2025-04-25 14:16:21,811 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:22,804 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/007570.json
+2025-04-25 14:16:22,804 - __main__ - INFO - 파일 크기: 45781 바이트
+2025-04-25 14:16:22,804 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:23,793 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/014910.json
+2025-04-25 14:16:23,793 - __main__ - INFO - 파일 크기: 46884 바이트
+2025-04-25 14:16:23,793 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:23,795 - __main__ - INFO - 배치 처리 완료: 70~72 / 84
+2025-04-25 14:16:30,032 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004990.json
+2025-04-25 14:16:30,032 - __main__ - INFO - 파일 크기: 45947 바이트
+2025-04-25 14:16:30,033 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:31,027 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000100.json
+2025-04-25 14:16:31,028 - __main__ - INFO - 파일 크기: 57909 바이트
+2025-04-25 14:16:31,028 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:32,022 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004540.json
+2025-04-25 14:16:32,023 - __main__ - INFO - 파일 크기: 47574 바이트
+2025-04-25 14:16:32,023 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:32,025 - __main__ - INFO - 배치 처리 완료: 73~75 / 84
+2025-04-25 14:16:38,328 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001270.json
+2025-04-25 14:16:38,328 - __main__ - INFO - 파일 크기: 46565 바이트
+2025-04-25 14:16:38,329 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:39,336 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003920.json
+2025-04-25 14:16:39,336 - __main__ - INFO - 파일 크기: 44271 바이트
+2025-04-25 14:16:39,336 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:40,428 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003460.json
+2025-04-25 14:16:40,428 - __main__ - INFO - 파일 크기: 50870 바이트
+2025-04-25 14:16:40,428 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:40,431 - __main__ - INFO - 배치 처리 완료: 76~78 / 84
+2025-04-25 14:16:46,699 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000140.json
+2025-04-25 14:16:46,700 - __main__ - INFO - 파일 크기: 46308 바이트
+2025-04-25 14:16:46,700 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:47,786 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/145990.json
+2025-04-25 14:16:47,786 - __main__ - INFO - 파일 크기: 57422 바이트
+2025-04-25 14:16:47,786 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:48,786 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001060.json
+2025-04-25 14:16:48,786 - __main__ - INFO - 파일 크기: 57876 바이트
+2025-04-25 14:16:48,787 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:48,789 - __main__ - INFO - 배치 처리 완료: 79~81 / 84
+2025-04-25 14:16:55,095 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/014820.json
+2025-04-25 14:16:55,096 - __main__ - INFO - 파일 크기: 41493 바이트
+2025-04-25 14:16:55,096 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:56,102 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/000070.json
+2025-04-25 14:16:56,103 - __main__ - INFO - 파일 크기: 56871 바이트
+2025-04-25 14:16:56,103 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:57,123 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001460.json
+2025-04-25 14:16:57,124 - __main__ - INFO - 파일 크기: 42009 바이트
+2025-04-25 14:16:57,124 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:16:57,126 - __main__ - INFO - 트렌드 데이터 수집 완료: 성공 84개, 실패 0개
+2025-04-25 14:17:04,127 - __main__ - INFO - 트렌드 데이터 수집 시작...
+2025-04-25 14:17:05,325 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004100.json
+2025-04-25 14:17:05,326 - __main__ - INFO - 파일 크기: 39159 바이트
+2025-04-25 14:17:05,326 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:06,331 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005930.json
+2025-04-25 14:17:06,331 - __main__ - INFO - 파일 크기: 57182 바이트
+2025-04-25 14:17:06,332 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:07,310 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/450140.json
+2025-04-25 14:17:07,310 - __main__ - INFO - 파일 크기: 43508 바이트
+2025-04-25 14:17:07,311 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:07,313 - __main__ - INFO - 배치 처리 완료: 1~3 / 84
+2025-04-25 14:17:13,404 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004250.json
+2025-04-25 14:17:13,404 - __main__ - INFO - 파일 크기: 52066 바이트
+2025-04-25 14:17:13,404 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:14,501 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/001790.json
+2025-04-25 14:17:14,501 - __main__ - INFO - 파일 크기: 42227 바이트
+2025-04-25 14:17:14,501 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:15,497 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004830.json
+2025-04-25 14:17:15,498 - __main__ - INFO - 파일 크기: 50578 바이트
+2025-04-25 14:17:15,498 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:15,500 - __main__ - INFO - 배치 처리 완료: 4~6 / 84
+2025-04-25 14:17:21,654 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005380.json
+2025-04-25 14:17:21,654 - __main__ - INFO - 파일 크기: 58507 바이트
+2025-04-25 14:17:21,655 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:22,658 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/007810.json
+2025-04-25 14:17:22,659 - __main__ - INFO - 파일 크기: 56020 바이트
+2025-04-25 14:17:22,659 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:23,656 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/002020.json
+2025-04-25 14:17:23,656 - __main__ - INFO - 파일 크기: 57049 바이트
+2025-04-25 14:17:23,657 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:23,659 - __main__ - INFO - 배치 처리 완료: 7~9 / 84
+2025-04-25 14:17:29,804 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003540.json
+2025-04-25 14:17:29,804 - __main__ - INFO - 파일 크기: 54934 바이트
+2025-04-25 14:17:29,804 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:30,853 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003070.json
+2025-04-25 14:17:30,854 - __main__ - INFO - 파일 크기: 57435 바이트
+2025-04-25 14:17:30,854 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:31,862 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004980.json
+2025-04-25 14:17:31,863 - __main__ - INFO - 파일 크기: 47679 바이트
+2025-04-25 14:17:31,863 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:31,865 - __main__ - INFO - 배치 처리 완료: 10~12 / 84
+2025-04-25 14:17:38,015 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/066570.json
+2025-04-25 14:17:38,015 - __main__ - INFO - 파일 크기: 57128 바이트
+2025-04-25 14:17:38,015 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:39,072 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/019170.json
+2025-04-25 14:17:39,072 - __main__ - INFO - 파일 크기: 41724 바이트
+2025-04-25 14:17:39,073 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:40,096 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/005940.json
+2025-04-25 14:17:40,096 - __main__ - INFO - 파일 크기: 46410 바이트
+2025-04-25 14:17:40,096 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:40,099 - __main__ - INFO - 배치 처리 완료: 13~15 / 84
+2025-04-25 14:17:46,188 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003530.json
+2025-04-25 14:17:46,188 - __main__ - INFO - 파일 크기: 42442 바이트
+2025-04-25 14:17:46,189 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:47,223 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/009830.json
+2025-04-25 14:17:47,223 - __main__ - INFO - 파일 크기: 57520 바이트
+2025-04-25 14:17:47,223 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:48,248 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/004360.json
+2025-04-25 14:17:48,249 - __main__ - INFO - 파일 크기: 56933 바이트
+2025-04-25 14:17:48,249 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:48,251 - __main__ - INFO - 배치 처리 완료: 16~18 / 84
+2025-04-25 14:17:54,526 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/051910.json
+2025-04-25 14:17:54,526 - __main__ - INFO - 파일 크기: 56602 바이트
+2025-04-25 14:17:54,527 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:55,736 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/051900.json
+2025-04-25 14:17:55,737 - __main__ - INFO - 파일 크기: 49445 바이트
+2025-04-25 14:17:55,737 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:56,744 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/090430.json
+2025-04-25 14:17:56,745 - __main__ - INFO - 파일 크기: 56524 바이트
+2025-04-25 14:17:56,745 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:17:56,747 - __main__ - INFO - 배치 처리 완료: 19~21 / 84
+2025-04-25 14:18:02,862 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/010950.json
+2025-04-25 14:18:02,863 - __main__ - INFO - 파일 크기: 49833 바이트
+2025-04-25 14:18:02,863 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:18:03,871 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/003490.json
+2025-04-25 14:18:03,871 - __main__ - INFO - 파일 크기: 51647 바이트
+2025-04-25 14:18:03,872 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:18:04,939 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/002790.json
+2025-04-25 14:18:04,940 - __main__ - INFO - 파일 크기: 56813 바이트
+2025-04-25 14:18:04,940 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:18:04,942 - __main__ - INFO - 배치 처리 완료: 22~24 / 84
+2025-04-25 14:18:11,139 - __main__ - INFO - 트렌드 데이터 저장 성공: data/trends/071050.json
+2025-04-25 14:18:11,139 - __main__ - INFO - 파일 크기: 52262 바이트
+2025-04-25 14:18:11,139 - __main__ - INFO -  트렌드 데이터 수집 완료 (1년치)
