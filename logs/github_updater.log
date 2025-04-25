@@ -630,3 +630,312 @@
 2025-04-25 14:18:57,926 - modules.trend_collector - INFO - 파일 크기: 41493 바이트
 2025-04-25 14:18:57,926 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
 2025-04-25 14:18:57,928 - modules.trend_collector - INFO - 트렌드 데이터 수집 완료: 성공 84개, 실패 0개
+2025-04-25 14:18:58,510 - __main__ - ERROR - 명령어 실패: fatal: could not read Username for 'https://github.com': No such device or address
+
+2025-04-25 14:18:58,510 - __main__ - ERROR - GitHub 커밋/푸시 오류: 명령어 실패: fatal: could not read Username for 'https://github.com': No such device or address
+
+2025-04-25 14:18:58,510 - __main__ - ERROR - 데이터 업데이트 오류: 명령어 실패: fatal: could not read Username for 'https://github.com': No such device or address
+
+2025-04-25 14:18:58,511 - __main__ - INFO - 다음 업데이트까지 30분 대기 중...
+2025-04-25 14:28:43,147 - __main__ - INFO - SSH 설정 완료
+2025-04-25 14:28:43,163 - __main__ - INFO - Git 설정 완료
+2025-04-25 14:28:43,164 - main - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-25 14:28:51,771 - main - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-25 14:29:00,115 - main - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-25 14:29:08,372 - main - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-25 14:29:16,391 - main - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-25 14:29:24,391 - main - INFO - 처리 중인 배치: 26~30 / 84
+2025-04-25 14:29:31,994 - main - INFO - 처리 중인 배치: 31~35 / 84
+2025-04-25 14:29:39,573 - main - INFO - 처리 중인 배치: 36~40 / 84
+2025-04-25 14:29:47,432 - main - INFO - 처리 중인 배치: 41~45 / 84
+2025-04-25 14:29:55,791 - main - INFO - 처리 중인 배치: 46~50 / 84
+2025-04-25 14:30:04,148 - main - INFO - 처리 중인 배치: 51~55 / 84
+2025-04-25 14:30:12,536 - main - INFO - 처리 중인 배치: 56~60 / 84
+2025-04-25 14:30:20,937 - main - INFO - 처리 중인 배치: 61~65 / 84
+2025-04-25 14:30:29,008 - main - INFO - 처리 중인 배치: 66~70 / 84
+2025-04-25 14:30:36,849 - main - INFO - 처리 중인 배치: 71~75 / 84
+2025-04-25 14:30:44,442 - main - INFO - 처리 중인 배치: 76~80 / 84
+2025-04-25 14:30:52,207 - main - INFO - 처리 중인 배치: 81~84 / 84
+2025-04-25 14:30:57,050 - __main__ - INFO - 파싱된 신호 수: 84
+2025-04-25 14:30:57,050 - __main__ - INFO - 파싱된 신호 수: 2
+2025-04-25 14:30:57,110 - modules.trend_collector - INFO - 트렌드 데이터 수집 시작...
+2025-04-25 14:30:58,585 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004100.json
+2025-04-25 14:30:58,586 - modules.trend_collector - INFO - 파일 크기: 39159 바이트
+2025-04-25 14:30:58,586 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:30:59,825 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/005930.json
+2025-04-25 14:30:59,825 - modules.trend_collector - INFO - 파일 크기: 57181 바이트
+2025-04-25 14:30:59,826 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:01,081 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/450140.json
+2025-04-25 14:31:01,082 - modules.trend_collector - INFO - 파일 크기: 43508 바이트
+2025-04-25 14:31:01,082 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:01,084 - modules.trend_collector - INFO - 배치 처리 완료: 1~3 / 84
+2025-04-25 14:31:07,236 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001790.json
+2025-04-25 14:31:07,236 - modules.trend_collector - INFO - 파일 크기: 42223 바이트
+2025-04-25 14:31:07,236 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:08,443 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004830.json
+2025-04-25 14:31:08,444 - modules.trend_collector - INFO - 파일 크기: 50579 바이트
+2025-04-25 14:31:08,445 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:09,814 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004250.json
+2025-04-25 14:31:09,816 - modules.trend_collector - INFO - 파일 크기: 52067 바이트
+2025-04-25 14:31:09,817 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:09,819 - modules.trend_collector - INFO - 배치 처리 완료: 4~6 / 84
+2025-04-25 14:31:15,910 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/007810.json
+2025-04-25 14:31:15,910 - modules.trend_collector - INFO - 파일 크기: 56019 바이트
+2025-04-25 14:31:15,910 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:17,141 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/002020.json
+2025-04-25 14:31:17,142 - modules.trend_collector - INFO - 파일 크기: 57049 바이트
+2025-04-25 14:31:17,142 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:18,470 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/005380.json
+2025-04-25 14:31:18,471 - modules.trend_collector - INFO - 파일 크기: 58507 바이트
+2025-04-25 14:31:18,471 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:18,474 - modules.trend_collector - INFO - 배치 처리 완료: 7~9 / 84
+2025-04-25 14:31:24,591 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/003070.json
+2025-04-25 14:31:24,591 - modules.trend_collector - INFO - 파일 크기: 57435 바이트
+2025-04-25 14:31:24,592 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:25,783 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004980.json
+2025-04-25 14:31:25,784 - modules.trend_collector - INFO - 파일 크기: 47680 바이트
+2025-04-25 14:31:25,784 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:27,032 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/003540.json
+2025-04-25 14:31:27,033 - modules.trend_collector - INFO - 파일 크기: 54935 바이트
+2025-04-25 14:31:27,033 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:27,035 - modules.trend_collector - INFO - 배치 처리 완료: 10~12 / 84
+2025-04-25 14:31:33,280 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/005940.json
+2025-04-25 14:31:33,281 - modules.trend_collector - INFO - 파일 크기: 46410 바이트
+2025-04-25 14:31:33,281 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:34,525 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/066570.json
+2025-04-25 14:31:34,525 - modules.trend_collector - INFO - 파일 크기: 57111 바이트
+2025-04-25 14:31:34,526 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:35,765 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/019170.json
+2025-04-25 14:31:35,765 - modules.trend_collector - INFO - 파일 크기: 41724 바이트
+2025-04-25 14:31:35,765 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:35,768 - modules.trend_collector - INFO - 배치 처리 완료: 13~15 / 84
+2025-04-25 14:31:41,874 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/009830.json
+2025-04-25 14:31:41,874 - modules.trend_collector - INFO - 파일 크기: 57522 바이트
+2025-04-25 14:31:41,875 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:43,178 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/003530.json
+2025-04-25 14:31:43,179 - modules.trend_collector - INFO - 파일 크기: 42442 바이트
+2025-04-25 14:31:43,179 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:44,443 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004360.json
+2025-04-25 14:31:44,443 - modules.trend_collector - INFO - 파일 크기: 56935 바이트
+2025-04-25 14:31:44,444 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:44,446 - modules.trend_collector - INFO - 배치 처리 완료: 16~18 / 84
+2025-04-25 14:31:50,537 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/090430.json
+2025-04-25 14:31:50,538 - modules.trend_collector - INFO - 파일 크기: 56526 바이트
+2025-04-25 14:31:50,538 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:51,770 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/051900.json
+2025-04-25 14:31:51,771 - modules.trend_collector - INFO - 파일 크기: 49445 바이트
+2025-04-25 14:31:51,771 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:53,029 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/051910.json
+2025-04-25 14:31:53,029 - modules.trend_collector - INFO - 파일 크기: 56602 바이트
+2025-04-25 14:31:53,030 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:31:53,033 - modules.trend_collector - INFO - 배치 처리 완료: 19~21 / 84
+2025-04-25 14:31:59,175 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/003490.json
+2025-04-25 14:31:59,176 - modules.trend_collector - INFO - 파일 크기: 51660 바이트
+2025-04-25 14:31:59,176 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:00,425 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/002790.json
+2025-04-25 14:32:00,426 - modules.trend_collector - INFO - 파일 크기: 56813 바이트
+2025-04-25 14:32:00,426 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:01,678 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/010950.json
+2025-04-25 14:32:01,679 - modules.trend_collector - INFO - 파일 크기: 49833 바이트
+2025-04-25 14:32:01,679 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:01,682 - modules.trend_collector - INFO - 배치 처리 완료: 22~24 / 84
+2025-04-25 14:32:07,774 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001510.json
+2025-04-25 14:32:07,775 - modules.trend_collector - INFO - 파일 크기: 50294 바이트
+2025-04-25 14:32:07,775 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:09,064 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/071050.json
+2025-04-25 14:32:09,064 - modules.trend_collector - INFO - 파일 크기: 52261 바이트
+2025-04-25 14:32:09,065 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:10,297 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/180640.json
+2025-04-25 14:32:10,298 - modules.trend_collector - INFO - 파일 크기: 36927 바이트
+2025-04-25 14:32:10,298 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:10,301 - modules.trend_collector - INFO - 배치 처리 완료: 25~27 / 84
+2025-04-25 14:32:16,406 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/005960.json
+2025-04-25 14:32:16,407 - modules.trend_collector - INFO - 파일 크기: 56538 바이트
+2025-04-25 14:32:16,407 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:17,656 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/363280.json
+2025-04-25 14:32:17,656 - modules.trend_collector - INFO - 파일 크기: 52296 바이트
+2025-04-25 14:32:17,656 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:18,957 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/006800.json
+2025-04-25 14:32:18,957 - modules.trend_collector - INFO - 파일 크기: 51361 바이트
+2025-04-25 14:32:18,958 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:18,961 - modules.trend_collector - INFO - 배치 처리 완료: 28~30 / 84
+2025-04-25 14:32:25,263 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000150.json
+2025-04-25 14:32:25,263 - modules.trend_collector - INFO - 파일 크기: 44728 바이트
+2025-04-25 14:32:25,264 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:26,503 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/008350.json
+2025-04-25 14:32:26,504 - modules.trend_collector - INFO - 파일 크기: 44744 바이트
+2025-04-25 14:32:26,504 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:27,746 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/264900.json
+2025-04-25 14:32:27,746 - modules.trend_collector - INFO - 파일 크기: 49777 바이트
+2025-04-25 14:32:27,747 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:27,749 - modules.trend_collector - INFO - 배치 처리 완료: 31~33 / 84
+2025-04-25 14:32:33,951 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/005720.json
+2025-04-25 14:32:33,952 - modules.trend_collector - INFO - 파일 크기: 52565 바이트
+2025-04-25 14:32:33,952 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:35,248 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/108670.json
+2025-04-25 14:32:35,249 - modules.trend_collector - INFO - 파일 크기: 57296 바이트
+2025-04-25 14:32:35,249 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:36,487 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/011780.json
+2025-04-25 14:32:36,487 - modules.trend_collector - INFO - 파일 크기: 48103 바이트
+2025-04-25 14:32:36,488 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:36,490 - modules.trend_collector - INFO - 배치 처리 완료: 34~36 / 84
+2025-04-25 14:32:42,635 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000810.json
+2025-04-25 14:32:42,635 - modules.trend_collector - INFO - 파일 크기: 53239 바이트
+2025-04-25 14:32:42,636 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:43,901 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/285130.json
+2025-04-25 14:32:43,901 - modules.trend_collector - INFO - 파일 크기: 53204 바이트
+2025-04-25 14:32:43,901 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:45,138 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/084690.json
+2025-04-25 14:32:45,139 - modules.trend_collector - INFO - 파일 크기: 45298 바이트
+2025-04-25 14:32:45,139 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:45,142 - modules.trend_collector - INFO - 배치 처리 완료: 37~39 / 84
+2025-04-25 14:32:51,293 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/009150.json
+2025-04-25 14:32:51,293 - modules.trend_collector - INFO - 파일 크기: 49873 바이트
+2025-04-25 14:32:51,294 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:52,668 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/032680.json
+2025-04-25 14:32:52,669 - modules.trend_collector - INFO - 파일 크기: 56014 바이트
+2025-04-25 14:32:52,669 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:53,956 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000320.json
+2025-04-25 14:32:53,957 - modules.trend_collector - INFO - 파일 크기: 35515 바이트
+2025-04-25 14:32:53,957 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:32:53,960 - modules.trend_collector - INFO - 배치 처리 완료: 40~42 / 84
+2025-04-25 14:33:00,060 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/003550.json
+2025-04-25 14:33:00,060 - modules.trend_collector - INFO - 파일 크기: 56864 바이트
+2025-04-25 14:33:00,061 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:01,114 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/120110.json
+2025-04-25 14:33:01,114 - modules.trend_collector - INFO - 파일 크기: 55151 바이트
+2025-04-25 14:33:01,114 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:02,270 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/006400.json
+2025-04-25 14:33:02,271 - modules.trend_collector - INFO - 파일 크기: 56472 바이트
+2025-04-25 14:33:02,271 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:02,273 - modules.trend_collector - INFO - 배치 처리 완료: 43~45 / 84
+2025-04-25 14:33:08,372 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/006340.json
+2025-04-25 14:33:08,373 - modules.trend_collector - INFO - 파일 크기: 37657 바이트
+2025-04-25 14:33:08,373 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:09,397 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/009410.json
+2025-04-25 14:33:09,397 - modules.trend_collector - INFO - 파일 크기: 56611 바이트
+2025-04-25 14:33:09,397 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:10,713 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000540.json
+2025-04-25 14:33:10,714 - modules.trend_collector - INFO - 파일 크기: 50173 바이트
+2025-04-25 14:33:10,714 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:10,717 - modules.trend_collector - INFO - 배치 처리 완료: 46~48 / 84
+2025-04-25 14:33:16,821 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/012200.json
+2025-04-25 14:33:16,822 - modules.trend_collector - INFO - 파일 크기: 52953 바이트
+2025-04-25 14:33:16,822 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:17,820 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001750.json
+2025-04-25 14:33:17,820 - modules.trend_collector - INFO - 파일 크기: 36855 바이트
+2025-04-25 14:33:17,820 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:18,978 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/021040.json
+2025-04-25 14:33:18,978 - modules.trend_collector - INFO - 파일 크기: 41557 바이트
+2025-04-25 14:33:18,978 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:18,981 - modules.trend_collector - INFO - 배치 처리 완료: 49~51 / 84
+2025-04-25 14:33:25,073 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004410.json
+2025-04-25 14:33:25,073 - modules.trend_collector - INFO - 파일 크기: 43213 바이트
+2025-04-25 14:33:25,073 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:26,124 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/008770.json
+2025-04-25 14:33:26,124 - modules.trend_collector - INFO - 파일 크기: 53215 바이트
+2025-04-25 14:33:26,124 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:27,302 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/096770.json
+2025-04-25 14:33:27,302 - modules.trend_collector - INFO - 파일 크기: 51072 바이트
+2025-04-25 14:33:27,302 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:27,305 - modules.trend_collector - INFO - 배치 처리 완료: 52~54 / 84
+2025-04-25 14:33:33,404 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/078930.json
+2025-04-25 14:33:33,404 - modules.trend_collector - INFO - 파일 크기: 57687 바이트
+2025-04-25 14:33:33,405 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:34,508 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/375500.json
+2025-04-25 14:33:34,508 - modules.trend_collector - INFO - 파일 크기: 50454 바이트
+2025-04-25 14:33:34,508 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:35,726 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000720.json
+2025-04-25 14:33:35,726 - modules.trend_collector - INFO - 파일 크기: 52015 바이트
+2025-04-25 14:33:35,727 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:35,729 - modules.trend_collector - INFO - 배치 처리 완료: 55~57 / 84
+2025-04-25 14:33:41,879 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/014280.json
+2025-04-25 14:33:41,880 - modules.trend_collector - INFO - 파일 크기: 47987 바이트
+2025-04-25 14:33:41,880 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:42,888 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001680.json
+2025-04-25 14:33:42,889 - modules.trend_collector - INFO - 파일 크기: 48151 바이트
+2025-04-25 14:33:42,889 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:44,138 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/002990.json
+2025-04-25 14:33:44,138 - modules.trend_collector - INFO - 파일 크기: 56820 바이트
+2025-04-25 14:33:44,139 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:44,141 - modules.trend_collector - INFO - 배치 처리 완료: 58~60 / 84
+2025-04-25 14:33:50,252 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/006120.json
+2025-04-25 14:33:50,253 - modules.trend_collector - INFO - 파일 크기: 57343 바이트
+2025-04-25 14:33:50,253 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:51,301 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/097950.json
+2025-04-25 14:33:51,302 - modules.trend_collector - INFO - 파일 크기: 58288 바이트
+2025-04-25 14:33:51,302 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:52,561 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000210.json
+2025-04-25 14:33:52,562 - modules.trend_collector - INFO - 파일 크기: 57364 바이트
+2025-04-25 14:33:52,562 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:52,565 - modules.trend_collector - INFO - 배치 처리 완료: 61~63 / 84
+2025-04-25 14:33:58,669 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/090350.json
+2025-04-25 14:33:58,670 - modules.trend_collector - INFO - 파일 크기: 52277 바이트
+2025-04-25 14:33:58,670 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:33:59,678 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000880.json
+2025-04-25 14:33:59,679 - modules.trend_collector - INFO - 파일 크기: 56997 바이트
+2025-04-25 14:33:59,679 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:01,111 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001520.json
+2025-04-25 14:34:01,111 - modules.trend_collector - INFO - 파일 크기: 52245 바이트
+2025-04-25 14:34:01,112 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:01,113 - modules.trend_collector - INFO - 배치 처리 완료: 64~66 / 84
+2025-04-25 14:34:07,246 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001040.json
+2025-04-25 14:34:07,247 - modules.trend_collector - INFO - 파일 크기: 56901 바이트
+2025-04-25 14:34:07,247 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:08,267 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/005300.json
+2025-04-25 14:34:08,268 - modules.trend_collector - INFO - 파일 크기: 57962 바이트
+2025-04-25 14:34:08,268 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:09,508 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/005740.json
+2025-04-25 14:34:09,508 - modules.trend_collector - INFO - 파일 크기: 36812 바이트
+2025-04-25 14:34:09,509 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:09,511 - modules.trend_collector - INFO - 배치 처리 완료: 67~69 / 84
+2025-04-25 14:34:15,617 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/014910.json
+2025-04-25 14:34:15,617 - modules.trend_collector - INFO - 파일 크기: 46887 바이트
+2025-04-25 14:34:15,617 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:16,668 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/007570.json
+2025-04-25 14:34:16,669 - modules.trend_collector - INFO - 파일 크기: 45778 바이트
+2025-04-25 14:34:16,669 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:17,925 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/034730.json
+2025-04-25 14:34:17,926 - modules.trend_collector - INFO - 파일 크기: 58063 바이트
+2025-04-25 14:34:17,926 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:17,928 - modules.trend_collector - INFO - 배치 처리 완료: 70~72 / 84
+2025-04-25 14:34:24,036 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004990.json
+2025-04-25 14:34:24,037 - modules.trend_collector - INFO - 파일 크기: 45947 바이트
+2025-04-25 14:34:24,037 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:25,069 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/004540.json
+2025-04-25 14:34:25,069 - modules.trend_collector - INFO - 파일 크기: 47574 바이트
+2025-04-25 14:34:25,070 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:26,316 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000100.json
+2025-04-25 14:34:26,317 - modules.trend_collector - INFO - 파일 크기: 57897 바이트
+2025-04-25 14:34:26,317 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:26,321 - modules.trend_collector - INFO - 배치 처리 완료: 73~75 / 84
+2025-04-25 14:34:32,432 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001270.json
+2025-04-25 14:34:32,432 - modules.trend_collector - INFO - 파일 크기: 46565 바이트
+2025-04-25 14:34:32,433 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:33,465 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/003920.json
+2025-04-25 14:34:33,466 - modules.trend_collector - INFO - 파일 크기: 44272 바이트
+2025-04-25 14:34:33,466 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:34,719 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/003460.json
+2025-04-25 14:34:34,720 - modules.trend_collector - INFO - 파일 크기: 50870 바이트
+2025-04-25 14:34:34,720 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:34,723 - modules.trend_collector - INFO - 배치 처리 완료: 76~78 / 84
+2025-04-25 14:34:40,825 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000140.json
+2025-04-25 14:34:40,826 - modules.trend_collector - INFO - 파일 크기: 46308 바이트
+2025-04-25 14:34:40,826 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:41,933 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/145990.json
+2025-04-25 14:34:41,933 - modules.trend_collector - INFO - 파일 크기: 57418 바이트
+2025-04-25 14:34:41,934 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:43,199 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001060.json
+2025-04-25 14:34:43,199 - modules.trend_collector - INFO - 파일 크기: 57876 바이트
+2025-04-25 14:34:43,200 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:43,202 - modules.trend_collector - INFO - 배치 처리 완료: 79~81 / 84
+2025-04-25 14:34:49,288 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/001460.json
+2025-04-25 14:34:49,288 - modules.trend_collector - INFO - 파일 크기: 42009 바이트
+2025-04-25 14:34:49,289 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:50,354 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/000070.json
+2025-04-25 14:34:50,355 - modules.trend_collector - INFO - 파일 크기: 56872 바이트
+2025-04-25 14:34:50,355 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:51,766 - modules.trend_collector - INFO - 트렌드 데이터 저장 성공: data/trends/014820.json
+2025-04-25 14:34:51,767 - modules.trend_collector - INFO - 파일 크기: 41493 바이트
+2025-04-25 14:34:51,767 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
+2025-04-25 14:34:51,770 - modules.trend_collector - INFO - 트렌드 데이터 수집 완료: 성공 84개, 실패 0개
