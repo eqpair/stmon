@@ -1,0 +1,21 @@
+# 웹 및 API 관련
+aiogram==2.25.2
+aiohttp>=3.11.0
+requests>=2.28.0
+bs4>=0.0.1
+beautifulsoup4>=4.13.0
+
+# 데이터 처리 및 분석
+pandas>=2.2.0
+numpy>=2.2.0
+matplotlib>=3.7.0
+pytz>=2025.0
+
+# 시스템 및 유틸리티
+psutil>=5.9.0
+python-dotenv>=1.0.0
+gitpython>=3.1.30
+
+# 비동기 처리
+asyncio>=3.4.3
+aiofiles>=24.1.0

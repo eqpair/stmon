@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <title>Trend Detail - Scenario Analysis</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .sz-high {
+            color: #DC2626;
+            font-weight: bold;
+        }
+
+        .sz-medium {
+            color: #EA580C;
+            font-weight: bold;
+        }
+
+        .sz-low {
+            color: #16A34A;
+        }
+
+        .signal-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .signal-R {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .signal-I {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .signal-O {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .scenario-result {
+            transition: all 0.3s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans KR", sans-serif;
+        }
+
+        /* 반응형 디자인 개선 */
+        @media (max-width: 1024px) {
+            .grid-cols-2 {
+                grid-template-columns: repeat(1, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 250px;
+            }
+
+            .slider {
+                height: 12px;
+            }
+
+            .slider::-webkit-slider-thumb,
+            .slider::-moz-range-thumb {
+                width: 25px;
+                height: 25px;
+            }
+
+            .flex.justify-between.items-center {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start !important;
+            }
+
+            .flex.space-x-2 {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                margin-top: 0.5rem;
+            }
+
+            .flex.space-x-2 a {
+                flex: 1;
+                text-align: center;
+                margin-right: 0.25rem !important;
+                margin-left: 0.25rem !important;
+            }
+
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl,
+            .text-lg {
+                font-size: 1.2rem;
+            }
+
+            .text-sm {
+                font-size: 0.75rem;
+            }
+
+            button,
+            a.px-4 {
+                padding: 0.75rem 1rem;
+                min-height: 44px;
+                font-size: 0.875rem;
+            }
+
+            .fa-home,
+            .fa-arrow-left {
+                font-size: 1rem;
+            }
+
+            #calculate-button {
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Scenario Analysis</h1>
+                <p class="text-sm text-gray-600">SZ 2.0 target: Price fluctuations</p>
+                <!-- 업데이트 정보 추가 -->
+                <p class="text-xs text-gray-500 mt-1">Last Updated: <span id="last-updated-time">Loading...</span></p>
+            </div>
+            <div class="flex space-x-2">
+                <a href="index.html"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <i class="fas fa-home mr-2"></i> Home
+                </a>
+                <a href="javascript:history.back()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                </a>
+            </div>
+        </header>
+
+        <!-- Loading Indicator -->
+        <div id="loading-container" class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <p class="text-gray-600">Loading data...</p>
+        </div>
+
+        <!-- Content Container -->
+        <div id="content-container" class="hidden">
+            <!-- Current Stock Info Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
+                        <div class="text-xl font-bold" id="current-common-price">-</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격 [Long]</div>
+                        <div class="text-xl font-bold" id="current-preferred-price">-</div>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
+                        <div class="text-xl font-bold" id="current-sz-value">-</div>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <div class="text-yellow-700 text-sm font-medium mb-1">현재 괴리율</div>
+                        <div class="text-xl font-bold" id="current-discount-rate">-</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Scenario Tool -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Scenario Analysis Tool</h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Manual Scenario Controls -->
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4"><strong class="text-xl">Price
+                                Control</strong></h3>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                보통주 [Short] ◀ 가격 조정
+                                <span class="text-xs text-gray-500">(현재 가격: <span
+                                        id="common-base-price">-</span>원)</span>
+                            </label>
+                            <div class="slider-wrapper">
+                                <input type="range" id="common-price-slider" class="slider mb-2" min="-5" max="5"
+                                    step="0.1" value="0">
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>-5%</span>
+                                <span id="common-price-percent">0%</span>
+                                <span>+5%</span>
+                            </div>
+                            <div class="mt-2 text-sm">
+                                <span class="font-medium">변경된 가격:</span>
+                                <span id="common-price-adjusted" class="font-bold text-blue-600">-</span>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                우선주 [Long] ▶ 가격 조정
+                                <span class="text-xs text-gray-500">(현재 가격: <span
+                                        id="preferred-base-price">-</span>원)</span>
+                            </label>
+                            <div class="slider-wrapper">
+                                <input type="range" id="preferred-price-slider" class="slider mb-2" min="-5" max="5"
+                                    step="0.1" value="0">
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>-5%</span>
+                                <span id="preferred-price-percent">0%</span>
+                                <span>+5%</span>
+                            </div>
+                            <div class="mt-2 text-sm">
+                                <span class="font-medium">변경된 가격:</span>
+                                <span id="preferred-price-adjusted" class="font-bold text-blue-600">-</span>
+                            </div>
+                        </div>
+                            <div class="mt-6 grid grid-cols-2 gap-2">
+                                <button id="reset-sliders-button"
+                                    class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                                    초기화
+                                </button>
+                                <button id="calculate-button"
+                                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    계산하기
+                                </button>
+                            </div>
+                    </div>
+
+                    <!-- Calculation Results -->
+                    <div id="manual-result" class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4"><strong class="text-xl">SZ Result</strong>
+                        </h3>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="p-4 bg-white rounded-lg shadow">
+                                <div class="text-gray-700 text-sm font-medium mb-1">조정된 괴리율</div>
+                                <div class="text-xl font-bold" id="adjusted-discount-rate">-</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-lg shadow">
+                                <div class="text-gray-700 text-sm font-medium mb-1">조정된 SZ 값</div>
+                                <div class="text-xl font-bold" id="adjusted-sz-value">-</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-white rounded-lg shadow mt-4">
+                            <div class="text-gray-700 text-sm font-medium mb-2">Result Analysis</div>
+                            <div id="scenario-interpretation" class="text-sm text-gray-800">
+                                Adjust the price to calculate the scenario.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historical SZ Value Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ value trend</h2>
+                <div class="chart-container">
+                    <canvas id="sz-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2025 EQ Pair Monitoring System.</p>
+        </div>
+    </footer>
+    <script>
+        // 마지막 업데이트 시간을 가져와 표시하는 함수
+        async function fetchLastUpdateTime() {
+            try {
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+
+                const response = await fetch(stockDataUrl);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch update time (${response.status})`);
+                }
+
+                const data = await response.json();
+
+                // 타임스탬프 가져오기
+                const updateTime = data.timestamp || data.last_updated || new Date().toLocaleString();
+
+                // 한국어 날짜 포맷팅
+                let formattedDate;
+                try {
+                    const date = new Date(updateTime);
+                    formattedDate = date.toLocaleString();
+                } catch (e) {
+                    formattedDate = updateTime; // 변환 실패시 원본 사용
+                }
+
+                document.getElementById('last-updated-time').textContent = formattedDate;
+            } catch (error) {
+                console.error('업데이트 시간 가져오기 실패:', error);
+                document.getElementById('last-updated-time').textContent = 'Unknown';
+            }
+        }
+        // 슬라이더 초기화 함수
+        function resetSliders() {
+            // 슬라이더 값 초기화
+            document.getElementById('common-price-slider').value = 0;
+            document.getElementById('preferred-price-slider').value = 0;
+
+            // 퍼센트 표시 초기화
+            document.getElementById('common-price-percent').textContent = '0%';
+            document.getElementById('preferred-price-percent').textContent = '0%';
+
+            // 조정된 가격 초기화
+            document.getElementById('common-price-adjusted').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() + ' KRW' : 'N/A';
+            document.getElementById('preferred-price-adjusted').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() + ' KRW' : 'N/A';
+
+            // 결과 값도 초기화
+            document.getElementById('adjusted-discount-rate').textContent = '-';
+            document.getElementById('adjusted-sz-value').textContent = '-';
+            document.getElementById('scenario-interpretation').textContent = '가격을 조정하여 시나리오를 계산하세요.';
+        }
+
+
+        // 페이지 로드 이벤트 리스너 개선
+        document.addEventListener('DOMContentLoaded', () => {
+            // URL에서 종목 정보 추출
+            const urlParams = new URLSearchParams(window.location.search);
+            const stockCode = urlParams.get('code');
+            let stockName = decodeURIComponent(urlParams.get('name') || '');
+
+            // HTML 태그 제거
+            stockName = stockName.replace(/<\/?[^>]+(>|$)/g, "");
+
+            if (!stockCode || !stockName) {
+                alert('종목 정보가 없습니다. 메인 페이지로 이동합니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 페이지 제목 설정
+            document.title = `${stockName} - Scenario Analysis`;
+            document.getElementById('stock-name').textContent = stockName;
+
+            // 데이터 로드 및 처리
+            loadAndProcessStockData(stockCode, stockName);
+
+            // 슬라이더 이벤트 리스너 설정
+            setupSliderListeners();
+
+            // 슬라이더 초기화 버튼에 이벤트 리스너 추가
+            document.getElementById('reset-sliders-button').addEventListener('click', resetSliders);
+
+            // 계산 버튼 이벤트 리스너
+            document.getElementById('calculate-button').addEventListener('click', calculateManualScenario);
+        });
+
+        // 전역 변수 설정
+        let stockData = {
+            current: {
+                commonPrice: 0,
+                preferredPrice: 0,
+                szValue: 0,
+                discountRate: 0
+            },
+            history: {
+                dates: [],
+                szValues: [],
+                discountRates: [],
+                mean: 0,
+                stdDev: 0
+            }
+        };
+
+        // loadAndProcessStockData 함수 개선 - 실시간 데이터 활용
+        async function loadAndProcessStockData(stockCode, stockName) {
+            console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
+            try {
+                // 로딩 표시
+                document.getElementById('loading-container').style.display = 'flex';
+                document.getElementById('content-container').classList.add('hidden');
+
+                // 마지막 업데이트 시간 가져오기
+                fetchLastUpdateTime();
+
+                // 1. 트렌드 데이터 로드
+                const trendData = await loadStockData(stockCode, stockName);
+
+                // 2. 실시간 데이터 로드 - stock_data.json에서 현재 종목 정보 가져오기
+                const realtimeData = await fetchRealtimeData(stockCode, stockName);
+
+                // 3. 두 데이터 통합 처리
+                stockData.current = {
+                    // 실시간 데이터 우선 사용, 없으면 트렌드 데이터의 마지막 값 사용
+                    commonPrice: realtimeData.commonPrice ||
+                        (trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
+                    preferredPrice: realtimeData.preferredPrice ||
+                        (trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
+                    szValue: realtimeData.szValue || 0,
+                    signal: realtimeData.signal || ''
+                };
+
+                // 4. 괴리율 계산
+                stockData.current.discountRate = calculateDiscountRate(
+                    stockData.current.commonPrice,
+                    stockData.current.preferredPrice
+                );
+
+                // 5. 히스토리 데이터 처리
+                stockData.history.dates = trendData.dates.slice(-150); // 최근 5개월만
+                stockData.history.discountRates = trendData.discount_rates.slice(-150);
+
+                // 6. SZ 값 계산을 위한 통계 데이터
+                const windowData = trendData.discount_rates.slice(-250, -1); // 최근 250일(약 1년) 데이터로 계산
+                stockData.history.mean = calculateMean(windowData);
+                stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
+                stockData.history.szValues = trendData.sz_values ? trendData.sz_values.slice(-150) :
+                    calculateSZValues(trendData.discount_rates, stockData.history.mean, stockData.history.stdDev).slice(-150);
+
+                // 7. UI 업데이트
+                updateCurrentInfo();
+                renderSZChart();
+
+                // 8. 로딩 완료 처리
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
+            } catch (error) {
+                console.error('데이터 로드 및 처리 오류:', error);
+
+                // 오류 메시지 표시
+                const loadingContainer = document.getElementById('loading-container');
+                loadingContainer.innerHTML = `
+                <div class="text-red-500 text-center">
+                    <p>데이터를 로드할 수 없습니다.</p>
+                    <p>${error.message}</p>
+                    <button onclick="window.location.reload()" 
+                            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                        다시 시도
+                    </button>
+                    <button onclick="window.location.href='index.html'" 
+                            class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                        메인 페이지로 돌아가기
+                    </button>
+                </div>
+            `;
+            }
+        }
+
+        // 실시간 데이터 가져오기 함수
+        async function fetchRealtimeData(stockCode, stockName) {
+            try {
+                // 기본 URL 설정 (GitHub Pages 환경 고려)
+                const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
+                const stockDataUrl = `${baseUrl}/data/stock_data.json?t=${new Date().getTime()}`;
+
+                // 캐시 방지 옵션으로 데이터 요청
+                const response = await fetch(stockDataUrl, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`실시간 데이터를 가져올 수 없습니다: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 종목명 정규화 함수
+                const normalizeStockName = (name) => {
+                    if (!name) return '';
+                    // HTML 태그 제거
+                    let cleanName = name.replace(/<[^>]+>/g, '');
+                    // 이모지 아이콘 제거 (🔴 🟠 🟢 🔵)
+                    cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
+                    // 가중치 형식 제거 (예: -0.5- 또는 (0.5))
+                    cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
+                    return cleanName.trim();
+                };
+
+                // 현재 종목 정규화
+                const normalizedCurrentName = normalizeStockName(stockName);
+
+                // 다양한 방법으로 일치하는 종목 찾기
+                let matchedSignal = null;
+
+                // 1. 정확한 이름 일치
+                for (const signal of data.all_signals) {
+                    const normalizedSignalName = normalizeStockName(signal.stock_name);
+                    if (normalizedSignalName === normalizedCurrentName) {
+                        matchedSignal = signal;
+                        console.log("정확히 일치하는 종목 발견:", normalizedSignalName);
+                        break;
+                    }
+                }
+
+                // 2. 부분 일치 검색
+                if (!matchedSignal) {
+                    for (const signal of data.all_signals) {
+                        const normalizedSignalName = normalizeStockName(signal.stock_name);
+                        if (normalizedSignalName.includes(normalizedCurrentName) ||
+                            normalizedCurrentName.includes(normalizedSignalName)) {
+                            matchedSignal = signal;
+                            console.log("부분 일치하는 종목 발견:", normalizedSignalName);
+                            break;
+                        }
+                    }
+                }
+
+                // 3. 종목 코드로 검색
+                if (!matchedSignal && stockCode !== 'unknown') {
+                    for (const signal of data.all_signals) {
+                        // 종목 코드 추출 시도
+                        try {
+                            const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
+                            if (signalCode === stockCode) {
+                                matchedSignal = signal;
+                                console.log("종목 코드로 일치하는 항목 발견:", signalCode);
+                                break;
+                            }
+                        } catch (codeError) {
+                            console.warn("종목 코드 추출 실패:", codeError);
+                        }
+                    }
+                }
+
+                // 일치하는 종목이 없으면 빈 객체 반환
+                if (!matchedSignal) {
+                    console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
+                    return {};
+                }
+
+                // 결과 반환
+                return {
+                    commonPrice: matchedSignal.price_a || null,
+                    preferredPrice: matchedSignal.price_b || null,
+                    szValue: matchedSignal.sz_value || 0,
+                    signal: matchedSignal.signal || ''
+                };
+
+            } catch (error) {
+                console.error('실시간 데이터 가져오기 오류:', error);
+                return {}; // 오류 발생 시 빈 객체 반환
+            }
+        }
+
+        // 괴리율 계산 함수
+        function calculateDiscountRate(commonPrice, preferredPrice) {
+            if (!commonPrice || !preferredPrice || commonPrice === 0) {
+                return 0;
+            }
+            return (commonPrice - preferredPrice) / commonPrice;
+        }
+
+        async function loadStockData(stockCode, stockName) {
+            const trendDataResponse = await fetch(`data/trends/${stockCode}.json?t=${new Date().getTime()}`);
+            if (!trendDataResponse.ok) {
+                throw new Error(`트렌드 데이터를 로드할 수 없습니다: ${stockName}`);
+            }
+
+            const trendDataText = await trendDataResponse.text();
+
+            // JSON 파싱 전에 "NaN" 문자열을 null로 대체
+            const cleanedTrendDataText = trendDataText
+                .replace(/"NaN"/g, 'null')
+                .replace(/NaN/g, 'null')
+                .replace(/Infinity/g, 'null')
+                .replace(/-Infinity/g, 'null');
+
+            return JSON.parse(cleanedTrendDataText, (key, value) => {
+                // 파싱 중에 특수값 처리
+                if (value === null || value === undefined ||
+                    (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
+                    return null;
+                }
+                if (typeof value === 'number' && !isFinite(value)) {
+                    return null;
+                }
+                return value;
+            });
+        }
+
+        async function loadStockDataJson() {
+            const response = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+            if (!response.ok) {
+                throw new Error('신호 데이터를 로드할 수 없습니다.');
+            }
+
+            const dataText = await response.text();
+
+            // 특수값 처리
+            const cleanedDataText = dataText
+                .replace(/"NaN"/g, 'null')
+                .replace(/NaN/g, 'null')
+                .replace(/Infinity/g, 'null')
+                .replace(/-Infinity/g, 'null');
+
+            return JSON.parse(cleanedDataText);
+        }
+
+        function calculateMean(data) {
+            const validData = data.filter(val => val !== null && !isNaN(val));
+            if (validData.length === 0) return 0;
+
+            const sum = validData.reduce((acc, val) => acc + val, 0);
+            return sum / validData.length;
+        }
+
+        function calculateStdDev(data, mean) {
+            const validData = data.filter(val => val !== null && !isNaN(val));
+            if (validData.length === 0) return 0;
+
+            const squaredDiffs = validData.map(val => Math.pow(val - mean, 2));
+            const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / validData.length;
+            return Math.sqrt(variance);
+        }
+
+        function calculateSZValues(discountRates, mean, stdDev) {
+            if (!discountRates || discountRates.length === 0) return [];
+
+            return discountRates.map(rate => {
+                if (rate === null || isNaN(rate)) return null;
+                if (stdDev === 0) return 0;
+                return (rate - mean) / stdDev;
+            });
+        }
+
+        function calculateSZValue(discountRate) {
+            if (stockData.history.stdDev === 0) return 0;
+            return (discountRate - stockData.history.mean) / stockData.history.stdDev;
+        }
+
+        // updateCurrentInfo 함수 개선 - 실시간 데이터 반영
+        function updateCurrentInfo() {
+            // 현재 가격 정보 업데이트
+            document.getElementById('current-common-price').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() + ' KRW' : 'N/A';
+            document.getElementById('current-preferred-price').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() + ' KRW' : 'N/A';
+
+            // SZ 값 표시
+            const szElement = document.getElementById('current-sz-value');
+            szElement.textContent = stockData.current.szValue.toFixed(2);
+
+            // SZ 값에 따른 색상 변경
+            szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
+            if (stockData.current.szValue >= 2.5) {
+                szElement.classList.add('sz-high');
+            } else if (stockData.current.szValue >= 1.5) {
+                szElement.classList.add('sz-medium');
+            } else {
+                szElement.classList.add('sz-low');
+            }
+
+            // 괴리율 표시 (백분율로 변환)
+            const discountElement = document.getElementById('current-discount-rate');
+            const discountPercent = (stockData.current.discountRate * 100).toFixed(2);
+            discountElement.textContent = discountPercent + '%';
+
+            // 슬라이더 기본 가격 업데이트
+            document.getElementById('common-base-price').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() : 'N/A';
+            document.getElementById('preferred-base-price').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() : 'N/A';
+
+            // 조정된 가격 초기화
+            document.getElementById('common-price-adjusted').textContent =
+                stockData.current.commonPrice ? stockData.current.commonPrice.toLocaleString() + ' KRW' : 'N/A';
+            document.getElementById('preferred-price-adjusted').textContent =
+                stockData.current.preferredPrice ? stockData.current.preferredPrice.toLocaleString() + ' KRW' : 'N/A';
+
+            // 슬라이더 초기화 (0% 위치로)
+            document.getElementById('common-price-slider').value = 0;
+            document.getElementById('preferred-price-slider').value = 0;
+            document.getElementById('common-price-percent').textContent = '0%';
+            document.getElementById('preferred-price-percent').textContent = '0%';
+        }
+
+        function renderSZChart() {
+            const ctx = document.getElementById('sz-chart').getContext('2d');
+            const screenWidth = window.innerWidth;
+            const isMobile = screenWidth <= 640;
+
+            const chartHeight = isMobile ? 250 : 300;
+            const pointRadius = isMobile ? 0 : 1;
+
+            // 차트 데이터 준비
+            const chartLabels = stockData.history.dates;
+            const chartValues = stockData.history.szValues;
+
+            // 차트 생성
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'SZ Value',
+                        data: chartValues,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        pointRadius: pointRadius,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'SZ = 2.0 Threshold',
+                        data: Array(chartLabels.length).fill(2.0),
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    height: chartHeight,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `SZ Value: ${context.raw ? context.raw.toFixed(2) : 'N/A'}`;
+                                }
+                            },
+                            bodyFont: {
+                                size: isMobile ? 10 : 12
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Recent 5-month SZ value trend',
+                            font: {
+                                size: isMobile ? 12 : 16
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hitRadius: isMobile ? 10 : 5
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'SZ Value',
+                                font: {
+                                    size: isMobile ? 10 : 12
+                                }
+                            },
+                            ticks: {
+                                font: {
+                                    size: isMobile ? 9 : 12
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxTicksLimit: isMobile ? 5 : 10,
+                                autoSkip: true,
+                                font: {
+                                    size: isMobile ? 9 : 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupSliderListeners() {
+            const commonSlider = document.getElementById('common-price-slider');
+            const commonPercent = document.getElementById('common-price-percent');
+            const commonAdjusted = document.getElementById('common-price-adjusted');
+
+            // 호가 단위에 맞는 스텝 사이즈 계산 함수 - 이 함수는 그대로 유지
+            function calculateStepSize(price) {
+                const tickSizes = [
+                    { max: 1000, step: 1 },
+                    { max: 5000, step: 5 },
+                    { max: 10000, step: 10 },
+                    { max: 50000, step: 50 },
+                    { max: 100000, step: 100 },
+                    { max: 500000, step: 500 },
+                    { step: 1000 }
+                ];
+
+                const tickRule = tickSizes.find(rule => !rule.max || price < rule.max);
+                return tickRule.step / price * 100; // 퍼센트로 환산
+            }
+
+            // 슬라이더 스텝 고정값 사용 (0.1%)
+            commonSlider.step = "0.1";
+
+            // 하지만 가격 계산 시에는 여전히 호가 단위 적용
+            commonSlider.addEventListener('input', function () {
+                const percent = parseFloat(this.value);
+                commonPercent.textContent = `${percent.toFixed(1)}%`;
+
+                const adjusted = stockData.current.commonPrice * (1 + percent / 100);
+                // 호가 단위에 맞게 반올림
+                const roundedPrice = roundToTickSize(adjusted);
+                commonAdjusted.textContent = roundedPrice.toLocaleString() + ' KRW';
+            });
+
+            // 우선주 슬라이더도 동일한 방식 적용
+            const preferredSlider = document.getElementById('preferred-price-slider');
+            const preferredPercent = document.getElementById('preferred-price-percent');
+            const preferredAdjusted = document.getElementById('preferred-price-adjusted');
+
+            // 슬라이더 스텝 고정값 사용 (0.1%)
+            preferredSlider.step = "0.1";
+
+            preferredSlider.addEventListener('input', function () {
+                const percent = parseFloat(this.value);
+                preferredPercent.textContent = `${percent.toFixed(1)}%`;
+
+                const adjusted = stockData.current.preferredPrice * (1 + percent / 100);
+                // 호가 단위에 맞게 반올림
+                const roundedPrice = roundToTickSize(adjusted);
+                preferredAdjusted.textContent = roundedPrice.toLocaleString() + ' KRW';
+            });
+        }
+        // 주가 호가 단위에 맞게 반올림하는 함수
+        function roundToTickSize(price) {
+            // 주가 범위별 호가 단위 정의
+            const tickSizes = [
+                { max: 1000, step: 1 },     // 1000원 미만: 1원 단위
+                { max: 5000, step: 5 },     // 5000원 미만: 5원 단위
+                { max: 10000, step: 10 },   // 10000원 미만: 10원 단위
+                { max: 50000, step: 50 },   // 50000원 미만: 50원 단위
+                { max: 100000, step: 100 }, // 100000원 미만: 100원 단위
+                { max: 500000, step: 500 }, // 500000원 미만: 500원 단위
+                { step: 1000 }               // 그 이상: 1000원 단위
+            ];
+
+            // 적절한 호가 단위 찾기
+            const tickRule = tickSizes.find(rule => !rule.max || price < rule.max);
+
+            // 해당 단위로 반올림
+            return Math.round(price / tickRule.step) * tickRule.step;
+        }
+        function calculateManualScenario() {
+            // 슬라이더에서 값 가져오기
+            const commonPct = parseFloat(document.getElementById('common-price-slider').value);
+            const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
+
+            // 조정된 가격 계산 (호가 단위에 맞게 반올림)
+            const adjustedCommon = roundToTickSize(stockData.current.commonPrice * (1 + commonPct / 100));
+            const adjustedPreferred = roundToTickSize(stockData.current.preferredPrice * (1 + preferredPct / 100));
+
+            // 조정된 괴리율 계산
+            const adjustedDiscountRate = (adjustedCommon - adjustedPreferred) / adjustedCommon;
+
+            // 조정된 SZ 값 계산
+            const adjustedSZValue = calculateSZValue(adjustedDiscountRate);
+
+            // UI 업데이트
+            const discountRateEl = document.getElementById('adjusted-discount-rate');
+            discountRateEl.textContent = (adjustedDiscountRate * 100).toFixed(2) + '%';
+
+            const szValueEl = document.getElementById('adjusted-sz-value');
+            szValueEl.textContent = adjustedSZValue.toFixed(2);
+
+            // SZ 값에 따른 색상 적용
+            szValueEl.classList.remove('sz-high', 'sz-medium', 'sz-low');
+            if (adjustedSZValue >= 2.5) {
+                szValueEl.classList.add('sz-high');
+            } else if (adjustedSZValue >= 1.5) {
+                szValueEl.classList.add('sz-medium');
+            } else {
+                szValueEl.classList.add('sz-low');
+            }
+
+            // 시나리오 해석 업데이트
+            const interpretationEl = document.getElementById('scenario-interpretation');
+
+            // 가격 변동 방향 텍스트
+            const commonChangeText = commonPct >= 0 ? '상승' : '하락';
+            const preferredChangeText = preferredPct >= 0 ? '상승' : '하락';
+
+            interpretationEl.innerHTML = `
+                <p>
+                    보통주가 ${Math.abs(commonPct)}% ${commonChangeText}하고,
+                    우선주가 ${Math.abs(preferredPct)}% ${preferredChangeText}할 경우,
+                </p>
+                <p class="mt-1">
+                    SZ 값은 <span class="${adjustedSZValue >= 2.5 ? 'sz-high' : adjustedSZValue >= 1.5 ? 'sz-medium' : 'sz-low'}">${adjustedSZValue.toFixed(2)}</span>가 됩니다.
+                </p>
+                <p class="mt-1 ${adjustedSZValue >= 2.0 ? 'text-red-600 font-medium' : ''}">
+                    ${adjustedSZValue >= 2.0 ? 'SZ 값이 2.0 이상입니다!' : 'SZ 값이 2.0 미만입니다.'}
+                </p>
+            `;
+        }        
+    </script>
+</body>
+
+</html>
