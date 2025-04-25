@@ -6,13 +6,13 @@ import json
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup
-
 from config import TICK_PAIRS
 from modules.pairs import NPPair
 from modules.utils import safe_json_dump
@@ -37,18 +37,18 @@ class TrendCollector:
     def __init__(self):
         self.pairs = [NPPair(*pair) for pair in TICK_PAIRS]
         self._session = None
-        
+
     async def _get_session(self):
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
         return self._session
-        
+
     async def collect_all_trends(self):
         """모든 종목의 트렌드 데이터 수집"""
         logger.info("트렌드 데이터 수집 시작...")
         
         # 배치 크기 정의
-        batch_size = 3  # 한 번에 3개씩 처리
+        batch_size = 3 # 한 번에 3개씩 처리
         success_count = 0
         error_count = 0
         
@@ -67,19 +67,19 @@ class TrendCollector:
             # 결과 처리
             batch_success = sum(1 for r in batch_results if not isinstance(r, Exception))
             batch_error = len(batch_results) - batch_success
-            
             success_count += batch_success
             error_count += batch_error
             
             # 다음 배치 전 대기
             if i + batch_size < len(self.pairs):
                 logger.info(f"배치 처리 완료: {i+1}~{i+len(batch)} / {len(self.pairs)}")
-                await asyncio.sleep(5)  # 배치 사이 5초 대기
+                await asyncio.sleep(5) # 배치 사이 5초 대기
         
         logger.info(f"트렌드 데이터 수집 완료: 성공 {success_count}개, 실패 {error_count}개")
-        
+
     async def collect_trend_data(self, pair):
         """특정 종목 페어의 트렌드 데이터 수집"""
+        session = None
         try:
             # 세션 가져오기
             session = await self._get_session()
@@ -97,6 +97,7 @@ class TrendCollector:
             
             # 데이터 처리 및 저장
             result = self._process_trend_data(pair, a_data, b_data)
+            
             if result:
                 self._save_trend_data(pair.A_code, result)
                 logger.info(f"{pair.A_name} 트렌드 데이터 수집 완료 (1년치)")
@@ -104,15 +105,16 @@ class TrendCollector:
             else:
                 logger.warning(f"{pair.A_name} 트렌드 데이터 처리 실패")
                 return False
-        
+                
         except Exception as e:
             logger.error(f"{pair.A_name} 트렌드 데이터 수집 중 오류: {str(e)}")
             raise
+            
         finally:
             # 이 부분이 추가되어야 함: 세션 명시적으로 닫기
             if session and not session.closed:
                 await session.close()
-    
+
     async def _fetch_stock_history(self, session, stock_code, start_date, days):
         """주식 히스토리 데이터 가져오기 - 1년 데이터용 수정"""
         # 네이버 금융 API URL (일별 차트 데이터)
@@ -126,11 +128,11 @@ class TrendCollector:
                     return None
                 
                 return await response.text()
-        
+                
         except Exception as e:
             logger.error(f"데이터 요청 중 오류 ({stock_code}): {str(e)}")
             return None
-    
+
     def _process_trend_data(self, pair, a_data, b_data):
         try:
             # 데이터 파싱
@@ -144,19 +146,18 @@ class TrendCollector:
             # 데이터 병합
             merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
             
-            # pairs.py와 동일한 계산식으로 수정
             # 괴리율 계산
             merged_df['dr'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
             
-            # 이동평균 계산 (pairs.py와 동일하게)
+            # 이동평균 계산
             merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period).mean().shift(1)
             
-            # 표준편차 계산 (pairs.py와 동일하게)
+            # 표준편차 계산
             merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period).std().shift(1)
             
-            # SZ 값 계산 (pairs.py와 동일하게)
+            # SZ 값 계산
             merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
-                    
+            
             # 결과 데이터 생성 시 직접 NaN 값을 변환
             result = {
                 'stock_code': pair.A_code,
@@ -184,7 +185,6 @@ class TrendCollector:
         for i in range(1, len(data)):
             last_row = data.iloc[i]
             prev_row = data.iloc[i-1]
-            
             sz = last_row['sz']
             
             # 신호 생성 로직 통일
@@ -196,7 +196,7 @@ class TrendCollector:
             if sz < 0.5:
                 signal += 'O'
             
-            if signal:  # 비어있지 않은 경우에만 신호 추가
+            if signal: # 비어있지 않은 경우에만 신호 추가
                 signal_entry = {
                     'timestamp': last_row.name.strftime('%Y-%m-%d %H:%M:%S'),
                     'sz_value': sz,
@@ -207,7 +207,7 @@ class TrendCollector:
                 signals.append(signal_entry)
         
         return signals
-    
+
     def _parse_stock_data(self, data, code):
         """주식 데이터 파싱"""
         try:
@@ -223,6 +223,7 @@ class TrendCollector:
             
             # item들을 찾음
             items = soup.find_all('item')
+            
             if not items:
                 logger.warning(f"{code} 아이템 데이터 없음")
                 return None
@@ -233,9 +234,10 @@ class TrendCollector:
             for item in items:
                 if 'data' not in item.attrs:
                     continue
-                    
+                
                 data = item['data'].split('|')
-                if len(data) >= 5:  # 데이터가 충분한지 확인
+                
+                if len(data) >= 5: # 데이터가 충분한지 확인
                     try:
                         dates.append(pd.to_datetime(data[0]))
                         closes.append(float(data[4]))
@@ -246,40 +248,21 @@ class TrendCollector:
             if not dates or not closes:
                 logger.warning(f"{code} 유효한 데이터 없음")
                 return None
-                
+            
             df = pd.DataFrame({'close': closes}, index=dates)
             df.name = name
+            
             return df
             
         except Exception as e:
             logger.error(f"{code} 데이터 파싱 중 오류: {str(e)}")
             return None
-        
-    def safe_json_dump(data, file_path):
-        """데이터를 안전하게 JSON 파일로 저장"""
-        import json
-        import os
-        
-        try:
-            # 디렉토리 확인 및 생성
-            directory = os.path.dirname(file_path)
-            if directory and not os.path.exists(directory):
-                os.makedirs(directory, exist_ok=True)
-            
-            # 데이터 저장
-            with open(file_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            return True
-        except Exception as e:
-            import logging
-            logging.getLogger(__name__).error(f"JSON 저장 오류 ({file_path}): {str(e)}")
-            return False
 
     def _save_trend_data(self, stock_code, data):
         """트렌드 데이터 저장"""
         file_path = TRENDS_DIR / f"{stock_code}.json"
-        
         try:
+            # 여기서 한 번만 호출
             safe_json_dump(data, file_path)
             logger.info(f"트렌드 데이터 저장 성공: {file_path}")
             
@@ -293,17 +276,16 @@ class TrendCollector:
             logger.error(f"트렌드 데이터 저장 실패 ({stock_code}): {str(e)}")
             raise
         
-        # utils.py에서 import한 안전한 JSON 저장 함수 사용
-        from modules.utils import safe_json_dump
-        
-        safe_json_dump(data, file_path)
-            
+        # 이 부분 제거 - 중복 호출
+        # from modules.utils import safe_json_dump
+        # safe_json_dump(data, file_path)
+
     def _generate_unique_dummy_data(self, pair):
         """종목별 고유한 더미 데이터 생성"""
         import random
         import numpy as np
         from datetime import datetime, timedelta
-
+        
         # 종목코드를 기반으로 한 고정된 랜덤 시드
         random.seed(hash(pair.A_code))
         
@@ -319,10 +301,10 @@ class TrendCollector:
         preferred_prices = []
         discount_rates = []
         sz_values = []
-
+        
         today = datetime.now()
         
-        for i in range(365):  # 365일로 변경
+        for i in range(365): # 365일로 변경
             date = today - timedelta(days=i)
             dates.append(date.strftime('%Y-%m-%d'))
             
@@ -348,7 +330,7 @@ class TrendCollector:
             # SZ 값 생성 (랜덤 + 패턴)
             sz_value = np.sin(i/20) * 2 + random.uniform(-1, 1)
             sz_values.append(sz_value)
-
+        
         # 신호 생성 로직 추가
         signals = []
         for i in range(1, len(sz_values)):
@@ -376,11 +358,11 @@ class TrendCollector:
                     'price_a': common_prices[i],
                     'price_b': preferred_prices[i]
                 })
-
+        
         return {
             'stock_code': pair.A_code,
             'stock_name': pair.A_name,
-            'dates': dates[::-1],  # 최근 날짜가 마지막에 오도록
+            'dates': dates[::-1], # 최근 날짜가 마지막에 오도록
             'common_prices': common_prices[::-1],
             'preferred_prices': preferred_prices[::-1],
             'discount_rates': discount_rates[::-1],

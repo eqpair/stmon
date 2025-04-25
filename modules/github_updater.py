@@ -9,6 +9,8 @@ import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Any
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # 로깅 설정
 os.makedirs('logs', exist_ok=True)
@@ -26,6 +28,7 @@ logger = logging.getLogger(__name__)
 GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/stmon')
 GITHUB_USERNAME = os.environ.get('GITHUB_USERNAME', 'eqpair')
 GITHUB_EMAIL = os.environ.get('GITHUB_EMAIL', 'frmn3962@gmail.com')
+
 # SSH 방식으로 변경
 GITHUB_REPO_URL = 'git@github.com:eqpair/stmon.git'
 
@@ -37,7 +40,7 @@ class GitHubUpdater:
     def __init__(self, monitor):
         self.monitor = monitor
         self.setup_git_config()
-        
+    
     def setup_git_config(self):
         """Git 설정 초기화"""
         try:
@@ -47,8 +50,9 @@ class GitHubUpdater:
             
             if not os.path.exists(ssh_config_path) or "StrictHostKeyChecking no" not in open(ssh_config_path).read():
                 with open(ssh_config_path, "a") as f:
-                    f.write("\nHost github.com\n    StrictHostKeyChecking no\n")
-                logger.info("SSH 설정 완료")
+                    f.write("\nHost github.com\n StrictHostKeyChecking no\n")
+            
+            logger.info("SSH 설정 완료")
             
             if not os.path.exists(GITHUB_REPO_PATH):
                 logger.info(f"클론 저장소 생성: {GITHUB_REPO_PATH}")
@@ -59,6 +63,7 @@ class GitHubUpdater:
             os.chdir(GITHUB_REPO_PATH)
             self.run_command(f"git config user.name '{GITHUB_USERNAME}'")
             self.run_command(f"git config user.email '{GITHUB_EMAIL}'")
+            
             logger.info("Git 설정 완료")
             
             # 데이터 디렉토리 생성
@@ -71,18 +76,19 @@ class GitHubUpdater:
     def run_command(self, command):
         """Shell 명령어 실행"""
         logger.debug(f"명령어 실행: {command}")
+        
         process = subprocess.run(
-            command, 
-            shell=True, 
-            capture_output=True, 
+            command,
+            shell=True,
+            capture_output=True,
             text=True,
-            cwd=GITHUB_REPO_PATH  # 작업 디렉토리 명시적 지정
+            cwd=GITHUB_REPO_PATH # 작업 디렉토리 명시적 지정
         )
         
         if process.returncode != 0:
             logger.error(f"명령어 실패: {process.stderr}")
             raise Exception(f"명령어 실패: {process.stderr}")
-            
+        
         return process.stdout.strip()
     
     async def update_data(self):
@@ -104,71 +110,75 @@ class GitHubUpdater:
             with open(data_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             
-            # 히스토리 데이터the same time, 트렌드 데이터도 업데이트
-            from stmon.modules.trend_collector import TrendCollector
+            # 히스토리 데이터와 함께 트렌드 데이터도 업데이트
+            from modules.trend_collector import TrendCollector
             collector = TrendCollector()
-            await collector.collect_all_trends()  # 트렌드 데이터 업데이트
+            await collector.collect_all_trends() # 트렌드 데이터 업데이트
             
             # 기존 코드: 히스토리 데이터 업데이트 및 커밋
             await self._update_history_data(data)
             self._commit_and_push()
             
             logger.info(f"GitHub 데이터 업데이트 완료: {current_time}")
+            
         except Exception as e:
             logger.error(f"데이터 업데이트 오류: {str(e)}")
     
     def _parse_signals(self, signals_text: str) -> List[Dict[str, Any]]:
         result = []
+        
         if not signals_text or "No divergent pairs" in signals_text:
             logger.warning(f"신호 데이터 없음 또는 divergent pairs 없음")
             return result
-            
+        
         # HTML 태그 제거 헬퍼 함수
         def strip_html_tags(text):
             import re
             return re.sub(r'<[^>]+>', '', text) if text else text
-            
+        
         # 데이터를 올바르게 파싱하기 위해 2줄씩 처리
         lines = signals_text.split('\n')
         i = 0
         
         while i < len(lines) - 1:
             try:
-                stock_name_line = strip_html_tags(lines[i].strip())  # HTML 태그 제거
+                stock_name_line = strip_html_tags(lines[i].strip()) # HTML 태그 제거
                 signal_line = lines[i+1].strip() if i+1 < len(lines) else ""
                 
                 if not stock_name_line or not signal_line:
                     i += 2
                     continue
-                    
+                
                 # 종목명 처리
                 if stock_name_line.startswith('🔴 ') or stock_name_line.startswith('🟠 ') or stock_name_line.startswith('🟢 ') or stock_name_line.startswith('🔵 '):
-                    icon_prefix = stock_name_line[:2]  # 아이콘 저장
-                    stock_name = stock_name_line[2:].strip()  # 아이콘 제거
+                    icon_prefix = stock_name_line[:2] # 아이콘 저장
+                    stock_name = stock_name_line[2:].strip() # 아이콘 제거
                 else:
                     icon_prefix = ""
                     stock_name = stock_name_line
-                    
+                
                 # 가중치 정보 추출
                 formatted_stock_name = stock_name
                 weight_info = ""
+                
                 if ' (' in stock_name and ')' in stock_name:
                     parts = stock_name.split(' (')
                     if len(parts) == 2 and ')' in parts[1]:
                         weight_info = parts[1].replace(')', '')
                         base_name = parts[0]
+                        
                         # 웹 표시용 종목명 포맷: 기본명-가중치-
                         formatted_stock_name = f"{base_name}-{weight_info}-"
                 
                 # 아이콘이 있으면 종목명 앞에 추가
                 if icon_prefix:
                     formatted_stock_name = f"{icon_prefix} {formatted_stock_name}"
-                    
+                
                 # 신호 라인 파싱
                 if '/' not in signal_line:
                     i += 2
                     continue
-                    
+                
                 signal_parts = signal_line.split('/')
                 
                 # SZ 값 추출
@@ -177,29 +187,33 @@ class GitHubUpdater:
                     sz_value = float(signal_parts[0].strip())
                 except ValueError:
                     sz_value = 0.0
-                    
+                
                 # 신호 추출
                 signal = ""
                 if len(signal_parts) > 1:
                     signal_info = signal_parts[1].strip()
+                    
                     if 'R' in signal_info:
                         signal += 'R'
                     if 'I' in signal_info:
                         signal += 'I'
                     if 'O' in signal_info:
                         signal += 'O'
-                        
+                
                 # 가격 추출
                 price_a = None
                 price_b = None
+                
                 if len(signal_parts) > 2:
                     price_part = signal_parts[2].strip()
                     price_items = price_part.split(',')
+                    
                     if len(price_items) > 0:
                         try:
                             price_a = float(price_items[0].strip())
                         except ValueError:
                             pass
+                    
                     if len(price_items) > 1:
                         try:
                             price_b = float(price_items[1].strip())
@@ -250,7 +264,7 @@ class GitHubUpdater:
         for signal in history["signals"]:
             # 타임스탬프가 있고, 1년 이내인 데이터만 유지
             if "timestamp" in signal:
-                signal_date = signal["timestamp"].split()[0]  # 2023-01-01 형식에서 날짜만 추출
+                signal_date = signal["timestamp"].split()[0] # 2023-01-01 형식에서 날짜만 추출
                 if signal_date >= one_year_ago_str:
                     filtered_signals.append(signal)
         
@@ -259,7 +273,6 @@ class GitHubUpdater:
         
         # 새 신호들 추가 (중복 확인)
         timestamp = current_data["timestamp"]
-        
         for signal in current_data["all_signals"]:
             signal["timestamp"] = timestamp
             
@@ -275,7 +288,7 @@ class GitHubUpdater:
                 history["signals"].append(signal)
         
         # 히스토리 크기 제한 - 1년치 데이터를 위해 충분히 여유있게 설정
-        max_signals = 10000  # 1년 365일 * 약 20개 종목 * 하루 1-2회 데이터
+        max_signals = 10000 # 1년 365일 * 약 20개 종목 * 하루 1-2회 데이터
         if len(history["signals"]) > max_signals:
             history["signals"] = history["signals"][-max_signals:]
         
@@ -286,8 +299,7 @@ class GitHubUpdater:
     async def update_trend_data(self):
         """트렌드 데이터 업데이트"""
         try:
-            from stmon.modules.trend_collector import TrendCollector
-            
+            from modules.trend_collector import TrendCollector
             logger.info("트렌드 데이터 수집 시작")
             collector = TrendCollector()
             await collector.collect_all_trends()
@@ -296,10 +308,10 @@ class GitHubUpdater:
             # 트렌드 데이터 디렉토리를 Git에 추가
             trends_dir = os.path.join(DATA_DIR, "trends")
             os.makedirs(trends_dir, exist_ok=True)
-        
+            
         except Exception as e:
             logger.error(f"트렌드 데이터 업데이트 오류: {str(e)}")
-
+    
     def _commit_and_push(self):
         """변경사항 커밋 및 GitHub 저장소에 푸시"""
         try:
@@ -308,7 +320,7 @@ class GitHubUpdater:
             # Git 상태 확인
             status = self.run_command("git status --porcelain")
             
-            if status:  # 변경사항이 있는 경우
+            if status: # 변경사항이 있는 경우
                 # 변경사항 스테이징
                 self.run_command("git add .")
                 
@@ -318,6 +330,7 @@ class GitHubUpdater:
                 
                 # GitHub에 푸시
                 self.run_command("git push")
+                
                 logger.info("GitHub 저장소에 성공적으로 푸시되었습니다.")
             else:
                 logger.info("변경사항이 없습니다. 푸시 생략.")
@@ -337,16 +350,16 @@ async def start_github_updater(daily_run=False):
         # 일일 실행 모드 (트렌드 데이터만 업데이트)
         await updater.update_trend_data()
         return
-
+    
     while True:
         try:
             await updater.update_data()
         except Exception as e:
             logger.error(f"업데이트 오류: {str(e)}")
-    
+        
         # 30분 대기
         logger.info("다음 업데이트까지 30분 대기 중...")
-        await asyncio.sleep(600)  # 30분마다 업데이트
+        await asyncio.sleep(600) # 30분마다 업데이트
 
 # 메인 함수
 if __name__ == "__main__":

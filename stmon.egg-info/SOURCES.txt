@@ -1,8 +1,12 @@
+LICENSE
+README.md
 setup.py
 modules/__init__.py
 modules/exceptions.py
+modules/github_updater.py
 modules/pairs.py
 modules/telegram.py
+modules/trend_collector.py
 modules/utils.py
 stmon.egg-info/PKG-INFO
 stmon.egg-info/SOURCES.txt
