@@ -254,7 +254,27 @@ class TrendCollector:
         except Exception as e:
             logger.error(f"{code} 데이터 파싱 중 오류: {str(e)}")
             return None
-    
+        
+    def safe_json_dump(data, file_path):
+        """데이터를 안전하게 JSON 파일로 저장"""
+        import json
+        import os
+        
+        try:
+            # 디렉토리 확인 및 생성
+            directory = os.path.dirname(file_path)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory, exist_ok=True)
+            
+            # 데이터 저장
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            return True
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"JSON 저장 오류 ({file_path}): {str(e)}")
+            return False
+
     def _save_trend_data(self, stock_code, data):
         """트렌드 데이터 저장"""
         file_path = TRENDS_DIR / f"{stock_code}.json"

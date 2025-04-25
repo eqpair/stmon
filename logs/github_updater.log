@@ -1,0 +1,267 @@
+2025-04-25 12:31:32,584 - __main__ - INFO - SSH 설정 완료
+2025-04-25 12:31:32,598 - __main__ - INFO - Git 설정 완료
+2025-04-25 12:31:32,599 - main - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-25 12:31:40,975 - main - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-25 12:31:48,855 - main - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-25 12:31:56,516 - main - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-25 12:32:04,142 - main - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-25 12:32:11,894 - main - INFO - 처리 중인 배치: 26~30 / 84
+2025-04-25 12:32:19,391 - main - INFO - 처리 중인 배치: 31~35 / 84
+2025-04-25 12:32:26,834 - main - INFO - 처리 중인 배치: 36~40 / 84
+2025-04-25 12:32:34,195 - main - INFO - 처리 중인 배치: 41~45 / 84
+2025-04-25 12:32:41,664 - main - INFO - 처리 중인 배치: 46~50 / 84
+2025-04-25 12:32:49,049 - main - INFO - 처리 중인 배치: 51~55 / 84
+2025-04-25 12:32:56,405 - main - INFO - 처리 중인 배치: 56~60 / 84
+2025-04-25 12:33:03,906 - main - INFO - 처리 중인 배치: 61~65 / 84
+2025-04-25 12:33:11,282 - main - INFO - 처리 중인 배치: 66~70 / 84
+2025-04-25 12:33:18,653 - main - INFO - 처리 중인 배치: 71~75 / 84
+2025-04-25 12:33:26,023 - main - INFO - 처리 중인 배치: 76~80 / 84
+2025-04-25 12:33:33,515 - main - INFO - 처리 중인 배치: 81~84 / 84
+2025-04-25 12:33:37,946 - __main__ - INFO - 파싱된 신호 수: 84
+2025-04-25 12:33:37,947 - __main__ - INFO - 파싱된 신호 수: 2
+2025-04-25 12:33:38,014 - trend_collector - INFO - 트렌드 데이터 수집 시작...
+2025-04-25 12:33:39,276 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (005930): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:33:39,277 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:33:39,279 - trend_collector - ERROR - 데이터 요청 중 오류 (004105): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:33:39,797 - trend_collector - ERROR - 004105 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:33:39,797 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:33:39,798 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:33:39,798 - trend_collector - ERROR - 데이터 요청 중 오류 (45014K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:33:40,317 - trend_collector - ERROR - 45014K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:33:40,318 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:33:40,318 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:33:40,318 - trend_collector - INFO - 배치 처리 완료: 1~3 / 84
+2025-04-25 12:33:46,329 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (001790): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:33:46,330 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:33:46,332 - trend_collector - ERROR - 데이터 요청 중 오류 (004255): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:33:46,739 - trend_collector - ERROR - 004255 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:33:46,739 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:33:46,740 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:33:46,740 - trend_collector - ERROR - 데이터 요청 중 오류 (004835): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:33:47,230 - trend_collector - ERROR - 004835 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:33:47,230 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:33:47,230 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:33:47,231 - trend_collector - INFO - 배치 처리 완료: 4~6 / 84
+2025-04-25 12:33:53,239 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (002020): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:33:53,239 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:33:53,241 - trend_collector - ERROR - 데이터 요청 중 오류 (005385): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:33:53,656 - trend_collector - ERROR - 005385 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:33:53,656 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:33:53,656 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:38:52,528 - trend_collector - ERROR - 데이터 요청 중 오류 (007815): 
+2025-04-25 12:38:53,005 - trend_collector - ERROR - 007815 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:38:53,006 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:38:53,006 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:38:53,007 - trend_collector - INFO - 배치 처리 완료: 7~9 / 84
+2025-04-25 12:38:59,067 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (003540): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:38:59,068 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:38:59,071 - trend_collector - ERROR - 데이터 요청 중 오류 (004985): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:38:59,481 - trend_collector - ERROR - 004985 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:38:59,482 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:38:59,482 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:38:59,482 - trend_collector - ERROR - 데이터 요청 중 오류 (003075): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:38:59,892 - trend_collector - ERROR - 003075 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:38:59,893 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:38:59,893 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:38:59,894 - trend_collector - INFO - 배치 처리 완료: 10~12 / 84
+2025-04-25 12:39:05,967 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (005940): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:39:05,968 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:39:05,970 - trend_collector - ERROR - 데이터 요청 중 오류 (019175): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:39:06,382 - trend_collector - ERROR - 019175 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:39:06,382 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:39:06,382 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:44:05,599 - trend_collector - ERROR - 데이터 요청 중 오류 (066575): 
+2025-04-25 12:44:06,010 - trend_collector - ERROR - 066575 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:44:06,011 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:44:06,011 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:44:06,012 - trend_collector - INFO - 배치 처리 완료: 13~15 / 84
+2025-04-25 12:44:12,048 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (009830): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:44:12,048 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:44:12,051 - trend_collector - ERROR - 데이터 요청 중 오류 (004365): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:44:12,471 - trend_collector - ERROR - 004365 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:44:12,471 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:44:12,471 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:44:12,472 - trend_collector - ERROR - 데이터 요청 중 오류 (003535): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:44:13,003 - trend_collector - ERROR - 003535 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:44:13,003 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:44:13,003 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:44:13,004 - trend_collector - INFO - 배치 처리 완료: 16~18 / 84
+2025-04-25 12:44:19,006 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (051900): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:44:19,006 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:44:19,008 - trend_collector - ERROR - 데이터 요청 중 오류 (051915): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:44:19,422 - trend_collector - ERROR - 051915 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:44:19,423 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:44:19,423 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:44:19,423 - trend_collector - ERROR - 데이터 요청 중 오류 (090435): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:44:19,835 - trend_collector - ERROR - 090435 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:44:19,836 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:44:19,836 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:44:19,837 - trend_collector - INFO - 배치 처리 완료: 19~21 / 84
+2025-04-25 12:44:25,950 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (010950): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:44:25,950 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:44:25,953 - trend_collector - ERROR - 데이터 요청 중 오류 (002795): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:44:26,366 - trend_collector - ERROR - 002795 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:44:26,366 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:44:26,367 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:25,600 - trend_collector - ERROR - 데이터 요청 중 오류 (003495): 
+2025-04-25 12:49:26,074 - trend_collector - ERROR - 003495 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:26,074 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:26,075 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:26,075 - trend_collector - INFO - 배치 처리 완료: 22~24 / 84
+2025-04-25 12:49:32,127 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (001510): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:32,127 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:32,129 - trend_collector - ERROR - 데이터 요청 중 오류 (071055): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:32,540 - trend_collector - ERROR - 071055 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:32,540 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:32,541 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:32,541 - trend_collector - ERROR - 데이터 요청 중 오류 (18064K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:32,953 - trend_collector - ERROR - 18064K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:32,953 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:32,954 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:32,954 - trend_collector - INFO - 배치 처리 완료: 25~27 / 84
+2025-04-25 12:49:39,019 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (363280): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:39,019 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:39,022 - trend_collector - ERROR - 데이터 요청 중 오류 (005965): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:39,431 - trend_collector - ERROR - 005965 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:39,431 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:39,431 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:39,432 - trend_collector - ERROR - 데이터 요청 중 오류 (006805): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:39,849 - trend_collector - ERROR - 006805 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:39,849 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:39,849 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:39,850 - trend_collector - INFO - 배치 처리 완료: 28~30 / 84
+2025-04-25 12:49:45,915 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (264900): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:45,915 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:45,918 - trend_collector - ERROR - 데이터 요청 중 오류 (008355): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:46,333 - trend_collector - ERROR - 008355 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:46,334 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:46,334 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:46,334 - trend_collector - ERROR - 데이터 요청 중 오류 (000155): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:46,745 - trend_collector - ERROR - 000155 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:46,746 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:46,746 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:46,747 - trend_collector - INFO - 배치 처리 완료: 31~33 / 84
+2025-04-25 12:49:52,808 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (011780): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:52,808 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:52,811 - trend_collector - ERROR - 데이터 요청 중 오류 (108675): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:53,232 - trend_collector - ERROR - 108675 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:53,232 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:53,232 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:53,233 - trend_collector - ERROR - 데이터 요청 중 오류 (005725): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:49:53,647 - trend_collector - ERROR - 005725 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:49:53,648 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:49:53,648 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:49:53,649 - trend_collector - INFO - 배치 처리 완료: 34~36 / 84
+2025-04-25 12:49:59,715 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (000810): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:59,715 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:49:59,718 - trend_collector - ERROR - 데이터 요청 중 오류 (28513K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:00,134 - trend_collector - ERROR - 28513K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:00,134 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:00,134 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:00,135 - trend_collector - ERROR - 데이터 요청 중 오류 (084695): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:00,546 - trend_collector - ERROR - 084695 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:00,546 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:00,547 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:00,547 - trend_collector - INFO - 배치 처리 완료: 37~39 / 84
+2025-04-25 12:50:06,617 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (032680): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:06,617 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:06,620 - trend_collector - ERROR - 데이터 요청 중 오류 (000325): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:07,029 - trend_collector - ERROR - 000325 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:07,030 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:07,030 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:07,030 - trend_collector - ERROR - 데이터 요청 중 오류 (009155): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:07,448 - trend_collector - ERROR - 009155 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:07,449 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:07,449 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:07,450 - trend_collector - INFO - 배치 처리 완료: 40~42 / 84
+2025-04-25 12:50:13,502 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (003550): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:13,502 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:13,504 - trend_collector - ERROR - 데이터 요청 중 오류 (006405): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:14,039 - trend_collector - ERROR - 006405 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:14,040 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:14,040 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:14,040 - trend_collector - ERROR - 데이터 요청 중 오류 (120115): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:14,450 - trend_collector - ERROR - 120115 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:14,450 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:14,450 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:14,451 - trend_collector - INFO - 배치 처리 완료: 43~45 / 84
+2025-04-25 12:50:20,510 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (006340): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:20,510 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:20,512 - trend_collector - ERROR - 데이터 요청 중 오류 (009415): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:20,923 - trend_collector - ERROR - 009415 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:20,924 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:20,924 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:20,924 - trend_collector - ERROR - 데이터 요청 중 오류 (000545): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:21,335 - trend_collector - ERROR - 000545 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:21,335 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:21,336 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:21,336 - trend_collector - INFO - 배치 처리 완료: 46~48 / 84
+2025-04-25 12:50:27,404 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (021040): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:27,405 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:27,407 - trend_collector - ERROR - 데이터 요청 중 오류 (001755): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:27,819 - trend_collector - ERROR - 001755 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:27,819 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:27,820 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:27,820 - trend_collector - ERROR - 데이터 요청 중 오류 (012205): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:28,227 - trend_collector - ERROR - 012205 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:28,227 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:28,228 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:28,228 - trend_collector - INFO - 배치 처리 완료: 49~51 / 84
+2025-04-25 12:50:34,295 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (008770): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:34,296 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:34,298 - trend_collector - ERROR - 데이터 요청 중 오류 (004415): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:34,703 - trend_collector - ERROR - 004415 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:34,704 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:34,704 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:34,704 - trend_collector - ERROR - 데이터 요청 중 오류 (096775): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:35,121 - trend_collector - ERROR - 096775 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:35,122 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:35,122 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:35,123 - trend_collector - INFO - 배치 처리 완료: 52~54 / 84
+2025-04-25 12:50:41,177 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (000720): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:41,177 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:41,179 - trend_collector - ERROR - 데이터 요청 중 오류 (37550K): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:41,592 - trend_collector - ERROR - 37550K 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:41,593 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:41,593 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:41,593 - trend_collector - ERROR - 데이터 요청 중 오류 (078935): [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-04-25 12:50:42,006 - trend_collector - ERROR - 078935 데이터 파싱 중 오류: Incoming markup is of an invalid type: None. Markup must be a string, a bytestring, or an open filehandle.
+2025-04-25 12:50:42,006 - trend_collector - WARNING -  데이터 파싱 실패
+2025-04-25 12:50:42,006 - trend_collector - WARNING -  트렌드 데이터 처리 실패
+2025-04-25 12:50:42,007 - trend_collector - INFO - 배치 처리 완료: 55~57 / 84
+2025-04-25 12:50:48,071 - trend_collector - ERROR - 트렌드 데이터 저장 실패 (014280): cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:50:48,072 - trend_collector - ERROR -  트렌드 데이터 수집 중 오류: cannot access local variable 'safe_json_dump' where it is not associated with a value
+2025-04-25 12:55:23,345 - __main__ - INFO - Git 설정 완료
+2025-04-25 12:55:23,346 - main - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-25 12:55:31,122 - main - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-25 12:55:38,693 - main - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-25 12:55:46,232 - main - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-25 12:55:53,723 - main - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-25 12:56:01,460 - main - INFO - 처리 중인 배치: 26~30 / 84
+2025-04-25 12:56:09,003 - main - INFO - 처리 중인 배치: 31~35 / 84
+2025-04-25 12:56:16,516 - main - INFO - 처리 중인 배치: 36~40 / 84
+2025-04-25 12:56:24,107 - main - INFO - 처리 중인 배치: 41~45 / 84
+2025-04-25 12:56:31,732 - main - INFO - 처리 중인 배치: 46~50 / 84
+2025-04-25 12:56:39,332 - main - INFO - 처리 중인 배치: 51~55 / 84
+2025-04-25 12:57:06,144 - __main__ - INFO - Git 설정 완료
+2025-04-25 12:57:06,145 - main - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-25 12:57:13,894 - main - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-25 12:57:21,322 - main - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-25 12:57:28,985 - main - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-25 12:57:36,533 - main - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-25 12:57:44,261 - main - INFO - 처리 중인 배치: 26~30 / 84
+2025-04-25 12:57:51,856 - main - INFO - 처리 중인 배치: 31~35 / 84
+2025-04-25 12:57:59,410 - main - INFO - 처리 중인 배치: 36~40 / 84
+2025-04-25 12:58:06,983 - main - INFO - 처리 중인 배치: 41~45 / 84
+2025-04-25 12:58:14,644 - main - INFO - 처리 중인 배치: 46~50 / 84
+2025-04-25 12:58:22,228 - main - INFO - 처리 중인 배치: 51~55 / 84
+2025-04-25 12:58:29,860 - main - INFO - 처리 중인 배치: 56~60 / 84
+2025-04-25 12:58:37,584 - main - INFO - 처리 중인 배치: 61~65 / 84
+2025-04-25 12:58:45,203 - main - INFO - 처리 중인 배치: 66~70 / 84
+2025-04-25 12:58:52,843 - main - INFO - 처리 중인 배치: 71~75 / 84
+2025-04-25 12:59:00,510 - main - INFO - 처리 중인 배치: 76~80 / 84
+2025-04-25 12:59:08,247 - main - INFO - 처리 중인 배치: 81~84 / 84
+2025-04-25 12:59:12,851 - __main__ - INFO - 파싱된 신호 수: 84
+2025-04-25 12:59:12,851 - __main__ - INFO - 파싱된 신호 수: 2
+2025-04-25 12:59:12,856 - __main__ - ERROR - 데이터 업데이트 오류: No module named 'trend_collector'
+2025-04-25 12:59:12,857 - __main__ - INFO - 다음 업데이트까지 30분 대기 중...

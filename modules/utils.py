@@ -195,7 +195,7 @@ def safe_json_dump(data, file_path):
     import json
     import numpy as np
     import os
-    
+
     try:
         # 데이터 정리 - NaN, 무한대 값 처리
         def clean_value(v):

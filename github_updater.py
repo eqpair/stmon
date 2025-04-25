@@ -105,7 +105,7 @@ class GitHubUpdater:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             
             # 히스토리 데이터the same time, 트렌드 데이터도 업데이트
-            from trend_collector import TrendCollector
+            from stmon.modules.trend_collector import TrendCollector
             collector = TrendCollector()
             await collector.collect_all_trends()  # 트렌드 데이터 업데이트
             
@@ -286,7 +286,7 @@ class GitHubUpdater:
     async def update_trend_data(self):
         """트렌드 데이터 업데이트"""
         try:
-            from trend_collector import TrendCollector
+            from stmon.modules.trend_collector import TrendCollector
             
             logger.info("트렌드 데이터 수집 시작")
             collector = TrendCollector()
