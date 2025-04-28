@@ -910,3 +910,48 @@
 2025-04-28 12:32:00,193 - modules.trend_collector - INFO - 파일 크기: 42170 바이트
 2025-04-28 12:32:00,193 - modules.trend_collector - INFO -  트렌드 데이터 수집 완료 (1년치)
 2025-04-28 12:32:00,196 - modules.trend_collector - INFO - 트렌드 데이터 수집 완료: 성공 84개, 실패 0개
+2025-04-28 12:32:10,441 - __main__ - INFO - GitHub 저장소에 성공적으로 푸시되었습니다.
+2025-04-28 12:32:10,442 - __main__ - INFO - GitHub 데이터 업데이트 완료: 2025-04-28 12:27:55
+2025-04-28 12:32:10,443 - __main__ - INFO - 다음 업데이트까지 10.0분 대기 중...
+2025-04-28 12:35:09,146 - root - INFO - Logging initialized
+2025-04-28 12:35:09,211 - root - INFO - Logging initialized
+2025-04-28 12:35:09,542 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-28 12:35:09,543 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-28 12:35:09,737 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-28 12:35:09,738 - __main__ - INFO - Starting Stock Monitor...
+2025-04-28 12:35:09,738 - modules.telegram - INFO - Resetting webhook
+2025-04-28 12:35:12,304 - modules.telegram - INFO - Webhook reset complete
+2025-04-28 12:35:12,304 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-28 12:35:12,305 - __main__ - INFO - Fetching signals for periodic update...
+2025-04-28 12:35:12,305 - __main__ - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-28 12:35:12,306 - modules.telegram - INFO - Starting telegram polling
+2025-04-28 12:35:12,307 - modules.telegram - INFO - Resetting webhook
+2025-04-28 12:35:17,852 - modules.telegram - INFO - Webhook reset complete
+2025-04-28 12:35:17,852 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-28 12:35:19,590 - __main__ - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-28 12:35:26,888 - __main__ - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-28 12:35:34,545 - __main__ - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-28 12:35:41,558 - root - INFO - Logging initialized
+2025-04-28 12:35:42,420 - __main__ - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-28 12:35:50,289 - __main__ - INFO - 처리 중인 배치: 26~30 / 84
+2025-04-28 12:35:57,831 - __main__ - INFO - 처리 중인 배치: 31~35 / 84
+2025-04-28 12:36:05,024 - __main__ - INFO - 처리 중인 배치: 36~40 / 84
+2025-04-28 12:36:12,135 - __main__ - INFO - 처리 중인 배치: 41~45 / 84
+2025-04-28 12:36:14,231 - root - INFO - Logging initialized
+2025-04-28 12:36:19,992 - __main__ - INFO - 처리 중인 배치: 46~50 / 84
+2025-04-28 12:36:27,338 - __main__ - INFO - 처리 중인 배치: 51~55 / 84
+2025-04-28 12:36:34,940 - __main__ - INFO - 처리 중인 배치: 56~60 / 84
+2025-04-28 12:36:42,896 - __main__ - INFO - 처리 중인 배치: 61~65 / 84
+2025-04-28 12:36:47,030 - root - INFO - Logging initialized
+2025-04-28 12:36:51,281 - __main__ - INFO - 처리 중인 배치: 66~70 / 84
+2025-04-28 12:36:58,815 - __main__ - INFO - 처리 중인 배치: 71~75 / 84
+2025-04-28 12:37:06,101 - __main__ - INFO - 처리 중인 배치: 76~80 / 84
+2025-04-28 12:37:13,381 - __main__ - INFO - 처리 중인 배치: 81~84 / 84
+2025-04-28 12:37:16,662 - modules.telegram - INFO - Sending message to chat -1001471005474
+2025-04-28 12:37:17,666 - modules.telegram - INFO - Message sent successfully
+2025-04-28 12:37:17,667 - modules.telegram - INFO - Sending message to chat -1001471005474
+2025-04-28 12:37:18,121 - modules.telegram - INFO - Message sent successfully
+2025-04-28 12:37:18,122 - modules.telegram - INFO - Sending message to chat -1001471005474
+2025-04-28 12:37:18,676 - modules.telegram - INFO - Message sent successfully
+2025-04-28 12:37:18,676 - __main__ - INFO - Periodic update sent successfully
+2025-04-28 12:37:19,390 - root - INFO - Logging initialized

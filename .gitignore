@@ -1,19 +1,71 @@
-# Python
+# Python 관련 파일
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # 가상환경
+stmon_env/
 venv/
-.venv/
+ENV/
+env/
 
-# IDE
+# 로그 파일
+logs/
+*.log
+
+# 임시 파일
+.temp/
+temp/
+tmp/
+.tmp/
+
+# 프로젝트 특정 파일
+config_local.py
+config_secrets.py
+*.key
+*.pem
+credentials.json
+token.json
+auth_token.txt
+telegram_token.txt
+
+# 데이터베이스 파일
+*.db
+*.sqlite
+*.sqlite3
+db.json
+
+# 개인 설정 파일
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db
 
-# 환경변수
-.env
-.env.local
+# 데이터 캐시 파일
+.data_cache/
+data_cache/
+*.cache
 
-# 데이터베이스
-*.db
-*.sqlite3
+# 임시 락 파일
+*.lock
+
+# 백업 파일
+*.bak
+*~
