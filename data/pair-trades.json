@@ -28,8 +28,8 @@
         "preferred_name": "대한항공우",
         "entry_date": "2023-07-12",
         "exit_date": "",
-        "common_entry": 210000,
-        "preferred_entry": 180000,
+        "common_entry": 25858,
+        "preferred_entry": 28527,
         "common_qty": 688,
         "preferred_qty": 624,
         "commission_bps": 10.0,
@@ -123,6 +123,27 @@
         "benchmark_rate_pct": 3.5,
         "common_exit": 62150,
         "preferred_exit": 59626,
+        "status": "청산"
+    },
+    {
+        "pair_name": "테스트페어/우",
+        "common_code": "000001",
+        "preferred_code": "000002",
+        "common_name": "테스트보통주",
+        "preferred_name": "테스트우선주",
+        "entry_date": "2025-04-01",
+        "exit_date": "2025-04-15",
+        "common_entry": 10000,
+        "preferred_entry": 10000,
+        "common_qty": 10,
+        "preferred_qty": 10,
+        "commission_bps": 10.0,
+        "stamp_bps": 20.0,
+        "common_floating_spread_bps": 0.0,
+        "preferred_floating_spread_bps": 0.0,
+        "benchmark_rate_pct": 0.0,
+        "common_exit": 9000,
+        "preferred_exit": 11000,
         "status": "청산"
     }
 ]

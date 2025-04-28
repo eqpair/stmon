@@ -4,7 +4,6 @@ function formatNumber(num) {
     return Number(num).toLocaleString("en-US");
 }
 
-// 시장 운영 시간(평일 8:30~16:30, KST) 판정
 function isMarketTime() {
     const now = new Date();
     const day = now.getDay();
