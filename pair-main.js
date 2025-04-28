@@ -16,7 +16,6 @@ function isMarketTime() {
     return isWeekday && afterOpen && beforeClose;
 }
 
-// trend_collector가 저장한 종가(마감가) 가져오기
 async function fetchClosingPrice(stockCode, isCommon) {
     try {
         const resp = await fetch(`data/trends/${stockCode}.json`);
@@ -31,7 +30,6 @@ async function fetchClosingPrice(stockCode, isCommon) {
     }
 }
 
-// 실시간가(네이버 API)
 async function fetchPrice(stockCode) {
     const url = `https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${stockCode}`;
     try {
@@ -43,7 +41,6 @@ async function fetchPrice(stockCode) {
     }
 }
 
-// 시장 중이면 실시간가, 마감이면 종가(마감가)
 async function getCurrentOrClosingPrice(stockCode, isCommon) {
     if (isMarketTime()) {
         return await fetchPrice(stockCode);
@@ -72,33 +69,23 @@ function calcInterest(principal, rate_pct, days) {
     return principal * (rate_pct / 100) * (days / 365);
 }
 
-// 수익(원)과 수익률(%) 동시 계산
-function calcPairProfitAndReturn(entry, cPrice, pPrice, days) {
-    const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
-    const common_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
-    const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
-
-    // 진입/청산가에 수수료, 이자 모두 반영
-    let common_exit = entry.status === "청산" ? entry.common_exit : cPrice;
-    let preferred_exit = entry.status === "청산" ? entry.preferred_exit : pPrice;
-
-    if (!common_exit || !preferred_exit) return { profit: "-", ret: "-" };
-
-    // 보통주(숏) 수익
-    const short_interest = calcInterest(entry.common_entry, common_interest_rate, days) * entry.common_qty;
-    const short_profit = (entry.common_entry * (1 - feeRate) - common_exit * (1 + feeRate) - short_interest) * entry.common_qty;
-
-    // 우선주(롱) 수익
-    const long_interest = calcInterest(entry.preferred_entry, preferred_interest_rate, days) * entry.preferred_qty;
-    const long_profit = (preferred_exit * (1 - feeRate) - entry.preferred_entry * (1 + feeRate) - long_interest) * entry.preferred_qty;
-
-    const total_profit = short_profit + long_profit;
-
-    // 진입 총액 (절대값 합산)
-    const total_entry = entry.common_entry * entry.common_qty + entry.preferred_entry * entry.preferred_qty;
-    const ret = total_entry !== 0 ? (total_profit / total_entry * 100).toFixed(2) + "%" : "-";
-
-    return { profit: formatNumber(Math.round(total_profit)), ret };
+// 각 포지션별 수익/수익률 계산
+function calcPositionProfitAndReturn(type, entry, exit, qty, feeRate, interestRate, days) {
+    if (!entry || !exit || !qty) return { profit: "-", ret: "-" };
+    let profit = 0;
+    if (type === "Short") {
+        // 보통주(숏): 진입가 > 청산가/현재가 → 수익
+        const interest = calcInterest(entry, interestRate, days) * qty;
+        profit = (entry * (1 - feeRate) - exit * (1 + feeRate) - interest) * qty;
+        const ret = entry !== 0 ? (profit / (entry * qty) * 100).toFixed(2) + "%" : "-";
+        return { profit: formatNumber(Math.round(profit)), ret };
+    } else {
+        // 우선주(롱): 진입가 < 청산가/현재가 → 수익
+        const interest = calcInterest(entry, interestRate, days) * qty;
+        profit = (exit * (1 - feeRate) - entry * (1 + feeRate) - interest) * qty;
+        const ret = entry !== 0 ? (profit / (entry * qty) * 100).toFixed(2) + "%" : "-";
+        return { profit: formatNumber(Math.round(profit)), ret };
+    }
 }
 
 async function fetchPairs() {
@@ -112,37 +99,76 @@ async function renderTable() {
     tbody.innerHTML = "";
 
     for (const entry of pairs) {
-        let cNow = "-", pNow = "-", pairRet = "-", pairProfit = "-";
-        let rowClass = entry.status === "청산" ? "closed" : "open";
+        let cNow = "-", pNow = "-";
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
 
+        // 현재가/종가
         if (entry.status === "보유중") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
-            const { profit, ret } = calcPairProfitAndReturn(entry, cNow, pNow, daysNum);
-            pairProfit = profit;
-            pairRet = ret;
         } else {
             cNow = entry.common_exit;
             pNow = entry.preferred_exit;
-            const { profit, ret } = calcPairProfitAndReturn(entry, cNow, pNow, daysNum);
-            pairProfit = profit;
-            pairRet = ret;
         }
-        const retClass = (pairRet !== "-" && parseFloat(pairRet) < 0) ? "negative" : "positive";
-        const profitClass = (pairProfit !== "-" && parseFloat(pairProfit.replace(/,/g, "")) < 0) ? "negative" : "positive";
+
+        // 보통주(Short) 계산
+        const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
+        const common_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
+        const short = calcPositionProfitAndReturn(
+            "Short",
+            entry.common_entry,
+            cNow,
+            entry.common_qty,
+            feeRate,
+            common_interest_rate,
+            daysNum
+        );
+
+        // 우선주(Long) 계산
+        const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
+        const long = calcPositionProfitAndReturn(
+            "Long",
+            entry.preferred_entry,
+            pNow,
+            entry.preferred_qty,
+            feeRate,
+            preferred_interest_rate,
+            daysNum
+        );
+
+        // 상태별 스타일
+        let rowClass = entry.status === "청산" ? "closed" : "open";
+        const shortClass = (short.profit !== "-" && parseFloat(short.profit.replace(/,/g, "")) < 0) ? "negative" : "positive";
+        const shortRetClass = (short.ret !== "-" && parseFloat(short.ret) < 0) ? "negative" : "positive";
+        const longClass = (long.profit !== "-" && parseFloat(long.profit.replace(/,/g, "")) < 0) ? "negative" : "positive";
+        const longRetClass = (long.ret !== "-" && parseFloat(long.ret) < 0) ? "negative" : "positive";
+
+        // 페어명 헤더
         tbody.innerHTML += `
+      <tr class="pair-header"><td colspan="10">${entry.pair_name}</td></tr>
       <tr class="${rowClass}">
-        <td data-label="페어">${entry.pair_name}</td>
+        <td data-label="구분">보통주<br>(Short)</td>
+        <td data-label="종목명">${entry.common_name}</td>
         <td data-label="진입일">${entry.entry_date}</td>
         <td data-label="청산일">${entry.exit_date || "-"}</td>
-        <td data-label="진행일수">${days}</td>
-        <td data-label="진입가">${formatNumber(entry.common_entry)} / ${formatNumber(entry.preferred_entry)}</td>
-        <td data-label="수량">${formatNumber(entry.common_qty)} / ${formatNumber(entry.preferred_qty)}</td>
-        <td data-label="청산가/현재가">${formatNumber(cNow) || "-"} / ${formatNumber(pNow) || "-"}</td>
-        <td data-label="수익" class="${profitClass}">${pairProfit}</td>
-        <td data-label="수익률" class="${retClass}">${pairRet}</td>
+        <td data-label="진입가">${formatNumber(entry.common_entry)}</td>
+        <td data-label="수량">${formatNumber(entry.common_qty)}</td>
+        <td data-label="청산가/현재가">${formatNumber(cNow) || "-"}</td>
+        <td data-label="수익" class="${shortClass}">${short.profit}</td>
+        <td data-label="수익률" class="${shortRetClass}">${short.ret}</td>
+        <td data-label="상태">${entry.status}</td>
+      </tr>
+      <tr class="${rowClass}">
+        <td data-label="구분">우선주<br>(Long)</td>
+        <td data-label="종목명">${entry.preferred_name}</td>
+        <td data-label="진입일">${entry.entry_date}</td>
+        <td data-label="청산일">${entry.exit_date || "-"}</td>
+        <td data-label="진입가">${formatNumber(entry.preferred_entry)}</td>
+        <td data-label="수량">${formatNumber(entry.preferred_qty)}</td>
+        <td data-label="청산가/현재가">${formatNumber(pNow) || "-"}</td>
+        <td data-label="수익" class="${longClass}">${long.profit}</td>
+        <td data-label="수익률" class="${longRetClass}">${long.ret}</td>
         <td data-label="상태">${entry.status}</td>
       </tr>
     `;

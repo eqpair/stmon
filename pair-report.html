@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어트레이딩 리포트 (수익/수익률)</title>
+    <title>페어트레이딩 리포트 (상세)</title>
     <script src="pair-main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -57,8 +57,7 @@
         }
 
         table {
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             width: 100%;
             background: #fff;
             border-radius: 12px;
@@ -68,9 +67,16 @@
 
         th,
         td {
-            padding: 16px 8px;
+            padding: 14px 8px;
             text-align: center;
             font-size: 1rem;
+            border-right: 1.5px solid #bdbdbd;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
         }
 
         th {
@@ -81,6 +87,12 @@
             letter-spacing: 0.5px;
         }
 
+        tr.pair-header {
+            background: #f0f4f8;
+            font-weight: 700;
+            font-size: 1.08em;
+        }
+
         tr.closed {
             background: #f5f5f5;
             color: #757575;
@@ -88,10 +100,6 @@
 
         tr.open {
             background: #fffde7;
-        }
-
-        tr:not(:last-child) td {
-            border-bottom: 1px solid #e0e0e0;
         }
 
         .positive {
@@ -155,6 +163,7 @@
 
             td {
                 border: none;
+                border-bottom: 1px solid #e0e0e0;
                 position: relative;
                 padding-left: 50%;
                 text-align: left;
@@ -182,14 +191,14 @@
         <div class="top-bar">
             <button class="home-btn" onclick="window.location.href='index.html'">🏠 홈으로</button>
         </div>
-        <h1>페어트레이딩 리포트 <span class="tag">수익/수익률</span></h1>
+        <h1>페어트레이딩 리포트 <span class="tag">상세</span></h1>
         <table id="pair-table">
             <thead>
                 <tr>
-                    <th>페어</th>
+                    <th>구분</th>
+                    <th>종목명</th>
                     <th>진입일</th>
                     <th>청산일</th>
-                    <th>진행일수</th>
                     <th>진입가</th>
                     <th>수량</th>
                     <th>청산가/현재가</th>
@@ -203,9 +212,9 @@
             </tbody>
         </table>
         <div style="margin-top:1.5rem;color:#888;font-size:0.97em;">
-            * 수익/수익률은 청산 시 확정, 보유중일 때는 실시간/종가 기준으로 계산됩니다.<br>
-            * 모든 거래비용(수수료, 스프레드 등) 반영, 마감 시 종가 사용.<br>
-            * 진행일수는 오늘 포함, 청산된 경우 진입일~청산일까지 계산됩니다.
+            * 보통주(Short)는 진입가보다 내려가야 수익, 우선주(Long)는 진입가보다 올라가야 수익입니다.<br>
+            * 각 페어는 보통주/우선주 한 줄씩 구분되어 표시됩니다.<br>
+            * 수익/수익률은 각 포지션별로 계산, 모든 거래비용 반영, 마감 시 종가 사용.
         </div>
     </div>
 </body>
