@@ -13,6 +13,9 @@
         "preferred_qty": 435,
         "commission_bps": 10.0,
         "stamp_bps": 20.0,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 3.5,
         "common_exit": null,
         "preferred_exit": null,
         "status": "보유중"
@@ -31,6 +34,9 @@
         "preferred_qty": 624,
         "commission_bps": 10.0,
         "stamp_bps": 20.0,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 3.5,        
         "common_exit": null,
         "preferred_exit": null,
         "status": "보유중"
@@ -49,6 +55,9 @@
         "preferred_qty": 406,
         "commission_bps": 10.0,
         "stamp_bps": 20.0,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 3.5,        
         "common_exit": 164312,
         "preferred_exit": 152759,
         "status": "청산"
@@ -67,6 +76,9 @@
         "preferred_qty": 425,
         "commission_bps": 10.0,
         "stamp_bps": 20.0,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 3.5,
         "common_exit": 246207,
         "preferred_exit": 184498,
         "status": "청산"
@@ -85,6 +97,9 @@
         "preferred_qty": 1000,
         "commission_bps": 10.0,
         "stamp_bps": 20.0,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 3.5,
         "common_exit": 42696,
         "preferred_exit": 23038,
         "status": "청산"
@@ -103,6 +118,9 @@
         "preferred_qty": 1490,
         "commission_bps": 10.0,
         "stamp_bps": 20.0,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 3.5,
         "common_exit": 62150,
         "preferred_exit": 59626,
         "status": "청산"
