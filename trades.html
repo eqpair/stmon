@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>트레이딩 리포트</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 30px;
+        }
+
+        input {
+            margin: 0 4px;
+        }
+
+        .trade-table,
+        .trade-table th,
+        .trade-table td {
+            border: 1px solid #888;
+            border-collapse: collapse;
+            padding: 7px;
+        }
+
+        .trade-table {
+            margin-top: 15px;
+            min-width: 800px;
+        }
+
+        .status-완료 {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-진행중 {
+            color: orange;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>보통주(숏) - 우선주(롱) 매매 리포트</h2>
+    <div>
+        <b>실시간 가격</b> -
+        보통주: <span id="liveCommon"></span>
+        / 우선주: <span id="livePref"></span>
+        / 날짜: <span id="liveDate"></span>
+        / SZ: <span id="liveSz"></span>
+    </div>
+    <form onsubmit="event.preventDefault(); addTrade();">
+        <input type="number" id="shortPrice" placeholder="보통주(숏) 진입가" required min="1000">
+        <input type="number" id="longPrice" placeholder="우선주(롱) 진입가" required min="1000">
+        <input type="number" id="qty" placeholder="수량" required min="1">
+        <input type="number" id="fee" value="0.02" step="0.01" min="0" max="1" style="width:50px;">%
+        <input type="number" id="shortExit" placeholder="보통주 청산가(선택)">
+        <input type="number" id="longExit" placeholder="우선주 청산가(선택)">
+        <button>내역 추가/수정</button>
+        <button type="button" onclick="clearTrades();">내역 초기화</button>
+    </form>
+    <table class="trade-table" id="tradeTable"></table>
+    <script>
+        const TICK = [
+                ['005930', '삼성전자'],
+                ['450140', '코오롱모빌리티그룹'],
+                ['004100', '태양금속'],
+                ['004250', 'NPC'],
+                ['001790', '대한제당'],
+                ['004830', '덕성'],
+                ['007810', '코리아써키트'],
+                ['002020', '코오롱'],
+                ['005380', '현대차'],
+                ['003540', '대신증권'],
+                ['004980', '성신양회'],
+                ['003070', '코오롱글로벌'],
+                ['005940', 'NH투자증권'],
+                ['019170', '신풍제약'],
+                ['066570', 'LG전자'],
+                ['009830', '한화솔루션'],
+                ['004360', '세방'],
+                ['003530', '한화투자증권'],
+                ['051900', 'LG생활건강'],
+                ['090430', '아모레퍼시픽'],
+                ['051910', 'LG화학'],
+                ['002790', '아모레G'],
+                ['003490', '대한항공'],
+                ['010950', 'S-Oil'],
+                ['180640', '한진칼'],
+                ['001510', 'SK증권'],
+                ['071050', '한국금융지주'],
+                ['363280', '티와이홀딩스'],
+                ['006800', '미래에셋증권'],
+                ['005960', '동부건설'],
+                ['264900', '크라운제과'],
+                ['000150', '두산'],
+                ['008350', '남선알미늄'],
+                ['011780', '금호석유'],
+                ['005720', '넥센'],
+                ['108670', 'LX하우시스'],
+                ['000810', '삼성화재'],
+                ['084690', '대상홀딩스'],
+                ['285130', 'SK케미칼'],
+                ['032680', '소프트센'],
+                ['009150', '삼성전기'],
+                ['000320', '노루홀딩스'],
+                ['003550', 'LG'],
+                ['006400', '삼성SDI'],
+                ['120110', '코오롱인더'],
+                ['006340', '대원전선'],
+                ['009410', '태영건설'],
+                ['000540', '흥국화재'],
+                ['021040', '대호특수강'],
+                ['012200', '계양전기'],
+                ['001750', '한양증권'],
+                ['008770', '호텔신라'],
+                ['096770', 'SK이노베이션'],
+                ['004410', '서울식품'],
+                ['000720', '현대건설'],
+                ['375500', 'DL이앤씨'],
+                ['078930', 'GS'],
+                ['014280', '금강공업'],
+                ['001680', '대상'],
+                ['002990', '금호건설'],
+                ['097950', 'CJ제일제당'],
+                ['006120', 'SK디스커버리'],
+                ['000210', 'DL'],
+                ['090350', '노루페인트'],
+                ['001520', '동양'],
+                ['000880', '한화'],
+                ['001040', 'CJ'],
+                ['005740', '크라운해태홀딩스'],
+                ['005300', '롯데칠성'],
+                ['034730', 'SK'],
+                ['014910', '성문전자'],
+                ['007570', '일양약품'],
+                ['004990', '롯데지주'],
+                ['004540', '깨끗한나라'],
+                ['000100', '유한양행'],
+                ['001270', '부국증권'],
+                ['003920', '남양유업'],
+                ['003460', '유화증권'],
+                ['145990', '삼양사'],
+                ['001060', 'JW중외제약'],
+                ['000140', '하이트진로홀딩스'],
+                ['001460', 'BYC'],
+                ['000070', '삼양홀딩스']
+            ];
+        const TRENDS_URL = `data/trends/${TICK}.json`; // 데이터 URL
+        const TRADE_KEY = 'trades_v1';
+
+        // 1. 실시간 데이터 fetch
+        let liveData = {}, lastIdx = -1;
+        async function fetchLiveData() {
+            try {
+                const res = await fetch(`${TRENDS_URL}?_t=${Date.now()}`); // 캐시 방지
+                if (!res.ok) throw new Error('데이터 없음');
+                liveData = await res.json();
+                lastIdx = (liveData['dates'] || []).length - 1;
+                document.getElementById('liveCommon').textContent = liveData.common_prices?.[lastIdx] || '';
+                document.getElementById('livePref').textContent = liveData.preferred_prices?.[lastIdx] || '';
+                document.getElementById('liveDate').textContent = liveData.dates?.[lastIdx] || '';
+                document.getElementById('liveSz').textContent = liveData.sz_values?.[lastIdx]?.toFixed(2) || '';
+            } catch { ['liveCommon', 'livePref', 'liveDate', 'liveSz'].forEach(id => document.getElementById(id).textContent = '-'); }
+        }
+
+        // 2. LocalStorage 거래내역 로드/세이브
+        function getTradeLog() {
+            try { return JSON.parse(localStorage.getItem(TRADE_KEY)) || []; } catch { return []; }
+        }
+        function setTradeLog(arr) { localStorage.setItem(TRADE_KEY, JSON.stringify(arr)); }
+
+        // 3. 거래 추가/수정
+        function addTrade() {
+            const shortPrice = Number(shortPriceEl.value);
+            const longPrice = Number(longPriceEl.value);
+            const qty = Number(qtyEl.value);
+            const fee = Number(feeEl.value) / 100;
+            const shortExit = shortExitEl.value ? Number(shortExitEl.value) : null;
+            const longExit = longExitEl.value ? Number(longExitEl.value) : null;
+            if (!shortPrice || !longPrice || !qty) { alert('진입가, 수량 입력!'); return; }
+            let list = getTradeLog();
+            // 동일 진입/수량 미청산 거래는 업데이트(수정), 아니면 추가
+            let updated = false;
+            for (let t of list) {
+                if (!t.shortExit && !t.longExit && t.shortPrice == shortPrice && t.longPrice == longPrice && t.qty == qty) {
+                    t.shortExit = shortExit; t.longExit = longExit; t.fee = fee;
+                    updated = true; break;
+                }
+            }
+            if (!updated) list.push({
+                shortPrice, longPrice, qty, fee, shortExit, longExit,
+                date: liveData.dates?.[lastIdx] || new Date().toISOString().slice(0, 10),
+                done: !!(shortExit && longExit)
+            });
+            setTradeLog(list); renderTradeTable();
+        }
+
+        // 4. 거래 초기화
+        function clearTrades() {
+            if (confirm('모든 거래 내역을 삭제하시겠습니까?')) {
+                localStorage.removeItem(TRADE_KEY);
+                renderTradeTable();
+            }
+        }
+
+        // 5. 손익/수익률 계산
+        function calcPnL(trade) {
+            // 진행중이면 현재가로 계산
+            const shortExit = (trade.shortExit != null) ? trade.shortExit : (liveData.common_prices?.[lastIdx] || trade.shortPrice);
+            const longExit = (trade.longExit != null) ? trade.longExit : (liveData.preferred_prices?.[lastIdx] || trade.longPrice);
+            const shortPnL = (trade.shortPrice - shortExit) * trade.qty;
+            const longPnL = (longExit - trade.longPrice) * trade.qty;
+            const feeAmt = (trade.shortPrice + shortExit + trade.longPrice + longExit) * trade.qty * trade.fee;
+            const totalPnL = shortPnL + longPnL - feeAmt;
+            const base = (trade.shortPrice + trade.longPrice) * trade.qty;
+            const pnlRate = base > 0 ? totalPnL / base * 100 : 0;
+            return { totalPnL, pnlRate };
+        }
+
+        // 6. 테이블 렌더링
+        function renderTradeTable() {
+            let list = getTradeLog();
+            let html = '<tr><th>#</th><th>진입일</th><th>보통주(숏) 진입</th><th>우선주(롱) 진입</th><th>수량</th><th>보통주 청산</th><th>우선주 청산</th><th>손익(수수료포함)</th><th>수익률(%)</th><th>상태</th></tr>';
+            let i = 1, total = 0;
+            list.forEach(t => {
+                const { totalPnL, pnlRate } = calcPnL(t);
+                let status = (t.shortExit && t.longExit) ? "완료" : "진행중";
+                total += totalPnL;
+                html += `<tr>
+      <td>${i++}</td>
+      <td>${t.date || ''}</td>
+      <td>${t.shortPrice}</td>
+      <td>${t.longPrice}</td>
+      <td>${t.qty}</td>
+      <td>${t.shortExit ?? '-'}</td>
+      <td>${t.longExit ?? '-'}</td>
+      <td>${totalPnL.toFixed(0)}</td>
+      <td>${pnlRate.toFixed(2)}</td>
+      <td class="status-${status}">${status}</td>
+    </tr>`;
+            });
+            html += `<tr style="font-weight:bold;"><td colspan="7">총 손익합계</td><td>${total.toFixed(0)}</td><td colspan="2"></td></tr>`;
+            tradeTable.innerHTML = html;
+        }
+
+        // 7. 요소 참조
+        const shortPriceEl = document.getElementById('shortPrice');
+        const longPriceEl = document.getElementById('longPrice');
+        const qtyEl = document.getElementById('qty');
+        const feeEl = document.getElementById('fee');
+        const shortExitEl = document.getElementById('shortExit');
+        const longExitEl = document.getElementById('longExit');
+
+        // 8. 주기적 fetch/표 갱신
+        window.onload = function () {
+            fetchLiveData(); renderTradeTable();
+            setInterval(fetchLiveData, 10000);   // 10초마다 실시간 갱신
+            setInterval(renderTradeTable, 10000);
+        }
+    </script>
+</body>
+
+</html>
