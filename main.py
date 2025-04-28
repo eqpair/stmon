@@ -24,7 +24,7 @@ log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 os.makedirs(log_dir, exist_ok=True)
 
 # 로그 파일 경로
-log_file = os.path.join(log_dir, 'stock_monitor.log')
+log_file = os.path.join(log_dir, 'logs/stock_monitor.log')
 
 # 로깅 설정 (중복 방지)
 logger = logging.getLogger()
