@@ -3,13 +3,13 @@
 import psutil
 import asyncio
 import logging
+from logging.handlers import RotatingFileHandler
+import os
 from typing import List, Tuple
 from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 import json
-import os
-import sys
 import fcntl
 import atexit
 
@@ -19,10 +19,6 @@ from modules.telegram import TelegramBot
 from modules.utils import is_market_time
 from modules.exceptions import MarketDataError
 
-import logging
-from logging.handlers import RotatingFileHandler
-import os
-
 # 로그 디렉토리 생성
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 os.makedirs(log_dir, exist_ok=True)
@@ -30,46 +26,33 @@ os.makedirs(log_dir, exist_ok=True)
 # 로그 파일 경로
 log_file = os.path.join(log_dir, 'stock_monitor.log')
 
-# 로그 설정
+# 로깅 설정 (중복 방지)
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-# 파일 핸들러 추가
-file_handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
-file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-logger.addHandler(file_handler)
-
-# 콘솔 핸들러 추가
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-logger.addHandler(console_handler)
-
-# 로그 테스트
-logging.info("Logging initialized")
+if not logger.handlers:
+    logger.setLevel(logging.INFO)
+    file_handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    logger.addHandler(file_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    logger.addHandler(console_handler)
+    logging.info("Logging initialized")
 
 # 중복 실행 방지를 위한 락 파일 설정
 def obtain_lock():
     lock_file_path = "/tmp/stmon_telegram.lock"
     try:
-        # 락 파일이 이미 존재하고 다른 프로세스가 사용 중인지 확인
         if os.path.exists(lock_file_path):
-            # 파일 내용 확인
             with open(lock_file_path, 'r') as f:
                 pid = f.read().strip()
-                # PID가 존재하는지 확인
                 if pid and os.path.exists(f"/proc/{pid}"):
                     print(f"Another instance is already running with PID {pid}")
                     sys.exit(1)
-                
-        # 파일이 없거나 유효하지 않은 경우 새로 생성
         with open(lock_file_path, 'w') as f:
             f.write(str(os.getpid()))
-        
-        # 프로그램 종료 시 락 파일 제거
         def cleanup():
             if os.path.exists(lock_file_path):
                 os.remove(lock_file_path)
-        
         atexit.register(cleanup)
         return True
     except Exception as e:
@@ -80,30 +63,19 @@ def obtain_lock():
 if not obtain_lock():
     print("Failed to obtain lock. Another instance might be running.")
     sys.exit(1)
-    
-def ensure_single_instance():
-        script_name = os.path.basename(sys.argv[0])
-        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-            try:
-                if proc.name() == 'python3' and proc.pid != os.getpid():
-                    # 명령줄에서 스크립트 파일명만 추출하여 비교
-                    for cmd in proc.cmdline():
-                        if os.path.basename(cmd) == script_name:
-                            print(f"Terminating existing instance with PID {proc.pid}")
-                            proc.kill()
-                            break
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
-                pass
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(Path('logs/stock_monitor.log')),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-logger = logging.getLogger(__name__)
+def ensure_single_instance():
+    script_name = os.path.basename(sys.argv[0])
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        try:
+            if proc.name() == 'python3' and proc.pid != os.getpid():
+                for cmd in proc.cmdline():
+                    if os.path.basename(cmd) == script_name:
+                        print(f"Terminating existing instance with PID {proc.pid}")
+                        proc.kill()
+                        break
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
 
 def mark_special_stocks(stock_name):
     """
@@ -111,7 +83,6 @@ def mark_special_stocks(stock_name):
     이 함수는 특별 관심 종목들을 그룹으로 나누어 다른 아이콘으로 표시합니다.
     또한 가중치 정보를 새로운 형식(-0.5- 등)으로 변환합니다.
     """
-    # 종목 기본명과 가중치 추출
     base_name = stock_name
     weight_info = None
     
@@ -121,19 +92,16 @@ def mark_special_stocks(stock_name):
             base_name = parts[0]
             weight_info = parts[1].replace(')', '')
     
-    # 특별 관심 종목 그룹 1 (빨간색 아이콘)
     special_stocks_1 = [
         '삼성전자', '현대차', 'S-Oil', '한진칼', 'SK'
     ]
     
-    # 특별 관심 종목 그룹 2 (주황색 아이콘)
     special_stocks_2 = [
         '한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션',
         'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라', 
         '부국증권', '하이트진로홀딩스'
     ]
     
-    # 특별 관심 종목 그룹 3 (녹색 아이콘)
     special_stocks_3 = [
         '코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌',
         '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산', 
@@ -141,7 +109,6 @@ def mark_special_stocks(stock_name):
         '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스'
     ]
     
-    # 특별 관심 종목 그룹 4 (파란색 아이콘)
     special_stocks_4 = [
         'NH투자증권', 'LG전자', 'LG생활건강', '아모레G', '대한항공',
         '미래에셋증권', '금호석유', 'SK케미칼', '삼성전기', 'LG', 
@@ -149,13 +116,10 @@ def mark_special_stocks(stock_name):
         'DL', 'CJ', '유한양행', 'BYC'
     ]
     
-    # 아이콘 추가 및 가중치 정보 포맷 변경
     result = base_name
     if weight_info:
-        # 괄호 대신 대시 형식으로 변경
         result = f"{base_name}-{weight_info}-"
     
-    # 기본명으로 종목 확인 및 아이콘 추가
     if base_name in special_stocks_1:
         return f'🔴 {result}'
     elif base_name in special_stocks_2:
@@ -207,7 +171,7 @@ class StockMonitor:
                 formatted_name = f"<b>{clean_name}</b>"
                 
                 if isinstance(result, Exception):
-                    logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
+                    logger.error(f"Error getting signal for {pair.A_name}: {str(result)}", exc_info=True)
                     all_messages.append(f"{formatted_name}\n    Error - {str(result)}")
                 elif result:
                     signal_info = result
@@ -256,7 +220,7 @@ class StockMonitor:
                         self.last_r_signal_time[pair.A_name] = current_time
                     
                 except Exception as e:
-                    logger.error(f"Error processing R signal for {pair.A_name}: {str(e)}")
+                    logger.error(f"Error processing R signal for {pair.A_name}: {str(e)}", exc_info=True)
             
             all_signals = "\n".join(all_messages)
             divergent_signals = "\n".join(divergent_messages) if divergent_messages else "No divergent pairs found at the moment."
@@ -264,7 +228,7 @@ class StockMonitor:
             return all_signals, divergent_signals
                         
         except Exception as e:
-            logger.error(f"Error in get_signals_with_divergent: {str(e)}")
+            logger.error(f"Error in get_signals_with_divergent: {str(e)}", exc_info=True)
             raise
 
     async def get_all_signals(self, divergence_only: bool = False) -> str:
@@ -272,7 +236,7 @@ class StockMonitor:
             all_signals, divergent_signals = await self.get_signals_with_divergent()
             return divergent_signals if divergence_only else all_signals
         except Exception as e:
-            logger.error(f"Error in get_all_signals: {str(e)}")
+            logger.error(f"Error in get_all_signals: {str(e)}", exc_info=True)
             raise
 
     async def send_periodic_updates(self):
@@ -297,8 +261,8 @@ class StockMonitor:
                 
                 await asyncio.sleep(WAIT_TIME)
             except Exception as e:
-                logger.error(f"Error in periodic update: {str(e)}")
-                await asyncio.sleep(30)
+                logger.error(f"Error in periodic update: {str(e)}", exc_info=True)
+                await asyncio.sleep(60)  # 30초 -> 60초로 변경
 
     async def start(self):
         try:
@@ -310,8 +274,9 @@ class StockMonitor:
             
             await asyncio.gather(update_task, polling_task)
         except Exception as e:
-            logger.error(f"Critical error in Stock Monitor: {str(e)}")
+            logger.error(f"Critical error in Stock Monitor: {str(e)}", exc_info=True)
             self.running = False
+            await self.telegram_bot.stop()
             raise
 
     async def shutdown(self):
@@ -327,11 +292,10 @@ async def main():
         logger.info("Received shutdown signal")
         await monitor.shutdown()
     except Exception as e:
-        logger.error(f"Fatal error: {str(e)}")
+        logger.error(f"Fatal error: {str(e)}", exc_info=True)
         await monitor.shutdown()
         sys.exit(1)
 
 if __name__ == "__main__":
     ensure_single_instance()  # 중복 프로세스 종료
     asyncio.run(main())
-    
