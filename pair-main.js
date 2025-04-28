@@ -23,9 +23,9 @@ async function fetchClosingPrice(stockCode, isCommon) {
             return data.common_prices[data.common_prices.length - 1];
         if (!isCommon && data.preferred_prices && data.preferred_prices.length > 0)
             return data.preferred_prices[data.preferred_prices.length - 1];
-        return null;
+        return "-";
     } catch {
-        return null;
+        return "-";
     }
 }
 
@@ -36,7 +36,7 @@ async function fetchPrice(stockCode) {
         const data = await resp.json();
         return data.result.areas[0].datas[0].nv;
     } catch {
-        return null;
+        return "-";
     }
 }
 
@@ -69,7 +69,7 @@ function calcInterest(entryAmt, rate_pct, days) {
 }
 
 function calcShortPnL(entry, exit, qty, feeRate, interestRate, days) {
-    if (!entry || !exit || !qty) return { pnl: 0, pnlStr: "-", ret: "-" };
+    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
     const entryFee = entryAmt * feeRate;
@@ -81,7 +81,7 @@ function calcShortPnL(entry, exit, qty, feeRate, interestRate, days) {
 }
 
 function calcLongPnL(entry, exit, qty, feeRate, interestRate, days) {
-    if (!entry || !exit || !qty) return { pnl: 0, pnlStr: "-", ret: "-" };
+    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
     const entryFee = entryAmt * feeRate;
@@ -112,8 +112,8 @@ async function renderTable() {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
         } else {
-            cNow = entry.common_exit;
-            pNow = entry.preferred_exit;
+            cNow = entry.common_exit !== null && entry.common_exit !== undefined ? entry.common_exit : "-";
+            pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
         }
 
         // 계산 파라미터
@@ -148,18 +148,18 @@ async function renderTable() {
         const pairProfitClass = pairProfit < 0 ? "negative" : "positive";
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "positive";
 
-        let rowClass = entry.status === "청산" ? "closed" : "open";
+        let rowClass = entry.status === "청산" ? "closed pair-row" : "open pair-row";
         const shortClass = (short.pnlStr !== "-" && parseFloat(short.pnlStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
         const shortRetClass = (short.ret !== "-" && parseFloat(short.ret) < 0) ? "negative" : "positive";
         const longClass = (long.pnlStr !== "-" && parseFloat(long.pnlStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
         const longRetClass = (long.ret !== "-" && parseFloat(long.ret) < 0) ? "negative" : "positive";
 
-        // 항상 두 줄 출력, 값이 없으면 "-"로 표기
+        // 항상 두 줄 출력, 값이 없으면 "-"로 표기, 폰트/배경 통일
         tbody.innerHTML += `
-      <tr class="pair-summary">
-        <td rowspan="2" style="vertical-align:middle;font-weight:700;">${entry.pair_name || "-"}</td>
-        <td rowspan="2" class="${pairProfitClass}" style="vertical-align:middle;font-weight:700;">${pairProfitStr}</td>
-        <td rowspan="2" class="${pairRetClass}" style="vertical-align:middle;font-weight:700;">${pairReturn}</td>
+      <tr class="${rowClass}">
+        <td rowspan="2" style="vertical-align:middle;">${entry.pair_name || "-"}</td>
+        <td rowspan="2" class="${pairProfitClass}" style="vertical-align:middle;">${pairProfitStr}</td>
+        <td rowspan="2" class="${pairRetClass}" style="vertical-align:middle;">${pairReturn}</td>
         <td>보통주(Short)</td>
         <td>${entry.entry_date || "-"}</td>
         <td>${entry.exit_date || "-"}</td>
