@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>페어 트레이딩 리포트</title>
+    <script src="pair-main.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', Arial, sans-serif;
+            margin: 2rem;
+        }
+
+        h1 {
+            color: #1a237e;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #bdbdbd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #e3f2fd;
+            color: #1a237e;
+        }
+
+        tr.closed {
+            background: #f5f5f5;
+            color: #757575;
+        }
+
+        tr.open {
+            background: #fffde7;
+        }
+
+        .positive {
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        .negative {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>페어트레이딩 리포트 (보통주숏+우선주롱)</h1>
+    <table id="pair-table">
+        <thead>
+            <tr>
+                <th>페어</th>
+                <th>진입일</th>
+                <th>청산일</th>
+                <th>진행일수</th>
+                <th>보통주(숏)</th>
+                <th>우선주(롱)</th>
+                <th>진입가</th>
+                <th>수량</th>
+                <th>수수료(%)</th>
+                <th>청산가/현재가</th>
+                <th>페어수익률</th>
+                <th>상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- JS로 동적 생성 -->
+        </tbody>
+    </table>
+    <div style="margin-top:1rem;color:#888;font-size:0.9em;">
+        * 실시간 수익률은 보유중 페어만 자동 갱신됩니다.<br>
+        * 진행일수는 오늘 포함, 청산된 경우 진입일~청산일까지 계산됩니다.
+    </div>
+</body>
+
+</html>
