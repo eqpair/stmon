@@ -10,6 +10,8 @@ from pathlib import Path
 import json
 import os
 import sys
+import fcntl
+import atexit
 
 from config import TICK_PAIRS, WAIT_TIME
 from modules.pairs import NPPair
@@ -17,6 +19,68 @@ from modules.telegram import TelegramBot
 from modules.utils import is_market_time
 from modules.exceptions import MarketDataError
 
+import logging
+from logging.handlers import RotatingFileHandler
+import os
+
+# 로그 디렉토리 생성
+log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+os.makedirs(log_dir, exist_ok=True)
+
+# 로그 파일 경로
+log_file = os.path.join(log_dir, 'stock_monitor.log')
+
+# 로그 설정
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# 파일 핸들러 추가
+file_handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(file_handler)
+
+# 콘솔 핸들러 추가
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(console_handler)
+
+# 로그 테스트
+logging.info("Logging initialized")
+
+# 중복 실행 방지를 위한 락 파일 설정
+def obtain_lock():
+    lock_file_path = "/tmp/stmon_telegram.lock"
+    try:
+        # 락 파일이 이미 존재하고 다른 프로세스가 사용 중인지 확인
+        if os.path.exists(lock_file_path):
+            # 파일 내용 확인
+            with open(lock_file_path, 'r') as f:
+                pid = f.read().strip()
+                # PID가 존재하는지 확인
+                if pid and os.path.exists(f"/proc/{pid}"):
+                    print(f"Another instance is already running with PID {pid}")
+                    sys.exit(1)
+                
+        # 파일이 없거나 유효하지 않은 경우 새로 생성
+        with open(lock_file_path, 'w') as f:
+            f.write(str(os.getpid()))
+        
+        # 프로그램 종료 시 락 파일 제거
+        def cleanup():
+            if os.path.exists(lock_file_path):
+                os.remove(lock_file_path)
+        
+        atexit.register(cleanup)
+        return True
+    except Exception as e:
+        print(f"Error obtaining lock: {e}")
+        return False
+
+# 프로그램 시작 시 락 확인
+if not obtain_lock():
+    print("Failed to obtain lock. Another instance might be running.")
+    sys.exit(1)
+    
 def ensure_single_instance():
         script_name = os.path.basename(sys.argv[0])
         for proc in psutil.process_iter(['pid', 'name', 'cmdline']):

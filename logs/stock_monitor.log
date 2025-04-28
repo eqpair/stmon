@@ -1,0 +1,30 @@
+2025-04-28 11:30:45,083 - root - INFO - Logging initialized
+2025-04-28 11:30:52,310 - root - INFO - Logging initialized
+2025-04-28 11:30:59,559 - root - INFO - Logging initialized
+2025-04-28 11:31:06,842 - root - INFO - Logging initialized
+2025-04-28 11:31:14,285 - root - INFO - Logging initialized
+2025-04-28 11:31:44,937 - root - INFO - Logging initialized
+2025-04-28 11:31:45,005 - root - INFO - Logging initialized
+2025-04-28 11:31:45,323 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-28 11:31:45,324 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-28 11:31:45,528 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-28 11:31:45,529 - __main__ - INFO - Starting Stock Monitor...
+2025-04-28 11:31:45,530 - modules.telegram - INFO - Resetting webhook
+2025-04-28 11:31:48,060 - modules.telegram - INFO - Webhook reset complete
+2025-04-28 11:31:48,060 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-28 11:31:48,061 - __main__ - INFO - Fetching signals for periodic update...
+2025-04-28 11:31:48,062 - __main__ - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-28 11:31:48,062 - modules.telegram - INFO - Starting telegram polling
+2025-04-28 11:31:48,063 - modules.telegram - INFO - Resetting webhook
+2025-04-28 11:31:52,554 - root - INFO - Logging initialized
+2025-04-28 11:31:54,673 - modules.telegram - INFO - Webhook reset complete
+2025-04-28 11:31:54,673 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-28 11:31:56,417 - __main__ - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-28 11:32:00,290 - root - INFO - Logging initialized
+2025-04-28 11:32:04,351 - __main__ - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-28 11:32:07,805 - root - INFO - Logging initialized
+2025-04-28 11:32:12,395 - __main__ - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-28 11:32:15,355 - root - INFO - Logging initialized
+2025-04-28 11:32:20,595 - __main__ - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-28 11:32:23,344 - root - INFO - Logging initialized
+2025-04-28 11:32:29,011 - __main__ - INFO - 처리 중인 배치: 26~30 / 84
