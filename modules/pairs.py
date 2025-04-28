@@ -173,7 +173,7 @@ class NPPair:
                 signal_parts.append('O')
                 
             signal_info = ''.join(signal_parts)
-            price_info = f"{last_row['close_B']:.0f}, {last_row['close_A']:.0f}"
+            price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
             ratio_info = f"{sz:.2f}"
             
             # 포맷 수정: sz/신호/가격 형식으로 통일

@@ -342,6 +342,7 @@ class GitHubUpdater:
 async def start_github_updater(daily_run=False):
     """GitHub 업데이터 시작"""
     from main import StockMonitor
+    from modules.utils import is_market_time  # 함수 임포트 추가
     
     monitor = StockMonitor()
     updater = GitHubUpdater(monitor)
@@ -353,14 +354,25 @@ async def start_github_updater(daily_run=False):
     
     while True:
         try:
-            await updater.update_data()
+            # 주식시장 운영 시간인지 확인
+            if is_market_time():
+                logger.info("주식시장 운영 시간입니다. 데이터를 업데이트합니다.")
+                await updater.update_data()
+            else:
+                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                logger.info(f"주식시장 운영 시간이 아닙니다 ({current_time}). 업데이트를 건너뜁니다.")
         except Exception as e:
             logger.error(f"업데이트 오류: {str(e)}")
         
-        # 30분 대기
-        logger.info("다음 업데이트까지 30분 대기 중...")
-        await asyncio.sleep(600) # 30분마다 업데이트
-
+        # 대기 시간: 주식시장 운영 시간이 아닐 경우 더 길게 대기
+        if is_market_time():
+            wait_time = 600  # 10분 (운영 시간 중)
+        else:
+            wait_time = 1800  # 30분 (운영 시간 외)
+            
+        logger.info(f"다음 업데이트까지 {wait_time/60}분 대기 중...")
+        await asyncio.sleep(wait_time)
+        
 # 메인 함수
 if __name__ == "__main__":
     import sys
