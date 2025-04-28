@@ -68,8 +68,8 @@ function calcInterest(entryAmt, rate_pct, days) {
     return entryAmt * (rate_pct / 100) * (days / 365);
 }
 
-// 실전용: 진입수수료, 청산수수료, 이자 모두 별도 차감
 function calcShortPnL(entry, exit, qty, feeRate, interestRate, days) {
+    if (!entry || !exit || !qty) return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
     const entryFee = entryAmt * feeRate;
@@ -81,6 +81,7 @@ function calcShortPnL(entry, exit, qty, feeRate, interestRate, days) {
 }
 
 function calcLongPnL(entry, exit, qty, feeRate, interestRate, days) {
+    if (!entry || !exit || !qty) return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
     const entryFee = entryAmt * feeRate;
@@ -141,7 +142,7 @@ async function renderTable() {
 
         // 합산
         const pairProfit = (typeof short.pnl === "number" ? short.pnl : 0) + (typeof long.pnl === "number" ? long.pnl : 0);
-        const pairEntry = entry.common_entry * entry.common_qty + entry.preferred_entry * entry.preferred_qty;
+        const pairEntry = (entry.common_entry && entry.common_qty ? entry.common_entry * entry.common_qty : 0) + (entry.preferred_entry && entry.preferred_qty ? entry.preferred_entry * entry.preferred_qty : 0);
         const pairReturn = pairEntry !== 0 ? (pairProfit / pairEntry * 100).toFixed(2) + "%" : "-";
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit < 0 ? "negative" : "positive";
@@ -153,33 +154,33 @@ async function renderTable() {
         const longClass = (long.pnlStr !== "-" && parseFloat(long.pnlStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
         const longRetClass = (long.ret !== "-" && parseFloat(long.ret) < 0) ? "negative" : "positive";
 
+        // 항상 두 줄 출력, 값이 없으면 "-"로 표기
         tbody.innerHTML += `
       <tr class="pair-summary">
-        <td rowspan="3" style="vertical-align:middle;font-weight:700;">${entry.pair_name}</td>
-        <td rowspan="3" class="${pairProfitClass}" style="vertical-align:middle;font-weight:700;">${pairProfitStr}</td>
-        <td rowspan="3" class="${pairRetClass}" style="vertical-align:middle;font-weight:700;">${pairReturn}</td>
-        <td>보통주<br>(Short)</td>
-        <td>${entry.entry_date}</td>
+        <td rowspan="2" style="vertical-align:middle;font-weight:700;">${entry.pair_name || "-"}</td>
+        <td rowspan="2" class="${pairProfitClass}" style="vertical-align:middle;font-weight:700;">${pairProfitStr}</td>
+        <td rowspan="2" class="${pairRetClass}" style="vertical-align:middle;font-weight:700;">${pairReturn}</td>
+        <td>보통주(Short)</td>
+        <td>${entry.entry_date || "-"}</td>
         <td>${entry.exit_date || "-"}</td>
-        <td>${formatNumber(entry.common_entry)}</td>
-        <td>${formatNumber(entry.common_qty)}</td>
+        <td>${formatNumber(entry.common_entry) || "-"}</td>
+        <td>${formatNumber(entry.common_qty) || "-"}</td>
         <td>${formatNumber(cNow) || "-"}</td>
         <td class="${shortClass}">${short.pnlStr}</td>
         <td class="${shortRetClass}">${short.ret}</td>
-        <td>${entry.status}</td>
+        <td>${entry.status || "-"}</td>
       </tr>
       <tr class="${rowClass}">
-        <td>우선주<br>(Long)</td>
-        <td>${entry.entry_date}</td>
+        <td>우선주(Long)</td>
+        <td>${entry.entry_date || "-"}</td>
         <td>${entry.exit_date || "-"}</td>
-        <td>${formatNumber(entry.preferred_entry)}</td>
-        <td>${formatNumber(entry.preferred_qty)}</td>
+        <td>${formatNumber(entry.preferred_entry) || "-"}</td>
+        <td>${formatNumber(entry.preferred_qty) || "-"}</td>
         <td>${formatNumber(pNow) || "-"}</td>
         <td class="${longClass}">${long.pnlStr}</td>
         <td class="${longRetClass}">${long.ret}</td>
-        <td>${entry.status}</td>
+        <td>${entry.status || "-"}</td>
       </tr>
-      <tr style="height:8px;background:#fff;"><td colspan="9"></td></tr>
     `;
     }
 }
