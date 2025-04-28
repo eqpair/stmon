@@ -4,6 +4,11 @@ function formatNumber(num) {
     return Number(num).toLocaleString("en-US");
 }
 
+// bps(0.01%) 단위 수수료를 합산해 %로 반환
+function getFeeRate(commission_bps, stamp_bps) {
+    return (Number(commission_bps) + Number(stamp_bps)) / 10000;
+}
+
 async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
     return await resp.json();
@@ -28,16 +33,17 @@ function calcDays(entryDate, exitDate) {
     return diffDays > 0 ? diffDays + "일" : "-";
 }
 
+// 진입/청산가에 각각 수수료율 적용
 function calcPairReturn(entry, cPrice, pPrice) {
-    const c_fee = entry.common_fee_pct / 100;
-    const p_fee = entry.preferred_fee_pct / 100;
+    const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
+    // 보통주: 숏, 우선주: 롱
     if (entry.status === "청산") {
-        const shortRet = ((entry.common_entry * (1 - c_fee) - entry.common_exit * (1 + c_fee)) / entry.common_entry) * 100;
-        const longRet = ((entry.preferred_exit * (1 - p_fee) - entry.preferred_entry * (1 + p_fee)) / entry.preferred_entry) * 100;
+        const shortRet = ((entry.common_entry * (1 - feeRate) - entry.common_exit * (1 + feeRate)) / entry.common_entry) * 100;
+        const longRet = ((entry.preferred_exit * (1 - feeRate) - entry.preferred_entry * (1 + feeRate)) / entry.preferred_entry) * 100;
         return (shortRet + longRet).toFixed(2) + "%";
     } else if (cPrice && pPrice) {
-        const shortRet = ((entry.common_entry * (1 - c_fee) - cPrice * (1 + c_fee)) / entry.common_entry) * 100;
-        const longRet = ((pPrice * (1 - p_fee) - entry.preferred_entry * (1 + p_fee)) / entry.preferred_entry) * 100;
+        const shortRet = ((entry.common_entry * (1 - feeRate) - cPrice * (1 + feeRate)) / entry.common_entry) * 100;
+        const longRet = ((pPrice * (1 - feeRate) - entry.preferred_entry * (1 + feeRate)) / entry.preferred_entry) * 100;
         return (shortRet + longRet).toFixed(2) + "%";
     }
     return "-";
@@ -70,7 +76,7 @@ async function renderTable() {
         <td data-label="진행일수">${days}</td>
         <td data-label="진입가">${formatNumber(entry.common_entry)} / ${formatNumber(entry.preferred_entry)}</td>
         <td data-label="수량">${formatNumber(entry.common_qty)} / ${formatNumber(entry.preferred_qty)}</td>
-        <td data-label="수수료(%)">${entry.common_fee_pct} / ${entry.preferred_fee_pct}</td>
+        <td data-label="수수료(bps)">${formatNumber(entry.commission_bps)} / ${formatNumber(entry.stamp_bps)}</td>
         <td data-label="청산가/현재가">${formatNumber(cNow) || "-"} / ${formatNumber(pNow) || "-"}</td>
         <td data-label="실시간수익률" class="${retClass}">${pairRet}</td>
         <td data-label="상태">${entry.status}</td>
