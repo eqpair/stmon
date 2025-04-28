@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 트레이딩 리포트</title>
+    <title>페어트레이딩 리포트 (실시간 수익률)</title>
     <script src="pair-main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -21,6 +21,31 @@
             border-radius: 16px;
             box-shadow: 0 2px 16px 0 rgba(60, 60, 60, 0.09);
             padding: 32px 24px 24px 24px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .home-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 6px 0 rgba(25, 118, 210, 0.09);
+            transition: background 0.2s;
+            margin-left: 6px;
+        }
+
+        .home-btn:hover {
+            background: #145ea8;
         }
 
         h1 {
@@ -154,6 +179,9 @@
 
 <body>
     <div class="container">
+        <div class="top-bar">
+            <button class="home-btn" onclick="window.location.href='index.html'">🏠 홈으로</button>
+        </div>
         <h1>페어트레이딩 리포트 <span class="tag">실시간 수익률</span></h1>
         <table id="pair-table">
             <thead>
