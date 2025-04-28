@@ -4,6 +4,7 @@ function formatNumber(num) {
     return Number(num).toLocaleString("en-US");
 }
 
+// 시장 운영 시간(평일 8:30~16:30, KST) 판정
 function isMarketTime() {
     const now = new Date();
     const day = now.getDay();
@@ -63,25 +64,32 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
-function calcInterest(principal, rate_pct, days) {
-    if (!principal || !rate_pct || !days) return 0;
-    return principal * (rate_pct / 100) * (days / 365);
+function calcInterest(entryAmt, rate_pct, days) {
+    if (!entryAmt || !rate_pct || !days) return 0;
+    return entryAmt * (rate_pct / 100) * (days / 365);
 }
 
-function calcPositionProfitAndReturn(type, entry, exit, qty, feeRate, interestRate, days) {
-    if (!entry || !exit || !qty) return { profit: 0, profitStr: "-", ret: "-" };
-    let profit = 0;
-    if (type === "Short") {
-        const interest = calcInterest(entry, interestRate, days) * qty;
-        profit = (entry * (1 - feeRate) - exit * (1 + feeRate) - interest) * qty;
-        const ret = entry !== 0 ? (profit / (entry * qty) * 100).toFixed(2) + "%" : "-";
-        return { profit, profitStr: formatNumber(Math.round(profit)), ret };
-    } else {
-        const interest = calcInterest(entry, interestRate, days) * qty;
-        profit = (exit * (1 - feeRate) - entry * (1 + feeRate) - interest) * qty;
-        const ret = entry !== 0 ? (profit / (entry * qty) * 100).toFixed(2) + "%" : "-";
-        return { profit, profitStr: formatNumber(Math.round(profit)), ret };
-    }
+// 실전용: 진입수수료, 청산수수료, 이자 모두 별도 차감
+function calcShortPnL(entry, exit, qty, feeRate, interestRate, days) {
+    const entryAmt = entry * qty;
+    const exitAmt = exit * qty;
+    const entryFee = entryAmt * feeRate;
+    const exitFee = exitAmt * feeRate;
+    const interest = calcInterest(entryAmt, interestRate, days);
+    const pnl = (entryAmt - entryFee) - (exitAmt + exitFee) - interest;
+    const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
+    return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
+}
+
+function calcLongPnL(entry, exit, qty, feeRate, interestRate, days) {
+    const entryAmt = entry * qty;
+    const exitAmt = exit * qty;
+    const entryFee = entryAmt * feeRate;
+    const exitFee = exitAmt * feeRate;
+    const interest = calcInterest(entryAmt, interestRate, days);
+    const pnl = (exitAmt - exitFee) - (entryAmt + entryFee) - interest;
+    const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
+    return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
 }
 
 async function fetchPairs() {
@@ -108,11 +116,13 @@ async function renderTable() {
             pNow = entry.preferred_exit;
         }
 
-        // 보통주(Short) 계산
+        // 계산 파라미터
         const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
         const common_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
-        const short = calcPositionProfitAndReturn(
-            "Short",
+        const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
+
+        // 보통주(Short)
+        const short = calcShortPnL(
             entry.common_entry,
             cNow,
             entry.common_qty,
@@ -120,11 +130,8 @@ async function renderTable() {
             common_interest_rate,
             daysNum
         );
-
-        // 우선주(Long) 계산
-        const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
-        const long = calcPositionProfitAndReturn(
-            "Long",
+        // 우선주(Long)
+        const long = calcLongPnL(
             entry.preferred_entry,
             pNow,
             entry.preferred_qty,
@@ -133,22 +140,20 @@ async function renderTable() {
             daysNum
         );
 
-        // 합산 수익/수익률
-        const pairProfit = (typeof short.profit === "number" ? short.profit : 0) + (typeof long.profit === "number" ? long.profit : 0);
+        // 합산
+        const pairProfit = (typeof short.pnl === "number" ? short.pnl : 0) + (typeof long.pnl === "number" ? long.pnl : 0);
         const pairEntry = entry.common_entry * entry.common_qty + entry.preferred_entry * entry.preferred_qty;
         const pairReturn = pairEntry !== 0 ? (pairProfit / pairEntry * 100).toFixed(2) + "%" : "-";
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit < 0 ? "negative" : "positive";
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "positive";
 
-        // 상태별 스타일
         let rowClass = entry.status === "청산" ? "closed" : "open";
-        const shortClass = (short.profitStr !== "-" && parseFloat(short.profitStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
+        const shortClass = (short.pnlStr !== "-" && parseFloat(short.pnlStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
         const shortRetClass = (short.ret !== "-" && parseFloat(short.ret) < 0) ? "negative" : "positive";
-        const longClass = (long.profitStr !== "-" && parseFloat(long.profitStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
+        const longClass = (long.pnlStr !== "-" && parseFloat(long.pnlStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
         const longRetClass = (long.ret !== "-" && parseFloat(long.ret) < 0) ? "negative" : "positive";
 
-        // 페어명+합산수익/수익률 한 줄, 아래에 보통주/우선주 상세
         tbody.innerHTML += `
       <tr class="pair-summary">
         <td rowspan="3" style="vertical-align:middle;font-weight:700;">${entry.pair_name}</td>
@@ -160,7 +165,7 @@ async function renderTable() {
         <td>${formatNumber(entry.common_entry)}</td>
         <td>${formatNumber(entry.common_qty)}</td>
         <td>${formatNumber(cNow) || "-"}</td>
-        <td class="${shortClass}">${short.profitStr}</td>
+        <td class="${shortClass}">${short.pnlStr}</td>
         <td class="${shortRetClass}">${short.ret}</td>
         <td>${entry.status}</td>
       </tr>
@@ -171,7 +176,7 @@ async function renderTable() {
         <td>${formatNumber(entry.preferred_entry)}</td>
         <td>${formatNumber(entry.preferred_qty)}</td>
         <td>${formatNumber(pNow) || "-"}</td>
-        <td class="${longClass}">${long.profitStr}</td>
+        <td class="${longClass}">${long.pnlStr}</td>
         <td class="${longRetClass}">${long.ret}</td>
         <td>${entry.status}</td>
       </tr>
