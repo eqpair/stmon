@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어트레이딩 리포트 (상세)</title>
+    <title>페어트레이딩 리포트 (상세/합산)</title>
     <script src="pair-main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -112,6 +112,12 @@
             font-weight: bold;
         }
 
+        .summary-row {
+            background: #e3f2fd;
+            font-weight: 700;
+            font-size: 1.07em;
+        }
+
         .tag {
             display: inline-block;
             background: #e3f2fd;
@@ -191,7 +197,7 @@
         <div class="top-bar">
             <button class="home-btn" onclick="window.location.href='index.html'">🏠 홈으로</button>
         </div>
-        <h1>페어트레이딩 리포트 <span class="tag">상세</span></h1>
+        <h1>페어트레이딩 리포트 <span class="tag">상세/합산</span></h1>
         <table id="pair-table">
             <thead>
                 <tr>
@@ -211,10 +217,12 @@
                 <!-- JS로 동적 생성 -->
             </tbody>
         </table>
+        <div id="summary-table" style="margin-top:2.2rem;"></div>
         <div style="margin-top:1.5rem;color:#888;font-size:0.97em;">
             * 보통주(Short)는 진입가보다 내려가야 수익, 우선주(Long)는 진입가보다 올라가야 수익입니다.<br>
             * 각 페어는 보통주/우선주 한 줄씩 구분되어 표시됩니다.<br>
-            * 수익/수익률은 각 포지션별로 계산, 모든 거래비용 반영, 마감 시 종가 사용.
+            * 수익/수익률은 각 포지션별로 계산, 모든 거래비용 반영, 마감 시 종가 사용.<br>
+            * 표 하단에 종목별 합산 수익/수익률이 자동 집계됩니다.
         </div>
     </div>
 </body>

@@ -71,20 +71,20 @@ function calcInterest(principal, rate_pct, days) {
 
 // 각 포지션별 수익/수익률 계산
 function calcPositionProfitAndReturn(type, entry, exit, qty, feeRate, interestRate, days) {
-    if (!entry || !exit || !qty) return { profit: "-", ret: "-" };
+    if (!entry || !exit || !qty) return { profit: 0, profitStr: "-", ret: "-" };
     let profit = 0;
     if (type === "Short") {
         // 보통주(숏): 진입가 > 청산가/현재가 → 수익
         const interest = calcInterest(entry, interestRate, days) * qty;
         profit = (entry * (1 - feeRate) - exit * (1 + feeRate) - interest) * qty;
         const ret = entry !== 0 ? (profit / (entry * qty) * 100).toFixed(2) + "%" : "-";
-        return { profit: formatNumber(Math.round(profit)), ret };
+        return { profit, profitStr: formatNumber(Math.round(profit)), ret };
     } else {
         // 우선주(롱): 진입가 < 청산가/현재가 → 수익
         const interest = calcInterest(entry, interestRate, days) * qty;
         profit = (exit * (1 - feeRate) - entry * (1 + feeRate) - interest) * qty;
         const ret = entry !== 0 ? (profit / (entry * qty) * 100).toFixed(2) + "%" : "-";
-        return { profit: formatNumber(Math.round(profit)), ret };
+        return { profit, profitStr: formatNumber(Math.round(profit)), ret };
     }
 }
 
@@ -93,10 +93,27 @@ async function fetchPairs() {
     return await resp.json();
 }
 
+function addSummaryRow(summaryTable, code, name, profit, entry, ret) {
+    const profitClass = profit < 0 ? "negative" : "positive";
+    const retClass = ret !== "-" && parseFloat(ret) < 0 ? "negative" : "positive";
+    summaryTable += `
+    <tr class="summary-row">
+      <td>${code}</td>
+      <td>${name}</td>
+      <td class="${profitClass}">${formatNumber(Math.round(profit))}</td>
+      <td class="${retClass}">${ret}</td>
+    </tr>
+  `;
+    return summaryTable;
+}
+
 async function renderTable() {
     const pairs = await fetchPairs();
     const tbody = document.querySelector("#pair-table tbody");
     tbody.innerHTML = "";
+
+    // 종목별 합산
+    const stockSummary = {}; // {code: {name, profit, entry}}
 
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
@@ -139,9 +156,9 @@ async function renderTable() {
 
         // 상태별 스타일
         let rowClass = entry.status === "청산" ? "closed" : "open";
-        const shortClass = (short.profit !== "-" && parseFloat(short.profit.replace(/,/g, "")) < 0) ? "negative" : "positive";
+        const shortClass = (short.profitStr !== "-" && parseFloat(short.profitStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
         const shortRetClass = (short.ret !== "-" && parseFloat(short.ret) < 0) ? "negative" : "positive";
-        const longClass = (long.profit !== "-" && parseFloat(long.profit.replace(/,/g, "")) < 0) ? "negative" : "positive";
+        const longClass = (long.profitStr !== "-" && parseFloat(long.profitStr.replace(/,/g, "")) < 0) ? "negative" : "positive";
         const longRetClass = (long.ret !== "-" && parseFloat(long.ret) < 0) ? "negative" : "positive";
 
         // 페어명 헤더
@@ -155,7 +172,7 @@ async function renderTable() {
         <td data-label="진입가">${formatNumber(entry.common_entry)}</td>
         <td data-label="수량">${formatNumber(entry.common_qty)}</td>
         <td data-label="청산가/현재가">${formatNumber(cNow) || "-"}</td>
-        <td data-label="수익" class="${shortClass}">${short.profit}</td>
+        <td data-label="수익" class="${shortClass}">${short.profitStr}</td>
         <td data-label="수익률" class="${shortRetClass}">${short.ret}</td>
         <td data-label="상태">${entry.status}</td>
       </tr>
@@ -167,12 +184,47 @@ async function renderTable() {
         <td data-label="진입가">${formatNumber(entry.preferred_entry)}</td>
         <td data-label="수량">${formatNumber(entry.preferred_qty)}</td>
         <td data-label="청산가/현재가">${formatNumber(pNow) || "-"}</td>
-        <td data-label="수익" class="${longClass}">${long.profit}</td>
+        <td data-label="수익" class="${longClass}">${long.profitStr}</td>
         <td data-label="수익률" class="${longRetClass}">${long.ret}</td>
         <td data-label="상태">${entry.status}</td>
       </tr>
     `;
+
+        // 종목별 합산: 보통주
+        if (!stockSummary[entry.common_code]) {
+            stockSummary[entry.common_code] = { name: entry.common_name, profit: 0, entry: 0 };
+        }
+        stockSummary[entry.common_code].profit += (typeof short.profit === "number" ? short.profit : 0);
+        stockSummary[entry.common_code].entry += entry.common_entry * entry.common_qty;
+
+        // 종목별 합산: 우선주
+        if (!stockSummary[entry.preferred_code]) {
+            stockSummary[entry.preferred_code] = { name: entry.preferred_name, profit: 0, entry: 0 };
+        }
+        stockSummary[entry.preferred_code].profit += (typeof long.profit === "number" ? long.profit : 0);
+        stockSummary[entry.preferred_code].entry += entry.preferred_entry * entry.preferred_qty;
     }
+
+    // 종목별 합산 표
+    let summaryTable = `
+    <table style="border-collapse:collapse;width:100%;margin-top:8px;">
+      <thead>
+        <tr>
+          <th style="background:#e3f2fd;color:#1a237e;font-weight:700;border-bottom:2px solid #bbdefb;">종목코드</th>
+          <th style="background:#e3f2fd;color:#1a237e;font-weight:700;border-bottom:2px solid #bbdefb;">종목명</th>
+          <th style="background:#e3f2fd;color:#1a237e;font-weight:700;border-bottom:2px solid #bbdefb;">합산 수익</th>
+          <th style="background:#e3f2fd;color:#1a237e;font-weight:700;border-bottom:2px solid #bbdefb;">합산 수익률</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+    for (const code in stockSummary) {
+        const s = stockSummary[code];
+        const ret = s.entry !== 0 ? (s.profit / s.entry * 100).toFixed(2) + "%" : "-";
+        summaryTable = addSummaryRow(summaryTable, code, s.name, s.profit, s.entry, ret);
+    }
+    summaryTable += "</tbody></table>";
+    document.getElementById("summary-table").innerHTML = summaryTable;
 }
 
 renderTable();
