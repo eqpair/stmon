@@ -85,9 +85,13 @@ def ensure_single_instance():
         script_name = os.path.basename(sys.argv[0])
         for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
             try:
-                if proc.name() == 'python3' and script_name in proc.cmdline() and proc.pid != os.getpid():
-                    print(f"Terminating existing instance with PID {proc.pid}")
-                    proc.kill()
+                if proc.name() == 'python3' and proc.pid != os.getpid():
+                    # 명령줄에서 스크립트 파일명만 추출하여 비교
+                    for cmd in proc.cmdline():
+                        if os.path.basename(cmd) == script_name:
+                            print(f"Terminating existing instance with PID {proc.pid}")
+                            proc.kill()
+                            break
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
 
