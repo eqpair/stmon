@@ -1,5 +1,8 @@
-// 오늘 날짜 (KST 기준)
-const TODAY = new Date('2025-04-28T18:06:00+09:00'); // 서버 없이 고정값 사용, 실제 배포시 new Date()로 대체 가능
+function formatNumber(num) {
+    if (num === null || num === undefined || num === "-") return "-";
+    if (isNaN(num)) return num;
+    return Number(num).toLocaleString("en-US");
+}
 
 async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
@@ -17,12 +20,10 @@ async function fetchPrice(code) {
     }
 }
 
-// 날짜 차이(일수) 계산 (오늘 포함, 청산시 진입~청산, 미청산시 진입~오늘)
 function calcDays(entryDate, exitDate) {
     if (!entryDate) return "-";
     const start = new Date(entryDate);
-    const end = exitDate ? new Date(exitDate) : TODAY;
-    // 하루 = 1000*60*60*24
+    const end = exitDate ? new Date(exitDate) : new Date();
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays + "일" : "-";
 }
@@ -63,22 +64,20 @@ async function renderTable() {
         const retClass = (pairRet !== "-" && parseFloat(pairRet) < 0) ? "negative" : "positive";
         tbody.innerHTML += `
       <tr class="${rowClass}">
-        <td>${entry.pair_name}</td>
-        <td>${entry.entry_date}</td>
-        <td>${entry.exit_date || "-"}</td>
-        <td>${days}</td>
-        <td>${entry.common_name}</td>
-        <td>${entry.preferred_name}</td>
-        <td>${entry.common_entry} / ${entry.preferred_entry}</td>
-        <td>${entry.common_qty} / ${entry.preferred_qty}</td>
-        <td>${entry.common_fee_pct} / ${entry.preferred_fee_pct}</td>
-        <td>${cNow || "-"} / ${pNow || "-"}</td>
-        <td class="${retClass}">${pairRet}</td>
-        <td>${entry.status}</td>
+        <td data-label="페어">${entry.pair_name}</td>
+        <td data-label="진입일">${entry.entry_date}</td>
+        <td data-label="청산일">${entry.exit_date || "-"}</td>
+        <td data-label="진행일수">${days}</td>
+        <td data-label="진입가">${formatNumber(entry.common_entry)} / ${formatNumber(entry.preferred_entry)}</td>
+        <td data-label="수량">${formatNumber(entry.common_qty)} / ${formatNumber(entry.preferred_qty)}</td>
+        <td data-label="수수료(%)">${entry.common_fee_pct} / ${entry.preferred_fee_pct}</td>
+        <td data-label="청산가/현재가">${formatNumber(cNow) || "-"} / ${formatNumber(pNow) || "-"}</td>
+        <td data-label="실시간수익률" class="${retClass}">${pairRet}</td>
+        <td data-label="상태">${entry.status}</td>
       </tr>
     `;
     }
 }
 
 renderTable();
-setInterval(renderTable, 30000);
+setInterval(renderTable, 30000); // 30초마다 실시간 갱신
