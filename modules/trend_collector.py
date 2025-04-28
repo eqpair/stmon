@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import psutil
 
 import asyncio
 import aiohttp
@@ -17,6 +18,20 @@ from config import TICK_PAIRS
 from modules.pairs import NPPair
 from modules.utils import safe_json_dump
 
+def ensure_single_instance():
+    script_path = os.path.abspath(sys.argv[0])
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        try:
+            if proc.name() == 'python3' and proc.pid != os.getpid():
+                cmdline = proc.cmdline()
+                # python3 /path/to/xxx.py
+                if len(cmdline) > 1 and os.path.abspath(cmdline[1]) == script_path:
+                    print(f"Terminating existing instance with PID {proc.pid} ({cmdline[1]})")
+                    proc.kill()
+                    break
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+        
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
@@ -388,6 +403,7 @@ class TrendCollector:
 async def main():
     collector = TrendCollector()
     await collector.collect_all_trends()
-
+      
 if __name__ == "__main__":
+    ensure_single_instance()
     asyncio.run(main())

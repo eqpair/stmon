@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import psutil
 
 import json
 from datetime import datetime
@@ -12,6 +13,21 @@ from typing import Dict, List, Any
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+def ensure_single_instance():
+    # 현재 실행 중인 py파일의 "절대경로" (심볼릭링크/상대경로 방지)
+    script_path = os.path.abspath(sys.argv[0])
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        try:
+            if proc.name() == 'python3' and proc.pid != os.getpid():
+                cmdline = proc.cmdline()
+                # cmdline[1]이 py파일 경로임 (python xxx.py ...)
+                if len(cmdline) > 1 and os.path.abspath(cmdline[1]) == script_path:
+                    print(f"Terminating existing instance with PID {proc.pid} ({cmdline[1]})")
+                    proc.kill()
+                    break
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+        
 # 로깅 설정
 os.makedirs('logs', exist_ok=True)
 logging.basicConfig(
@@ -372,9 +388,10 @@ async def start_github_updater(daily_run=False):
             
         logger.info(f"다음 업데이트까지 {wait_time/60}분 대기 중...")
         await asyncio.sleep(wait_time)
-        
+                            
 # 메인 함수
 if __name__ == "__main__":
+    ensure_single_instance()
     import sys
     
     daily_run = False

@@ -65,15 +65,16 @@ if not obtain_lock():
     sys.exit(1)
 
 def ensure_single_instance():
-    script_name = os.path.basename(sys.argv[0])
+    script_path = os.path.abspath(sys.argv[0])
     for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
         try:
             if proc.name() == 'python3' and proc.pid != os.getpid():
-                for cmd in proc.cmdline():
-                    if os.path.basename(cmd) == script_name:
-                        print(f"Terminating existing instance with PID {proc.pid}")
-                        proc.kill()
-                        break
+                cmdline = proc.cmdline()
+                # python3 /path/to/xxx.py
+                if len(cmdline) > 1 and os.path.abspath(cmdline[1]) == script_path:
+                    print(f"Terminating existing instance with PID {proc.pid} ({cmdline[1]})")
+                    proc.kill()
+                    break
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
 
