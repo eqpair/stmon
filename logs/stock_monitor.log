@@ -966,3 +966,30 @@
 2025-04-28 12:42:10,841 - root - INFO - Logging initialized
 2025-04-28 12:42:43,127 - root - INFO - Logging initialized
 2025-04-28 12:43:15,728 - root - INFO - Logging initialized
+2025-04-28 12:43:59,223 - root - INFO - Logging initialized
+2025-04-28 12:43:59,295 - root - INFO - Logging initialized
+2025-04-28 12:43:59,609 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-28 12:43:59,610 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-28 12:43:59,830 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-28 12:43:59,831 - __main__ - INFO - Starting Stock Monitor...
+2025-04-28 12:43:59,832 - modules.telegram - INFO - Resetting webhook
+2025-04-28 12:44:02,380 - modules.telegram - INFO - Webhook reset complete
+2025-04-28 12:44:02,380 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-28 12:44:02,381 - __main__ - INFO - Fetching signals for periodic update...
+2025-04-28 12:44:02,381 - __main__ - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-28 12:44:02,382 - modules.telegram - INFO - Starting telegram polling
+2025-04-28 12:44:02,382 - modules.telegram - INFO - Resetting webhook
+2025-04-28 12:44:07,938 - modules.telegram - INFO - Webhook reset complete
+2025-04-28 12:44:07,939 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-28 12:44:09,685 - __main__ - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-28 12:44:17,011 - __main__ - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-28 12:44:24,664 - __main__ - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-28 12:44:31,808 - root - INFO - Logging initialized
+2025-04-28 12:44:32,519 - __main__ - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-28 12:44:41,041 - __main__ - INFO - 처리 중인 배치: 26~30 / 84
+2025-04-28 12:44:48,634 - __main__ - INFO - 처리 중인 배치: 31~35 / 84
+2025-04-28 12:44:55,995 - __main__ - INFO - 처리 중인 배치: 36~40 / 84
+2025-04-28 12:45:03,211 - __main__ - INFO - 처리 중인 배치: 41~45 / 84
+2025-04-28 12:45:04,370 - root - INFO - Logging initialized
+2025-04-28 12:45:11,273 - __main__ - INFO - 처리 중인 배치: 46~50 / 84
+2025-04-28 12:45:18,851 - __main__ - INFO - 처리 중인 배치: 51~55 / 84
