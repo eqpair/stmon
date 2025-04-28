@@ -4,7 +4,6 @@ function formatNumber(num) {
     return Number(num).toLocaleString("en-US");
 }
 
-// bps(0.01%) 단위 수수료를 합산해 %로 반환
 function getFeeRate(commission_bps, stamp_bps) {
     return (Number(commission_bps) + Number(stamp_bps)) / 10000;
 }
@@ -61,11 +60,11 @@ async function renderTable() {
         if (entry.status === "보유중") {
             cNow = await fetchPrice(entry.common_code);
             pNow = await fetchPrice(entry.preferred_code);
-            pairRet = calcPairReturn(entry, cNow, pNow);
+            pairRet = calcPairReturn(entry, cNow, pNow); // 실시간 수익률
         } else {
             cNow = entry.common_exit;
             pNow = entry.preferred_exit;
-            pairRet = calcPairReturn(entry, null, null);
+            pairRet = calcPairReturn(entry, null, null); // 확정 수익률
         }
         const retClass = (pairRet !== "-" && parseFloat(pairRet) < 0) ? "negative" : "positive";
         tbody.innerHTML += `
@@ -78,7 +77,7 @@ async function renderTable() {
         <td data-label="수량">${formatNumber(entry.common_qty)} / ${formatNumber(entry.preferred_qty)}</td>
         <td data-label="수수료(bps)">${formatNumber(entry.commission_bps)} / ${formatNumber(entry.stamp_bps)}</td>
         <td data-label="청산가/현재가">${formatNumber(cNow) || "-"} / ${formatNumber(pNow) || "-"}</td>
-        <td data-label="실시간수익률" class="${retClass}">${pairRet}</td>
+        <td data-label="수익률" class="${retClass}">${pairRet}</td>
         <td data-label="상태">${entry.status}</td>
       </tr>
     `;
