@@ -11,24 +11,31 @@
 
 <body>
     <header>
+        <button class="home-btn" onclick="location.href='index.html'">홈으로</button>
         <h1>페어트레이딩 리포트</h1>
-        <div class="dashboard-summary">
-            <div class="summary-card">
-                <div class="summary-title">합산수익</div>
-                <div class="summary-value" id="totalProfit">0</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-title">합산수익률</div>
-                <div class="summary-value" id="totalReturn">0%</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-title">보유중 페어</div>
-                <div class="summary-value" id="openPairs">0</div>
-            </div>
-        </div>
     </header>
     <main>
-        <div class="pair-list" id="pairList"></div>
+        <div class="pair-table-wrap">
+            <table class="pair-table">
+                <thead>
+                    <tr>
+                        <th>종목명</th>
+                        <th>합산수익</th>
+                        <th>합산수익률</th>
+                        <th>구분</th>
+                        <th>진입일</th>
+                        <th>청산일</th>
+                        <th>진입가</th>
+                        <th>수량</th>
+                        <th>현재/청산가</th>
+                        <th>수익</th>
+                        <th>수익률</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody id="pairTableBody"></tbody>
+            </table>
+        </div>
     </main>
     <script src="pair-main.js"></script>
 </body>

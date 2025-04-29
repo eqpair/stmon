@@ -90,11 +90,10 @@ async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
     return await resp.json();
 }
-async function renderPairCards() {
+async function renderTable() {
     const pairs = await fetchPairs();
-    const pairList = document.getElementById("pairList");
-    pairList.innerHTML = "";
-    let totalProfit = 0, totalEntry = 0, openCount = 0;
+    const tbody = document.getElementById("pairTableBody");
+    tbody.innerHTML = "";
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
         let days = calcDays(entry.entry_date, entry.exit_date);
@@ -109,48 +108,52 @@ async function renderPairCards() {
         const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
         const common_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
         const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
-        const short = calcShortPnL(
-            entry.common_entry, cNow, entry.common_qty, feeRate, common_interest_rate, daysNum
-        );
-        const long = calcLongPnL(
-            entry.preferred_entry, pNow, entry.preferred_qty, feeRate, preferred_interest_rate, daysNum
-        );
+        const short = calcShortPnL(entry.common_entry, cNow, entry.common_qty, feeRate, common_interest_rate, daysNum);
+        const long = calcLongPnL(entry.preferred_entry, pNow, entry.preferred_qty, feeRate, preferred_interest_rate, daysNum);
         const pairProfit = (typeof short.pnl === "number" ? short.pnl : 0) + (typeof long.pnl === "number" ? long.pnl : 0);
         const pairEntry = (entry.common_entry && entry.common_qty ? entry.common_entry * entry.common_qty : 0) +
             (entry.preferred_entry && entry.preferred_qty ? entry.preferred_entry * entry.preferred_qty : 0);
         const pairReturn = pairEntry !== 0 ? (pairProfit / pairEntry * 100).toFixed(2) + "%" : "-";
         const pairProfitStr = formatNumber(Math.round(pairProfit));
-        // 수익이면 빨간색, 손실이면 파란색
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
-        let rowClass = entry.status === "청산" ? "closed pair-card" : "open pair-card";
-        const shortClass = (short.pnlStr !== "-" && parseFloat(short.pnlStr.replace(/,/g, "")) > 0) ? "positive" : ((short.pnlStr !== "-" && parseFloat(short.pnlStr.replace(/,/g, "")) < 0) ? "negative" : "");
-        const shortRetClass = (short.ret !== "-" && parseFloat(short.ret) > 0) ? "positive" : ((short.ret !== "-" && parseFloat(short.ret) < 0) ? "negative" : "");
-        const longClass = (long.pnlStr !== "-" && parseFloat(long.pnlStr.replace(/,/g, "")) > 0) ? "positive" : ((long.pnlStr !== "-" && parseFloat(long.pnlStr.replace(/,/g, "")) < 0) ? "negative" : "");
-        const longRetClass = (long.ret !== "-" && parseFloat(long.ret) > 0) ? "positive" : ((long.ret !== "-" && parseFloat(long.ret) < 0) ? "negative" : "");
-        if (entry.status === "보유중") openCount++;
-        totalProfit += pairProfit;
-        totalEntry += pairEntry;
-        const card = document.createElement("div");
-        card.className = rowClass;
-        card.innerHTML = `
-      <div class="pair-header">
-        <span class="pair-name">${entry.pair_name}</span>
-        <span class="pair-status">${entry.status}</span>
-      </div>
-      <div class="pair-body">
-        <div>합산수익: <span class="${pairProfitClass}">${pairProfitStr}</span></div>
-        <div>합산수익률: <span class="${pairRetClass}">${pairReturn}</span></div>
-        <div>진입일: ${entry.entry_date || "-"}</div>
-        <div>청산일: ${entry.exit_date || "-"}</div>
-        <div>보통주(Short): 진입 ${formatNumber(entry.common_entry)}, 현재/청산 ${formatNumber(cNow)}, 수익 <span class="${shortClass}">${short.pnlStr}</span>, 수익률 <span class="${shortRetClass}">${short.ret}</span></div>
-        <div>우선주(Long): 진입 ${formatNumber(entry.preferred_entry)}, 현재/청산 ${formatNumber(pNow)}, 수익 <span class="${longClass}">${long.pnlStr}</span>, 수익률 <span class="${longRetClass}">${long.ret}</span></div>
-      </div>
-    `;
-        pairList.appendChild(card);
+        // 메인 라인(종목명, 합산수익, 합산수익률)
+        tbody.innerHTML += `
+<tr class="main-row">
+  <td>${entry.pair_name}</td>
+  <td class="${pairProfitClass}">${pairProfitStr}</td>
+  <td class="${pairRetClass}">${pairReturn}</td>
+  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr class="sub-row">
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>보통주(Short)</td>
+  <td>${entry.entry_date || "-"}</td>
+  <td>${entry.exit_date || "-"}</td>
+  <td>${formatNumber(entry.common_entry)}</td>
+  <td>${formatNumber(entry.common_qty)}</td>
+  <td>${formatNumber(cNow)}</td>
+  <td class="${short.pnl > 0 ? 'positive' : (short.pnl < 0 ? 'negative' : '')}">${short.pnlStr}</td>
+  <td class="${short.ret !== '-' && parseFloat(short.ret) > 0 ? 'positive' : (short.ret !== '-' && parseFloat(short.ret) < 0 ? 'negative' : '')}">${short.ret}</td>
+  <td>${entry.status}</td>
+</tr>
+<tr class="sub-row">
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>우선주(Long)</td>
+  <td>${entry.entry_date || "-"}</td>
+  <td>${entry.exit_date || "-"}</td>
+  <td>${formatNumber(entry.preferred_entry)}</td>
+  <td>${formatNumber(entry.preferred_qty)}</td>
+  <td>${formatNumber(pNow)}</td>
+  <td class="${long.pnl > 0 ? 'positive' : (long.pnl < 0 ? 'negative' : '')}">${long.pnlStr}</td>
+  <td class="${long.ret !== '-' && parseFloat(long.ret) > 0 ? 'positive' : (long.ret !== '-' && parseFloat(long.ret) < 0 ? 'negative' : '')}">${long.ret}</td>
+  <td>${entry.status}</td>
+</tr>
+`;
     }
-    document.getElementById("totalProfit").textContent = formatNumber(Math.round(totalProfit));
-    document.getElementById("totalReturn").textContent = totalEntry !== 0 ? (totalProfit / totalEntry * 100).toFixed(2) + "%" : "-";
-    document.getElementById("openPairs").textContent = openCount;
 }
-window.addEventListener("DOMContentLoaded", renderPairCards);
+window.addEventListener("DOMContentLoaded", renderTable);

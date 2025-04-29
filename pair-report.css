@@ -9,93 +9,73 @@ body {
 header {
     background: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    padding: 24px 0 12px 0;
-    margin-bottom: 12px;
+    padding: 18px 0 12px 0;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
 
 h1 {
-    margin: 0 24px 12px 24px;
-    font-size: 2em;
+    margin: 0 0 0 24px;
+    font-size: 1.5em;
     letter-spacing: -1px;
-}
-
-.dashboard-summary {
-    display: flex;
-    gap: 24px;
-    margin: 0 24px 12px 24px;
-}
-
-.summary-card {
-    background: #f8fafc;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    padding: 20px 32px;
     flex: 1;
-    text-align: center;
 }
 
-.summary-title {
-    font-size: 1.1em;
-    color: #888;
-}
-
-.summary-value {
-    font-size: 2em;
-    font-weight: bold;
-    margin-top: 8px;
-}
-
-.pair-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin: 24px;
-    justify-content: flex-start;
-}
-
-.pair-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    width: 370px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: box-shadow 0.2s;
-    border-left: 6px solid #e0e7ef;
-}
-
-.pair-card.open {
-    border-left: 6px solid #e53935;
-}
-
-.pair-card.closed {
-    border-left: 6px solid #1976d2;
-    opacity: 0.7;
-}
-
-.pair-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-bottom: 8px;
-}
-
-.pair-status {
-    font-size: 0.95em;
-    background: #f4f6fa;
+.home-btn {
+    margin-left: 24px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
     border-radius: 8px;
-    padding: 2px 10px;
+    padding: 8px 18px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-.pair-body {
-    font-size: 0.98em;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
+.home-btn:hover {
+    background: #1251a0;
+}
+
+.pair-table-wrap {
+    overflow-x: auto;
+    margin: 0 0 24px 0;
+}
+
+.pair-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 900px;
+}
+
+.pair-table th,
+.pair-table td {
+    padding: 8px 10px;
+    text-align: center;
+    border-bottom: 1px solid #e0e7ef;
+}
+
+.pair-table th {
+    background: #f8fafc;
+    color: #555;
+    font-weight: 700;
+}
+
+.pair-table tr.main-row {
+    background: #f5f5f5;
+    font-weight: bold;
+}
+
+.pair-table tr.sub-row {
+    background: #fff;
+    font-size: 0.97em;
 }
 
 .positive {
@@ -111,17 +91,12 @@ h1 {
 
 /* 파란색(손실) */
 @media (max-width: 900px) {
-    .pair-list {
-        flex-direction: column;
-        gap: 16px;
+    .pair-table {
+        min-width: 700px;
     }
 
-    .pair-card {
-        width: 98vw;
-    }
-
-    .dashboard-summary {
-        flex-direction: column;
-        gap: 12px;
+    h1,
+    .home-btn {
+        font-size: 1.1em;
     }
 }
