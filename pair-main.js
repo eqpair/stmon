@@ -60,9 +60,8 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
-// 보통주(숏) - 차입수수료율 직접 사용
+// 보통주(숏) - 차입수수료율: common_borrow_rate가 있으면 그 값, 없으면 benchmark+spread
 function calcShortPnL(entry, exit, qty, feeRate, borrowRate, days) {
-    // borrowRate: common_borrow_rate(%)를 그대로 사용
     if (!entry || !exit || !qty || entry === "-" || exit === "-")
         return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
@@ -73,7 +72,7 @@ function calcShortPnL(entry, exit, qty, feeRate, borrowRate, days) {
     const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
     return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
 }
-// 우선주(롱) - 기존대로
+// 우선주(롱)
 function calcLongPnL(entry, exit, qty, feeRate, interestRate, days) {
     if (!entry || !exit || !qty || entry === "-" || exit === "-")
         return { pnl: 0, pnlStr: "-", ret: "-" };
@@ -105,8 +104,11 @@ async function renderTable() {
             pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
         }
         const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
-        // ★ 보통주(숏)는 common_borrow_rate(%)를 직접 사용!
-        const common_borrow_rate = entry.common_borrow_rate !== undefined ? entry.common_borrow_rate : getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
+        // ★ 보통주(숏): common_borrow_rate 있으면 그 값, 없으면 benchmark+spread
+        const common_borrow_rate =
+            entry.common_borrow_rate !== undefined && entry.common_borrow_rate !== null
+                ? entry.common_borrow_rate
+                : getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
         const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
         const short = calcShortPnL(entry.common_entry, cNow, entry.common_qty, feeRate, common_borrow_rate, daysNum);
         const long = calcLongPnL(entry.preferred_entry, pNow, entry.preferred_qty, feeRate, preferred_interest_rate, daysNum);
