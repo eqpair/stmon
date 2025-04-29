@@ -1,53 +1,53 @@
 #!/usr/bin/env python3
 
+import os
+import sys
 import psutil
+import atexit
 import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
-import os
-from typing import List, Tuple
 from datetime import datetime, timedelta
-import sys
 from pathlib import Path
 import json
-import fcntl
-import atexit
+import subprocess
+
+import aiohttp
+import pandas as pd
+import numpy as np
+from bs4 import BeautifulSoup
 
 from config import TICK_PAIRS, WAIT_TIME
 from modules.pairs import NPPair
 from modules.telegram import TelegramBot
-from modules.utils import is_market_time
-from modules.exceptions import MarketDataError
+from modules.utils import is_market_time, safe_json_dump
 
 # 로그 디렉토리 생성
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, 'stock_monitor.log')
 
-# 로그 파일 경로
-log_file = os.path.join(log_dir, 'logs/stock_monitor.log')
-
-# 로깅 설정 (중복 방지)
+# 로그 설정
 logger = logging.getLogger()
-if not logger.handlers:
-    logger.setLevel(logging.INFO)
-    file_handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
-    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    logger.addHandler(file_handler)
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    logger.addHandler(console_handler)
-    logging.info("Logging initialized")
+logger.setLevel(logging.INFO)
+file_handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(file_handler)
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(console_handler)
+logging.info("Logging initialized")
 
-# 중복 실행 방지를 위한 락 파일 설정
+# 중복 실행 방지 락
 def obtain_lock():
     lock_file_path = "/tmp/stmon_telegram.lock"
     try:
         if os.path.exists(lock_file_path):
             with open(lock_file_path, 'r') as f:
                 pid = f.read().strip()
-                if pid and os.path.exists(f"/proc/{pid}"):
-                    print(f"Another instance is already running with PID {pid}")
-                    sys.exit(1)
+            if pid and os.path.exists(f"/proc/{pid}"):
+                print(f"Another instance is already running with PID {pid}")
+                sys.exit(1)
         with open(lock_file_path, 'w') as f:
             f.write(str(os.getpid()))
         def cleanup():
@@ -59,68 +59,47 @@ def obtain_lock():
         print(f"Error obtaining lock: {e}")
         return False
 
-# 프로그램 시작 시 락 확인
 if not obtain_lock():
     print("Failed to obtain lock. Another instance might be running.")
     sys.exit(1)
 
 def ensure_single_instance():
-    script_path = os.path.abspath(sys.argv[0])
+    script_name = os.path.basename(sys.argv[0])
     for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
         try:
             if proc.name() == 'python3' and proc.pid != os.getpid():
-                cmdline = proc.cmdline()
-                # python3 /path/to/xxx.py
-                if len(cmdline) > 1 and os.path.abspath(cmdline[1]) == script_path:
-                    print(f"Terminating existing instance with PID {proc.pid} ({cmdline[1]})")
-                    proc.kill()
-                    break
+                for cmd in proc.cmdline():
+                    if os.path.basename(cmd) == script_name:
+                        print(f"Terminating existing instance with PID {proc.pid}")
+                        proc.kill()
+                        break
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
 
+# 종목명 가중치 및 아이콘 표시
 def mark_special_stocks(stock_name):
-    """
-    특별 관심 종목에 아이콘 표시하고 가중치 정보 포함한 종목명 반환
-    이 함수는 특별 관심 종목들을 그룹으로 나누어 다른 아이콘으로 표시합니다.
-    또한 가중치 정보를 새로운 형식(-0.5- 등)으로 변환합니다.
-    """
     base_name = stock_name
     weight_info = None
-    
     if ' (' in stock_name and ')' in stock_name:
         parts = stock_name.split(' (')
         if len(parts) == 2 and ')' in parts[1]:
             base_name = parts[0]
             weight_info = parts[1].replace(')', '')
-    
-    special_stocks_1 = [
-        '삼성전자', '현대차', 'S-Oil', '한진칼', 'SK'
-    ]
-    
-    special_stocks_2 = [
-        '한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션',
-        'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라', 
-        '부국증권', '하이트진로홀딩스'
-    ]
-    
-    special_stocks_3 = [
-        '코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌',
-        '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산', 
-        '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트', 
-        '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스'
-    ]
-    
-    special_stocks_4 = [
-        'NH투자증권', 'LG전자', 'LG생활건강', '아모레G', '대한항공',
-        '미래에셋증권', '금호석유', 'SK케미칼', '삼성전기', 'LG', 
-        '삼성SDI', '코오롱인더', '현대건설', 'DL이앤씨', '대상', 
-        'DL', 'CJ', '유한양행', 'BYC'
-    ]
-    
+    special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
+    special_stocks_2 = ['한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션',
+                        'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라',
+                        '부국증권', '하이트진로홀딩스']
+    special_stocks_3 = ['코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌',
+                        '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산',
+                        '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트',
+                        '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스']
+    special_stocks_4 = ['NH투자증권', 'LG전자', 'LG생활건강', '아모레G', '대한항공',
+                        '미래에셋증권', '금호석유', 'SK케미칼', '삼성전기', 'LG',
+                        '삼성SDI', '코오롱인더', '현대건설', 'DL이앤씨', '대상',
+                        'DL', 'CJ', '유한양행', 'BYC']
     result = base_name
     if weight_info:
         result = f"{base_name}-{weight_info}-"
-    
     if base_name in special_stocks_1:
         return f'🔴 {result}'
     elif base_name in special_stocks_2:
@@ -132,104 +111,227 @@ def mark_special_stocks(stock_name):
     else:
         return result
 
+# 신호 텍스트를 웹용 JSON으로 파싱
+def parse_signals(signals_text):
+    import re
+    result = []
+    if not signals_text or "No divergent pairs" in signals_text:
+        return result
+    lines = signals_text.split('\n')
+    i = 0
+    while i < len(lines) - 1:
+        stock_name_line = re.sub(r'<[^>]+>', '', lines[i].strip())
+        signal_line = lines[i+1].strip() if i+1 < len(lines) else ""
+        if not stock_name_line or not signal_line:
+            i += 2
+            continue
+        sz_value = 0.0
+        signal = ""
+        price_a, price_b = None, None
+        signal_parts = signal_line.split('/')
+        try:
+            sz_value = float(signal_parts[0].strip())
+        except:
+            sz_value = 0.0
+        if len(signal_parts) > 1:
+            signal = signal_parts[1].strip()
+        if len(signal_parts) > 2:
+            price_items = signal_parts[2].strip().split(',')
+            if len(price_items) > 0:
+                try: price_a = float(price_items[0].strip())
+                except: pass
+            if len(price_items) > 1:
+                try: price_b = float(price_items[1].strip())
+                except: pass
+        signal_data = {
+            "stock_name": stock_name_line,
+            "sz_value": sz_value,
+            "signal": signal,
+            "price_a": price_a,
+            "price_b": price_b,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        result.append(signal_data)
+        i += 2
+    return result
+
+# 웹 데이터 파일 저장
+def save_web_data(all_signals, divergent_signals):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    data = {
+        "timestamp": current_time,
+        "last_updated": current_time,
+        "all_signals": parse_signals(all_signals),
+        "divergent_signals": parse_signals(divergent_signals)
+    }
+    safe_json_dump(data, "data/stock_data.json")
+
+# 트렌드 데이터 수집 및 저장
+async def collect_all_trends(pairs):
+    TRENDS_DIR = Path("data/trends")
+    TRENDS_DIR.mkdir(parents=True, exist_ok=True)
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
+        for pair in pairs:
+            days_to_fetch = 365
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days_to_fetch)
+            a_data = await fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30)
+            b_data = await fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
+            if not a_data or not b_data:
+                logger.warning(f"트렌드 데이터 수집 실패: {pair.A_name}")
+                continue
+            result = process_trend_data(pair, a_data, b_data)
+            if result:
+                file_path = TRENDS_DIR / f"{pair.A_code}.json"
+                safe_json_dump(result, file_path)
+                logger.info(f"{pair.A_name} 트렌드 데이터 저장 완료")
+
+async def fetch_stock_history(session, stock_code, start_date, days):
+    url = f"https://fchart.stock.naver.com/sise.nhn?symbol={stock_code}&timeframe=day&startTime={start_date.strftime('%Y%m%d')}&count={days}&requestType=0"
+    try:
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
+            if response.status != 200:
+                return None
+            return await response.text()
+    except Exception as e:
+        logger.warning(f"{stock_code} 데이터 수집 실패: {e}")
+        return None
+
+def process_trend_data(pair, a_data, b_data):
+    try:
+        a_df = parse_stock_data(a_data, pair.A_code)
+        b_df = parse_stock_data(b_data, pair.B_code)
+        if a_df is None or b_df is None or a_df.empty or b_df.empty:
+            return None
+        merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
+        merged_df['dr'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
+        merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period).mean().shift(1)
+        merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period).std().shift(1)
+        merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
+        result = {
+            'stock_code': pair.A_code,
+            'stock_name': pair.A_name,
+            'dates': merged_df.index.strftime('%Y-%m-%d').tolist(),
+            'common_prices': [None if pd.isna(x) else float(x) for x in merged_df['close_A'].tolist()],
+            'preferred_prices': [None if pd.isna(x) else float(x) for x in merged_df['close_B'].tolist()],
+            'discount_rates': [None if pd.isna(x) else float(x) for x in merged_df['dr'].tolist()],
+            'sz_values': [None if pd.isna(x) else float(x) for x in merged_df['sz'].tolist()],
+            'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        return result
+    except Exception as e:
+        logger.warning(f"트렌드 데이터 처리 오류: {e}")
+        return None
+
+def parse_stock_data(data, code):
+    try:
+        soup = BeautifulSoup(data, 'html.parser')
+        chartdata = soup.find('chartdata')
+        if chartdata is None:
+            return None
+        name = chartdata.get('name', code)
+        items = soup.find_all('item')
+        if not items:
+            return None
+        dates, closes = [], []
+        for item in items:
+            if 'data' not in item.attrs:
+                continue
+            d = item['data'].split('|')
+            if len(d) >= 5:
+                try:
+                    dates.append(pd.to_datetime(d[0]))
+                    closes.append(float(d[4]))
+                except:
+                    continue
+        if not dates or not closes:
+            return None
+        df = pd.DataFrame({'close': closes}, index=dates)
+        df.name = name
+        return df
+    except Exception as e:
+        logger.warning(f"주식 데이터 파싱 오류: {e}")
+        return None
+
+# GitHub 커밋 및 푸시
+def commit_and_push_github(repo_path, commit_message=None):
+    if commit_message is None:
+        commit_message = f"데이터 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    os.chdir(repo_path)
+    status = subprocess.run("git status --porcelain", shell=True, capture_output=True, text=True)
+    if not status.stdout.strip():
+        logger.info("변경사항 없음, git push 생략")
+        return
+    subprocess.run("git add .", shell=True, check=True)
+    subprocess.run(f'git commit -m "{commit_message}"', shell=True, check=True)
+    subprocess.run("git push", shell=True, check=True)
+    logger.info("GitHub 저장소에 성공적으로 푸시되었습니다.")
+
 class StockMonitor:
     def __init__(self):
-        self.pairs: List[NPPair] = [NPPair(*pair) for pair in TICK_PAIRS]
+        self.pairs = [NPPair(*pair) for pair in TICK_PAIRS]
         self.telegram_bot = TelegramBot()
         self.running = True
-        self.last_r_signal_time = {}  # 종목별 마지막 R 신호 시간 추적
-            
-    async def get_signals_with_divergent(self) -> Tuple[str, str]:
+        self.last_r_signal_time = {}
+
+    async def get_signals_with_divergent(self):
         try:
-            # 배치 크기 설정 (한 번에 처리할 페어 수)
             batch_size = 5
             all_results = []
-            
-            # 페어를 배치로 나누어 처리
             for i in range(0, len(self.pairs), batch_size):
                 logger.info(f"처리 중인 배치: {i+1}~{min(i+batch_size, len(self.pairs))} / {len(self.pairs)}")
                 batch_pairs = self.pairs[i:i+batch_size]
                 batch_tasks = [asyncio.create_task(pair.get_signal_now()) for pair in batch_pairs]
                 batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
-                
-                # 결과 처리
                 for pair, result in zip(batch_pairs, batch_results):
                     all_results.append((pair, result))
-                
-                # 배치 간 딜레이 추가
                 if i + batch_size < len(self.pairs):
-                    await asyncio.sleep(3)  # 배치 간 3초 대기
-            
+                    await asyncio.sleep(3)
             all_messages = []
             divergent_messages = []
-            r_signal_pairs = []  # 'R' 신호 페어 추적
-            
+            r_signal_pairs = []
             for pair, result in all_results:
-                # 종목명에 HTML 태그가 없도록 깨끗하게 추출
                 clean_name = mark_special_stocks(pair.A_name)
-                
-                # 깨끗한 종목명을 <b> 태그로 감싸기
-                formatted_name = f"<b>{clean_name}</b>"
-                
+                formatted_name = f"{clean_name}"
                 if isinstance(result, Exception):
-                    logger.error(f"Error getting signal for {pair.A_name}: {str(result)}", exc_info=True)
-                    all_messages.append(f"{formatted_name}\n    Error - {str(result)}")
+                    logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
+                    all_messages.append(f"{formatted_name}\n Error - {str(result)}")
                 elif result:
                     signal_info = result
-                    all_messages.append(f"{formatted_name}\n    {signal_info}")
-                    
-                    # sz 값이 2를 넘는지 확인
+                    all_messages.append(f"{formatted_name}\n {signal_info}")
                     try:
                         sz_value = float(signal_info.split('/')[0].strip())
                         if sz_value >= 2:
-                            divergent_messages.append(f"{formatted_name}\n    {signal_info}")
-                    
-                        # 'R' 신호 확인
+                            divergent_messages.append(f"{formatted_name}\n {signal_info}")
                         if 'R' in signal_info.split('/')[1]:
                             r_signal_pairs.append((pair, signal_info))
                     except (ValueError, IndexError):
                         continue
                 else:
-                    all_messages.append(f"{formatted_name}\n    No signal")
-            
-            # 'R' 신호 메시지 처리도 동일하게 수정
+                    all_messages.append(f"{formatted_name}\n No signal")
             for pair, signal_info in r_signal_pairs:
                 try:
-                    # 신호 정보 파싱
                     parts = signal_info.split('/')
                     sz = float(parts[0].strip())
-                    
-                    # 해당 종목의 마지막 R 신호 시간 확인
                     current_time = datetime.now()
                     last_signal_time = self.last_r_signal_time.get(pair.A_name)
-                    # 마지막 신호 시간이 없거나 1시간 이상 지났다면 메시지 전송
                     if (not last_signal_time) or (current_time - last_signal_time > timedelta(hours=1)):
-                        # 깨끗한 종목명 추출
                         clean_name = mark_special_stocks(pair.A_name)
-                        formatted_name = f"<b>{clean_name}</b>"
-
+                        formatted_name = f"{clean_name}"
                         r_message = (
-                            f"🚨 <b>R Signal Detected</b>\n"
+                            f"🚨 R Signal Detected\n"
                             f"{formatted_name}\n"
-                            f"     {signal_info}\n"
+                            f" {signal_info}\n"
                         )
-                    
-                        # 텔레그램으로 R 신호 메시지 전송
                         await self.telegram_bot.send_message(r_message)
-                    
-                        # 마지막 R 신호 시간 업데이트
                         self.last_r_signal_time[pair.A_name] = current_time
-                    
                 except Exception as e:
-                    logger.error(f"Error processing R signal for {pair.A_name}: {str(e)}", exc_info=True)
-            
+                    logger.error(f"Error processing R signal for {pair.A_name}: {str(e)}")
             all_signals = "\n".join(all_messages)
             divergent_signals = "\n".join(divergent_messages) if divergent_messages else "No divergent pairs found at the moment."
-            
             return all_signals, divergent_signals
-                        
         except Exception as e:
-            logger.error(f"Error in get_signals_with_divergent: {str(e)}", exc_info=True)
+            logger.error(f"Error in get_signals_with_divergent: {str(e)}")
             raise
 
     async def get_all_signals(self, divergence_only: bool = False) -> str:
@@ -237,47 +339,47 @@ class StockMonitor:
             all_signals, divergent_signals = await self.get_signals_with_divergent()
             return divergent_signals if divergence_only else all_signals
         except Exception as e:
-            logger.error(f"Error in get_all_signals: {str(e)}", exc_info=True)
+            logger.error(f"Error in get_all_signals: {str(e)}")
             raise
 
     async def send_periodic_updates(self):
+        GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/stmon')
         while self.running:
             try:
                 if not is_market_time():
                     await asyncio.sleep(60)
                     continue
-                
                 logger.info("Fetching signals for periodic update...")
                 all_signals, divergent_signals = await self.get_signals_with_divergent()
                 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                
                 message = (
                     f"🕒 {current_time}\n"
                     f"📊 Current Status\n{all_signals}\n\n"
                     f"🚨 Divergent Pairs\n{divergent_signals}"
                 )
-                
                 await self.telegram_bot.send_message(message)
                 logger.info("Periodic update sent successfully")
-                
+                # 웹 데이터 파일 저장
+                save_web_data(all_signals, divergent_signals)
+                # 트렌드 데이터 수집 및 저장
+                await collect_all_trends(self.pairs)
+                # GitHub 커밋/푸시
+                commit_and_push_github(GITHUB_REPO_PATH)
                 await asyncio.sleep(WAIT_TIME)
             except Exception as e:
-                logger.error(f"Error in periodic update: {str(e)}", exc_info=True)
-                await asyncio.sleep(60)  # 30초 -> 60초로 변경
+                logger.error(f"Error in periodic update: {str(e)}")
+                await asyncio.sleep(30)
 
     async def start(self):
         try:
             logger.info("Starting Stock Monitor...")
             await self.telegram_bot.start(self.pairs)
-            
             update_task = asyncio.create_task(self.send_periodic_updates())
             polling_task = asyncio.create_task(self.telegram_bot.start_polling())
-            
             await asyncio.gather(update_task, polling_task)
         except Exception as e:
-            logger.error(f"Critical error in Stock Monitor: {str(e)}", exc_info=True)
+            logger.error(f"Critical error in Stock Monitor: {str(e)}")
             self.running = False
-            await self.telegram_bot.stop()
             raise
 
     async def shutdown(self):
@@ -293,10 +395,10 @@ async def main():
         logger.info("Received shutdown signal")
         await monitor.shutdown()
     except Exception as e:
-        logger.error(f"Fatal error: {str(e)}", exc_info=True)
+        logger.error(f"Fatal error: {str(e)}")
         await monitor.shutdown()
         sys.exit(1)
 
 if __name__ == "__main__":
-    ensure_single_instance()  # 중복 프로세스 종료
+    ensure_single_instance()
     asyncio.run(main())

@@ -2477,3 +2477,25 @@
 2025-04-28 14:20:46,628 - main - INFO - 처리 중인 배치: 1~5 / 84
 2025-04-28 14:20:54,057 - main - INFO - 처리 중인 배치: 6~10 / 84
 2025-04-28 14:21:01,600 - main - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-29 10:10:38,639 - root - INFO - Logging initialized
+2025-04-29 10:10:38,785 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 10:10:38,786 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 10:10:38,914 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 10:10:38,915 - root - INFO - Starting Stock Monitor...
+2025-04-29 10:10:38,915 - modules.telegram - INFO - Resetting webhook
+2025-04-29 10:10:41,480 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 10:10:41,481 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 10:10:41,482 - root - INFO - Fetching signals for periodic update...
+2025-04-29 10:10:41,482 - root - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-29 10:10:41,483 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 10:10:41,483 - modules.telegram - INFO - Resetting webhook
+2025-04-29 10:10:47,242 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 10:10:47,243 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 10:10:48,979 - root - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-29 10:10:57,427 - root - INFO - 처리 중인 배치: 11~15 / 84
+2025-04-29 10:11:04,916 - root - INFO - 처리 중인 배치: 16~20 / 84
+2025-04-29 10:11:13,076 - root - INFO - 처리 중인 배치: 21~25 / 84
+2025-04-29 10:11:23,730 - root - INFO - 처리 중인 배치: 26~30 / 84
+2025-04-29 10:11:31,948 - root - INFO - 처리 중인 배치: 31~35 / 84
+2025-04-29 10:11:39,015 - root - INFO - 처리 중인 배치: 36~40 / 84
+2025-04-29 10:11:46,120 - root - INFO - 처리 중인 배치: 41~45 / 84
