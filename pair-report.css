@@ -73,18 +73,17 @@ header {
     font-weight: 700;
 }
 
+.pair-table tr.main-row,
+.pair-table tr.sub-row {
+    transition: background 0.2s;
+}
+
 .pair-table tr.main-row {
-    background: #f2f7fd;
     font-weight: bold;
     border-top: 3px solid #333;
 }
 
-.pair-table tr.main-row.alt {
-    background: #f8fafc;
-}
-
 .pair-table tr.sub-row {
-    background: #fff;
     font-size: 0.97em;
 }
 
@@ -100,6 +99,47 @@ header {
 .negative {
     color: #1976d2;
     font-weight: bold;
+}
+
+/* 페어별 배경색 (최대 10페어 예시, 필요시 색상 추가) */
+.pair-bg-0 {
+    background: #f2f7fd !important;
+}
+
+.pair-bg-1 {
+    background: #f8fafc !important;
+}
+
+.pair-bg-2 {
+    background: #f7fbe7 !important;
+}
+
+.pair-bg-3 {
+    background: #fff6eb !important;
+}
+
+.pair-bg-4 {
+    background: #f7e7f9 !important;
+}
+
+.pair-bg-5 {
+    background: #e7f9f7 !important;
+}
+
+.pair-bg-6 {
+    background: #fdf7e2 !important;
+}
+
+.pair-bg-7 {
+    background: #eee7f9 !important;
+}
+
+.pair-bg-8 {
+    background: #f9e7e7 !important;
+}
+
+.pair-bg-9 {
+    background: #e7f0f9 !important;
 }
 
 @media (max-width: 900px) {
