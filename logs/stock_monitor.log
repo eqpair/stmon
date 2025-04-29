@@ -6149,3 +6149,2474 @@
 2025-04-29 17:09:37,121 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
 2025-04-29 17:10:37,302 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
 2025-04-29 17:11:37,500 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
+2025-04-29 17:12:37,652 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
+2025-04-29 17:13:21,911 - root - INFO - Logging initialized
+2025-04-29 17:13:22,057 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:13:22,057 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:13:22,175 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:13:22,175 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:13:22,176 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:13:24,749 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:13:24,750 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:13:24,751 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:13:24,751 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:13:24,869 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '003495', '051905', 'last_updated']
+2025-04-29 17:13:28,798 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:13:28,799 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:14:25,044 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '003495', '051905', 'last_updated']
+2025-04-29 17:15:25,182 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '003495', '051905', 'last_updated']
+2025-04-29 17:16:25,353 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '003495', '051905', 'last_updated']
+2025-04-29 17:17:25,510 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '003495', '051905', 'last_updated']
+2025-04-29 17:18:25,707 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '003495', '051905', 'last_updated']
+2025-04-29 17:19:22,781 - root - INFO - Logging initialized
+2025-04-29 17:19:22,781 - root - INFO - Logging initialized
+2025-04-29 17:19:22,785 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:19:22,785 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:19:22,970 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:19:22,970 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:19:22,971 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f767a2dd0>
+2025-04-29 17:19:22,971 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f767a2dd0>
+2025-04-29 17:19:22,972 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7476d940>, 88488.605075723), (<aiohttp.client_proto.ResponseHandler object at 0x7f7476ed60>, 88492.366126612)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7542c550>
+2025-04-29 17:19:22,972 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7476d940>, 88488.605075723), (<aiohttp.client_proto.ResponseHandler object at 0x7f7476ed60>, 88492.366126612)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7542c550>
+2025-04-29 17:19:55,308 - root - INFO - Logging initialized
+2025-04-29 17:19:55,444 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:19:55,444 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:19:55,560 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:19:55,560 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:19:55,561 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:19:57,143 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:19:57,143 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:19:57,144 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:19:57,144 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:19:57,257 - root - INFO - 실시간 가격 저장 완료: ['003490', '051900', '051905', '003495', 'last_updated']
+2025-04-29 17:19:58,182 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:19:58,182 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:19:58,725 - root - INFO - Logging initialized
+2025-04-29 17:19:58,725 - root - INFO - Logging initialized
+2025-04-29 17:19:58,728 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:19:58,728 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:19:58,920 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:19:58,920 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:19:58,921 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7f4afb50>
+2025-04-29 17:19:58,921 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7f4afb50>
+2025-04-29 17:19:58,921 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7f4d5860>, 88528.344573732)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7f4bc690>
+2025-04-29 17:19:58,921 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7f4d5860>, 88528.344573732)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7f4bc690>
+2025-04-29 17:20:31,298 - root - INFO - Logging initialized
+2025-04-29 17:20:31,434 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:20:31,435 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:20:31,553 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:20:31,553 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:20:31,553 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:20:33,131 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:20:33,131 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:20:33,132 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:20:33,132 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:20:33,247 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '051900', '003495', 'last_updated']
+2025-04-29 17:20:34,170 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:20:34,171 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:20:34,727 - root - INFO - Logging initialized
+2025-04-29 17:20:34,727 - root - INFO - Logging initialized
+2025-04-29 17:20:34,730 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:20:34,730 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:20:34,905 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:20:34,905 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:20:34,906 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9ac04250>
+2025-04-29 17:20:34,906 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9ac04250>
+2025-04-29 17:20:34,906 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9ac15860>, 88564.346432314)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9b8cbf50>
+2025-04-29 17:20:34,906 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9ac15860>, 88564.346432314)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9b8cbf50>
+2025-04-29 17:21:07,311 - root - INFO - Logging initialized
+2025-04-29 17:21:07,449 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:21:07,450 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:21:07,566 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:21:07,566 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:21:07,567 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:21:09,137 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:21:09,137 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:21:09,138 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:21:09,138 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:21:09,258 - root - INFO - 실시간 가격 저장 완료: ['003495', '051900', '051905', '003490', 'last_updated']
+2025-04-29 17:21:10,158 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:21:10,159 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:21:10,694 - root - INFO - Logging initialized
+2025-04-29 17:21:10,694 - root - INFO - Logging initialized
+2025-04-29 17:21:10,697 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:21:10,697 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:21:10,878 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:21:10,878 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:21:10,879 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7456e910>
+2025-04-29 17:21:10,879 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7456e910>
+2025-04-29 17:21:10,880 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f745657f0>, 88600.313610351)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f75958b10>
+2025-04-29 17:21:10,880 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f745657f0>, 88600.313610351)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f75958b10>
+2025-04-29 17:21:43,296 - root - INFO - Logging initialized
+2025-04-29 17:21:43,431 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:21:43,432 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:21:43,549 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:21:43,550 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:21:43,550 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:21:45,147 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:21:45,148 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:21:45,148 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:21:45,148 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:21:45,262 - root - INFO - 실시간 가격 저장 완료: ['003495', '051905', '003490', '051900', 'last_updated']
+2025-04-29 17:21:46,191 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:21:46,192 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:21:46,743 - root - INFO - Logging initialized
+2025-04-29 17:21:46,743 - root - INFO - Logging initialized
+2025-04-29 17:21:46,746 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:21:46,746 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:21:46,938 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:21:46,938 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:21:46,939 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9c462a10>
+2025-04-29 17:21:46,939 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9c462a10>
+2025-04-29 17:21:46,940 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9c4557f0>, 88636.362629901)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9d11c710>
+2025-04-29 17:21:46,940 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9c4557f0>, 88636.362629901)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9d11c710>
+2025-04-29 17:22:19,314 - root - INFO - Logging initialized
+2025-04-29 17:22:19,448 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:22:19,449 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:22:19,564 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:22:19,565 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:22:19,565 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:22:21,180 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:22:21,180 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:22:21,181 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:22:21,181 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:22:21,333 - root - INFO - 실시간 가격 저장 완료: ['003495', '051900', '003490', '051905', 'last_updated']
+2025-04-29 17:22:22,233 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:22:22,234 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:22:22,792 - root - INFO - Logging initialized
+2025-04-29 17:22:22,792 - root - INFO - Logging initialized
+2025-04-29 17:22:22,796 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:22:22,796 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:22:22,981 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:22:22,981 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:22:22,983 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f91a3fb10>
+2025-04-29 17:22:22,983 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f91a3fb10>
+2025-04-29 17:22:22,984 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f91a657f0>, 88672.412184668)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f91a72690>
+2025-04-29 17:22:22,984 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f91a657f0>, 88672.412184668)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f91a72690>
+2025-04-29 17:22:55,305 - root - INFO - Logging initialized
+2025-04-29 17:22:55,440 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:22:55,440 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:22:55,556 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:22:55,557 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:22:55,558 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:22:57,104 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:22:57,104 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:22:57,105 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:22:57,105 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:22:57,220 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
+2025-04-29 17:22:58,124 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:22:58,124 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:22:58,649 - root - INFO - Logging initialized
+2025-04-29 17:22:58,649 - root - INFO - Logging initialized
+2025-04-29 17:22:58,653 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:22:58,653 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:22:58,838 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:22:58,838 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:22:58,839 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7faaaccad0>
+2025-04-29 17:22:58,839 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7faaaccad0>
+2025-04-29 17:22:58,841 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa9b85860>, 88708.268649148)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa9b5f050>
+2025-04-29 17:22:58,841 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa9b85860>, 88708.268649148)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa9b5f050>
+2025-04-29 17:23:31,304 - root - INFO - Logging initialized
+2025-04-29 17:23:31,438 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:23:31,439 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:23:31,556 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:23:31,561 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:23:31,561 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:23:33,104 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:23:33,104 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:23:33,105 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:23:33,105 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:23:33,236 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '051905', '003495', 'last_updated']
+2025-04-29 17:23:34,127 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:23:34,128 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:23:34,650 - root - INFO - Logging initialized
+2025-04-29 17:23:34,650 - root - INFO - Logging initialized
+2025-04-29 17:23:34,654 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:23:34,654 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:23:34,846 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:23:34,846 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:23:34,847 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7d118290>
+2025-04-29 17:23:34,847 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7d118290>
+2025-04-29 17:23:34,848 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7ca457f0>, 88744.270060134)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7d98c710>
+2025-04-29 17:23:34,848 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7ca457f0>, 88744.270060134)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7d98c710>
+2025-04-29 17:24:07,297 - root - INFO - Logging initialized
+2025-04-29 17:24:07,431 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:24:07,432 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:24:07,548 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:24:07,548 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:24:07,548 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:24:09,158 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:24:09,159 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:24:09,160 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:24:09,160 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:24:09,287 - root - INFO - 실시간 가격 저장 완료: ['003495', '003490', '051905', '051900', 'last_updated']
+2025-04-29 17:24:10,210 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:24:10,211 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:24:10,767 - root - INFO - Logging initialized
+2025-04-29 17:24:10,767 - root - INFO - Logging initialized
+2025-04-29 17:24:10,771 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:24:10,771 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:24:10,964 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:24:10,964 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:24:10,965 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f89711050>
+2025-04-29 17:24:10,965 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f89711050>
+2025-04-29 17:24:10,966 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f87ed56a0>, 88780.387131985)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f88b9c3d0>
+2025-04-29 17:24:10,966 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f87ed56a0>, 88780.387131985)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f88b9c3d0>
+2025-04-29 17:24:43,295 - root - INFO - Logging initialized
+2025-04-29 17:24:43,430 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:24:43,431 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:24:43,545 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:24:43,545 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:24:43,546 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:24:45,084 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:24:45,084 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:24:45,085 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:24:45,085 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:24:45,199 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '051900', '003490', 'last_updated']
+2025-04-29 17:24:46,093 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:24:46,093 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:24:46,605 - root - INFO - Logging initialized
+2025-04-29 17:24:46,605 - root - INFO - Logging initialized
+2025-04-29 17:24:46,608 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:24:46,608 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:24:46,780 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:24:46,780 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:24:46,781 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8b992d90>
+2025-04-29 17:24:46,781 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8b992d90>
+2025-04-29 17:24:46,781 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f89965710>, 88816.225461879)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8c214d10>
+2025-04-29 17:24:46,781 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f89965710>, 88816.225461879)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8c214d10>
+2025-04-29 17:25:19,297 - root - INFO - Logging initialized
+2025-04-29 17:25:19,431 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:25:19,432 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:25:19,549 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:25:19,549 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:25:19,550 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:25:21,130 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:25:21,131 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:25:21,131 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:25:21,132 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:25:21,263 - root - INFO - 실시간 가격 저장 완료: ['051900', '051905', '003495', '003490', 'last_updated']
+2025-04-29 17:25:22,158 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:25:22,159 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:25:22,696 - root - INFO - Logging initialized
+2025-04-29 17:25:22,696 - root - INFO - Logging initialized
+2025-04-29 17:25:22,700 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:25:22,700 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:25:22,879 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:25:22,879 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:25:22,880 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9f81ca10>
+2025-04-29 17:25:22,880 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9f81ca10>
+2025-04-29 17:25:22,881 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9eb55710>, 88852.316219794)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9f81c810>
+2025-04-29 17:25:22,881 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9eb55710>, 88852.316219794)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9f81c810>
+2025-04-29 17:25:55,301 - root - INFO - Logging initialized
+2025-04-29 17:25:55,435 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:25:55,436 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:25:55,552 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:25:55,553 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:25:55,553 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:25:57,066 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:25:57,067 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:25:57,068 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:25:57,068 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:25:57,192 - root - INFO - 실시간 가격 저장 완료: ['051905', '051900', '003490', '003495', 'last_updated']
+2025-04-29 17:25:58,068 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:25:58,069 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:25:58,580 - root - INFO - Logging initialized
+2025-04-29 17:25:58,580 - root - INFO - Logging initialized
+2025-04-29 17:25:58,584 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:25:58,584 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:25:58,773 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:25:58,773 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:25:58,774 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f98970890>
+2025-04-29 17:25:58,774 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f98970890>
+2025-04-29 17:25:58,775 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f969256a0>, 88888.199909079)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f99959d50>
+2025-04-29 17:25:58,775 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f969256a0>, 88888.199909079)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f99959d50>
+2025-04-29 17:26:31,306 - root - INFO - Logging initialized
+2025-04-29 17:26:31,441 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:26:31,442 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:26:31,557 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:26:31,558 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:26:31,558 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:26:33,172 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:26:33,172 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:26:33,173 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:26:33,173 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:26:33,303 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '003495', '051900', 'last_updated']
+2025-04-29 17:26:34,226 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:26:34,226 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:26:34,792 - root - INFO - Logging initialized
+2025-04-29 17:26:34,792 - root - INFO - Logging initialized
+2025-04-29 17:26:34,796 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:26:34,796 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:26:34,980 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:26:34,980 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:26:34,981 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7d1fe650>
+2025-04-29 17:26:34,981 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7d1fe650>
+2025-04-29 17:26:34,982 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7c2c56a0>, 88924.41110588)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7eb8fa10>
+2025-04-29 17:26:34,982 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7c2c56a0>, 88924.41110588)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7eb8fa10>
+2025-04-29 17:27:07,292 - root - INFO - Logging initialized
+2025-04-29 17:27:07,426 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:27:07,426 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:27:07,541 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:27:07,542 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:27:07,542 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:27:09,115 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:27:09,115 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:27:09,116 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:27:09,116 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:27:09,233 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
+2025-04-29 17:27:10,170 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:27:10,171 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:27:10,733 - root - INFO - Logging initialized
+2025-04-29 17:27:10,733 - root - INFO - Logging initialized
+2025-04-29 17:27:10,737 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:27:10,737 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:27:10,928 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:27:10,928 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:27:10,929 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa1ac1990>
+2025-04-29 17:27:10,929 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa1ac1990>
+2025-04-29 17:27:10,930 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa1ab5710>, 88960.352634026)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa1ac1950>
+2025-04-29 17:27:10,930 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa1ab5710>, 88960.352634026)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa1ac1950>
+2025-04-29 17:27:43,289 - root - INFO - Logging initialized
+2025-04-29 17:27:43,424 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:27:43,425 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:27:43,541 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:27:43,542 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:27:43,542 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:27:45,075 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:27:45,075 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:27:45,076 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:27:45,076 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:27:45,211 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '051905', '003495', 'last_updated']
+2025-04-29 17:27:46,087 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:27:46,087 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:27:46,604 - root - INFO - Logging initialized
+2025-04-29 17:27:46,604 - root - INFO - Logging initialized
+2025-04-29 17:27:46,608 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:27:46,608 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:27:46,799 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:27:46,799 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:27:46,800 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f85d73350>
+2025-04-29 17:27:46,800 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f85d73350>
+2025-04-29 17:27:46,800 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f85d956a0>, 88996.223579439)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f885ec990>
+2025-04-29 17:27:46,800 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f85d956a0>, 88996.223579439)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f885ec990>
+2025-04-29 17:28:19,307 - root - INFO - Logging initialized
+2025-04-29 17:28:19,440 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:28:19,441 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:28:19,557 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:28:19,558 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:28:19,558 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:28:21,111 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:28:21,111 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:28:21,112 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:28:21,112 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:28:21,228 - root - INFO - 실시간 가격 저장 완료: ['051900', '051905', '003490', '003495', 'last_updated']
+2025-04-29 17:28:22,130 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:28:22,130 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:28:22,651 - root - INFO - Logging initialized
+2025-04-29 17:28:22,651 - root - INFO - Logging initialized
+2025-04-29 17:28:22,653 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:28:22,653 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:28:22,822 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:28:22,822 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:28:22,823 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7d402b10>
+2025-04-29 17:28:22,823 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7d402b10>
+2025-04-29 17:28:22,824 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7b3d5710>, 89032.272491665)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7b3e15d0>
+2025-04-29 17:28:22,824 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7b3d5710>, 89032.272491665)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7b3e15d0>
+2025-04-29 17:28:55,308 - root - INFO - Logging initialized
+2025-04-29 17:28:55,442 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:28:55,443 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:28:55,560 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:28:55,562 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:28:55,562 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:28:57,101 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:28:57,102 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:28:57,102 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:28:57,103 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:28:57,284 - root - INFO - 실시간 가격 저장 완료: ['051905', '003490', '003495', '051900', 'last_updated']
+2025-04-29 17:28:58,141 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:28:58,142 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:28:58,666 - root - INFO - Logging initialized
+2025-04-29 17:28:58,666 - root - INFO - Logging initialized
+2025-04-29 17:28:58,668 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:28:58,668 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:28:58,846 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:28:58,846 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:28:58,847 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f792dc990>
+2025-04-29 17:28:58,847 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f792dc990>
+2025-04-29 17:28:58,848 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f783956a0>, 89068.287910052)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7905c210>
+2025-04-29 17:28:58,848 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f783956a0>, 89068.287910052)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7905c210>
+2025-04-29 17:29:31,298 - root - INFO - Logging initialized
+2025-04-29 17:29:31,434 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:29:31,435 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:29:31,551 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:29:31,552 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:29:31,552 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:29:33,148 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:29:33,149 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:29:33,149 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:29:33,150 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:29:33,310 - root - INFO - 실시간 가격 저장 완료: ['051905', '003490', '051900', '003495', 'last_updated']
+2025-04-29 17:29:34,393 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:29:34,394 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:29:35,588 - root - INFO - Logging initialized
+2025-04-29 17:29:35,588 - root - INFO - Logging initialized
+2025-04-29 17:29:35,592 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:29:35,592 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:29:35,784 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:29:35,784 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:29:35,785 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8a8e1c90>
+2025-04-29 17:29:35,785 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8a8e1c90>
+2025-04-29 17:29:35,786 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8a8d5710>, 89105.207566093)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8b3147d0>
+2025-04-29 17:29:35,786 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8a8d5710>, 89105.207566093)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8b3147d0>
+2025-04-29 17:30:08,299 - root - INFO - Logging initialized
+2025-04-29 17:30:08,433 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:30:08,433 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:30:08,549 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:30:08,549 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:30:08,550 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:30:10,078 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:30:10,079 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:30:10,079 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:30:10,080 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:30:10,211 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
+2025-04-29 17:30:11,093 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:30:11,094 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:30:11,609 - root - INFO - Logging initialized
+2025-04-29 17:30:11,609 - root - INFO - Logging initialized
+2025-04-29 17:30:11,613 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:30:11,613 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:30:11,805 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:30:11,805 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:30:11,807 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f80b43410>
+2025-04-29 17:30:11,807 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f80b43410>
+2025-04-29 17:30:11,807 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f80b356a0>, 89141.228308535)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f80b41510>
+2025-04-29 17:30:11,807 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f80b356a0>, 89141.228308535)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f80b41510>
+2025-04-29 17:30:44,307 - root - INFO - Logging initialized
+2025-04-29 17:30:44,441 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:30:44,442 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:30:44,557 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:30:44,558 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:30:44,558 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:30:46,170 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:30:46,171 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:30:46,179 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:30:46,179 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:30:46,326 - root - INFO - 실시간 가격 저장 완료: ['051900', '051905', '003490', '003495', 'last_updated']
+2025-04-29 17:30:47,215 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:30:47,216 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:30:47,765 - root - INFO - Logging initialized
+2025-04-29 17:30:47,765 - root - INFO - Logging initialized
+2025-04-29 17:30:47,769 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:30:47,769 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:30:47,960 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:30:47,960 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:30:47,961 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f91d749d0>
+2025-04-29 17:30:47,961 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f91d749d0>
+2025-04-29 17:30:47,963 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f91885710>, 89177.384744371)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f91862090>
+2025-04-29 17:30:47,963 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f91885710>, 89177.384744371)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f91862090>
+2025-04-29 17:31:20,293 - root - INFO - Logging initialized
+2025-04-29 17:31:20,428 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:31:20,429 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:31:20,545 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:31:20,546 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:31:20,547 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:31:22,112 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:31:22,112 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:31:22,113 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:31:22,113 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:31:22,239 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '051900', '003490', 'last_updated']
+2025-04-29 17:31:23,155 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:31:23,156 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:31:23,690 - root - INFO - Logging initialized
+2025-04-29 17:31:23,690 - root - INFO - Logging initialized
+2025-04-29 17:31:23,693 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:31:23,693 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:31:23,880 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:31:23,880 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:31:23,882 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f93dc8290>
+2025-04-29 17:31:23,882 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f93dc8290>
+2025-04-29 17:31:23,883 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f936f5710>, 89213.309181877)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f943bc710>
+2025-04-29 17:31:23,883 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f936f5710>, 89213.309181877)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f943bc710>
+2025-04-29 17:31:56,295 - root - INFO - Logging initialized
+2025-04-29 17:31:56,430 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:31:56,431 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:31:56,546 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:31:56,546 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:31:56,547 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:31:58,107 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:31:58,108 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:31:58,112 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:31:58,112 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:31:58,254 - root - INFO - 실시간 가격 저장 완료: ['003495', '051905', '003490', '051900', 'last_updated']
+2025-04-29 17:31:59,144 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:31:59,144 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:31:59,676 - root - INFO - Logging initialized
+2025-04-29 17:31:59,676 - root - INFO - Logging initialized
+2025-04-29 17:31:59,681 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:31:59,681 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:31:59,873 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:31:59,873 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:31:59,874 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f757b3790>
+2025-04-29 17:31:59,874 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f757b3790>
+2025-04-29 17:31:59,876 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f757a5710>, 89249.296120956)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f757b1e10>
+2025-04-29 17:31:59,876 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f757a5710>, 89249.296120956)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f757b1e10>
+2025-04-29 17:32:32,302 - root - INFO - Logging initialized
+2025-04-29 17:32:32,437 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:32:32,438 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:32:32,555 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:32:32,556 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:32:32,556 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:32:34,103 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:32:34,104 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:32:34,105 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:32:34,105 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:32:34,240 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '051900', '003495', 'last_updated']
+2025-04-29 17:32:35,130 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:32:35,131 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:32:35,651 - root - INFO - Logging initialized
+2025-04-29 17:32:35,651 - root - INFO - Logging initialized
+2025-04-29 17:32:35,653 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:32:35,653 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:32:35,818 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:32:35,818 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:32:35,819 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fad348b50>
+2025-04-29 17:32:35,819 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fad348b50>
+2025-04-29 17:32:35,819 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa9f756a0>, 89285.272868933)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fabfc4fd0>
+2025-04-29 17:32:35,819 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa9f756a0>, 89285.272868933)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fabfc4fd0>
+2025-04-29 17:33:08,303 - root - INFO - Logging initialized
+2025-04-29 17:33:08,438 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:33:08,439 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:33:08,556 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:33:08,557 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:33:08,558 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:33:10,119 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:33:10,119 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:33:10,120 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:33:10,120 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:33:10,235 - root - INFO - 실시간 가격 저장 완료: ['003490', '003495', '051905', '051900', 'last_updated']
+2025-04-29 17:33:11,144 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:33:11,144 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:33:11,682 - root - INFO - Logging initialized
+2025-04-29 17:33:11,682 - root - INFO - Logging initialized
+2025-04-29 17:33:11,684 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:33:11,684 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:33:11,849 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:33:11,849 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:33:11,850 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f978c3350>
+2025-04-29 17:33:11,850 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f978c3350>
+2025-04-29 17:33:11,851 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f978b56a0>, 89321.303957073)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9ab42d50>
+2025-04-29 17:33:11,851 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f978b56a0>, 89321.303957073)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9ab42d50>
+2025-04-29 17:33:44,312 - root - INFO - Logging initialized
+2025-04-29 17:33:44,446 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:33:44,447 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:33:44,562 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:33:44,562 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:33:44,562 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:33:46,204 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:33:46,205 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:33:46,205 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:33:46,205 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:33:46,338 - root - INFO - 실시간 가격 저장 완료: ['051905', '003490', '051900', '003495', 'last_updated']
+2025-04-29 17:33:47,262 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:33:47,262 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:33:47,826 - root - INFO - Logging initialized
+2025-04-29 17:33:47,826 - root - INFO - Logging initialized
+2025-04-29 17:33:47,829 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:33:47,829 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:33:48,018 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:33:48,018 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:33:48,019 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa487fc50>
+2025-04-29 17:33:48,019 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa487fc50>
+2025-04-29 17:33:48,020 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa48756a0>, 89357.445455411)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa553c210>
+2025-04-29 17:33:48,020 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa48756a0>, 89357.445455411)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa553c210>
+2025-04-29 17:34:20,542 - root - INFO - Logging initialized
+2025-04-29 17:34:20,677 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:34:20,677 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:34:20,798 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:34:20,798 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:34:20,799 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:34:22,413 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:34:22,413 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:34:22,414 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:34:22,415 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:34:22,528 - root - INFO - 실시간 가격 저장 완료: ['051905', '003490', '003495', '051900', 'last_updated']
+2025-04-29 17:34:23,471 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:34:23,471 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:34:24,033 - root - INFO - Logging initialized
+2025-04-29 17:34:24,033 - root - INFO - Logging initialized
+2025-04-29 17:34:24,036 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:34:24,036 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:34:24,225 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:34:24,225 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:34:24,227 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f75083b50>
+2025-04-29 17:34:24,227 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f75083b50>
+2025-04-29 17:34:24,228 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f75075710>, 89393.652656852)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f75461290>
+2025-04-29 17:34:24,228 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f75075710>, 89393.652656852)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f75461290>
+2025-04-29 17:34:56,550 - root - INFO - Logging initialized
+2025-04-29 17:34:56,685 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:34:56,686 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:34:56,803 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:34:56,807 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:34:56,807 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:34:58,376 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:34:58,377 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:34:58,377 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:34:58,378 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:34:58,598 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '003490', '051900', 'last_updated']
+2025-04-29 17:34:59,407 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:34:59,407 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:34:59,942 - root - INFO - Logging initialized
+2025-04-29 17:34:59,942 - root - INFO - Logging initialized
+2025-04-29 17:34:59,946 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:34:59,946 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:35:00,137 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:35:00,137 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:35:00,138 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2fa3b90>
+2025-04-29 17:35:00,138 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2fa3b90>
+2025-04-29 17:35:00,139 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa2f95710>, 89429.561857266)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa2f73490>
+2025-04-29 17:35:00,139 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa2f95710>, 89429.561857266)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa2f73490>
+2025-04-29 17:35:32,545 - root - INFO - Logging initialized
+2025-04-29 17:35:32,678 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:35:32,679 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:35:32,801 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:35:32,802 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:35:32,803 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:35:34,379 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:35:34,379 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:35:34,380 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:35:34,380 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:35:34,528 - root - INFO - 실시간 가격 저장 완료: ['003495', '051900', '051905', '003490', 'last_updated']
+2025-04-29 17:35:35,486 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:35:35,487 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:35:36,029 - root - INFO - Logging initialized
+2025-04-29 17:35:36,029 - root - INFO - Logging initialized
+2025-04-29 17:35:36,032 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:35:36,032 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:35:36,215 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:35:36,215 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:35:36,216 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7face31990>
+2025-04-29 17:35:36,216 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7face31990>
+2025-04-29 17:35:36,216 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7face256a0>, 89465.648789905)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fae660990>
+2025-04-29 17:35:36,216 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7face256a0>, 89465.648789905)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fae660990>
+2025-04-29 17:36:08,549 - root - INFO - Logging initialized
+2025-04-29 17:36:08,683 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:36:08,684 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:36:08,800 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:36:08,800 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:36:08,801 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:36:10,425 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:36:10,426 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:36:10,427 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:36:10,427 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:36:10,550 - root - INFO - 실시간 가격 저장 완료: ['003495', '003490', '051900', '051905', 'last_updated']
+2025-04-29 17:36:11,486 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:36:11,487 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:36:12,060 - root - INFO - Logging initialized
+2025-04-29 17:36:12,060 - root - INFO - Logging initialized
+2025-04-29 17:36:12,063 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:36:12,063 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:36:12,256 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:36:12,256 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:36:12,258 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9ddb0bd0>
+2025-04-29 17:36:12,258 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9ddb0bd0>
+2025-04-29 17:36:12,259 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9bd656a0>, 89501.679430913)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9ca2cb50>
+2025-04-29 17:36:12,259 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9bd656a0>, 89501.679430913)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9ca2cb50>
+2025-04-29 17:36:44,830 - root - INFO - Logging initialized
+2025-04-29 17:36:44,965 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:36:44,966 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:36:45,082 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:36:45,083 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:36:45,083 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:36:46,645 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:36:46,646 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:36:46,647 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:36:46,647 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:36:46,792 - root - INFO - 실시간 가격 저장 완료: ['051905', '003495', '051900', '003490', 'last_updated']
+2025-04-29 17:36:47,674 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:36:47,675 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:36:48,211 - root - INFO - Logging initialized
+2025-04-29 17:36:48,211 - root - INFO - Logging initialized
+2025-04-29 17:36:48,214 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:36:48,214 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:36:48,403 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:36:48,403 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:36:48,404 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa3772b10>
+2025-04-29 17:36:48,404 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa3772b10>
+2025-04-29 17:36:48,404 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa1735710>, 89537.830678203)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa23fc7d0>
+2025-04-29 17:36:48,404 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa1735710>, 89537.830678203)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa23fc7d0>
+2025-04-29 17:37:20,789 - root - INFO - Logging initialized
+2025-04-29 17:37:20,923 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:37:20,923 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:37:21,039 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:37:21,039 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:37:21,040 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:37:22,685 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:37:22,685 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:37:22,686 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:37:22,686 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:37:22,808 - root - INFO - 실시간 가격 저장 완료: ['051905', '051900', '003495', '003490', 'last_updated']
+2025-04-29 17:37:23,738 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:37:23,739 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:37:24,298 - root - INFO - Logging initialized
+2025-04-29 17:37:24,298 - root - INFO - Logging initialized
+2025-04-29 17:37:24,301 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:37:24,301 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:37:24,488 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:37:24,488 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:37:24,489 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9d2e19d0>
+2025-04-29 17:37:24,489 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9d2e19d0>
+2025-04-29 17:37:24,489 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9d2d5710>, 89573.917437704)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa035b350>
+2025-04-29 17:37:24,489 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9d2d5710>, 89573.917437704)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa035b350>
+2025-04-29 17:37:56,806 - root - INFO - Logging initialized
+2025-04-29 17:37:56,939 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:37:56,939 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:37:57,054 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:37:57,055 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:37:57,055 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:37:58,582 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:37:58,582 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:37:58,583 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:37:58,583 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:37:58,732 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '003495', '051900', 'last_updated']
+2025-04-29 17:37:59,592 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:37:59,592 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:38:00,106 - root - INFO - Logging initialized
+2025-04-29 17:38:00,106 - root - INFO - Logging initialized
+2025-04-29 17:38:00,109 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:38:00,109 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:38:00,294 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:38:00,294 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:38:00,295 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2ee2d90>
+2025-04-29 17:38:00,295 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2ee2d90>
+2025-04-29 17:38:00,296 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa0ea5710>, 89609.725564675)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa287dd50>
+2025-04-29 17:38:00,296 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa0ea5710>, 89609.725564675)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa287dd50>
+2025-04-29 17:38:32,814 - root - INFO - Logging initialized
+2025-04-29 17:38:32,950 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:38:32,950 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:38:33,066 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:38:33,067 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:38:33,067 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:38:34,627 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:38:34,627 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:38:34,628 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:38:34,628 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:38:34,738 - root - INFO - 실시간 가격 저장 완료: ['051905', '051900', '003490', '003495', 'last_updated']
+2025-04-29 17:38:35,656 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:38:35,656 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:38:36,190 - root - INFO - Logging initialized
+2025-04-29 17:38:36,190 - root - INFO - Logging initialized
+2025-04-29 17:38:36,192 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:38:36,192 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:38:36,360 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:38:36,360 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:38:36,361 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7faf7ce650>
+2025-04-29 17:38:36,361 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7faf7ce650>
+2025-04-29 17:38:36,362 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fae895710>, 89645.811760254)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fb10c6150>
+2025-04-29 17:38:36,362 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fae895710>, 89645.811760254)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fb10c6150>
+2025-04-29 17:39:08,809 - root - INFO - Logging initialized
+2025-04-29 17:39:08,944 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:39:08,945 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:39:09,061 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:39:09,062 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:39:09,063 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:39:10,599 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:39:10,599 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:39:10,600 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:39:10,600 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:39:10,720 - root - INFO - 실시간 가격 저장 완료: ['003495', '051905', '003490', '051900', 'last_updated']
+2025-04-29 17:39:11,619 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:39:11,620 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:39:12,140 - root - INFO - Logging initialized
+2025-04-29 17:39:12,140 - root - INFO - Logging initialized
+2025-04-29 17:39:12,144 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:39:12,144 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:39:12,321 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:39:12,321 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:39:12,322 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f772d3550>
+2025-04-29 17:39:12,322 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f772d3550>
+2025-04-29 17:39:12,323 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f772c56a0>, 89681.760236903)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f772a3290>
+2025-04-29 17:39:12,323 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f772c56a0>, 89681.760236903)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f772a3290>
+2025-04-29 17:39:44,813 - root - INFO - Logging initialized
+2025-04-29 17:39:44,947 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:39:44,948 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:39:45,065 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:39:45,066 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:39:45,066 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:39:46,608 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:39:46,609 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:39:46,609 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:39:46,610 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:39:46,739 - root - INFO - 실시간 가격 저장 완료: ['003495', '051900', '003490', '051905', 'last_updated']
+2025-04-29 17:39:47,632 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:39:47,633 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:39:48,156 - root - INFO - Logging initialized
+2025-04-29 17:39:48,156 - root - INFO - Logging initialized
+2025-04-29 17:39:48,160 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:39:48,160 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:39:48,351 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:39:48,351 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:39:48,352 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa8c83350>
+2025-04-29 17:39:48,352 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa8c83350>
+2025-04-29 17:39:48,352 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa8c75710>, 89717.77613672)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa8c819d0>
+2025-04-29 17:39:48,352 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa8c75710>, 89717.77613672)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa8c819d0>
+2025-04-29 17:40:20,813 - root - INFO - Logging initialized
+2025-04-29 17:40:20,947 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:40:20,947 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:40:21,063 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:40:21,064 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:40:21,065 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:40:22,709 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:40:22,709 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:40:22,710 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:40:22,711 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:40:22,821 - root - INFO - 실시간 가격 저장 완료: ['051905', '051900', '003495', '003490', 'last_updated']
+2025-04-29 17:40:23,764 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:40:23,765 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:40:24,325 - root - INFO - Logging initialized
+2025-04-29 17:40:24,325 - root - INFO - Logging initialized
+2025-04-29 17:40:24,329 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:40:24,329 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:40:24,509 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:40:24,509 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:40:24,511 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa58b1a10>
+2025-04-29 17:40:24,511 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa58b1a10>
+2025-04-29 17:40:24,511 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa58a5710>, 89753.945182639)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa727cb50>
+2025-04-29 17:40:24,511 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa58a5710>, 89753.945182639)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa727cb50>
+2025-04-29 17:40:57,064 - root - INFO - Logging initialized
+2025-04-29 17:40:57,201 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:40:57,202 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:40:57,317 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:40:57,318 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:40:57,318 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:40:58,887 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:40:58,887 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:40:58,888 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:40:58,888 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:40:59,073 - root - INFO - 실시간 가격 저장 완료: ['051905', '051900', '003490', '003495', 'last_updated']
+2025-04-29 17:40:59,915 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:40:59,916 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:41:00,450 - root - INFO - Logging initialized
+2025-04-29 17:41:00,450 - root - INFO - Logging initialized
+2025-04-29 17:41:00,453 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:41:00,453 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:41:00,627 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:41:00,627 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:41:00,628 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fb0962b10>
+2025-04-29 17:41:00,628 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fb0962b10>
+2025-04-29 17:41:00,630 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fae925710>, 89790.069677863)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7faf5ec210>
+2025-04-29 17:41:00,630 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fae925710>, 89790.069677863)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7faf5ec210>
+2025-04-29 17:41:33,043 - root - INFO - Logging initialized
+2025-04-29 17:41:33,177 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:41:33,179 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:41:33,294 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:41:33,295 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:41:33,295 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:41:34,872 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:41:34,873 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:41:34,873 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:41:34,874 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:41:34,985 - root - INFO - 실시간 가격 저장 완료: ['003490', '003495', '051900', '051905', 'last_updated']
+2025-04-29 17:41:35,910 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:41:35,911 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:41:36,448 - root - INFO - Logging initialized
+2025-04-29 17:41:36,448 - root - INFO - Logging initialized
+2025-04-29 17:41:36,451 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:41:36,451 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:41:36,642 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:41:36,642 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:41:36,644 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7aa4e650>
+2025-04-29 17:41:36,644 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7aa4e650>
+2025-04-29 17:41:36,644 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f79b156a0>, 89826.06718071)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7b344d10>
+2025-04-29 17:41:36,644 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f79b156a0>, 89826.06718071)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7b344d10>
+2025-04-29 17:42:09,055 - root - INFO - Logging initialized
+2025-04-29 17:42:09,191 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:42:09,192 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:42:09,306 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:42:09,307 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:42:09,307 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:42:10,834 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:42:10,834 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:42:10,835 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:42:10,835 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:42:10,954 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '051905', '003495', 'last_updated']
+2025-04-29 17:42:11,845 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:42:11,846 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:42:12,361 - root - INFO - Logging initialized
+2025-04-29 17:42:12,361 - root - INFO - Logging initialized
+2025-04-29 17:42:12,364 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:42:12,364 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:42:12,544 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:42:12,544 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:42:12,545 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d6b1a50>
+2025-04-29 17:42:12,545 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d6b1a50>
+2025-04-29 17:42:12,546 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d6a56a0>, 89861.980224968)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d6b1a10>
+2025-04-29 17:42:12,546 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d6a56a0>, 89861.980224968)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d6b1a10>
+2025-04-29 17:42:45,057 - root - INFO - Logging initialized
+2025-04-29 17:42:45,192 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:42:45,193 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:42:45,308 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:42:45,309 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:42:45,309 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:42:46,828 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:42:46,829 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:42:46,830 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:42:46,830 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:42:46,954 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '003495', '051900', 'last_updated']
+2025-04-29 17:42:47,836 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:42:47,837 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:42:48,348 - root - INFO - Logging initialized
+2025-04-29 17:42:48,348 - root - INFO - Logging initialized
+2025-04-29 17:42:48,351 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:42:48,351 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:42:48,532 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:42:48,532 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:42:48,534 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8a80f250>
+2025-04-29 17:42:48,534 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8a80f250>
+2025-04-29 17:42:48,534 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8a8056a0>, 89897.967756897)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8a7e2b90>
+2025-04-29 17:42:48,534 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8a8056a0>, 89897.967756897)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8a7e2b90>
+2025-04-29 17:43:21,060 - root - INFO - Logging initialized
+2025-04-29 17:43:21,194 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:43:21,194 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:43:21,309 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:43:21,310 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:43:21,310 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:43:22,857 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:43:22,858 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:43:22,858 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:43:22,859 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:43:22,975 - root - INFO - 실시간 가격 저장 완료: ['051905', '003490', '003495', '051900', 'last_updated']
+2025-04-29 17:43:23,878 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:43:23,879 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:43:24,404 - root - INFO - Logging initialized
+2025-04-29 17:43:24,404 - root - INFO - Logging initialized
+2025-04-29 17:43:24,408 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:43:24,408 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:43:24,594 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:43:24,594 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:43:24,595 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8fafdd10>
+2025-04-29 17:43:24,595 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8fafdd10>
+2025-04-29 17:43:24,596 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8e125710>, 89934.023760387)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8e12df10>
+2025-04-29 17:43:24,596 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8e125710>, 89934.023760387)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8e12df10>
+2025-04-29 17:43:57,048 - root - INFO - Logging initialized
+2025-04-29 17:43:57,183 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:43:57,184 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:43:57,300 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:43:57,301 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:43:57,301 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:43:58,811 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:43:58,811 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:43:58,812 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:43:58,812 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:43:58,985 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '051905', '003495', 'last_updated']
+2025-04-29 17:43:59,814 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:43:59,814 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:44:00,333 - root - INFO - Logging initialized
+2025-04-29 17:44:00,333 - root - INFO - Logging initialized
+2025-04-29 17:44:00,337 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:44:00,337 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:44:00,528 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:44:00,528 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:44:00,529 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8c503c90>
+2025-04-29 17:44:00,529 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8c503c90>
+2025-04-29 17:44:00,530 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8c4f56a0>, 89969.952805093)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d43ca90>
+2025-04-29 17:44:00,530 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8c4f56a0>, 89969.952805093)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d43ca90>
+2025-04-29 17:44:33,050 - root - INFO - Logging initialized
+2025-04-29 17:44:33,185 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:44:33,185 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:44:33,300 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:44:33,300 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:44:33,301 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:44:34,830 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:44:34,831 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:44:34,831 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:44:34,832 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:44:34,944 - root - INFO - 실시간 가격 저장 완료: ['051900', '003490', '003495', '051905', 'last_updated']
+2025-04-29 17:44:35,841 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:44:35,841 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:44:36,360 - root - INFO - Logging initialized
+2025-04-29 17:44:36,360 - root - INFO - Logging initialized
+2025-04-29 17:44:36,363 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:44:36,363 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:44:36,540 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:44:36,540 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:44:36,541 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa1d53690>
+2025-04-29 17:44:36,541 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa1d53690>
+2025-04-29 17:44:36,542 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa1d756a0>, 90005.979203854)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa27b49d0>
+2025-04-29 17:44:36,542 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa1d756a0>, 90005.979203854)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa27b49d0>
+2025-04-29 17:45:09,048 - root - INFO - Logging initialized
+2025-04-29 17:45:09,183 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:45:09,183 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:45:09,300 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:45:09,300 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:45:09,301 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:45:10,836 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:45:10,836 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:45:10,837 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:45:10,837 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:45:10,991 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '051900', '003495', 'last_updated']
+2025-04-29 17:45:11,854 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:45:11,854 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:45:12,375 - root - INFO - Logging initialized
+2025-04-29 17:45:12,375 - root - INFO - Logging initialized
+2025-04-29 17:45:12,378 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:45:12,378 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:45:12,548 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:45:12,548 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:45:12,549 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fac7f1bd0>
+2025-04-29 17:45:12,549 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fac7f1bd0>
+2025-04-29 17:45:12,550 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fac7e5710>, 90041.994267967)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7faefdeed0>
+2025-04-29 17:45:12,550 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fac7e5710>, 90041.994267967)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7faefdeed0>
+2025-04-29 17:45:45,055 - root - INFO - Logging initialized
+2025-04-29 17:45:45,188 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:45:45,189 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:45:45,305 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:45:45,305 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:45:45,306 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:45:46,884 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:45:46,885 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:45:46,885 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:45:46,886 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:45:47,060 - root - INFO - 실시간 가격 저장 완료: ['003495', '051905', '051900', '003490', 'last_updated']
+2025-04-29 17:45:47,931 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:45:47,931 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:45:48,499 - root - INFO - Logging initialized
+2025-04-29 17:45:48,499 - root - INFO - Logging initialized
+2025-04-29 17:45:48,502 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:45:48,502 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:45:48,676 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:45:48,676 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:45:48,677 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa66d2d90>
+2025-04-29 17:45:48,677 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa66d2d90>
+2025-04-29 17:45:48,678 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa46a56a0>, 90078.118382019)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa46ad950>
+2025-04-29 17:45:48,678 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa46a56a0>, 90078.118382019)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa46ad950>
+2025-04-29 17:46:21,057 - root - INFO - Logging initialized
+2025-04-29 17:46:21,191 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:46:21,192 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:46:21,307 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:46:21,308 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:46:21,308 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:46:22,892 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:46:22,892 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:46:22,893 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:46:22,893 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:46:23,009 - root - INFO - 실시간 가격 저장 완료: ['051905', '003490', '051900', '003495', 'last_updated']
+2025-04-29 17:46:23,941 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:46:23,941 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:46:24,484 - root - INFO - Logging initialized
+2025-04-29 17:46:24,484 - root - INFO - Logging initialized
+2025-04-29 17:46:24,488 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:46:24,488 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:46:24,677 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:46:24,677 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:46:24,678 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8e3c1d10>
+2025-04-29 17:46:24,678 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8e3c1d10>
+2025-04-29 17:46:24,680 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8e3b5710>, 90114.103953679)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8e38edd0>
+2025-04-29 17:46:24,680 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8e3b5710>, 90114.103953679)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8e38edd0>
+2025-04-29 17:46:57,068 - root - INFO - Logging initialized
+2025-04-29 17:46:57,202 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:46:57,203 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:46:57,318 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:46:57,318 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:46:57,318 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:46:58,876 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:46:58,877 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:46:58,877 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:46:58,878 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:46:58,991 - root - INFO - 실시간 가격 저장 완료: ['003490', '003495', '051905', '051900', 'last_updated']
+2025-04-29 17:46:59,902 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:46:59,902 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:47:00,432 - root - INFO - Logging initialized
+2025-04-29 17:47:00,432 - root - INFO - Logging initialized
+2025-04-29 17:47:00,436 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:47:00,436 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:47:00,627 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:47:00,627 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:47:00,628 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f89f23210>
+2025-04-29 17:47:00,628 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f89f23210>
+2025-04-29 17:47:00,628 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f89f156a0>, 90150.051921366)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8ae5c450>
+2025-04-29 17:47:00,628 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f89f156a0>, 90150.051921366)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8ae5c450>
+2025-04-29 17:47:33,062 - root - INFO - Logging initialized
+2025-04-29 17:47:33,197 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:47:33,198 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:47:33,315 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:47:33,316 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:47:33,316 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:47:34,917 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:47:34,917 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:47:34,918 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:47:34,918 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:47:35,043 - root - INFO - 실시간 가격 저장 완료: ['003490', '051900', '003495', '051905', 'last_updated']
+2025-04-29 17:47:35,951 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:47:35,951 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:47:36,493 - root - INFO - Logging initialized
+2025-04-29 17:47:36,493 - root - INFO - Logging initialized
+2025-04-29 17:47:36,497 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:47:36,497 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:47:36,688 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:47:36,688 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:47:36,689 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fae482dd0>
+2025-04-29 17:47:36,689 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fae482dd0>
+2025-04-29 17:47:36,690 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fac455710>, 90186.112938384)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fade2dc90>
+2025-04-29 17:47:36,690 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fac455710>, 90186.112938384)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fade2dc90>
+2025-04-29 17:48:09,044 - root - INFO - Logging initialized
+2025-04-29 17:48:09,179 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:48:09,179 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:48:09,295 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:48:09,295 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:48:09,296 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:48:10,891 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:48:10,891 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:48:10,892 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:48:10,892 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:48:11,043 - root - INFO - 실시간 가격 저장 완료: ['051905', '003490', '051900', '003495', 'last_updated']
+2025-04-29 17:48:11,936 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:48:11,936 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:48:12,486 - root - INFO - Logging initialized
+2025-04-29 17:48:12,486 - root - INFO - Logging initialized
+2025-04-29 17:48:12,489 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:48:12,489 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:48:12,676 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:48:12,676 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:48:12,677 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fad651f50>
+2025-04-29 17:48:12,677 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fad651f50>
+2025-04-29 17:48:12,678 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fad6456a0>, 90222.105566778)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fadb4c490>
+2025-04-29 17:48:12,678 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fad6456a0>, 90222.105566778)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fadb4c490>
+2025-04-29 17:48:45,041 - root - INFO - Logging initialized
+2025-04-29 17:48:45,176 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:48:45,177 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:48:45,293 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:48:45,294 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:48:45,294 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:48:46,857 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:48:46,858 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:48:46,859 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:48:46,859 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:48:46,993 - root - INFO - 실시간 가격 저장 완료: ['003495', '051905', '051900', '003490', 'last_updated']
+2025-04-29 17:48:47,887 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:48:47,887 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:48:48,420 - root - INFO - Logging initialized
+2025-04-29 17:48:48,420 - root - INFO - Logging initialized
+2025-04-29 17:48:48,424 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:48:48,424 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:48:48,601 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:48:48,601 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:48:48,602 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d383a10>
+2025-04-29 17:48:48,602 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d383a10>
+2025-04-29 17:48:48,602 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d375710>, 90258.039911835)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8e2ac690>
+2025-04-29 17:48:48,602 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d375710>, 90258.039911835)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8e2ac690>
+2025-04-29 17:49:21,046 - root - INFO - Logging initialized
+2025-04-29 17:49:21,180 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:49:21,180 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:49:21,299 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:49:21,299 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:49:21,300 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:49:22,937 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:49:22,937 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:49:22,938 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:49:22,938 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:49:23,061 - root - INFO - 실시간 가격 저장 완료: ['003490', '051900', '051905', '003495', 'last_updated']
+2025-04-29 17:49:23,999 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:49:24,000 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:49:24,573 - root - INFO - Logging initialized
+2025-04-29 17:49:24,573 - root - INFO - Logging initialized
+2025-04-29 17:49:24,577 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:49:24,577 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:49:24,763 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:49:24,763 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:49:24,764 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7cdf9050>
+2025-04-29 17:49:24,764 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7cdf9050>
+2025-04-29 17:49:24,765 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7c3b5710>, 90294.192986266)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7c393290>
+2025-04-29 17:49:24,765 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7c3b5710>, 90294.192986266)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7c393290>
+2025-04-29 17:49:57,306 - root - INFO - Logging initialized
+2025-04-29 17:49:57,441 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:49:57,442 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:49:57,558 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:49:57,559 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:49:57,559 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:49:59,087 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:49:59,088 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:49:59,088 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:49:59,088 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:49:59,233 - root - INFO - 실시간 가격 저장 완료: ['051900', '051905', '003490', '003495', 'last_updated']
+2025-04-29 17:50:00,098 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:50:00,099 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:50:00,613 - root - INFO - Logging initialized
+2025-04-29 17:50:00,613 - root - INFO - Logging initialized
+2025-04-29 17:50:00,617 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:50:00,617 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:50:00,809 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:50:00,809 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:50:00,811 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f776e1a90>
+2025-04-29 17:50:00,811 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f776e1a90>
+2025-04-29 17:50:00,812 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f776d56a0>, 90330.233076427)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7a969ed0>
+2025-04-29 17:50:00,812 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f776d56a0>, 90330.233076427)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7a969ed0>
+2025-04-29 17:50:33,287 - root - INFO - Logging initialized
+2025-04-29 17:50:33,422 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:50:33,423 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:50:33,540 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:50:33,541 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:50:33,541 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:50:35,199 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:50:35,200 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:50:35,201 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:50:35,201 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:50:35,333 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '003495', '051900', 'last_updated']
+2025-04-29 17:50:36,259 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:50:36,259 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:50:36,827 - root - INFO - Logging initialized
+2025-04-29 17:50:36,827 - root - INFO - Logging initialized
+2025-04-29 17:50:36,830 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:50:36,830 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:50:37,008 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:50:37,008 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:50:37,009 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fad71dd10>
+2025-04-29 17:50:37,009 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fad71dd10>
+2025-04-29 17:50:37,009 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fac345710>, 90366.446458991)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fac89ce50>
+2025-04-29 17:50:37,009 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fac345710>, 90366.446458991)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fac89ce50>
+2025-04-29 17:51:09,549 - root - INFO - Logging initialized
+2025-04-29 17:51:09,684 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:51:09,684 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:51:09,802 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:51:09,802 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:51:09,803 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:51:11,361 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:51:11,362 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:51:11,363 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:51:11,363 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:51:11,505 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '003495', '051900', 'last_updated']
+2025-04-29 17:51:12,371 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:51:12,372 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:51:12,884 - root - INFO - Logging initialized
+2025-04-29 17:51:12,884 - root - INFO - Logging initialized
+2025-04-29 17:51:12,887 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:51:12,887 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:51:13,079 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:51:13,079 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:51:13,080 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f79e8c710>
+2025-04-29 17:51:13,080 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f79e8c710>
+2025-04-29 17:51:13,080 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f78ad56a0>, 90402.503567604)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f79a1c410>
+2025-04-29 17:51:13,080 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f78ad56a0>, 90402.503567604)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f79a1c410>
+2025-04-29 17:51:45,549 - root - INFO - Logging initialized
+2025-04-29 17:51:45,683 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:51:45,684 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:51:45,800 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:51:45,801 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:51:45,801 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:51:47,404 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:51:47,404 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:51:47,405 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:51:47,405 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:51:47,775 - root - INFO - 실시간 가격 저장 완료: ['003495', '003490', '051900', '051905', 'last_updated']
+2025-04-29 17:51:48,547 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:51:48,548 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:51:49,093 - root - INFO - Logging initialized
+2025-04-29 17:51:49,093 - root - INFO - Logging initialized
+2025-04-29 17:51:49,097 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:51:49,097 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:51:49,290 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:51:49,290 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:51:49,291 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d9d19d0>
+2025-04-29 17:51:49,291 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d9d19d0>
+2025-04-29 17:51:49,292 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d9c5710>, 90438.713062937)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d9d1990>
+2025-04-29 17:51:49,292 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d9c5710>, 90438.713062937)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d9d1990>
+2025-04-29 17:52:21,815 - root - INFO - Logging initialized
+2025-04-29 17:52:21,952 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:52:21,953 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:52:22,073 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:52:22,074 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:52:22,075 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:52:23,619 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:52:23,619 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:52:23,620 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:52:23,620 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:52:23,759 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '051900', '003495', 'last_updated']
+2025-04-29 17:52:24,637 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:52:24,637 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:52:25,165 - root - INFO - Logging initialized
+2025-04-29 17:52:25,165 - root - INFO - Logging initialized
+2025-04-29 17:52:25,169 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:52:25,169 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:52:25,362 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:52:25,362 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:52:25,363 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f72edc410>
+2025-04-29 17:52:25,363 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f72edc410>
+2025-04-29 17:52:25,364 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f729d5710>, 90474.784469904)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f729e2050>
+2025-04-29 17:52:25,364 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f729d5710>, 90474.784469904)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f729e2050>
+2025-04-29 17:52:57,813 - root - INFO - Logging initialized
+2025-04-29 17:52:57,948 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:52:57,948 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:52:58,064 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:52:58,065 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:52:58,065 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:52:59,611 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:52:59,611 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:52:59,612 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:52:59,612 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:52:59,726 - root - INFO - 실시간 가격 저장 완료: ['051900', '003495', '003490', '051905', 'last_updated']
+2025-04-29 17:53:00,634 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:53:00,635 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:53:01,154 - root - INFO - Logging initialized
+2025-04-29 17:53:01,154 - root - INFO - Logging initialized
+2025-04-29 17:53:01,157 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:53:01,157 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:53:01,349 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:53:01,349 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:53:01,351 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f87f13410>
+2025-04-29 17:53:01,351 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f87f13410>
+2025-04-29 17:53:01,351 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f87f35710>, 90510.774110473)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f88424450>
+2025-04-29 17:53:01,351 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f87f35710>, 90510.774110473)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f88424450>
+2025-04-29 17:53:33,814 - root - INFO - Logging initialized
+2025-04-29 17:53:33,950 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:53:33,951 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:53:34,066 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:53:34,067 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:53:34,067 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:53:35,630 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:53:35,631 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:53:35,632 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:53:35,632 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:53:35,755 - root - INFO - 실시간 가격 저장 완료: ['003490', '051905', '051900', '003495', 'last_updated']
+2025-04-29 17:53:36,665 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:53:36,666 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:53:37,205 - root - INFO - Logging initialized
+2025-04-29 17:53:37,205 - root - INFO - Logging initialized
+2025-04-29 17:53:37,208 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:53:37,208 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:53:37,394 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:53:37,394 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:53:37,395 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7facb62d90>
+2025-04-29 17:53:37,395 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7facb62d90>
+2025-04-29 17:53:37,396 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7faab35710>, 90546.824591371)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fae0bcc10>
+2025-04-29 17:53:37,396 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7faab35710>, 90546.824591371)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fae0bcc10>
+2025-04-29 17:54:09,792 - root - INFO - Logging initialized
+2025-04-29 17:54:09,926 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:54:09,927 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:54:10,043 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:54:10,043 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:54:10,043 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:54:11,600 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:54:11,601 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:54:11,601 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:54:11,602 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:54:11,762 - root - INFO - 실시간 가격 저장 완료: ['003495', '051905', '003490', '051900', 'last_updated']
+2025-04-29 17:54:12,623 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:54:12,624 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:54:13,140 - root - INFO - Logging initialized
+2025-04-29 17:54:13,140 - root - INFO - Logging initialized
+2025-04-29 17:54:13,143 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:54:13,143 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:54:13,335 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:54:13,335 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:54:13,336 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa66c2f50>
+2025-04-29 17:54:13,336 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa66c2f50>
+2025-04-29 17:54:13,336 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa66e5710>, 90582.759519994)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa8724210>
+2025-04-29 17:54:13,336 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa66e5710>, 90582.759519994)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa8724210>
+2025-04-29 17:54:45,796 - root - INFO - Logging initialized
+2025-04-29 17:54:45,930 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:54:45,931 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:54:46,046 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:54:46,047 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:54:46,047 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:54:47,602 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:54:47,602 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:54:47,603 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:54:47,603 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:54:47,717 - root - INFO - 실시간 가격 저장 완료: ['003490', '003495', '051905', '051900', 'last_updated']
+2025-04-29 17:54:48,625 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:54:48,625 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:54:49,153 - root - INFO - Logging initialized
+2025-04-29 17:54:49,153 - root - INFO - Logging initialized
+2025-04-29 17:54:49,157 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:54:49,157 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:54:49,341 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:54:49,341 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:54:49,342 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa51fd790>
+2025-04-29 17:54:49,342 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa51fd790>
+2025-04-29 17:54:49,343 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa3825710>, 90618.773021727)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa476c110>
+2025-04-29 17:54:49,343 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa3825710>, 90618.773021727)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa476c110>
+2025-04-29 17:55:22,361 - root - INFO - Logging initialized
+2025-04-29 17:55:22,557 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:55:22,559 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:55:22,730 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:55:22,731 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:55:22,732 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:55:24,346 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:55:24,348 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:55:24,349 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:55:24,350 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:55:24,540 - root - INFO - 실시간 가격 저장 완료: ['003495', '051900', '051905', '003490', 'last_updated']
+2025-04-29 17:55:25,419 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:55:25,420 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:55:25,956 - root - INFO - Logging initialized
+2025-04-29 17:55:25,956 - root - INFO - Logging initialized
+2025-04-29 17:55:25,959 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:55:25,959 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:55:26,189 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:55:26,189 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:55:26,191 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d65c550>
+2025-04-29 17:55:26,191 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8d65c550>
+2025-04-29 17:55:26,193 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d6757f0>, 90655.578418237)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8dafa950>
+2025-04-29 17:55:26,193 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d6757f0>, 90655.578418237)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8dafa950>
+2025-04-29 17:55:58,815 - root - INFO - Logging initialized
+2025-04-29 17:55:58,954 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:55:58,955 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:55:59,073 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:55:59,073 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:55:59,073 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:56:00,689 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:56:00,689 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:56:00,690 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:56:00,690 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:56:00,692 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 17:56:01,742 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:56:01,743 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:56:02,325 - root - INFO - Logging initialized
+2025-04-29 17:56:02,325 - root - INFO - Logging initialized
+2025-04-29 17:56:02,329 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:56:02,329 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:56:02,556 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:56:02,556 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:56:02,557 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2238990>
+2025-04-29 17:56:02,557 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2238990>
+2025-04-29 17:56:02,558 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa2225860>, 90691.942695644)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa2233090>
+2025-04-29 17:56:02,558 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa2225860>, 90691.942695644)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa2233090>
+2025-04-29 17:56:35,064 - root - INFO - Logging initialized
+2025-04-29 17:56:35,208 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:56:35,208 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:56:35,325 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:56:35,325 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:56:35,326 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:56:36,901 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:56:36,902 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:56:36,903 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:56:36,903 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:56:36,905 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 17:56:37,932 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:56:37,933 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:56:38,468 - root - INFO - Logging initialized
+2025-04-29 17:56:38,468 - root - INFO - Logging initialized
+2025-04-29 17:56:38,472 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:56:38,472 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:56:38,660 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:56:38,660 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:56:38,661 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa278ca90>
+2025-04-29 17:56:38,661 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa278ca90>
+2025-04-29 17:56:38,662 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9ff35860>, 90728.087775473)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa27d3290>
+2025-04-29 17:56:38,662 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9ff35860>, 90728.087775473)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa27d3290>
+2025-04-29 17:57:11,093 - root - INFO - Logging initialized
+2025-04-29 17:57:11,234 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:57:11,235 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:57:11,351 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:57:11,352 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:57:11,352 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:57:12,876 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:57:12,876 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:57:12,877 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:57:12,878 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:57:12,880 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 17:57:13,887 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:57:13,887 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:57:14,401 - root - INFO - Logging initialized
+2025-04-29 17:57:14,401 - root - INFO - Logging initialized
+2025-04-29 17:57:14,404 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:57:14,404 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:57:14,596 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:57:14,596 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:57:14,597 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8fdbf310>
+2025-04-29 17:57:14,597 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8fdbf310>
+2025-04-29 17:57:14,598 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8fdb5860>, 90764.021014862)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8fd9ced0>
+2025-04-29 17:57:14,598 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8fdb5860>, 90764.021014862)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8fd9ced0>
+2025-04-29 17:57:47,007 - root - INFO - Logging initialized
+2025-04-29 17:57:47,148 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:57:47,148 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:57:47,264 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:57:47,265 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:57:47,265 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:57:48,862 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:57:48,863 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:57:48,865 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:57:48,865 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:57:48,869 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 17:57:49,899 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:57:49,902 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:57:50,436 - root - INFO - Logging initialized
+2025-04-29 17:57:50,436 - root - INFO - Logging initialized
+2025-04-29 17:57:50,441 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:57:50,441 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:57:50,634 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:57:50,634 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:57:50,635 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f95a8fd50>
+2025-04-29 17:57:50,635 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f95a8fd50>
+2025-04-29 17:57:50,636 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f94dd5860>, 90800.056446818)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f94dbc950>
+2025-04-29 17:57:50,636 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f94dd5860>, 90800.056446818)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f94dbc950>
+2025-04-29 17:58:23,053 - root - INFO - Logging initialized
+2025-04-29 17:58:23,195 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:58:23,196 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:58:23,314 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:58:23,315 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:58:23,315 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:58:24,885 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:58:24,885 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:58:24,886 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:58:24,887 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:58:24,889 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 17:58:25,912 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:58:25,913 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:58:26,442 - root - INFO - Logging initialized
+2025-04-29 17:58:26,442 - root - INFO - Logging initialized
+2025-04-29 17:58:26,444 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:58:26,444 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:58:26,597 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:58:26,597 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:58:26,599 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f748bcd50>
+2025-04-29 17:58:26,599 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f748bcd50>
+2025-04-29 17:58:26,600 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f748d5860>, 90836.06459466)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f839c41d0>
+2025-04-29 17:58:26,600 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f748d5860>, 90836.06459466)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f839c41d0>
+2025-04-29 17:58:59,074 - root - INFO - Logging initialized
+2025-04-29 17:58:59,215 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:58:59,216 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:58:59,335 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:58:59,335 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:58:59,336 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:59:00,852 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:59:00,852 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:59:00,853 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:59:00,854 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:59:00,855 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 17:59:01,873 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:59:01,873 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:59:02,382 - root - INFO - Logging initialized
+2025-04-29 17:59:02,382 - root - INFO - Logging initialized
+2025-04-29 17:59:02,385 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:59:02,385 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:59:02,571 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:59:02,571 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:59:02,572 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f895c9490>
+2025-04-29 17:59:02,572 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f895c9490>
+2025-04-29 17:59:02,572 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f88685860>, 90872.00142481)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8af30b10>
+2025-04-29 17:59:02,572 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f88685860>, 90872.00142481)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8af30b10>
+2025-04-29 17:59:35,053 - root - INFO - Logging initialized
+2025-04-29 17:59:35,194 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 17:59:35,195 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 17:59:35,312 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 17:59:35,313 - root - INFO - Starting Stock Monitor...
+2025-04-29 17:59:35,313 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:59:36,856 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:59:36,857 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 17:59:36,857 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 17:59:36,858 - modules.telegram - INFO - Resetting webhook
+2025-04-29 17:59:36,860 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 17:59:37,857 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 17:59:37,858 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 17:59:38,364 - root - INFO - Logging initialized
+2025-04-29 17:59:38,364 - root - INFO - Logging initialized
+2025-04-29 17:59:38,368 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:59:38,368 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 17:59:38,552 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:59:38,552 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 17:59:38,553 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fab7ac650>
+2025-04-29 17:59:38,553 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fab7ac650>
+2025-04-29 17:59:38,554 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fab7c5860>, 90907.983512144)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fabc453d0>
+2025-04-29 17:59:38,554 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fab7c5860>, 90907.983512144)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fabc453d0>
+2025-04-29 18:00:11,037 - root - INFO - Logging initialized
+2025-04-29 18:00:11,178 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:00:11,179 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:00:11,298 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:00:11,299 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:00:11,299 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:00:12,937 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:00:12,938 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:00:12,939 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:00:12,939 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:00:12,941 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:00:14,002 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:00:14,003 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:00:14,571 - root - INFO - Logging initialized
+2025-04-29 18:00:14,571 - root - INFO - Logging initialized
+2025-04-29 18:00:14,572 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:00:14,572 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:00:14,727 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:00:14,727 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:00:14,728 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9f094e90>
+2025-04-29 18:00:14,728 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9f094e90>
+2025-04-29 18:00:14,729 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9f0757f0>, 90944.193561299)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9fface90>
+2025-04-29 18:00:14,729 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9f0757f0>, 90944.193561299)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9fface90>
+2025-04-29 18:00:47,060 - root - INFO - Logging initialized
+2025-04-29 18:00:47,201 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:00:47,202 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:00:47,319 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:00:47,320 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:00:47,321 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:00:48,842 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:00:48,843 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:00:48,843 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:00:48,844 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:00:48,846 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:00:49,852 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:00:49,852 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:00:50,365 - root - INFO - Logging initialized
+2025-04-29 18:00:50,365 - root - INFO - Logging initialized
+2025-04-29 18:00:50,369 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:00:50,369 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:00:50,556 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:00:50,556 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:00:50,557 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7449a1d0>
+2025-04-29 18:00:50,557 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7449a1d0>
+2025-04-29 18:00:50,558 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f73fa5860>, 90979.984702588)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f73f8c550>
+2025-04-29 18:00:50,558 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f73fa5860>, 90979.984702588)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f73f8c550>
+2025-04-29 18:01:23,053 - root - INFO - Logging initialized
+2025-04-29 18:01:23,194 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:01:23,195 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:01:23,312 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:01:23,312 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:01:23,313 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:01:24,940 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:01:24,940 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:01:24,941 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:01:24,942 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:01:24,944 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:01:26,003 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:01:26,004 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:01:26,576 - root - INFO - Logging initialized
+2025-04-29 18:01:26,576 - root - INFO - Logging initialized
+2025-04-29 18:01:26,580 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:01:26,580 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:01:26,756 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:01:26,756 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:01:26,758 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2a0c890>
+2025-04-29 18:01:26,758 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa2a0c890>
+2025-04-29 18:01:26,758 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa01a5860>, 91016.195596864)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa157cfd0>
+2025-04-29 18:01:26,758 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa01a5860>, 91016.195596864)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa157cfd0>
+2025-04-29 18:01:59,323 - root - INFO - Logging initialized
+2025-04-29 18:01:59,466 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:01:59,466 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:01:59,583 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:01:59,583 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:01:59,584 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:02:01,123 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:02:01,123 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:02:01,124 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:02:01,124 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:02:01,126 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:02:02,143 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:02:02,144 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:02:02,673 - root - INFO - Logging initialized
+2025-04-29 18:02:02,673 - root - INFO - Logging initialized
+2025-04-29 18:02:02,677 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:02:02,677 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:02:02,855 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:02:02,855 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:02:02,856 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9b729f50>
+2025-04-29 18:02:02,856 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9b729f50>
+2025-04-29 18:02:02,857 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9a9d5860>, 91052.2929389)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9a9b5b90>
+2025-04-29 18:02:02,857 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f9a9d5860>, 91052.2929389)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f9a9b5b90>
+2025-04-29 18:02:35,303 - root - INFO - Logging initialized
+2025-04-29 18:02:35,451 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:02:35,452 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:02:35,567 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:02:35,568 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:02:35,568 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:02:37,086 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:02:37,086 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:02:37,087 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:02:37,087 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:02:37,089 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:02:38,088 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:02:38,088 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:02:38,595 - root - INFO - Logging initialized
+2025-04-29 18:02:38,595 - root - INFO - Logging initialized
+2025-04-29 18:02:38,598 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:02:38,598 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:02:38,768 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:02:38,768 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:02:38,770 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa3f3f550>
+2025-04-29 18:02:38,770 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa3f3f550>
+2025-04-29 18:02:38,771 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa3f35860>, 91088.215452506)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa672eed0>
+2025-04-29 18:02:38,771 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa3f35860>, 91088.215452506)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa672eed0>
+2025-04-29 18:03:12,179 - root - INFO - Logging initialized
+2025-04-29 18:03:12,556 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:03:12,558 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:03:12,728 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:03:12,730 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:03:12,732 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:03:14,320 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:03:14,321 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:03:14,322 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:03:14,322 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:03:14,325 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:03:15,354 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:03:15,356 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:03:15,900 - root - INFO - Logging initialized
+2025-04-29 18:03:15,900 - root - INFO - Logging initialized
+2025-04-29 18:03:15,903 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:03:15,903 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:03:16,060 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:03:16,060 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:03:16,062 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7c422090>
+2025-04-29 18:03:16,062 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7c422090>
+2025-04-29 18:03:16,063 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7a3d5860>, 91125.523131391)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7a854d10>
+2025-04-29 18:03:16,063 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f7a3d5860>, 91125.523131391)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f7a854d10>
+2025-04-29 18:03:48,600 - root - INFO - Logging initialized
+2025-04-29 18:03:48,744 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:03:48,744 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:03:48,886 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:03:48,887 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:03:48,887 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:03:50,496 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:03:50,497 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:03:50,498 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:03:50,499 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:03:50,501 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:03:51,546 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:03:51,548 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:03:52,116 - root - INFO - Logging initialized
+2025-04-29 18:03:52,116 - root - INFO - Logging initialized
+2025-04-29 18:03:52,119 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:03:52,119 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:03:52,394 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:03:52,394 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:03:52,397 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fabd09210>
+2025-04-29 18:03:52,397 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fabd09210>
+2025-04-29 18:03:52,398 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7faa915860>, 91161.736878816)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7faa927f90>
+2025-04-29 18:03:52,398 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7faa915860>, 91161.736878816)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7faa927f90>
+2025-04-29 18:04:24,872 - root - INFO - Logging initialized
+2025-04-29 18:04:25,013 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:04:25,014 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:04:25,141 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:04:25,142 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:04:25,142 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:04:27,456 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:04:27,456 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:04:27,457 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:04:27,457 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:04:27,459 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:04:28,478 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:04:28,479 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:04:29,053 - root - INFO - Logging initialized
+2025-04-29 18:04:29,053 - root - INFO - Logging initialized
+2025-04-29 18:04:29,057 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:04:29,057 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:04:29,221 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:04:29,221 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:04:29,222 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8e40f110>
+2025-04-29 18:04:29,222 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8e40f110>
+2025-04-29 18:04:29,223 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8c2e1c50>, 91198.632701227)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8eb3a150>
+2025-04-29 18:04:29,223 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8c2e1c50>, 91198.632701227)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8eb3a150>
+2025-04-29 18:05:01,582 - root - INFO - Logging initialized
+2025-04-29 18:05:01,725 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:05:01,726 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:05:01,843 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:05:01,844 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:05:01,844 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:05:03,507 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:05:03,508 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:05:03,509 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:05:03,509 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:05:03,511 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:05:04,571 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:05:04,571 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:05:05,131 - root - INFO - Logging initialized
+2025-04-29 18:05:05,131 - root - INFO - Logging initialized
+2025-04-29 18:05:05,134 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:05:05,134 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:05:05,323 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:05:05,323 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:05:05,324 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8e4b1850>
+2025-04-29 18:05:05,324 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f8e4b1850>
+2025-04-29 18:05:05,325 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d121c50>, 91234.75007454)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d106690>
+2025-04-29 18:05:05,325 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f8d121c50>, 91234.75007454)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f8d106690>
+2025-04-29 18:05:37,819 - root - INFO - Logging initialized
+2025-04-29 18:05:37,961 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:05:37,963 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:05:38,078 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:05:38,079 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:05:38,080 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:05:39,642 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:05:39,643 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:05:39,644 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:05:39,644 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:05:39,646 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:05:40,670 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:05:40,671 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:05:41,203 - root - INFO - Logging initialized
+2025-04-29 18:05:41,203 - root - INFO - Logging initialized
+2025-04-29 18:05:41,207 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:05:41,207 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:05:41,393 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:05:41,393 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:05:41,394 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f83930690>
+2025-04-29 18:05:41,394 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f83930690>
+2025-04-29 18:05:41,395 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f825a1c50>, 91270.822177889)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f82c75750>
+2025-04-29 18:05:41,395 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f825a1c50>, 91270.822177889)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f82c75750>
+2025-04-29 18:06:13,862 - root - INFO - Logging initialized
+2025-04-29 18:06:14,006 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:06:14,007 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:06:14,122 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:06:14,123 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:06:14,123 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:06:15,699 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:06:15,699 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:06:15,700 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:06:15,700 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:06:15,702 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:06:16,736 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:06:16,737 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:06:17,286 - root - INFO - Logging initialized
+2025-04-29 18:06:17,286 - root - INFO - Logging initialized
+2025-04-29 18:06:17,290 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:06:17,290 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:06:17,484 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:06:17,484 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:06:17,485 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f96cf18d0>
+2025-04-29 18:06:17,485 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f96cf18d0>
+2025-04-29 18:06:17,486 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f96ce1c50>, 91306.905622183)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f96cc27d0>
+2025-04-29 18:06:17,486 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f96ce1c50>, 91306.905622183)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f96cc27d0>
+2025-04-29 18:06:49,828 - root - INFO - Logging initialized
+2025-04-29 18:06:49,971 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:06:49,972 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:06:50,090 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:06:50,091 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:06:50,091 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:06:51,653 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:06:51,654 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:06:51,655 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:06:51,655 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:06:51,657 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:06:52,680 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:06:52,681 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:06:53,213 - root - INFO - Logging initialized
+2025-04-29 18:06:53,213 - root - INFO - Logging initialized
+2025-04-29 18:06:53,218 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:06:53,218 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:06:53,404 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:06:53,404 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:06:53,405 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa5c4b990>
+2025-04-29 18:06:53,405 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa5c4b990>
+2025-04-29 18:06:53,406 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa3b61c50>, 91342.831958775)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa50bd190>
+2025-04-29 18:06:53,406 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa3b61c50>, 91342.831958775)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa50bd190>
+2025-04-29 18:07:25,821 - root - INFO - Logging initialized
+2025-04-29 18:07:25,966 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:07:25,967 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:07:26,083 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:07:26,083 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:07:26,084 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:07:27,647 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:07:27,648 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:07:27,649 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:07:27,649 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:07:27,651 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:07:28,677 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:07:28,677 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:07:29,227 - root - INFO - Logging initialized
+2025-04-29 18:07:29,227 - root - INFO - Logging initialized
+2025-04-29 18:07:29,230 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:07:29,230 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:07:29,418 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:07:29,418 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:07:29,420 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f835215d0>
+2025-04-29 18:07:29,420 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f835215d0>
+2025-04-29 18:07:29,422 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f83511c50>, 91378.84598643)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f834f2a10>
+2025-04-29 18:07:29,422 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f83511c50>, 91378.84598643)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f834f2a10>
+2025-04-29 18:08:01,862 - root - INFO - Logging initialized
+2025-04-29 18:08:02,005 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:08:02,006 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:08:02,125 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:08:02,126 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:08:02,127 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:08:03,708 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:08:03,709 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:08:03,709 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:08:03,710 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:08:03,712 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:08:04,752 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:08:04,752 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:08:05,293 - root - INFO - Logging initialized
+2025-04-29 18:08:05,293 - root - INFO - Logging initialized
+2025-04-29 18:08:05,297 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:08:05,297 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:08:05,490 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:08:05,490 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:08:05,491 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f93119fd0>
+2025-04-29 18:08:05,491 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f93119fd0>
+2025-04-29 18:08:05,492 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f90851c50>, 91414.912622604)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f938b5750>
+2025-04-29 18:08:05,492 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f90851c50>, 91414.912622604)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f938b5750>
+2025-04-29 18:08:37,822 - root - INFO - Logging initialized
+2025-04-29 18:08:37,965 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:08:37,966 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:08:38,082 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:08:38,083 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:08:38,083 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:08:39,720 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:08:39,721 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:08:39,721 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:08:39,722 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:08:39,724 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:08:40,790 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:08:40,790 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:08:41,349 - root - INFO - Logging initialized
+2025-04-29 18:08:41,349 - root - INFO - Logging initialized
+2025-04-29 18:08:41,354 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:08:41,354 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:08:41,549 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:08:41,549 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:08:41,551 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9a52a1d0>
+2025-04-29 18:08:41,551 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f9a52a1d0>
+2025-04-29 18:08:41,552 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f99c81c50>, 91450.96880695)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f99c62990>
+2025-04-29 18:08:41,552 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f99c81c50>, 91450.96880695)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f99c62990>
+2025-04-29 18:09:14,080 - root - INFO - Logging initialized
+2025-04-29 18:09:14,222 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:09:14,223 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:09:14,341 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:09:14,342 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:09:14,343 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:09:15,880 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:09:15,880 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:09:15,881 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:09:15,882 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:09:15,883 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:09:16,897 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:09:16,898 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:09:17,419 - root - INFO - Logging initialized
+2025-04-29 18:09:17,419 - root - INFO - Logging initialized
+2025-04-29 18:09:17,422 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:09:17,422 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:09:17,610 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:09:17,610 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:09:17,612 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa39ef3d0>
+2025-04-29 18:09:17,612 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa39ef3d0>
+2025-04-29 18:09:17,613 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa0931c50>, 91487.037752025)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa3132a10>
+2025-04-29 18:09:17,613 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa0931c50>, 91487.037752025)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa3132a10>
+2025-04-29 18:09:50,087 - root - INFO - Logging initialized
+2025-04-29 18:09:50,231 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:09:50,232 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:09:50,349 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:09:50,349 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:09:50,350 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:09:51,873 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:09:51,873 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:09:51,874 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:09:51,874 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:09:51,876 - root - ERROR - 실시간 가격 저장 실패: [Errno 2] No such file or directory: '/home/eq/stmon/data/pair-trades.json'
+2025-04-29 18:09:52,882 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:09:52,883 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:09:53,396 - root - INFO - Logging initialized
+2025-04-29 18:09:53,396 - root - INFO - Logging initialized
+2025-04-29 18:09:53,400 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:09:53,400 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:09:53,585 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:09:53,585 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:09:53,586 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f827e1950>
+2025-04-29 18:09:53,586 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f827e1950>
+2025-04-29 18:09:53,587 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f80691c50>, 91523.015403525)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f80671e10>
+2025-04-29 18:09:53,587 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7f80691c50>, 91523.015403525)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7f80671e10>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Trading Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 32px;
+        }
+
+        h1 {
+            color: #174f81;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+
+        th,
+        td {
+            padding: 8px 6px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background: #f5f7fa;
+            color: #20507e;
+        }
+
+        .profit-pos {
+            color: #1c7c35;
+            font-weight: bold;
+        }
+
+        .profit-neg {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .status-open {
+            background: #f9f6e7;
+        }
+
+        .status-exited {
+            background: #f1f1f1;
+        }
+
+        .filter-bar {
+            margin-bottom: 16px;
+        }
+
+        .summary-bar {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Trading Reports</h1>
+    <div class="filter-bar">
+        <button onclick="loadData()">전체 보기</button>
+        <button onclick="filterStatus('Open')">진행중만</button>
+        <button onclick="filterStatus('Exited')">종료(청산)만</button>
+    </div>
+    <div class="summary-bar" id="summary-bar"></div>
+    <table id="reports-table">
+        <thead>
+            <tr>
+                <th>종목</th>
+                <th>진입일</th>
+                <th>청산일</th>
+                <th>보통주(Short)<br>코드/가격</th>
+                <th>우선주(Long)<br>코드/가격</th>
+                <th>보통주 수익</th>
+                <th>우선주 수익</th>
+                <th>거래비용</th>
+                <th>합산손익</th>
+                <th>수익률(%)</th>
+                <th>상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 데이터가 여기에 채워집니다 -->
+        </tbody>
+    </table>
+    <script>
+        let allTrades = [];
+        // 손익계산 - Settlement Ticket 방식 적용
+        function calcPnL(trade) {
+            const ce = Number(trade.common_exit), pe = Number(trade.preferred_exit);
+            const be = Number(trade.common_entry), pe_in = Number(trade.preferred_entry);
+            const cq = Number(trade.common_qty), pq = Number(trade.preferred_qty);
+            if ((!ce && ce !== 0) || (!pe && pe !== 0)) return { profit: null, profit_short: null, profit_long: null, roi: null, cost: null };
+            const profit_short = ((be - ce) * cq);
+            const profit_long = ((pe - pe_in) * pq);
+            const cost = (Number(trade.commission) || 0) + (Number(trade.stamp) || 0) + (Number(trade.spread) || 0) + (Number(trade.benchmark) || 0);
+            const profit = profit_short + profit_long - cost;
+            const invested = (be * cq) + (pe_in * pq);
+            const roi = invested ? (profit / invested) * 100 : null;
+            return { profit, profit_short, profit_long, roi, cost };
+        }
+
+        function renderTable(trades) {
+            const tbody = document.getElementById('reports-table').querySelector('tbody');
+            tbody.innerHTML = '';
+            let total_profit = 0, total_cost = 0, valid_row_cnt = 0;
+            trades.forEach(trade => {
+                const { profit, profit_short, profit_long, roi, cost } = calcPnL(trade);
+                if (profit !== null) { total_profit += profit; total_cost += cost; valid_row_cnt++; }
+                tbody.innerHTML += `
+          <tr class="status-${trade.status?.toLowerCase()}">
+            <td>${trade.symbol}</td>
+            <td>${trade.date_in || '-'}</td>
+            <td>${trade.date_out || '-'}</td>
+            <td>
+              ${trade.common_code}<br>
+              <small>진입:${trade.common_entry} / 청산:${trade.common_exit || '미정'}</small>
+            </td>
+            <td>
+              ${trade.preferred_code}<br>
+              <small>진입:${trade.preferred_entry} / 청산:${trade.preferred_exit || '미정'}</small>
+            </td>
+            <td class="${profit_short > 0 ? 'profit-pos' : 'profit-neg'}">${profit_short?.toLocaleString('ko-KR') || '-'}</td>
+            <td class="${profit_long > 0 ? 'profit-pos' : 'profit-neg'}">${profit_long?.toLocaleString('ko-KR') || '-'}</td>
+            <td>${cost?.toLocaleString('ko-KR') || '-'}</td>
+            <td class="${profit > 0 ? 'profit-pos' : 'profit-neg'}">${profit?.toLocaleString('ko-KR') || '-'}</td>
+            <td>${roi == null ? '-' : roi.toFixed(2)}</td>
+            <td>${trade.status}</td>
+          </tr>
+        `;
+            });
+            document.getElementById('summary-bar').innerHTML =
+                `<b>합산 손익: ${total_profit.toLocaleString('ko-KR')}원</b> / <b>거래비용 총합: ${total_cost.toLocaleString('ko-KR')}원</b> / <b>매매건수: ${valid_row_cnt}</b>`;
+        }
+        function loadData() {
+            fetch('data/trade-data.json?_=' + Date.now())
+                .then(r => r.json())
+                .then(data => { allTrades = data; renderTable(allTrades) });
+        }
+        function filterStatus(status) {
+            renderTable(allTrades.filter(t => t.status === status));
+        }
+        loadData();
+    </script>
+</body>
+
+</html>

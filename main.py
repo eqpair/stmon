@@ -429,6 +429,94 @@ class StockMonitor:
         self.running = False
         await self.telegram_bot.stop()
 
+    TRADE_PATH = os.path.join(os.path.dirname(__file__), 'data/trade-data.json')
+
+    async def get_price(code):
+        url = f'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:{code}'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                js = await resp.json()
+                try:
+                    price = float(js['result']['areas'][0]['datas'][0]['nv'])
+                    return price
+                except Exception:
+                    print(f"시세 가져오기 실패: {code}")
+                    return None
+
+    async def update_open_trades():
+        # trade-data.json에서 Open만 실시간가 갱신
+        with open(TRADE_PATH, encoding='utf-8') as f:
+            trades = json.load(f)
+        changed = False
+        tasks = []
+        idx_list = []
+        for idx, trade in enumerate(trades):
+            if trade.get('status') == 'Open':
+                tasks.append(get_price(trade['common_code']))
+                tasks.append(get_price(trade['preferred_code']))
+                idx_list.append(idx)
+        prices = await asyncio.gather(*tasks)
+        for i, idx in enumerate(idx_list):
+            trade = trades[idx]
+            common_exit = prices[i*2]
+            preferred_exit = prices[i*2+1]
+            if common_exit is not None:
+                trade['common_exit'] = common_exit
+                changed = True
+            if preferred_exit is not None:
+                trade['preferred_exit'] = preferred_exit
+                changed = True
+        if changed:
+            with open(TRADE_PATH, 'w', encoding='utf-8') as f:
+                json.dump(trades, f, ensure_ascii=False, indent=2)
+            print('진행중 매매 실시간가 반영 완료.')
+        else:
+            print('변경 없음.')
+
+    def calc_pnl(trade):
+        try:
+            ce = float(trade['common_exit']) if trade['common_exit'] is not None else None
+            pe = float(trade['preferred_exit']) if trade['preferred_exit'] is not None else None
+            be = float(trade['common_entry'])
+            pei = float(trade['preferred_entry'])
+            cq = float(trade['common_qty'])
+            pq = float(trade['preferred_qty'])
+            if ce is None or pe is None:
+                return None
+            profit_short = (be - ce) * cq
+            profit_long = (pe - pei) * pq
+            cost = float(trade.get('commission',0))+float(trade.get('stamp',0))+float(trade.get('spread',0))+float(trade.get('benchmark',0))
+            profit = profit_short + profit_long - cost
+            invested = be*cq + pei*pq
+            roi = (profit/invested*100) if invested else None
+            return {
+                "symbol": trade['symbol'],
+                "profit": profit, "profit_short": profit_short, "profit_long": profit_long,
+                "roi": roi, "cost": cost, "status": trade['status'],
+                "date_in": trade.get('date_in'), "date_out": trade.get('date_out')
+            }
+        except Exception as e:
+            print('계산오류:', e)
+            return None
+
+    def show_report():
+        # 콘솔용 리포트 출력
+        with open(TRADE_PATH, encoding='utf-8') as f:
+            trades = json.load(f)
+        print("="*60)
+        print(f"{'종목':<10} {'상태':<8} {'손익':>10} {'수익률':>8} {'Short':>10} {'Long':>10} {'비용':>8}")
+        total_p, total_cnt = 0, 0
+        for trade in trades:
+            res = calc_pnl(trade)
+            if not res: continue
+            total_p += res['profit']; total_cnt += 1
+            print(f"{res['symbol']:<10} {res['status']:<8} "
+                f"{int(res['profit']):>10,} {res['roi']:>7.2f}% "
+                f"{int(res['profit_short']):>10,} {int(res['profit_long']):>10,} {int(res['cost']):>8,}")
+        print("-"*60)
+        print(f"합산손익: {int(total_p):,}원 | 집계건수: {total_cnt}건")
+        print("="*60)
+
 async def main():
     monitor = StockMonitor()
     try:
