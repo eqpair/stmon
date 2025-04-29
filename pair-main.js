@@ -43,12 +43,7 @@ async function getCurrentOrClosingPrice(stockCode, isCommon) {
         return await fetchClosingPrice(stockCode, isCommon);
     }
 }
-function getFeeRate(commission_bps, stamp_bps) {
-    // bps 단위 → % 변환
-    return (Number(commission_bps) + Number(stamp_bps)) / 10000;
-}
 function getFloatingRate(benchmark_rate_pct, floating_spread_bps) {
-    // benchmark(%) + spread(bps → %) 합산
     const base = Number(benchmark_rate_pct) || 0;
     const spread = Number(floating_spread_bps) / 100 || 0;
     return base + spread;
@@ -60,33 +55,28 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
-
-// 티켓과 동일하게: (진입가-청산가)*수량 - (진입금액*차입수수료율*일수/365)
 function calcShortPnL(entry, exit, qty, floatingRate, spread, days) {
     if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
-    const borrowRate = Number(floatingRate) + (Number(spread) || 0); // %단위
+    const borrowRate = Number(floatingRate) + (Number(spread) || 0);
     const borrowFee = entryAmt * (borrowRate / 100) * (days / 365);
     const equityPnL = entryAmt - exitAmt;
     const pnl = equityPnL - borrowFee;
     const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
     return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
 }
-
-// 롱도 티켓과 동일하게: (청산가-진입가)*수량 - (진입금액*이자율*일수/365)
 function calcLongPnL(entry, exit, qty, floatingRate, spread, days) {
     if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
-    const lendRate = Number(floatingRate) + (Number(spread) || 0); // %단위
+    const lendRate = Number(floatingRate) + (Number(spread) || 0);
     const lendFee = entryAmt * (lendRate / 100) * (days / 365);
     const equityPnL = exitAmt - entryAmt;
     const pnl = equityPnL - lendFee;
     const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
     return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
 }
-
 async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
     return await resp.json();
@@ -95,6 +85,7 @@ async function renderTable() {
     const pairs = await fetchPairs();
     const tbody = document.getElementById("pairTableBody");
     tbody.innerHTML = "";
+    let lastPair = "";
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
         let days = calcDays(entry.entry_date, entry.exit_date);
@@ -106,7 +97,6 @@ async function renderTable() {
             cNow = entry.common_exit !== null && entry.common_exit !== undefined ? entry.common_exit : "-";
             pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
         }
-        // 티켓과 동일하게: floating_rate + spread(bps→%)
         const short = calcShortPnL(
             entry.common_entry, cNow, entry.common_qty,
             entry.benchmark_rate_pct, entry.common_floating_spread_bps, daysNum
@@ -122,6 +112,7 @@ async function renderTable() {
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
+        // 종목 구분선: pair_name이 바뀔 때만 main-row에 border-top 적용
         tbody.innerHTML += `
 <tr class="main-row">
   <td>${entry.pair_name}</td>
@@ -158,6 +149,7 @@ async function renderTable() {
   <td>${entry.status}</td>
 </tr>
 `;
+        lastPair = entry.pair_name;
     }
 }
 window.addEventListener("DOMContentLoaded", renderTable);

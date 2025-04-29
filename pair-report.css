@@ -71,6 +71,8 @@ h1 {
 .pair-table tr.main-row {
     background: #f5f5f5;
     font-weight: bold;
+    border-top: 3px solid #333;
+    /* 종목 구분선 */
 }
 
 .pair-table tr.sub-row {
