@@ -44,11 +44,11 @@ async function getCurrentOrClosingPrice(stockCode, isCommon) {
     }
 }
 function getFeeRate(commission_bps, stamp_bps) {
-    // 커미션+스탬프 합산 bps → %
+    // bps 단위 → % 변환
     return (Number(commission_bps) + Number(stamp_bps)) / 10000;
 }
-function getInterestRate(benchmark_rate_pct, floating_spread_bps) {
-    // Benchmark(KWCDC) + 스프레드(bps) → %
+function getFloatingRate(benchmark_rate_pct, floating_spread_bps) {
+    // benchmark(%) + spread(bps → %) 합산
     const base = Number(benchmark_rate_pct) || 0;
     const spread = Number(floating_spread_bps) / 100 || 0;
     return base + spread;
@@ -60,30 +60,33 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
-// 보통주(숏) - 차입수수료율: common_borrow_rate가 있으면 그 값, 없으면 benchmark+spread
-function calcShortPnL(entry, exit, qty, feeRate, borrowRate, days) {
-    if (!entry || !exit || !qty || entry === "-" || exit === "-")
-        return { pnl: 0, pnlStr: "-", ret: "-" };
+
+// 티켓과 동일하게: (진입가-청산가)*수량 - (진입금액*차입수수료율*일수/365)
+function calcShortPnL(entry, exit, qty, floatingRate, spread, days) {
+    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
-    const commission = (entryAmt + exitAmt) * feeRate;
+    const borrowRate = Number(floatingRate) + (Number(spread) || 0); // %단위
     const borrowFee = entryAmt * (borrowRate / 100) * (days / 365);
-    const pnl = entryAmt - exitAmt - commission - borrowFee;
+    const equityPnL = entryAmt - exitAmt;
+    const pnl = equityPnL - borrowFee;
     const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
     return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
 }
-// 우선주(롱)
-function calcLongPnL(entry, exit, qty, feeRate, interestRate, days) {
-    if (!entry || !exit || !qty || entry === "-" || exit === "-")
-        return { pnl: 0, pnlStr: "-", ret: "-" };
+
+// 롱도 티켓과 동일하게: (청산가-진입가)*수량 - (진입금액*이자율*일수/365)
+function calcLongPnL(entry, exit, qty, floatingRate, spread, days) {
+    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
     const exitAmt = exit * qty;
-    const commission = (entryAmt + exitAmt) * feeRate;
-    const interest = entryAmt * (interestRate / 100) * (days / 365);
-    const pnl = exitAmt - entryAmt - commission - interest;
+    const lendRate = Number(floatingRate) + (Number(spread) || 0); // %단위
+    const lendFee = entryAmt * (lendRate / 100) * (days / 365);
+    const equityPnL = exitAmt - entryAmt;
+    const pnl = equityPnL - lendFee;
     const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
     return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
 }
+
 async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
     return await resp.json();
@@ -103,15 +106,15 @@ async function renderTable() {
             cNow = entry.common_exit !== null && entry.common_exit !== undefined ? entry.common_exit : "-";
             pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
         }
-        const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
-        // ★ 보통주(숏): common_borrow_rate 있으면 그 값, 없으면 benchmark+spread
-        const common_borrow_rate =
-            entry.common_borrow_rate !== undefined && entry.common_borrow_rate !== null
-                ? entry.common_borrow_rate
-                : getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
-        const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
-        const short = calcShortPnL(entry.common_entry, cNow, entry.common_qty, feeRate, common_borrow_rate, daysNum);
-        const long = calcLongPnL(entry.preferred_entry, pNow, entry.preferred_qty, feeRate, preferred_interest_rate, daysNum);
+        // 티켓과 동일하게: floating_rate + spread(bps→%)
+        const short = calcShortPnL(
+            entry.common_entry, cNow, entry.common_qty,
+            entry.benchmark_rate_pct, entry.common_floating_spread_bps, daysNum
+        );
+        const long = calcLongPnL(
+            entry.preferred_entry, pNow, entry.preferred_qty,
+            entry.benchmark_rate_pct, entry.preferred_floating_spread_bps, daysNum
+        );
         const pairProfit = (typeof short.pnl === "number" ? short.pnl : 0) + (typeof long.pnl === "number" ? long.pnl : 0);
         const pairEntry = (entry.common_entry && entry.common_qty ? entry.common_entry * entry.common_qty : 0) +
             (entry.preferred_entry && entry.preferred_qty ? entry.preferred_entry * entry.preferred_qty : 0);
