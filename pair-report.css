@@ -71,7 +71,6 @@ header {
     font-size: 0.95em;
     white-space: nowrap;
     font-weight: bold;
-    /* 모든 셀 굵게 */
 }
 
 .pair-table th {
@@ -108,36 +107,6 @@ header {
 .pair-table tr.main-row.pair-bg-3,
 .pair-table tr.sub-row.pair-bg-3 {
     background: #fff6eb !important;
-}
-
-.pair-table tr.main-row.pair-bg-4,
-.pair-table tr.sub-row.pair-bg-4 {
-    background: #f7e7f9 !important;
-}
-
-.pair-table tr.main-row.pair-bg-5,
-.pair-table tr.sub-row.pair-bg-5 {
-    background: #e7f9f7 !important;
-}
-
-.pair-table tr.main-row.pair-bg-6,
-.pair-table tr.sub-row.pair-bg-6 {
-    background: #fdf7e2 !important;
-}
-
-.pair-table tr.main-row.pair-bg-7,
-.pair-table tr.sub-row.pair-bg-7 {
-    background: #eee7f9 !important;
-}
-
-.pair-table tr.main-row.pair-bg-8,
-.pair-table tr.sub-row.pair-bg-8 {
-    background: #f9e7e7 !important;
-}
-
-.pair-table tr.main-row.pair-bg-9,
-.pair-table tr.sub-row.pair-bg-9 {
-    background: #e7f0f9 !important;
 }
 
 .positive {

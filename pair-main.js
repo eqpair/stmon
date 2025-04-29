@@ -55,7 +55,6 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
-// 진입가 대비 종료가 기준 수익률 (숏/롱)
 function calcShortRate(entry, exit) {
     if (!entry || !exit || entry === "-" || exit === "-") return "-";
     return (((entry - exit) / entry) * 100).toFixed(2) + "%";
@@ -64,25 +63,28 @@ function calcLongRate(entry, exit) {
     if (!entry || !exit || entry === "-" || exit === "-") return "-";
     return (((exit - entry) / entry) * 100).toFixed(2) + "%";
 }
-function calcShortPnL(entry, exit, qty, floatingRate, spread, days) {
-    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
-    const entryAmt = entry * qty;
-    const exitAmt = exit * qty;
-    const borrowRate = Number(floatingRate) + (Number(spread) || 0);
+function calcShortPnL(entry, exit, entryQty, exitQty, feeRate, borrowRate, days) {
+    if (!entry || !exit || !entryQty || !exitQty || entry === "-" || exit === "-")
+        return { pnl: 0, pnlStr: "-", ret: "-" };
+    const entryAmt = entry * entryQty;
+    const exitAmt = exit * exitQty;
+    const commission = (entryAmt + exitAmt) * feeRate;
     const borrowFee = entryAmt * (borrowRate / 100) * (days / 365);
-    const equityPnL = entryAmt - exitAmt;
-    const pnl = equityPnL - borrowFee;
+    const pnl = entryAmt - exitAmt - commission - borrowFee;
     return { pnl, pnlStr: formatNumber(Math.round(pnl)) };
 }
-function calcLongPnL(entry, exit, qty, floatingRate, spread, days) {
-    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
-    const entryAmt = entry * qty;
-    const exitAmt = exit * qty;
-    const lendRate = Number(floatingRate) + (Number(spread) || 0);
-    const lendFee = entryAmt * (lendRate / 100) * (days / 365);
-    const equityPnL = exitAmt - entryAmt;
-    const pnl = equityPnL - lendFee;
+function calcLongPnL(entry, exit, entryQty, exitQty, feeRate, interestRate, days) {
+    if (!entry || !exit || !entryQty || !exitQty || entry === "-" || exit === "-")
+        return { pnl: 0, pnlStr: "-", ret: "-" };
+    const entryAmt = entry * entryQty;
+    const exitAmt = exit * exitQty;
+    const commission = (entryAmt + exitAmt) * feeRate;
+    const interest = entryAmt * (interestRate / 100) * (days / 365);
+    const pnl = exitAmt - entryAmt - commission - interest;
     return { pnl, pnlStr: formatNumber(Math.round(pnl)) };
+}
+function getFeeRate(commission_bps, stamp_bps) {
+    return (Number(commission_bps) + Number(stamp_bps)) / 10000;
 }
 async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
@@ -95,29 +97,38 @@ async function renderTable() {
     let alt = 0;
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
+        let cExitQty = entry.common_exit_qty !== undefined ? entry.common_exit_qty : entry.common_qty;
+        let pExitQty = entry.preferred_exit_qty !== undefined ? entry.preferred_exit_qty : entry.preferred_qty;
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
         if (entry.status === "Open") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
+            cExitQty = entry.common_qty;
+            pExitQty = entry.preferred_qty;
         } else {
             cNow = entry.common_exit !== null && entry.common_exit !== undefined ? entry.common_exit : "-";
             pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
         }
+        const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
         const short = calcShortPnL(
-            entry.common_entry, cNow, entry.common_qty,
-            entry.benchmark_rate_pct, entry.common_floating_spread_bps, daysNum
+            entry.common_entry, cNow, entry.common_qty, cExitQty,
+            feeRate,
+            getFloatingRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps),
+            daysNum
         );
         const long = calcLongPnL(
-            entry.preferred_entry, pNow, entry.preferred_qty,
-            entry.benchmark_rate_pct, entry.preferred_floating_spread_bps, daysNum
+            entry.preferred_entry, pNow, entry.preferred_qty, pExitQty,
+            feeRate,
+            getFloatingRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps),
+            daysNum
         );
         const pairProfit = (typeof short.pnl === "number" ? short.pnl : 0) + (typeof long.pnl === "number" ? long.pnl : 0);
         const pairEntry = (entry.common_entry && entry.common_qty ? entry.common_entry * entry.common_qty : 0) +
             (entry.preferred_entry && entry.preferred_qty ? entry.preferred_entry * entry.preferred_qty : 0);
         const pairReturn = pairEntry !== 0 ? (pairProfit / pairEntry * 100).toFixed(2) + "%" : "-";
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
-        const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
+        const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (parseFloat(pairReturn) < 0 ? "negative" : "");
         // 진입가 대비 종료가 기준 수익률
         const shortRate = calcShortRate(entry.common_entry, cNow);
         const longRate = calcLongRate(entry.preferred_entry, pNow);
@@ -134,7 +145,7 @@ async function renderTable() {
             const days = calcDays(entry.entry_date, entry.exit_date);
             daysInfo = `<span class="days-block">${days}</span>`;
         }
-        const pairBgClass = `pair-bg-${alt % 10}`;
+        const pairBgClass = `pair-bg-${alt % 4}`;
         tbody.innerHTML += `
 <tr class="main-row ${pairBgClass}">
   <td rowspan="2">${entry.pair_name}</td>
@@ -145,6 +156,7 @@ async function renderTable() {
   <td>${formatNumber(entry.common_entry)}</td>
   <td>${formatNumber(entry.common_qty)}</td>
   <td>${formatNumber(cNow)}</td>
+  <td>${formatNumber(cExitQty)}</td>
   <td class="${short.pnl > 0 ? 'positive' : (short.pnl < 0 ? 'negative' : '')}">${short.pnlStr}</td>
   <td class="${shortRateClass}">${shortRate}</td>
   <td rowspan="2">${entry.exit_date || "-"}${daysInfo}</td>
@@ -156,6 +168,7 @@ async function renderTable() {
   <td>${formatNumber(entry.preferred_entry)}</td>
   <td>${formatNumber(entry.preferred_qty)}</td>
   <td>${formatNumber(pNow)}</td>
+  <td>${formatNumber(pExitQty)}</td>
   <td class="${long.pnl > 0 ? 'positive' : (long.pnl < 0 ? 'negative' : '')}">${long.pnlStr}</td>
   <td class="${longRateClass}">${longRate}</td>
 </tr>
