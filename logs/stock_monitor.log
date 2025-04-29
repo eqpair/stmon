@@ -8882,3 +8882,31 @@ connector: <aiohttp.connector.TCPConnector object at 0x7faa6f0050>
 2025-04-29 18:15:04,426 - asyncio - ERROR - Unclosed connector
 connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa942a890>, 91833.848747944)]']
 connector: <aiohttp.connector.TCPConnector object at 0x7faa6f0050>
+2025-04-29 18:15:36,557 - root - INFO - Logging initialized
+2025-04-29 18:15:36,747 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 18:15:36,748 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 18:15:36,877 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 18:15:36,878 - root - INFO - Starting Stock Monitor...
+2025-04-29 18:15:36,879 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:15:38,448 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:15:38,449 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 18:15:38,449 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 18:15:38,450 - modules.telegram - INFO - Resetting webhook
+2025-04-29 18:15:39,477 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 18:15:39,477 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 18:15:40,014 - root - INFO - Logging initialized
+2025-04-29 18:15:40,014 - root - INFO - Logging initialized
+2025-04-29 18:15:40,016 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:15:40,016 - aiogram.dispatcher.dispatcher - WARNING - Polling is stopped.
+2025-04-29 18:15:40,168 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:15:40,168 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2025-04-29 18:15:40,170 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa1a15650>
+2025-04-29 18:15:40,170 - asyncio - ERROR - Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fa1a15650>
+2025-04-29 18:15:40,171 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa19fa820>, 91869.63706341)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa1a0fcd0>
+2025-04-29 18:15:40,171 - asyncio - ERROR - Unclosed connector
+connections: ['[(<aiohttp.client_proto.ResponseHandler object at 0x7fa19fa820>, 91869.63706341)]']
+connector: <aiohttp.connector.TCPConnector object at 0x7fa1a0fcd0>
