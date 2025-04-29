@@ -112,11 +112,11 @@ async function renderTable() {
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
-        // 청산일이 있으면 소요일수 표시
+        // 청산일이 있으면 소요일수 줄바꿈, 숫자만
         let daysInfo = "";
         if (entry.exit_date && entry.entry_date) {
             const days = calcDays(entry.entry_date, entry.exit_date);
-            daysInfo = `<span class="small">(${days}일)</span>`;
+            daysInfo = `<span class="days-block">${days}</span>`;
         }
         // 페어별 같은 배경색, 우선주 굵게, 2줄 묶음, 모바일 대응
         const pairBgClass = `pair-bg-${alt % 10}`;
