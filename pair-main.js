@@ -60,9 +60,9 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
-// 보통주(숏) - 차입수수료까지 반영된 명확한 수식
+// 보통주(숏) - 차입수수료율 직접 사용
 function calcShortPnL(entry, exit, qty, feeRate, borrowRate, days) {
-    // entry, exit: 가격, qty: 수량, feeRate: (커미션+스탬프) %, borrowRate: 차입이자 %, days: 보유일수
+    // borrowRate: common_borrow_rate(%)를 그대로 사용
     if (!entry || !exit || !qty || entry === "-" || exit === "-")
         return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
@@ -73,9 +73,8 @@ function calcShortPnL(entry, exit, qty, feeRate, borrowRate, days) {
     const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
     return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
 }
-// 우선주(롱) - 롱 이자까지 반영된 명확한 수식
+// 우선주(롱) - 기존대로
 function calcLongPnL(entry, exit, qty, feeRate, interestRate, days) {
-    // entry, exit: 가격, qty: 수량, feeRate: (커미션+스탬프) %, interestRate: 이자 %, days: 보유일수
     if (!entry || !exit || !qty || entry === "-" || exit === "-")
         return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
@@ -106,8 +105,9 @@ async function renderTable() {
             pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
         }
         const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
-        const common_borrow_rate = getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps); // 숏 차입수수료
-        const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps); // 롱 이자
+        // ★ 보통주(숏)는 common_borrow_rate(%)를 직접 사용!
+        const common_borrow_rate = entry.common_borrow_rate !== undefined ? entry.common_borrow_rate : getInterestRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps);
+        const preferred_interest_rate = getInterestRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps);
         const short = calcShortPnL(entry.common_entry, cNow, entry.common_qty, feeRate, common_borrow_rate, daysNum);
         const long = calcLongPnL(entry.preferred_entry, pNow, entry.preferred_qty, feeRate, preferred_interest_rate, daysNum);
         const pairProfit = (typeof short.pnl === "number" ? short.pnl : 0) + (typeof long.pnl === "number" ? long.pnl : 0);
@@ -117,7 +117,6 @@ async function renderTable() {
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
-        // 메인 라인(종목명, 합산수익, 합산수익률)
         tbody.innerHTML += `
 <tr class="main-row">
   <td>${entry.pair_name}</td>
