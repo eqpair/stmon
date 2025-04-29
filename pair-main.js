@@ -125,7 +125,7 @@ async function renderTable() {
   <td rowspan="2">${entry.pair_name}</td>
   <td rowspan="2" class="${pairProfitClass}">${pairProfitStr}</td>
   <td rowspan="2" class="${pairRetClass}">${pairReturn}</td>
-  <td>보통주(Short)</td>
+  <td>보통주(S)</td>
   <td>${entry.entry_date || "-"}</td>
   <td>${formatNumber(entry.common_entry)}</td>
   <td>${formatNumber(entry.common_qty)}</td>
@@ -136,7 +136,10 @@ async function renderTable() {
   <td rowspan="2">${entry.status}</td>
 </tr>
 <tr class="sub-row bold ${pairBgClass}">
-  <td>우선주(Long)</td>
+  <td rowspan="2">${entry.pair_name}</td>
+  <td rowspan="2" class="${pairProfitClass}">${pairProfitStr}</td>
+  <td rowspan="2" class="${pairRetClass}">${pairReturn}</td>
+  <td>우선주(L)</td>
   <td>${entry.entry_date || "-"}</td>
   <td>${formatNumber(entry.preferred_entry)}</td>
   <td>${formatNumber(entry.preferred_qty)}</td>
