@@ -55,6 +55,15 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
+// 진입가 대비 종료가 기준 수익률 (숏/롱)
+function calcShortRate(entry, exit) {
+    if (!entry || !exit || entry === "-" || exit === "-") return "-";
+    return (((entry - exit) / entry) * 100).toFixed(2) + "%";
+}
+function calcLongRate(entry, exit) {
+    if (!entry || !exit || entry === "-" || exit === "-") return "-";
+    return (((exit - entry) / entry) * 100).toFixed(2) + "%";
+}
 function calcShortPnL(entry, exit, qty, floatingRate, spread, days) {
     if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
     const entryAmt = entry * qty;
@@ -63,8 +72,7 @@ function calcShortPnL(entry, exit, qty, floatingRate, spread, days) {
     const borrowFee = entryAmt * (borrowRate / 100) * (days / 365);
     const equityPnL = entryAmt - exitAmt;
     const pnl = equityPnL - borrowFee;
-    const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
-    return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
+    return { pnl, pnlStr: formatNumber(Math.round(pnl)) };
 }
 function calcLongPnL(entry, exit, qty, floatingRate, spread, days) {
     if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
@@ -74,8 +82,7 @@ function calcLongPnL(entry, exit, qty, floatingRate, spread, days) {
     const lendFee = entryAmt * (lendRate / 100) * (days / 365);
     const equityPnL = exitAmt - entryAmt;
     const pnl = equityPnL - lendFee;
-    const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
-    return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
+    return { pnl, pnlStr: formatNumber(Math.round(pnl)) };
 }
 async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
@@ -109,40 +116,41 @@ async function renderTable() {
         const pairEntry = (entry.common_entry && entry.common_qty ? entry.common_entry * entry.common_qty : 0) +
             (entry.preferred_entry && entry.preferred_qty ? entry.preferred_entry * entry.preferred_qty : 0);
         const pairReturn = pairEntry !== 0 ? (pairProfit / pairEntry * 100).toFixed(2) + "%" : "-";
-        const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
+        // 진입가 대비 종료가 기준 수익률
+        const shortRate = calcShortRate(entry.common_entry, cNow);
+        const longRate = calcLongRate(entry.preferred_entry, pNow);
         // 청산일이 있으면 소요일수 줄바꿈, 숫자만
         let daysInfo = "";
         if (entry.exit_date && entry.entry_date) {
             const days = calcDays(entry.entry_date, entry.exit_date);
             daysInfo = `<span class="days-block">${days}</span>`;
         }
-        // 페어별 같은 배경색, 우선주 굵게, 2줄 묶음, 모바일 대응
         const pairBgClass = `pair-bg-${alt % 10}`;
         tbody.innerHTML += `
 <tr class="main-row ${pairBgClass}">
   <td rowspan="2">${entry.pair_name}</td>
-  <td rowspan="2" class="${pairProfitClass}">${pairProfitStr}</td>
+  <td rowspan="2" class="${pairProfitClass}">${formatNumber(Math.round(pairProfit))}</td>
   <td rowspan="2" class="${pairRetClass}">${pairReturn}</td>
-  <td>보통주(S)</td>
+  <td>보통주(Short)</td>
   <td>${entry.entry_date || "-"}</td>
   <td>${formatNumber(entry.common_entry)}</td>
   <td>${formatNumber(entry.common_qty)}</td>
   <td>${formatNumber(cNow)}</td>
   <td class="${short.pnl > 0 ? 'positive' : (short.pnl < 0 ? 'negative' : '')}">${short.pnlStr}</td>
-  <td class="${short.ret !== '-' && parseFloat(short.ret) > 0 ? 'positive' : (short.ret !== '-' && parseFloat(short.ret) < 0 ? 'negative' : '')}">${short.ret}</td>
+  <td>${shortRate}</td>
   <td rowspan="2">${entry.exit_date || "-"}${daysInfo}</td>
   <td rowspan="2">${entry.status}</td>
 </tr>
-<tr class="sub-row bold ${pairBgClass}">
-  <td>우선주(L)</td>
+<tr class="sub-row ${pairBgClass}">
+  <td>우선주(Long)</td>
   <td>${entry.entry_date || "-"}</td>
   <td>${formatNumber(entry.preferred_entry)}</td>
   <td>${formatNumber(entry.preferred_qty)}</td>
   <td>${formatNumber(pNow)}</td>
   <td class="${long.pnl > 0 ? 'positive' : (long.pnl < 0 ? 'negative' : '')}">${long.pnlStr}</td>
-  <td class="${long.ret !== '-' && parseFloat(long.ret) > 0 ? 'positive' : (long.ret !== '-' && parseFloat(long.ret) < 0 ? 'negative' : '')}">${long.ret}</td>
+  <td>${longRate}</td>
 </tr>
 `;
         alt++;

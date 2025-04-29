@@ -70,12 +70,13 @@ header {
     border: none;
     font-size: 0.95em;
     white-space: nowrap;
+    font-weight: bold;
+    /* 모든 셀 굵게 */
 }
 
 .pair-table th {
     background: #e9f0fa;
     color: #444;
-    font-weight: 700;
     border-radius: 8px 8px 0 0;
     letter-spacing: 0.02em;
     font-size: 0.95em;
@@ -89,36 +90,62 @@ header {
     transition: background 0.2s;
 }
 
-.pair-table tr.main-row {
-    font-weight: bold;
-    background: #f3f7fd;
-    border-top: 2px solid #1976d2;
+.pair-table tr.main-row.pair-bg-0,
+.pair-table tr.sub-row.pair-bg-0 {
+    background: #f3f7fd !important;
 }
 
-.pair-table tr.main-row.alt {
-    background: #f8fafc;
-    border-top: 2px solid #d32f2f;
+.pair-table tr.main-row.pair-bg-1,
+.pair-table tr.sub-row.pair-bg-1 {
+    background: #f8fafc !important;
 }
 
-.pair-table tr.sub-row {
-    background: #fff;
-    font-size: 0.95em;
+.pair-table tr.main-row.pair-bg-2,
+.pair-table tr.sub-row.pair-bg-2 {
+    background: #f7fbe7 !important;
 }
 
-.pair-table tr.sub-row.bold {
-    font-weight: bold;
-    color: #1976d2;
-    background: #f7faff;
+.pair-table tr.main-row.pair-bg-3,
+.pair-table tr.sub-row.pair-bg-3 {
+    background: #fff6eb !important;
+}
+
+.pair-table tr.main-row.pair-bg-4,
+.pair-table tr.sub-row.pair-bg-4 {
+    background: #f7e7f9 !important;
+}
+
+.pair-table tr.main-row.pair-bg-5,
+.pair-table tr.sub-row.pair-bg-5 {
+    background: #e7f9f7 !important;
+}
+
+.pair-table tr.main-row.pair-bg-6,
+.pair-table tr.sub-row.pair-bg-6 {
+    background: #fdf7e2 !important;
+}
+
+.pair-table tr.main-row.pair-bg-7,
+.pair-table tr.sub-row.pair-bg-7 {
+    background: #eee7f9 !important;
+}
+
+.pair-table tr.main-row.pair-bg-8,
+.pair-table tr.sub-row.pair-bg-8 {
+    background: #f9e7e7 !important;
+}
+
+.pair-table tr.main-row.pair-bg-9,
+.pair-table tr.sub-row.pair-bg-9 {
+    background: #e7f0f9 !important;
 }
 
 .positive {
     color: #e53935;
-    font-weight: bold;
 }
 
 .negative {
     color: #1976d2;
-    font-weight: bold;
 }
 
 .pair-table td,
@@ -194,6 +221,7 @@ header {
         background: #fff !important;
         font-size: 0.95em;
         word-break: keep-all;
+        font-weight: bold;
     }
 
     .pair-table td:before {
