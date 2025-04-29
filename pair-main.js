@@ -121,6 +121,13 @@ async function renderTable() {
         // 진입가 대비 종료가 기준 수익률
         const shortRate = calcShortRate(entry.common_entry, cNow);
         const longRate = calcLongRate(entry.preferred_entry, pNow);
+        let shortRateClass = "", longRateClass = "";
+        if (shortRate !== "-" && !isNaN(parseFloat(shortRate))) {
+            shortRateClass = parseFloat(shortRate) > 0 ? "positive" : (parseFloat(shortRate) < 0 ? "negative" : "");
+        }
+        if (longRate !== "-" && !isNaN(parseFloat(longRate))) {
+            longRateClass = parseFloat(longRate) > 0 ? "positive" : (parseFloat(longRate) < 0 ? "negative" : "");
+        }
         // 청산일이 있으면 소요일수 줄바꿈, 숫자만
         let daysInfo = "";
         if (entry.exit_date && entry.entry_date) {
@@ -139,7 +146,7 @@ async function renderTable() {
   <td>${formatNumber(entry.common_qty)}</td>
   <td>${formatNumber(cNow)}</td>
   <td class="${short.pnl > 0 ? 'positive' : (short.pnl < 0 ? 'negative' : '')}">${short.pnlStr}</td>
-  <td>${shortRate}</td>
+  <td class="${shortRateClass}">${shortRate}</td>
   <td rowspan="2">${entry.exit_date || "-"}${daysInfo}</td>
   <td rowspan="2">${entry.status}</td>
 </tr>
@@ -150,7 +157,7 @@ async function renderTable() {
   <td>${formatNumber(entry.preferred_qty)}</td>
   <td>${formatNumber(pNow)}</td>
   <td class="${long.pnl > 0 ? 'positive' : (long.pnl < 0 ? 'negative' : '')}">${long.pnlStr}</td>
-  <td>${longRate}</td>
+  <td class="${longRateClass}">${longRate}</td>
 </tr>
 `;
         alt++;
