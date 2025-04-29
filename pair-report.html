@@ -3,224 +3,34 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어트레이딩 리포트 (실전 합산)</title>
-    <script src="pair-main.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: 'Segoe UI', 'Malgun Gothic', Arial, sans-serif;
-            background: #f8fafc;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 40px auto 0 auto;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 2px 16px 0 rgba(60, 60, 60, 0.09);
-            padding: 32px 24px 24px 24px;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .home-btn {
-            background: #1976d2;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
-            font-size: 1.05rem;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 2px 6px 0 rgba(25, 118, 210, 0.09);
-            transition: background 0.2s;
-            margin-left: 6px;
-        }
-
-        .home-btn:hover {
-            background: #145ea8;
-        }
-
-        h1 {
-            color: #1a237e;
-            font-size: 2.2rem;
-            margin-bottom: 18px;
-            letter-spacing: -1px;
-            font-weight: 700;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.07);
-        }
-
-        th,
-        td {
-            padding: 14px 8px;
-            text-align: center;
-            font-size: 1rem;
-            border-right: 1.5px solid #bdbdbd;
-            border-bottom: 1px solid #e0e0e0;
-            font-weight: 400;
-            background: #f7fafc;
-        }
-
-        th:last-child,
-        td:last-child {
-            border-right: none;
-        }
-
-        th {
-            background: #e3f2fd;
-            color: #1a237e;
-            font-weight: 700;
-            border-bottom: 2px solid #bbdefb;
-            letter-spacing: 0.5px;
-        }
-
-        tr.pair-row {
-            background: #f7fafc;
-        }
-
-        tr.closed {
-            background: #f5f5f5 !important;
-            color: #757575;
-        }
-
-        tr.open {
-            background: #fffde7 !important;
-        }
-
-        .positive {
-            color: #1976d2;
-            font-weight: bold;
-        }
-
-        .negative {
-            color: #d32f2f;
-            font-weight: bold;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #e3f2fd;
-            color: #1976d2;
-            font-size: 0.92em;
-            border-radius: 8px;
-            padding: 2px 10px;
-            margin-right: 4px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                padding: 8px 2px;
-            }
-
-            th,
-            td {
-                font-size: 0.96rem;
-                padding: 10px 2px;
-            }
-
-            h1 {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (max-width: 600px) {
-
-            table,
-            thead,
-            tbody,
-            th,
-            td,
-            tr {
-                display: block;
-            }
-
-            thead {
-                display: none;
-            }
-
-            tr {
-                margin-bottom: 16px;
-                border-radius: 8px;
-                box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.07);
-            }
-
-            td {
-                border: none;
-                border-bottom: 1px solid #e0e0e0;
-                position: relative;
-                padding-left: 50%;
-                text-align: left;
-                min-height: 36px;
-                background: #fff;
-            }
-
-            td:before {
-                position: absolute;
-                top: 12px;
-                left: 12px;
-                width: 48%;
-                white-space: nowrap;
-                color: #888;
-                font-size: 0.94em;
-                font-weight: 600;
-                content: attr(data-label);
-            }
-        }
-    </style>
+    <title>페어트레이딩 리포트</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="pair-report.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="flex space-x-2">
-            <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                <i class="fas fa-home mr-2"></i> Home
-            </a>
+    <header>
+        <h1>페어트레이딩 리포트</h1>
+        <div class="dashboard-summary">
+            <div class="summary-card">
+                <div class="summary-title">합산수익</div>
+                <div class="summary-value" id="totalProfit">0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title">합산수익률</div>
+                <div class="summary-value" id="totalReturn">0%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title">보유중 페어</div>
+                <div class="summary-value" id="openPairs">0</div>
+            </div>
         </div>
-        <h1>페어트레이딩 리포트 <span class="tag">실전 합산</span></h1>
-        <table id="pair-table">
-            <thead>
-                <tr>
-                    <th>페어명</th>
-                    <th>합산수익</th>
-                    <th>합산수익률</th>
-                    <th>구분</th>
-                    <th>진입일</th>
-                    <th>청산일</th>
-                    <th>진입가</th>
-                    <th>수량</th>
-                    <th>청산가/현재가</th>
-                    <th>개별수익</th>
-                    <th>개별수익률</th>
-                    <th>상태</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- JS로 동적 생성 -->
-            </tbody>
-        </table>
-        <div style="margin-top:1.5rem;color:#888;font-size:0.97em;">
-            * 항상 보통주/우선주 두 줄이 나오며, 값이 없으면 "-"로 표시됩니다.<br>
-            * 합산수익/수익률은 두 포지션의 실현손익을 합산하여 산출됩니다.<br>
-            * 모든 거래비용·이자·스프레드·마감가 반영, 실시간/마감가 자동 적용.
-        </div>
-    </div>
+    </header>
+    <main>
+        <div class="pair-list" id="pairList"></div>
+    </main>
+    <script src="pair-main.js"></script>
 </body>
 
 </html>

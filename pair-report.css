@@ -1,0 +1,127 @@
+body {
+    font-family: 'Noto Sans KR', Arial, sans-serif;
+    background: #f4f6fa;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 24px 0 12px 0;
+    margin-bottom: 12px;
+}
+
+h1 {
+    margin: 0 24px 12px 24px;
+    font-size: 2em;
+    letter-spacing: -1px;
+}
+
+.dashboard-summary {
+    display: flex;
+    gap: 24px;
+    margin: 0 24px 12px 24px;
+}
+
+.summary-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 20px 32px;
+    flex: 1;
+    text-align: center;
+}
+
+.summary-title {
+    font-size: 1.1em;
+    color: #888;
+}
+
+.summary-value {
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.pair-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin: 24px;
+    justify-content: flex-start;
+}
+
+.pair-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    width: 370px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.2s;
+    border-left: 6px solid #e0e7ef;
+}
+
+.pair-card.open {
+    border-left: 6px solid #e53935;
+}
+
+.pair-card.closed {
+    border-left: 6px solid #1976d2;
+    opacity: 0.7;
+}
+
+.pair-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+.pair-status {
+    font-size: 0.95em;
+    background: #f4f6fa;
+    border-radius: 8px;
+    padding: 2px 10px;
+}
+
+.pair-body {
+    font-size: 0.98em;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.positive {
+    color: #e53935;
+    font-weight: bold;
+}
+
+/* 빨간색(수익) */
+.negative {
+    color: #1976d2;
+    font-weight: bold;
+}
+
+/* 파란색(손실) */
+@media (max-width: 900px) {
+    .pair-list {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .pair-card {
+        width: 98vw;
+    }
+
+    .dashboard-summary {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
