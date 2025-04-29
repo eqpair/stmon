@@ -90,7 +90,7 @@ async function renderTable() {
         let cNow = "-", pNow = "-";
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
-        if (entry.status === "보유중") {
+        if (entry.status === "Open") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
         } else {
@@ -112,6 +112,12 @@ async function renderTable() {
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
+        // 청산일이 있으면 소요일수 표시
+        let daysInfo = "";
+        if (entry.exit_date && entry.entry_date) {
+            const days = calcDays(entry.entry_date, entry.exit_date);
+            daysInfo = `<span class="small">(${days}일)</span>`;
+        }
         // 페어별 같은 배경색, 우선주 굵게, 2줄 묶음, 모바일 대응
         const pairBgClass = `pair-bg-${alt % 10}`;
         tbody.innerHTML += `
@@ -126,7 +132,7 @@ async function renderTable() {
   <td>${formatNumber(cNow)}</td>
   <td class="${short.pnl > 0 ? 'positive' : (short.pnl < 0 ? 'negative' : '')}">${short.pnlStr}</td>
   <td class="${short.ret !== '-' && parseFloat(short.ret) > 0 ? 'positive' : (short.ret !== '-' && parseFloat(short.ret) < 0 ? 'negative' : '')}">${short.ret}</td>
-  <td rowspan="2">${entry.exit_date || "-"}</td>
+  <td rowspan="2">${entry.exit_date || "-"}${daysInfo}</td>
   <td rowspan="2">${entry.status}</td>
 </tr>
 <tr class="sub-row bold ${pairBgClass}">
