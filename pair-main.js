@@ -55,27 +55,36 @@ function calcDays(entryDate, exitDate) {
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     return diffDays > 0 ? diffDays : "-";
 }
-function calcShortPnL(entry, exit, qty, floatingRate, spread, days) {
-    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
-    const entryAmt = entry * qty;
-    const exitAmt = exit * qty;
-    const borrowRate = Number(floatingRate) + (Number(spread) || 0);
-    const borrowFee = entryAmt * (borrowRate / 100) * (days / 365);
-    const equityPnL = entryAmt - exitAmt;
-    const pnl = equityPnL - borrowFee;
-    const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
-    return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
+function calcShortRate(entry, exit) {
+    if (!entry || !exit || entry === "-" || exit === "-") return "-";
+    return (((entry - exit) / entry) * 100).toFixed(2) + "%";
 }
-function calcLongPnL(entry, exit, qty, floatingRate, spread, days) {
-    if (!entry || !exit || !qty || entry === "-" || exit === "-") return { pnl: 0, pnlStr: "-", ret: "-" };
-    const entryAmt = entry * qty;
-    const exitAmt = exit * qty;
-    const lendRate = Number(floatingRate) + (Number(spread) || 0);
-    const lendFee = entryAmt * (lendRate / 100) * (days / 365);
-    const equityPnL = exitAmt - entryAmt;
-    const pnl = equityPnL - lendFee;
-    const ret = entryAmt !== 0 ? (pnl / entryAmt * 100).toFixed(2) + "%" : "-";
-    return { pnl, pnlStr: formatNumber(Math.round(pnl)), ret };
+function calcLongRate(entry, exit) {
+    if (!entry || !exit || entry === "-" || exit === "-") return "-";
+    return (((exit - entry) / entry) * 100).toFixed(2) + "%";
+}
+function calcShortPnL(entry, exit, entryQty, exitQty, feeRate, borrowRate, days) {
+    if (!entry || !exit || !entryQty || !exitQty || entry === "-" || exit === "-")
+        return { pnl: 0, pnlStr: "-", ret: "-" };
+    const entryAmt = entry * entryQty;
+    const exitAmt = exit * exitQty;
+    const commission = (entryAmt + exitAmt) * feeRate;
+    const borrowFee = entryAmt * (borrowRate / 100) * (days / 365);
+    const pnl = entryAmt - exitAmt - commission - borrowFee;
+    return { pnl, pnlStr: formatNumber(Math.round(pnl)) };
+}
+function calcLongPnL(entry, exit, entryQty, exitQty, feeRate, interestRate, days) {
+    if (!entry || !exit || !entryQty || !exitQty || entry === "-" || exit === "-")
+        return { pnl: 0, pnlStr: "-", ret: "-" };
+    const entryAmt = entry * entryQty;
+    const exitAmt = exit * exitQty;
+    const commission = (entryAmt + exitAmt) * feeRate;
+    const interest = entryAmt * (interestRate / 100) * (days / 365);
+    const pnl = exitAmt - entryAmt - commission - interest;
+    return { pnl, pnlStr: formatNumber(Math.round(pnl)) };
+}
+function getFeeRate(commission_bps, stamp_bps) {
+    return (Number(commission_bps) + Number(stamp_bps)) / 10000;
 }
 async function fetchPairs() {
     const resp = await fetch('data/pair-trades.json');
@@ -88,61 +97,80 @@ async function renderTable() {
     let alt = 0;
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
+        let cExitQty = entry.common_exit_qty !== undefined ? entry.common_exit_qty : entry.common_qty;
+        let pExitQty = entry.preferred_exit_qty !== undefined ? entry.preferred_exit_qty : entry.preferred_qty;
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
         if (entry.status === "보유중") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
+            cExitQty = entry.common_qty;
+            pExitQty = entry.preferred_qty;
         } else {
             cNow = entry.common_exit !== null && entry.common_exit !== undefined ? entry.common_exit : "-";
             pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
         }
+        const feeRate = getFeeRate(entry.commission_bps, entry.stamp_bps);
         const short = calcShortPnL(
-            entry.common_entry, cNow, entry.common_qty,
-            entry.benchmark_rate_pct, entry.common_floating_spread_bps, daysNum
+            entry.common_entry, cNow, entry.common_qty, cExitQty,
+            feeRate,
+            getFloatingRate(entry.benchmark_rate_pct, entry.common_floating_spread_bps),
+            daysNum
         );
         const long = calcLongPnL(
-            entry.preferred_entry, pNow, entry.preferred_qty,
-            entry.benchmark_rate_pct, entry.preferred_floating_spread_bps, daysNum
+            entry.preferred_entry, pNow, entry.preferred_qty, pExitQty,
+            feeRate,
+            getFloatingRate(entry.benchmark_rate_pct, entry.preferred_floating_spread_bps),
+            daysNum
         );
         const pairProfit = (typeof short.pnl === "number" ? short.pnl : 0) + (typeof long.pnl === "number" ? long.pnl : 0);
         const pairEntry = (entry.common_entry && entry.common_qty ? entry.common_entry * entry.common_qty : 0) +
             (entry.preferred_entry && entry.preferred_qty ? entry.preferred_entry * entry.preferred_qty : 0);
         const pairReturn = pairEntry !== 0 ? (pairProfit / pairEntry * 100).toFixed(2) + "%" : "-";
-        const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
-        const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
-        // 청산일이 있으면 소요일수 표시
+        const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (parseFloat(pairReturn) < 0 ? "negative" : "");
+        // 진입가 대비 종료가 기준 수익률
+        const shortRate = calcShortRate(entry.common_entry, cNow);
+        const longRate = calcLongRate(entry.preferred_entry, pNow);
+        let shortRateClass = "", longRateClass = "";
+        if (shortRate !== "-" && !isNaN(parseFloat(shortRate))) {
+            shortRateClass = parseFloat(shortRate) > 0 ? "positive" : (parseFloat(shortRate) < 0 ? "negative" : "");
+        }
+        if (longRate !== "-" && !isNaN(parseFloat(longRate))) {
+            longRateClass = parseFloat(longRate) > 0 ? "positive" : (parseFloat(longRate) < 0 ? "negative" : "");
+        }
+        // 청산일이 있으면 소요일수 줄바꿈, 숫자만
         let daysInfo = "";
         if (entry.exit_date && entry.entry_date) {
             const days = calcDays(entry.entry_date, entry.exit_date);
-            daysInfo = `<span class="small">(${days}일)</span>`;
+            daysInfo = `<span class="days-block">${days}</span>`;
         }
-        // 페어별 같은 배경색, 우선주 굵게, 2줄 묶음, 모바일 대응
-        const pairBgClass = `pair-bg-${alt % 10}`;
+        const pairBgClass = `pair-bg-${alt % 4}`;
         tbody.innerHTML += `
 <tr class="main-row ${pairBgClass}">
   <td rowspan="2">${entry.pair_name}</td>
-  <td rowspan="2" class="${pairProfitClass}">${pairProfitStr}</td>
+  <td rowspan="2" class="${pairProfitClass}">${formatNumber(Math.round(pairProfit))}</td>
   <td rowspan="2" class="${pairRetClass}">${pairReturn}</td>
   <td>보통주(Short)</td>
   <td>${entry.entry_date || "-"}</td>
   <td>${formatNumber(entry.common_entry)}</td>
   <td>${formatNumber(entry.common_qty)}</td>
   <td>${formatNumber(cNow)}</td>
+  <td>${formatNumber(cExitQty)}</td>
   <td class="${short.pnl > 0 ? 'positive' : (short.pnl < 0 ? 'negative' : '')}">${short.pnlStr}</td>
-  <td class="${short.ret !== '-' && parseFloat(short.ret) > 0 ? 'positive' : (short.ret !== '-' && parseFloat(short.ret) < 0 ? 'negative' : '')}">${short.ret}</td>
+  <td class="${shortRateClass}">${shortRate}</td>
   <td rowspan="2">${entry.exit_date || "-"}${daysInfo}</td>
   <td rowspan="2">${entry.status}</td>
 </tr>
-<tr class="sub-row bold ${pairBgClass}">
+<tr class="sub-row ${pairBgClass}">
   <td>우선주(Long)</td>
   <td>${entry.entry_date || "-"}</td>
   <td>${formatNumber(entry.preferred_entry)}</td>
   <td>${formatNumber(entry.preferred_qty)}</td>
   <td>${formatNumber(pNow)}</td>
+  <td>${formatNumber(pExitQty)}</td>
   <td class="${long.pnl > 0 ? 'positive' : (long.pnl < 0 ? 'negative' : '')}">${long.pnlStr}</td>
-  <td class="${long.ret !== '-' && parseFloat(long.ret) > 0 ? 'positive' : (long.ret !== '-' && parseFloat(long.ret) < 0 ? 'negative' : '')}">${long.ret}</td>
+  <td class="${longRateClass}">${longRate}</td>
 </tr>
 `;
         alt++;
