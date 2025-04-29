@@ -94,18 +94,13 @@ async function renderTable() {
     const pairs = await fetchPairs();
     const tbody = document.getElementById("pairTableBody");
     tbody.innerHTML = "";
-    let alt = 0;
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
-        let cExitQty = entry.common_exit_qty !== undefined ? entry.common_exit_qty : entry.common_qty;
-        let pExitQty = entry.preferred_exit_qty !== undefined ? entry.preferred_exit_qty : entry.preferred_qty;
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
         if (entry.status === "Open") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
-            cExitQty = entry.common_qty;
-            pExitQty = entry.preferred_qty;
         } else {
             cNow = entry.common_exit !== null && entry.common_exit !== undefined ? entry.common_exit : "-";
             pNow = entry.preferred_exit !== null && entry.preferred_exit !== undefined ? entry.preferred_exit : "-";
