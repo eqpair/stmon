@@ -101,7 +101,7 @@ async function renderTable() {
         let pExitQty = entry.preferred_exit_qty !== undefined ? entry.preferred_exit_qty : entry.preferred_qty;
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
-        if (entry.status === "Progress") {
+        if (entry.status === "Open") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
             cExitQty = entry.common_qty;
