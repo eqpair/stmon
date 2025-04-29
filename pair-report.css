@@ -10,8 +10,8 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px 0 14px 0;
-    margin-bottom: 24px;
+    padding: 24px 0 18px 0;
+    margin-bottom: 28px;
     background: #fff;
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.03);
     position: relative;
@@ -19,7 +19,7 @@ header {
 
 .center-title {
     margin: 0;
-    font-size: 1.25em;
+    font-size: 1.45em;
     letter-spacing: -1px;
     text-align: center;
     flex: 1;
@@ -30,15 +30,15 @@ header {
 
 .home-btn {
     position: absolute;
-    right: 18px;
+    right: 28px;
     top: 50%;
     transform: translateY(-50%);
     background: #1976d2;
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 7px 14px;
-    font-size: 0.97em;
+    border-radius: 9px;
+    padding: 9px 22px;
+    font-size: 1em;
     font-weight: bold;
     cursor: pointer;
     transition: background 0.2s, box-shadow 0.2s;
@@ -51,70 +51,74 @@ header {
 
 .pair-table-wrap {
     max-width: 1100px;
-    margin: 0 auto 24px auto;
-    padding: 0 6px;
+    margin: 0 auto 30px auto;
+    padding: 0 8px;
 }
 
 .pair-table {
     border-collapse: separate;
-    border-spacing: 0 7px;
+    border-spacing: 0 10px;
     width: 100%;
     background: none;
-    font-size: 0.95em;
+    font-size: 0.97em;
 }
 
 .pair-table th,
 .pair-table td {
-    padding: 7px 5px;
+    padding: 9px 7px;
     text-align: center;
     border: none;
-    font-size: 0.95em;
+    font-size: 0.97em;
     white-space: nowrap;
-    font-weight: bold;
 }
 
 .pair-table th {
     background: #e9f0fa;
     color: #444;
-    border-radius: 8px 8px 0 0;
+    font-weight: 700;
+    border-radius: 10px 10px 0 0;
     letter-spacing: 0.02em;
-    font-size: 0.95em;
+    font-size: 0.97em;
 }
 
 .pair-table tr.main-row,
 .pair-table tr.sub-row {
     box-shadow: 0 2px 10px rgba(25, 118, 210, 0.03);
-    border-radius: 10px;
+    border-radius: 13px;
     background: #fff;
     transition: background 0.2s;
 }
 
-.pair-table tr.main-row.pair-bg-0,
-.pair-table tr.sub-row.pair-bg-0 {
-    background: #f3f7fd !important;
+.pair-table tr.main-row {
+    font-weight: bold;
+    background: #f3f7fd;
+    border-top: 2px solid #1976d2;
 }
 
-.pair-table tr.main-row.pair-bg-1,
-.pair-table tr.sub-row.pair-bg-1 {
-    background: #f8fafc !important;
+.pair-table tr.main-row.alt {
+    background: #f8fafc;
+    border-top: 2px solid #d32f2f;
 }
 
-.pair-table tr.main-row.pair-bg-2,
-.pair-table tr.sub-row.pair-bg-2 {
-    background: #f7fbe7 !important;
+.pair-table tr.sub-row {
+    background: #fff;
+    font-size: 0.96em;
 }
 
-.pair-table tr.main-row.pair-bg-3,
-.pair-table tr.sub-row.pair-bg-3 {
-    background: #fff6eb !important;
+.pair-table tr.sub-row.bold {
+    font-weight: bold;
+    color: #1976d2;
+    background: #f7faff;
 }
 
 .positive {
     color: #e53935;
+    font-weight: bold;
 }
 
 .negative {
     color: #1976d2;
+    font-weight: bold;
 }
 
 .pair-table td,
@@ -123,18 +127,9 @@ header {
 }
 
 .small {
-    font-size: 0.82em;
+    font-size: 0.85em;
     color: #888;
     font-weight: normal;
-}
-
-.days-block {
-    display: block;
-    font-size: 0.88em;
-    color: #888;
-    margin-top: 2px;
-    font-weight: 500;
-    line-height: 1.2;
 }
 
 @media (max-width: 1000px) {
@@ -145,17 +140,17 @@ header {
     .pair-table th,
     .pair-table td {
         font-size: 0.92em;
-        padding: 6px 2px;
+        padding: 7px 3px;
     }
 
     .center-title {
-        font-size: 1em;
+        font-size: 1.05em;
     }
 
     .home-btn {
-        font-size: 0.93em;
-        padding: 6px 8px;
-        right: 6px;
+        font-size: 0.97em;
+        padding: 7px 10px;
+        right: 10px;
     }
 }
 
@@ -175,7 +170,7 @@ header {
     }
 
     .pair-table tr {
-        margin-bottom: 12px;
+        margin-bottom: 16px;
         border: none !important;
         background: none !important;
         box-shadow: none !important;
@@ -188,9 +183,8 @@ header {
         border: none;
         border-bottom: 1px solid #e0e7ef;
         background: #fff !important;
-        font-size: 0.95em;
+        font-size: 0.97em;
         word-break: keep-all;
-        font-weight: bold;
     }
 
     .pair-table td:before {
@@ -205,12 +199,12 @@ header {
     }
 
     .center-title {
-        font-size: 0.92em;
+        font-size: 1em;
     }
 
     .home-btn {
-        font-size: 0.91em;
-        padding: 6px 5px;
-        right: 2px;
+        font-size: 0.93em;
+        padding: 7px 7px;
+        right: 5px;
     }
 }

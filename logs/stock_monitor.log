@@ -5255,3 +5255,30 @@
 2025-04-29 15:05:47,885 - root - INFO - BYC (0.5) 트렌드 데이터 저장 완료
 2025-04-29 15:05:48,797 - root - INFO - 삼양홀딩스 (5) 트렌드 데이터 저장 완료
 2025-04-29 15:05:49,740 - root - INFO - 동원시스템즈 트렌드 데이터 저장 완료
+2025-04-29 15:05:53,113 - root - INFO - GitHub 저장소에 성공적으로 푸시되었습니다.
+2025-04-29 15:06:13,083 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:07:13,096 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:08:13,108 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:09:13,120 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:10:13,128 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:11:13,139 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:12:13,147 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:13:13,153 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:14:13,159 - root - INFO - 실시간 가격 저장 완료: ['last_updated']
+2025-04-29 15:14:58,589 - root - INFO - Logging initialized
+2025-04-29 15:14:58,736 - modules.telegram - INFO - Creating new TelegramBot instance
+2025-04-29 15:14:58,736 - modules.telegram - INFO - Initializing TelegramBot
+2025-04-29 15:14:58,853 - modules.telegram - INFO - TelegramBot initialization complete
+2025-04-29 15:14:58,854 - root - INFO - Starting Stock Monitor...
+2025-04-29 15:14:58,854 - modules.telegram - INFO - Resetting webhook
+2025-04-29 15:15:01,385 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 15:15:01,386 - modules.telegram - INFO - Telegram bot started successfully
+2025-04-29 15:15:01,386 - root - INFO - Fetching signals for periodic update...
+2025-04-29 15:15:01,387 - root - INFO - 처리 중인 배치: 1~5 / 84
+2025-04-29 15:15:01,387 - modules.telegram - INFO - Starting telegram polling
+2025-04-29 15:15:01,388 - modules.telegram - INFO - Resetting webhook
+2025-04-29 15:15:01,544 - root - INFO - 실시간 가격 저장 완료: ['051900', '003495', '003490', '051905', 'last_updated']
+2025-04-29 15:15:06,247 - modules.telegram - INFO - Webhook reset complete
+2025-04-29 15:15:06,247 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2025-04-29 15:15:08,780 - root - INFO - 처리 중인 배치: 6~10 / 84
+2025-04-29 15:15:15,811 - root - INFO - 처리 중인 배치: 11~15 / 84
