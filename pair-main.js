@@ -85,12 +85,11 @@ async function renderTable() {
     const pairs = await fetchPairs();
     const tbody = document.getElementById("pairTableBody");
     tbody.innerHTML = "";
-    let lastPair = "";
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
-        if (entry.status === "보유중") {
+        if (entry.status === "Open") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
         } else {
@@ -112,44 +111,32 @@ async function renderTable() {
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
-        // 종목 구분선: pair_name이 바뀔 때만 main-row에 border-top 적용
+        // 2줄로 묶어서 출력, 합산수익/수익률은 rowspan=2로 묶음
         tbody.innerHTML += `
 <tr class="main-row">
-  <td>${entry.pair_name}</td>
-  <td class="${pairProfitClass}">${pairProfitStr}</td>
-  <td class="${pairRetClass}">${pairReturn}</td>
-  <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-</tr>
-<tr class="sub-row">
-  <td></td>
-  <td></td>
-  <td></td>
+  <td rowspan="2">${entry.pair_name}</td>
+  <td rowspan="2" class="${pairProfitClass}">${pairProfitStr}</td>
+  <td rowspan="2" class="${pairRetClass}">${pairReturn}</td>
   <td>보통주(Short)</td>
   <td>${entry.entry_date || "-"}</td>
-  <td>${entry.exit_date || "-"}</td>
   <td>${formatNumber(entry.common_entry)}</td>
   <td>${formatNumber(entry.common_qty)}</td>
   <td>${formatNumber(cNow)}</td>
   <td class="${short.pnl > 0 ? 'positive' : (short.pnl < 0 ? 'negative' : '')}">${short.pnlStr}</td>
   <td class="${short.ret !== '-' && parseFloat(short.ret) > 0 ? 'positive' : (short.ret !== '-' && parseFloat(short.ret) < 0 ? 'negative' : '')}">${short.ret}</td>
-  <td>${entry.status}</td>
+  <td rowspan="2">${entry.exit_date || "-"}</td>
+  <td rowspan="2">${entry.status}</td>
 </tr>
 <tr class="sub-row">
-  <td></td>
-  <td></td>
-  <td></td>
   <td>우선주(Long)</td>
   <td>${entry.entry_date || "-"}</td>
-  <td>${entry.exit_date || "-"}</td>
   <td>${formatNumber(entry.preferred_entry)}</td>
   <td>${formatNumber(entry.preferred_qty)}</td>
   <td>${formatNumber(pNow)}</td>
   <td class="${long.pnl > 0 ? 'positive' : (long.pnl < 0 ? 'negative' : '')}">${long.pnlStr}</td>
   <td class="${long.ret !== '-' && parseFloat(long.ret) > 0 ? 'positive' : (long.ret !== '-' && parseFloat(long.ret) < 0 ? 'negative' : '')}">${long.ret}</td>
-  <td>${entry.status}</td>
 </tr>
 `;
-        lastPair = entry.pair_name;
     }
 }
 window.addEventListener("DOMContentLoaded", renderTable);
