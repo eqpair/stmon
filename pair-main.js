@@ -85,11 +85,12 @@ async function renderTable() {
     const pairs = await fetchPairs();
     const tbody = document.getElementById("pairTableBody");
     tbody.innerHTML = "";
+    let alt = false;
     for (const entry of pairs) {
         let cNow = "-", pNow = "-";
         let days = calcDays(entry.entry_date, entry.exit_date);
         let daysNum = days === "-" ? 0 : Number(days);
-        if (entry.status === "Open") {
+        if (entry.status === "보유중") {
             cNow = await getCurrentOrClosingPrice(entry.common_code, true);
             pNow = await getCurrentOrClosingPrice(entry.preferred_code, false);
         } else {
@@ -111,9 +112,9 @@ async function renderTable() {
         const pairProfitStr = formatNumber(Math.round(pairProfit));
         const pairProfitClass = pairProfit > 0 ? "positive" : (pairProfit < 0 ? "negative" : "");
         const pairRetClass = pairReturn !== "-" && parseFloat(pairReturn) > 0 ? "positive" : (pairReturn !== "-" && parseFloat(pairReturn) < 0 ? "negative" : "");
-        // 2줄로 묶어서 출력, 합산수익/수익률은 rowspan=2로 묶음
+        // 종목별 배경색, 우선주 굵게, 2줄 묶음, 모바일에서도 보기 좋게
         tbody.innerHTML += `
-<tr class="main-row">
+<tr class="main-row${alt ? ' alt' : ''}">
   <td rowspan="2">${entry.pair_name}</td>
   <td rowspan="2" class="${pairProfitClass}">${pairProfitStr}</td>
   <td rowspan="2" class="${pairRetClass}">${pairReturn}</td>
@@ -127,7 +128,7 @@ async function renderTable() {
   <td rowspan="2">${entry.exit_date || "-"}</td>
   <td rowspan="2">${entry.status}</td>
 </tr>
-<tr class="sub-row">
+<tr class="sub-row bold${alt ? ' alt' : ''}">
   <td>우선주(Long)</td>
   <td>${entry.entry_date || "-"}</td>
   <td>${formatNumber(entry.preferred_entry)}</td>
@@ -137,6 +138,7 @@ async function renderTable() {
   <td class="${long.ret !== '-' && parseFloat(long.ret) > 0 ? 'positive' : (long.ret !== '-' && parseFloat(long.ret) < 0 ? 'negative' : '')}">${long.ret}</td>
 </tr>
 `;
+        alt = !alt;
     }
 }
 window.addEventListener("DOMContentLoaded", renderTable);
