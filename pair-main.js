@@ -1,59 +1,67 @@
 // pair-main.js
 
-// "Open" 상태 페어의 trend 마감가를 가져와서 평가손익까지 계산하는 함수
+// 차입수수료까지 반영한 평가손익 계산 (Open 상태 페어만)
 
-async function fetchOpenPairsWithPrices() {
-    // 1. pair-trades.json에서 Open 페어만 추출
-    const tradesRes = await fetch('data/pair-trades.json');
-    const trades = await tradesRes.json();
-    const openPairs = trades.filter(pair => pair.status === 'Open');
-
-    // 2. 각 페어별로 trend 파일에서 최신 가격(마감가) fetch
-    const results = [];
-    for (const pair of openPairs) {
-        // trend 파일에서 보통주/우선주 마감가 읽기
-        let commonClose = null, preferredClose = null;
-        try {
-            const commonTrendRes = await fetch(`data/trends/${pair.common_code}.json`);
-            const commonTrend = await commonTrendRes.json();
-            if (commonTrend.common_prices && commonTrend.common_prices.length > 0)
-                commonClose = commonTrend.common_prices[commonTrend.common_prices.length - 1];
-        } catch { }
-        try {
-            const preferredTrendRes = await fetch(`data/trends/${pair.preferred_code}.json`);
-            const preferredTrend = await preferredTrendRes.json();
-            if (preferredTrend.preferred_prices && preferredTrend.preferred_prices.length > 0)
-                preferredClose = preferredTrend.preferred_prices[preferredTrend.preferred_prices.length - 1];
-        } catch { }
-        results.push({
-            pair_name: pair.pair_name,
-            common_code: pair.common_code,
-            preferred_code: pair.preferred_code,
-            entry_date: pair.entry_date,
-            common_entry: pair.common_entry,
-            preferred_entry: pair.preferred_entry,
-            common_qty: pair.common_qty,
-            preferred_qty: pair.preferred_qty,
-            common_close: commonClose,
-            preferred_close: preferredClose,
-            status: pair.status
-        });
-    }
-    return results;
+function calcBorrowFee(entry, qty, borrowFeePct, days) {
+    if (!entry || !qty || !borrowFeePct || !days) return 0;
+    return entry * qty * (borrowFeePct / 100) * (days / 365);
 }
 
-// 예시: HTML에 표시
+function calcPnL(trade, commonPrice, preferredPrice, todayStr) {
+    // 날짜 계산
+    const entryDate = new Date(trade.entry_date);
+    const today = todayStr ? new Date(todayStr) : new Date();
+    const days = Math.max(1, Math.round((today - entryDate) / (1000 * 60 * 60 * 24)));
+
+    // 손익 계산
+    const shortPnl = (trade.common_entry - commonPrice) * trade.common_qty;
+    const longPnl = (preferredPrice - trade.preferred_entry) * trade.preferred_qty;
+
+    // 위탁+거래세 계산
+    const comm_bps = (trade.commission_bps || 0) + (trade.stamp_bps || 0);
+    const comm = ((trade.common_entry * trade.common_qty + commonPrice * trade.common_qty) +
+        (trade.preferred_entry * trade.preferred_qty + preferredPrice * trade.preferred_qty)) * (comm_bps / 10000);
+
+    // 차입수수료 계산 (보통주 숏만 적용)
+    const borrowFee = calcBorrowFee(trade.common_entry, trade.common_qty, trade.common_borrow_fee_pct || 0, days);
+
+    // 총손익
+    return shortPnl + longPnl - comm - borrowFee;
+}
+
+// trend 파일에서 보통주/우선주 현재가(마감가) fetch
+async function fetchTrendClose(pair) {
+    try {
+        const res = await fetch('data/trends/' + pair.common_code + '.json');
+        const data = await res.json();
+        let commonClose = null, preferredClose = null;
+        if (data.common_prices && data.common_prices.length > 0)
+            commonClose = data.common_prices[data.common_prices.length - 1];
+        if (data.preferred_prices && data.preferred_prices.length > 0)
+            preferredClose = data.preferred_prices[data.preferred_prices.length - 1];
+        return { commonClose, preferredClose };
+    } catch {
+        return { commonClose: null, preferredClose: null };
+    }
+}
+
+// Open 상태 페어만 평가손익 포함 테이블 렌더링
 async function renderOpenPairsTable() {
-    const pairs = await fetchOpenPairsWithPrices();
+    const res = await fetch('data/pair-trades.json');
+    const trades = await res.json();
+    const openPairs = trades.filter(pair => pair.status === 'Open');
     const tbody = document.getElementById('open-pairs-body');
     tbody.innerHTML = '';
-    for (const pair of pairs) {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    for (const pair of openPairs) {
+        // trend에서 현재가 fetch (보통주 코드 기준)
+        const trend = await fetchTrendClose(pair);
+        const commonPrice = trend.commonClose;
+        const preferredPrice = trend.preferredClose;
         // 평가손익 계산
         let pnl = '-';
-        if (pair.common_close && pair.preferred_close) {
-            const shortPnl = (pair.common_entry - pair.common_close) * pair.common_qty;
-            const longPnl = (pair.preferred_close - pair.preferred_entry) * pair.preferred_qty;
-            pnl = (shortPnl + longPnl).toLocaleString();
+        if (commonPrice != null && preferredPrice != null) {
+            pnl = Math.round(calcPnL(pair, commonPrice, preferredPrice, todayStr)).toLocaleString();
         }
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -63,14 +71,15 @@ async function renderOpenPairsTable() {
       <td>${pair.entry_date}</td>
       <td>${pair.common_entry.toLocaleString()}<br>${pair.preferred_entry.toLocaleString()}</td>
       <td>${pair.common_qty}<br>${pair.preferred_qty}</td>
-      <td>${pair.common_close ? pair.common_close.toLocaleString() : '-'}<br>${pair.preferred_close ? pair.preferred_close.toLocaleString() : '-'}</td>
+      <td>${commonPrice != null ? commonPrice.toLocaleString() : '-'}<br>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
       <td>${pnl}</td>
       <td>${pair.status}</td>
+      <td>${pair.common_borrow_fee_pct ? pair.common_borrow_fee_pct + '%' : '-'}</td>
     `;
         tbody.appendChild(tr);
     }
-    if (pairs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9">진행중(Open) 페어가 없습니다.</td></tr>`;
+    if (openPairs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10">진행중(Open) 페어가 없습니다.</td></tr>`;
     }
 }
 
