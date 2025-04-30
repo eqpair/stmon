@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>보유중 페어 트레이딩 리포트</title>
+    <title>페어 트레이딩 리포트</title>
     <style>
         body {
             font-family: sans-serif;
@@ -24,6 +24,14 @@
             background: #f3f3f3;
         }
 
+        .exited {
+            background: #e6ffe6;
+        }
+
+        .holding {
+            background: #ffe6e6;
+        }
+
         .loading {
             color: #888;
         }
@@ -31,7 +39,7 @@
 </head>
 
 <body>
-    <h1>보유중 페어 트레이딩 리포트</h1>
+    <h1>페어 트레이딩 리포트</h1>
     <table>
         <thead>
             <tr>
@@ -39,18 +47,19 @@
                 <th>보통주 코드</th>
                 <th>우선주 코드</th>
                 <th>진입일</th>
+                <th>청산일</th>
                 <th>진입가(보통/우선)</th>
+                <th>청산가(보통/우선)</th>
                 <th>수량(보통/우선)</th>
-                <th>현재가(보통/우선)</th>
-                <th>평가손익</th>
+                <th>평가손익/실현손익</th>
                 <th>Floating Spread</th>
                 <th>Benchmark(%)</th>
                 <th>상태</th>
             </tr>
         </thead>
-        <tbody id="holdings-body">
+        <tbody id="pair-trades-body">
             <tr>
-                <td colspan="11" class="loading">데이터 불러오는 중...</td>
+                <td colspan="12" class="loading">데이터 불러오는 중...</td>
             </tr>
         </tbody>
     </table>
@@ -66,7 +75,7 @@
                 return null;
             }
         }
-        // trend 파일에서 마감가 fetch
+        // trend 파일에서 마감가 fetch (실시간 실패시)
         async function fetchTrendClose(code) {
             try {
                 const res = await fetch(`/data/trends/${code}.json`);
@@ -78,48 +87,57 @@
                 return null;
             }
         }
-        // 보유중 페어 렌더링
-        async function renderHoldings() {
+        // 손익 계산 함수
+        function calcPnL(entry, exit, qty, direction) {
+            if (entry == null || exit == null || qty == null) return 0;
+            return (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
+        }
+        async function renderTable() {
             const res = await fetch('/data/pair-trades.json');
-            const allPairs = await res.json();
-            const holdings = allPairs.filter(pair => pair.status === "Open");
-            const tbody = document.getElementById('holdings-body');
+            const data = await res.json();
+            const tbody = document.getElementById('pair-trades-body');
             tbody.innerHTML = '';
-            for (const pair of holdings) {
-                // 실시간 가격 시도, 실패시 trend 마감가 폴백
-                let [commonPrice, preferredPrice] = [null, null];
-                commonPrice = await fetchNaverPrice(pair.common_code);
-                if (commonPrice === null) commonPrice = await fetchTrendClose(pair.common_code);
-                preferredPrice = await fetchNaverPrice(pair.preferred_code);
-                if (preferredPrice === null) preferredPrice = await fetchTrendClose(pair.preferred_code);
-                // 평가손익 계산
+            for (const trade of data) {
+                const isExited = trade.status === "Exited";
+                let commonPrice = trade.common_exit;
+                let preferredPrice = trade.preferred_exit;
+                // 보유중이면 실시간/마감가 fetch
+                if (!isExited) {
+                    commonPrice = await fetchNaverPrice(trade.common_code);
+                    if (commonPrice === null) commonPrice = await fetchTrendClose(trade.common_code);
+                    preferredPrice = await fetchNaverPrice(trade.preferred_code);
+                    if (preferredPrice === null) preferredPrice = await fetchTrendClose(trade.preferred_code);
+                }
+                // 손익 계산
                 let pnl = '-';
                 if (commonPrice && preferredPrice) {
-                    const shortPnl = (pair.common_entry - commonPrice) * pair.common_qty;
-                    const longPnl = (preferredPrice - pair.preferred_entry) * pair.preferred_qty;
+                    const shortPnl = calcPnL(trade.common_entry, commonPrice, trade.common_qty, 'S');
+                    const longPnl = calcPnL(trade.preferred_entry, preferredPrice, trade.preferred_qty, 'L');
                     pnl = (shortPnl + longPnl).toLocaleString();
                 }
                 const tr = document.createElement('tr');
+                tr.className = isExited ? 'exited' : 'holding';
                 tr.innerHTML = `
-          <td>${pair.pair_name}</td>
-          <td>${pair.common_code}</td>
-          <td>${pair.preferred_code}</td>
-          <td>${pair.entry_date}</td>
-          <td>${pair.common_entry.toLocaleString()}<br>${pair.preferred_entry.toLocaleString()}</td>
-          <td>${pair.common_qty}<br>${pair.preferred_qty}</td>
+          <td>${trade.pair_name}</td>
+          <td>${trade.common_code}</td>
+          <td>${trade.preferred_code}</td>
+          <td>${trade.entry_date}</td>
+          <td>${trade.exit_date || '-'}</td>
+          <td>${trade.common_entry?.toLocaleString() || '-'}<br>${trade.preferred_entry?.toLocaleString() || '-'}</td>
           <td>${commonPrice ? commonPrice.toLocaleString() : '-'}<br>${preferredPrice ? preferredPrice.toLocaleString() : '-'}</td>
+          <td>${trade.common_qty}<br>${trade.preferred_qty}</td>
           <td>${pnl}</td>
-          <td>${pair.common_floating_spread_bps}<br>${pair.preferred_floating_spread_bps}</td>
-          <td>${pair.benchmark_rate_pct}</td>
-          <td>${pair.status}</td>
+          <td>${trade.common_floating_spread_bps}<br>${trade.preferred_floating_spread_bps}</td>
+          <td>${trade.benchmark_rate_pct}</td>
+          <td>${trade.status}</td>
         `;
                 tbody.appendChild(tr);
             }
-            if (holdings.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="loading">보유중인 페어가 없습니다.</td></tr>`;
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="loading">매매 기록이 없습니다.</td></tr>`;
             }
         }
-        renderHoldings();
+        renderTable();
     </script>
 </body>
 
