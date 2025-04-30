@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 트레이딩 리포트 (cal.xlsx 방식)</title>
+    <title>페어 트레이딩 리포트 (cal.xlsx 스타일)</title>
     <style>
         body {
             font-family: sans-serif;
@@ -55,7 +55,7 @@
 </head>
 
 <body>
-    <h1>페어 트레이딩 리포트 (cal.xlsx 방식)</h1>
+    <h1>페어 트레이딩 리포트 (cal.xlsx 스타일)</h1>
     <table>
         <thead>
             <tr>
@@ -71,38 +71,35 @@
                 <th>Q'ty</th>
                 <th>Profit</th>
                 <th>Rate</th>
-                <th>Floating Amt</th>
-                <th>Floating Rate</th>
-                <th>Sprd.</th>
                 <th>No of days</th>
             </tr>
         </thead>
         <tbody id="report-body">
             <tr>
-                <td colspan="16" class="center">데이터 불러오는 중...</td>
+                <td colspan="13" class="center">데이터 불러오는 중...</td>
             </tr>
         </tbody>
     </table>
     <script>
+        // 차입수수료(일할) 계산
         function calcFloatingAmt(entry, qty, borrowFeePct, days) {
             if (!entry || !qty || !borrowFeePct || !days) return 0;
             return entry * qty * (borrowFeePct / 100) * (days / 365);
         }
+        // 손익(Short는 차입수수료 차감)
         function calcPnL(entry, exit, qty, direction, floatingAmt = 0) {
             if (entry == null || exit == null || qty == null) return 0;
             const base = (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
             return direction === 'S' ? base - floatingAmt : base;
         }
+        // 수익률
         function calcReturn(entry, qty, profit) {
             if (!entry || !qty) return 0;
             return profit / (entry * qty) * 100;
         }
+        // 플러스/마이너스 색상
         function profitClass(val) {
             return val > 0 ? 'profit-plus' : (val < 0 ? 'profit-minus' : '');
-        }
-        function calcSprd(commonEntry, preferredEntry) {
-            if (!commonEntry) return 0;
-            return (commonEntry - preferredEntry) / commonEntry;
         }
         async function fetchTrendClose(pair) {
             try {
@@ -140,10 +137,8 @@
                 const lastDate = exitDate ? new Date(exitDate) : new Date();
                 const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
 
-                // Floating Amt/Rate/Sprd
+                // 차입수수료(보통주만, 우선주는 0)
                 const floatingAmt = calcFloatingAmt(trade.common_entry, trade.common_qty, trade.common_borrow_fee_pct || 0, days);
-                const floatingRate = (trade.common_borrow_fee_pct || 0) / 100;
-                const sprd = calcSprd(trade.common_entry, trade.preferred_entry);
 
                 // 개별 손익/수익률
                 const shortPnl = calcPnL(trade.common_entry, commonPrice, trade.common_qty, 'S', floatingAmt);
@@ -156,14 +151,14 @@
                 const totalInvest = trade.common_entry * trade.common_qty + trade.preferred_entry * trade.preferred_qty;
                 const totalRet = totalInvest ? (totalPnl / totalInvest * 100) : 0;
 
-                // 요약(합계) 행
+                // 합계(요약) 행
                 const summaryTr = document.createElement('tr');
                 summaryTr.className = 'pair-summary';
                 summaryTr.innerHTML = `
           <td>${trade.pair_name}</td>
           <td class="right">${Math.round(totalPnl).toLocaleString()}</td>
-          <td class="right">${totalRet.toFixed(2)}%</td>
-          <td colspan="13"></td>
+          <td class="right ${profitClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+          <td colspan="10"></td>
         `;
                 tbody.appendChild(summaryTr);
 
@@ -183,9 +178,6 @@
           <td class="right">${trade.common_qty}</td>
           <td class="right ${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
           <td class="right ${profitClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-          <td class="right">${Math.round(floatingAmt).toLocaleString()}</td>
-          <td class="right">${floatingRate.toFixed(4)}</td>
-          <td class="right">${sprd.toFixed(4)}</td>
           <td class="right">${days}</td>
         `;
                 tbody.appendChild(commonTr);
@@ -206,15 +198,12 @@
           <td class="right">${trade.preferred_qty}</td>
           <td class="right ${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
           <td class="right ${profitClass(longRet)}">${longRet.toFixed(2)}%</td>
-          <td class="right">0</td>
-          <td class="right">0</td>
-          <td class="right">${(-sprd).toFixed(4)}</td>
           <td class="right">${days}</td>
         `;
                 tbody.appendChild(preferredTr);
             }
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="16" class="center">매매 기록이 없습니다.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="13" class="center">매매 기록이 없습니다.</td></tr>`;
             }
         }
         renderReport();
