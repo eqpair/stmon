@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 트레이딩 리포트 (모든 비용 차감)</title>
+    <title>페어 트레이딩 리포트 (테이블형, 모든 비용 차감)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -55,57 +55,38 @@
             color: #fff;
         }
 
-        .card-list {
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-            justify-content: flex-start;
+        .report-table-wrap {
+            max-width: 1200px;
             margin: 0 auto 3em auto;
-            max-width: 900px;
-        }
-
-        .pair-card {
             background: #fff;
-            border-radius: 18px;
+            border-radius: 16px;
             box-shadow: 0 3px 16px #e0e0e0;
-            margin: 0.7em 0;
+            padding: 2em 2em 2em 2em;
+            overflow-x: auto;
+        }
+
+        table.report-table {
             width: 100%;
-            padding: 2.3em 2.4em 2.1em 2.4em;
-            display: flex;
-            flex-direction: column;
-            gap: 1.2em;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            table-layout: auto;
         }
 
-        .pair-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5em;
-        }
-
-        .pair-title {
-            font-size: 1.25em;
-            font-weight: 700;
-            color: #1976d2;
-            letter-spacing: -0.5px;
-        }
-
-        .pair-status {
+        .report-table th,
+        .report-table td {
+            padding: 16px 14px;
             font-size: 1.08em;
-            font-weight: 600;
-            color: #888;
-            padding: 5px 16px;
-            border-radius: 7px;
-            background: #f3f3f3;
+            word-break: keep-all;
+            text-align: center;
+            background: #f9f9f9;
+            border-bottom: 1.5px solid #e0e0e0;
         }
 
-        .pair-summary {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.13em;
-            font-weight: 600;
-            margin: 0.5em 0 1em 0;
+        .report-table th {
+            background: #f3f3f3;
+            font-weight: 700;
+            font-size: 1.07em;
+            border-top: 1.5px solid #e0e0e0;
         }
 
         .profit-plus {
@@ -128,97 +109,37 @@
             font-weight: bold;
         }
 
-        .pair-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 12px;
-            margin-top: 0.6em;
-            table-layout: fixed;
-        }
-
-        .pair-table th,
-        .pair-table td {
-            padding: 18px 20px;
-            font-size: 1.12em;
-            word-break: break-all;
-            text-align: center;
-            border-bottom: 1.5px solid #e0e0e0;
-            background: #f9f9f9;
-            min-width: 90px;
-        }
-
-        .pair-table th {
-            background: #f3f3f3;
-            font-weight: 700;
-            font-size: 1.07em;
-            border-top: 1.5px solid #e0e0e0;
-        }
-
         .bold-green {
             color: #1ca93a;
             font-weight: bold;
         }
 
-        @media (max-width: 900px) {
-            .card-list {
-                max-width: 100%;
+        @media (max-width: 1100px) {
+            .report-table-wrap {
+                padding: 1em 0.5em 1.5em 0.5em;
             }
 
-            .pair-card {
-                min-width: 0;
-                max-width: 100%;
-                padding: 1.6em 0.8em 1.3em 0.8em;
-            }
-
-            .home-btn {
-                right: 8px;
-                top: 10px;
-                padding: 6px 13px;
+            .report-table th,
+            .report-table td {
                 font-size: 0.97em;
+                padding: 10px 4px;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .report-table th,
+            .report-table td {
+                font-size: 0.94em;
+                padding: 7px 2px;
+            }
+
+            .report-table-wrap {
+                padding: 0.7em 0.1em 1em 0.1em;
             }
 
             h1 {
                 font-size: 1.13em;
-            }
-
-            .pair-title {
-                font-size: 1.07em;
-            }
-
-            .pair-summary {
-                font-size: 1em;
-            }
-
-            .pair-table th,
-            .pair-table td {
-                font-size: 0.97em;
-                padding: 11px 4px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .pair-card {
-                padding: 1.1em 0.3em 1em 0.3em;
-            }
-
-            .pair-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-
-            .pair-title {
-                font-size: 1em;
-            }
-
-            .pair-summary {
-                font-size: 0.96em;
-            }
-
-            .pair-table th,
-            .pair-table td {
-                font-size: 0.93em;
-                padding: 7px 2px;
             }
         }
     </style>
@@ -230,8 +151,32 @@
         <button class="home-btn" onclick="location.href='index.html'">HOME</button>
     </div>
     <h1>페어 트레이딩 리포트</h1>
-    <div class="card-list" id="card-list">
-        <div style="text-align:center;width:100%;">데이터 불러오는 중...</div>
+    <div class="report-table-wrap">
+        <table class="report-table" id="report-table">
+            <thead>
+                <tr>
+                    <th>페어명</th>
+                    <th>상태</th>
+                    <th>Position</th>
+                    <th>Code</th>
+                    <th>Entry D.</th>
+                    <th>Exit D.</th>
+                    <th>Entry P.</th>
+                    <th>Exit(Current)</th>
+                    <th>Q'ty</th>
+                    <th>Profit</th>
+                    <th>Rate</th>
+                    <th>No of days</th>
+                    <th>Pair Total Profit</th>
+                    <th>Pair Total Rate</th>
+                </tr>
+            </thead>
+            <tbody id="report-body">
+                <tr>
+                    <td colspan="14" style="text-align:center;">데이터 불러오는 중...</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <script>
         function calcFee(entry, exit, qty, bps) {
@@ -265,7 +210,6 @@
         function rateClass(val) {
             return val > 0 ? 'rate-plus' : (val < 0 ? 'rate-minus' : '');
         }
-        // trend 파일에서 현재가(마감가) fetch
         async function fetchTrendClose(pair) {
             try {
                 const res = await fetch('data/trends/' + pair.common_code + '.json');
@@ -280,7 +224,6 @@
                 return { commonClose: null, preferredClose: null };
             }
         }
-        // stock_data.json에서 last update 읽기
         async function updateLastUpdate() {
             try {
                 const res = await fetch('data/stock_data.json');
@@ -293,12 +236,12 @@
                 document.getElementById('last-update').textContent = 'Last update: -';
             }
         }
-        async function renderCards() {
+        async function renderTable() {
             await updateLastUpdate();
             const res = await fetch('data/pair-trades.json');
             const data = await res.json();
-            const cardList = document.getElementById('card-list');
-            cardList.innerHTML = '';
+            const tbody = document.getElementById('report-body');
+            tbody.innerHTML = '';
             const todayStr = new Date().toISOString().slice(0, 10);
             for (const trade of data) {
                 const isExited = trade.status === "Exited";
@@ -332,74 +275,47 @@
                 const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
                 const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
 
-                // 카드 생성
-                const card = document.createElement('div');
-                card.className = 'pair-card';
-
-                // Header
-                card.innerHTML += `
-          <div class="pair-header">
-            <span class="pair-title">${trade.pair_name}</span>
-            <span class="pair-status">${trade.status}</span>
-          </div>
-          <div class="pair-summary">
-            <span>Total Profit: <span class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</span></span>
-            <span>Total Rate: <span class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</span></span>
-          </div>
+                // Short(보통주) 행
+                const trShort = document.createElement('tr');
+                trShort.innerHTML = `
+          <td rowspan="2">${trade.pair_name}</td>
+          <td rowspan="2">${trade.status}</td>
+          <td>Short</td>
+          <td>${trade.common_code}</td>
+          <td>${trade.entry_date}</td>
+          <td>${isExited ? trade.exit_date : '-'}</td>
+          <td>${trade.common_entry?.toLocaleString() || '-'}</td>
+          <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+          <td>${trade.common_qty}</td>
+          <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+          <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+          <td>${days}</td>
+          <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+          <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
         `;
+                tbody.appendChild(trShort);
 
-                // 상세 테이블
-                card.innerHTML += `
-          <table class="pair-table">
-            <thead>
-              <tr>
-                <th>Position</th>
-                <th>Code</th>
-                <th>Entry D.</th>
-                <th>Exit D.</th>
-                <th>Entry P.</th>
-                <th>Exit(Current)</th>
-                <th>Q'ty</th>
-                <th>Profit</th>
-                <th>Rate</th>
-                <th>No of days</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Short</td>
-                <td>${trade.common_code}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
-                <td>${trade.common_entry?.toLocaleString() || '-'}</td>
-                <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-                <td>${trade.common_qty}</td>
-                <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-                <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-                <td>${days}</td>
-              </tr>
-              <tr>
-                <td>Long</td>
-                <td>${trade.preferred_code}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
-                <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
-                <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-                <td>${trade.preferred_qty}</td>
-                <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-                <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
-                <td>${days}</td>
-              </tr>
-            </tbody>
-          </table>
+                // Long(우선주) 행
+                const trLong = document.createElement('tr');
+                trLong.innerHTML = `
+          <td>Long</td>
+          <td>${trade.preferred_code}</td>
+          <td>${trade.entry_date}</td>
+          <td>${isExited ? trade.exit_date : '-'}</td>
+          <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
+          <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
+          <td>${trade.preferred_qty}</td>
+          <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+          <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+          <td>${days}</td>
         `;
-                cardList.appendChild(card);
+                tbody.appendChild(trLong);
             }
             if (data.length === 0) {
-                cardList.innerHTML = `<div style="text-align:center;width:100%;">매매 기록이 없습니다.</div>`;
+                tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;">매매 기록이 없습니다.</td></tr>`;
             }
         }
-        renderCards();
+        renderTable();
     </script>
 </body>
 
