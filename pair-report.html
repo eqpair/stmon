@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 트레이딩 리포트 (가독성 개선)</title>
+    <title>페어 트레이딩 리포트 (모든 비용 차감)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -236,20 +236,22 @@
             if (!entry || !exit || !qty || !bps) return 0;
             return (entry * qty + exit * qty) * (bps / 10000);
         }
-        function calcFloatingAmt(entry, qty, borrowFeePct, days) {
+        function calcBorrowFee(entry, qty, borrowFeePct, days) {
             if (!entry || !qty || !borrowFeePct || !days) return 0;
             return entry * qty * (borrowFeePct / 100) * (days / 365);
         }
-        function calcPnL(entry, exit, qty, direction, floatingAmt = 0, comm_bps = 0, stamp_bps = 0) {
-            if (entry == null || exit == null || qty == null) return 0;
-            const base = (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
+        function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
+            const base = (entry - exit) * qty;
+            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
             const commission = calcFee(entry, exit, qty, comm_bps);
             const stamp = calcFee(entry, exit, qty, stamp_bps);
-            if (direction === 'S') {
-                return base - floatingAmt - commission - stamp;
-            } else {
-                return base - commission - stamp;
-            }
+            return base - borrowFee - commission - stamp;
+        }
+        function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
+            const base = (exit - entry) * qty;
+            const commission = calcFee(entry, exit, qty, comm_bps);
+            const stamp = calcFee(entry, exit, qty, stamp_bps);
+            return base - commission - stamp;
         }
         function calcReturn(entry, qty, profit) {
             if (!entry || !qty) return 0;
@@ -313,14 +315,20 @@
                 const comm_bps = trade.commission_bps || 0;
                 const stamp_bps = trade.stamp_bps || 0;
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
-                const floatingAmt = calcFloatingAmt(trade.common_entry, trade.common_qty, borrowFeePct, days);
-                const shortPnl = calcPnL(trade.common_entry, commonPrice, trade.common_qty, 'S', floatingAmt, comm_bps, stamp_bps);
-                const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
-                const longPnl = calcPnL(trade.preferred_entry, preferredPrice, trade.preferred_qty, 'L', 0, comm_bps, stamp_bps);
-                const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
+
+                const shortPnl = calcShortPnL(
+                    trade.common_entry, commonPrice, trade.common_qty,
+                    borrowFeePct, days, comm_bps, stamp_bps
+                );
+                const longPnl = calcLongPnL(
+                    trade.preferred_entry, preferredPrice, trade.preferred_qty,
+                    comm_bps, stamp_bps
+                );
                 const totalPnl = shortPnl + longPnl;
                 const totalInvest = trade.common_entry * trade.common_qty + trade.preferred_entry * trade.preferred_qty;
                 const totalRet = totalInvest ? (totalPnl / totalInvest * 100) : 0;
+                const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
+                const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
 
                 // 카드 생성
                 const card = document.createElement('div');
