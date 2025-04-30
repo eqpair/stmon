@@ -58,12 +58,15 @@
         .report-table-wrap {
             max-width: 1100px;
             margin: 0 auto 3em auto;
-            display: flex; /* Flexbox를 사용하여 중앙 정렬 */
-            justify-content: center; /* 수평 중앙 정렬 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
         }
 
         table.report-table {
             width: auto;
+            min-width: 0;
             margin: 0 auto;
             border-collapse: separate;
             border-spacing: 0 10px;
@@ -123,9 +126,13 @@
         @media (max-width: 1200px) {
 
             .report-table-wrap,
-            .top-bar,
             h1 {
                 max-width: 100vw;
+            }
+
+            .last-update-wrapper {
+                max-width: 100%;
+                padding: 0 0.5em;
             }
 
             .report-table th,
@@ -135,6 +142,7 @@
             }
 
             table.report-table {
+                width: 100%;
                 min-width: 700px;
             }
         }
@@ -320,7 +328,7 @@
           <td>${trade.entry_date}</td>
           <td>${isExited ? trade.exit_date : '-'}</td>
           <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
-          <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
+          <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? commonPrice.toLocaleString() : '-'}</td>
           <td>${trade.preferred_qty}</td>
           <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
           <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
