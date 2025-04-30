@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 트레이딩 리포트 (cal.xlsx 스타일)</title>
+    <title>페어 트레이딩 리포트 (cal.xlsx 방식, 모든 수수료 포함)</title>
     <style>
         body {
             font-family: sans-serif;
@@ -55,7 +55,7 @@
 </head>
 
 <body>
-    <h1>페어 트레이딩 리포트 (cal.xlsx 스타일)</h1>
+    <h1>페어 트레이딩 리포트 (cal.xlsx 방식, 모든 수수료 포함)</h1>
     <table>
         <thead>
             <tr>
@@ -81,16 +81,27 @@
         </tbody>
     </table>
     <script>
-        // 차입수수료(일할) 계산
+        // 거래수수료/거래세 계산
+        function calcFee(entry, exit, qty, bps) {
+            if (!entry || !exit || !qty || !bps) return 0;
+            return (entry * qty + exit * qty) * (bps / 10000);
+        }
+        // 차입수수료(일할)
         function calcFloatingAmt(entry, qty, borrowFeePct, days) {
             if (!entry || !qty || !borrowFeePct || !days) return 0;
             return entry * qty * (borrowFeePct / 100) * (days / 365);
         }
-        // 손익(Short는 차입수수료 차감)
-        function calcPnL(entry, exit, qty, direction, floatingAmt = 0) {
+        // 손익(모든 비용 차감)
+        function calcPnL(entry, exit, qty, direction, floatingAmt = 0, comm_bps = 0, stamp_bps = 0) {
             if (entry == null || exit == null || qty == null) return 0;
             const base = (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
-            return direction === 'S' ? base - floatingAmt : base;
+            const commission = calcFee(entry, exit, qty, comm_bps);
+            const stamp = calcFee(entry, exit, qty, stamp_bps);
+            if (direction === 'S') {
+                return base - floatingAmt - commission - stamp;
+            } else {
+                return base - commission - stamp;
+            }
         }
         // 수익률
         function calcReturn(entry, qty, profit) {
@@ -137,13 +148,18 @@
                 const lastDate = exitDate ? new Date(exitDate) : new Date();
                 const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
 
-                // 차입수수료(보통주만, 우선주는 0)
-                const floatingAmt = calcFloatingAmt(trade.common_entry, trade.common_qty, trade.common_borrow_fee_pct || 0, days);
+                // 수수료율
+                const comm_bps = trade.commission_bps || 0;
+                const stamp_bps = trade.stamp_bps || 0;
+                const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
-                // 개별 손익/수익률
-                const shortPnl = calcPnL(trade.common_entry, commonPrice, trade.common_qty, 'S', floatingAmt);
+                // 차입수수료(보통주만, 우선주는 0)
+                const floatingAmt = calcFloatingAmt(trade.common_entry, trade.common_qty, borrowFeePct, days);
+
+                // 개별 손익/수익률(모든 비용 차감)
+                const shortPnl = calcPnL(trade.common_entry, commonPrice, trade.common_qty, 'S', floatingAmt, comm_bps, stamp_bps);
                 const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
-                const longPnl = calcPnL(trade.preferred_entry, preferredPrice, trade.preferred_qty, 'L');
+                const longPnl = calcPnL(trade.preferred_entry, preferredPrice, trade.preferred_qty, 'L', 0, comm_bps, stamp_bps);
                 const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
 
                 // 합계 손익/수익률
