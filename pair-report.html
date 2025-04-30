@@ -69,7 +69,8 @@
 
         .report-table-wrap {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1300px;
+            /* 1100px에서 1300px로 증가 */
             margin: 0 auto 3em auto;
             display: flex;
             flex-direction: column;
@@ -80,8 +81,8 @@
 
         table.report-table {
             width: 100%;
-            min-width: 1000px;
-            /* 최소 너비 설정으로 내용이 압축되지 않도록 함 */
+            min-width: 1200px;
+            /* 1000px에서 1200px로 증가 */
             margin: 0 auto;
             border-collapse: separate;
             border-spacing: 0 10px;
@@ -91,7 +92,8 @@
 
         .report-table th,
         .report-table td {
-            padding: 16px 4px;
+            padding: 16px 8px;
+            /* 4px에서 8px로 셀 패딩 증가 */
             font-size: 1em;
             text-align: center;
             background: #fff;
@@ -187,15 +189,15 @@
             <thead>
                 <tr>
                     <th>Item</th>
-                    <th>T. Profit</th>
-                    <th>T. Rate</th>
+                    <th>Total Profit</th>
+                    <th>Total Rate</th>
                     <th>Status</th>
                     <th>Position</th>
                     <th>Code</th>
                     <th>Entry D.</th>
                     <th>Exit D.</th>
                     <th>Entry P.</th>
-                    <th>Exit(C)</th>
+                    <th>Exit(Current)</th>
                     <th>Q'ty</th>
                     <th>Profit</th>
                     <th>Rate</th>
