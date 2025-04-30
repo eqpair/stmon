@@ -3,26 +3,37 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 트레이딩 리포트 (cal.xlsx 방식, 모든 수수료 포함)</title>
+    <title>페어 트레이딩 리포트 (모바일/반응형)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 1.3em;
+            text-align: center;
+            margin: 1.2em 0 0.7em 0;
         }
 
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-top: 20px;
+            background: #fff;
         }
 
         th,
         td {
-            border: 1px solid #ccc;
-            padding: 6px;
+            border: 1px solid #e0e0e0;
+            padding: 8px 6px;
+            font-size: 1em;
         }
 
         th {
             background: #f3f3f3;
+            font-weight: 700;
         }
 
         .pair-summary {
@@ -51,11 +62,85 @@
             color: #0050b3;
             font-weight: bold;
         }
+
+        .item-label {
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 900px) {
+
+            table,
+            thead,
+            tbody,
+            tr,
+            th,
+            td {
+                display: block;
+                width: 100%;
+            }
+
+            thead tr {
+                display: none;
+            }
+
+            .pair-summary,
+            .stock-row {
+                margin-bottom: 1.2em;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px #e0e0e0;
+            }
+
+            tr {
+                margin-bottom: 1.2em;
+            }
+
+            td {
+                border: none;
+                border-bottom: 1px solid #e0e0e0;
+                position: relative;
+                padding-left: 40%;
+                min-height: 36px;
+            }
+
+            td:before {
+                position: absolute;
+                left: 12px;
+                top: 0;
+                width: 38%;
+                white-space: nowrap;
+                font-weight: 600;
+                color: #888;
+                font-size: 0.97em;
+                content: attr(data-label);
+            }
+
+            .center,
+            .right {
+                text-align: left;
+            }
+        }
+
+        /* 모바일에서 카드 간격 */
+        @media (max-width: 600px) {
+            body {
+                font-size: 0.98em;
+            }
+
+            h1 {
+                font-size: 1.08em;
+            }
+
+            td {
+                padding: 7px 4px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <h1>페어 트레이딩 리포트 (cal.xlsx 방식, 모든 수수료 포함)</h1>
+    <h1>페어 트레이딩 리포트</h1>
     <table>
         <thead>
             <tr>
@@ -81,17 +166,14 @@
         </tbody>
     </table>
     <script>
-        // 거래수수료/거래세 계산
         function calcFee(entry, exit, qty, bps) {
             if (!entry || !exit || !qty || !bps) return 0;
             return (entry * qty + exit * qty) * (bps / 10000);
         }
-        // 차입수수료(일할)
         function calcFloatingAmt(entry, qty, borrowFeePct, days) {
             if (!entry || !qty || !borrowFeePct || !days) return 0;
             return entry * qty * (borrowFeePct / 100) * (days / 365);
         }
-        // 손익(모든 비용 차감)
         function calcPnL(entry, exit, qty, direction, floatingAmt = 0, comm_bps = 0, stamp_bps = 0) {
             if (entry == null || exit == null || qty == null) return 0;
             const base = (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
@@ -103,12 +185,10 @@
                 return base - commission - stamp;
             }
         }
-        // 수익률
         function calcReturn(entry, qty, profit) {
             if (!entry || !qty) return 0;
             return profit / (entry * qty) * 100;
         }
-        // 플러스/마이너스 색상
         function profitClass(val) {
             return val > 0 ? 'profit-plus' : (val < 0 ? 'profit-minus' : '');
         }
@@ -143,26 +223,17 @@
                     preferredPrice = trend.preferredClose;
                     exitDate = todayStr;
                 }
-                // 날짜 계산
                 const entryDate = new Date(trade.entry_date);
                 const lastDate = exitDate ? new Date(exitDate) : new Date();
                 const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
-
-                // 수수료율
                 const comm_bps = trade.commission_bps || 0;
                 const stamp_bps = trade.stamp_bps || 0;
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
-
-                // 차입수수료(보통주만, 우선주는 0)
                 const floatingAmt = calcFloatingAmt(trade.common_entry, trade.common_qty, borrowFeePct, days);
-
-                // 개별 손익/수익률(모든 비용 차감)
                 const shortPnl = calcPnL(trade.common_entry, commonPrice, trade.common_qty, 'S', floatingAmt, comm_bps, stamp_bps);
                 const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
                 const longPnl = calcPnL(trade.preferred_entry, preferredPrice, trade.preferred_qty, 'L', 0, comm_bps, stamp_bps);
                 const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
-
-                // 합계 손익/수익률
                 const totalPnl = shortPnl + longPnl;
                 const totalInvest = trade.common_entry * trade.common_qty + trade.preferred_entry * trade.preferred_qty;
                 const totalRet = totalInvest ? (totalPnl / totalInvest * 100) : 0;
@@ -171,9 +242,9 @@
                 const summaryTr = document.createElement('tr');
                 summaryTr.className = 'pair-summary';
                 summaryTr.innerHTML = `
-          <td>${trade.pair_name}</td>
-          <td class="right ${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
-          <td class="right ${profitClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+          <td data-label="Item">${trade.pair_name}</td>
+          <td data-label="Total Profit" class="right ${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+          <td data-label="Total Rate" class="right ${profitClass(totalRet)}">${totalRet.toFixed(2)}%</td>
           <td colspan="10"></td>
         `;
                 tbody.appendChild(summaryTr);
@@ -182,19 +253,19 @@
                 const commonTr = document.createElement('tr');
                 commonTr.className = 'stock-row';
                 commonTr.innerHTML = `
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>Short</td>
-          <td>${trade.common_code}</td>
-          <td>${trade.entry_date}</td>
-          <td>${isExited ? trade.exit_date : '-'}</td>
-          <td class="right">${trade.common_entry?.toLocaleString() || '-'}</td>
-          <td class="right">${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-          <td class="right">${trade.common_qty}</td>
-          <td class="right ${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-          <td class="right ${profitClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-          <td class="right">${days}</td>
+          <td data-label="Item"></td>
+          <td data-label="Total Profit"></td>
+          <td data-label="Total Rate"></td>
+          <td data-label="Position">Short</td>
+          <td data-label="Code">${trade.common_code}</td>
+          <td data-label="Entry D.">${trade.entry_date}</td>
+          <td data-label="Exit D.">${isExited ? trade.exit_date : '-'}</td>
+          <td data-label="Entry P." class="right">${trade.common_entry?.toLocaleString() || '-'}</td>
+          <td data-label="Exit(Current)" class="right">${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+          <td data-label="Q'ty" class="right">${trade.common_qty}</td>
+          <td data-label="Profit" class="right ${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+          <td data-label="Rate" class="right ${profitClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+          <td data-label="No of days" class="right">${days}</td>
         `;
                 tbody.appendChild(commonTr);
 
@@ -202,19 +273,19 @@
                 const preferredTr = document.createElement('tr');
                 preferredTr.className = 'stock-row';
                 preferredTr.innerHTML = `
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>Long</td>
-          <td>${trade.preferred_code}</td>
-          <td>${trade.entry_date}</td>
-          <td>${isExited ? trade.exit_date : '-'}</td>
-          <td class="right">${trade.preferred_entry?.toLocaleString() || '-'}</td>
-          <td class="right">${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-          <td class="right">${trade.preferred_qty}</td>
-          <td class="right ${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-          <td class="right ${profitClass(longRet)}">${longRet.toFixed(2)}%</td>
-          <td class="right">${days}</td>
+          <td data-label="Item"></td>
+          <td data-label="Total Profit"></td>
+          <td data-label="Total Rate"></td>
+          <td data-label="Position">Long</td>
+          <td data-label="Code">${trade.preferred_code}</td>
+          <td data-label="Entry D.">${trade.entry_date}</td>
+          <td data-label="Exit D.">${isExited ? trade.exit_date : '-'}</td>
+          <td data-label="Entry P." class="right">${trade.preferred_entry?.toLocaleString() || '-'}</td>
+          <td data-label="Exit(Current)" class="right">${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
+          <td data-label="Q'ty" class="right">${trade.preferred_qty}</td>
+          <td data-label="Profit" class="right ${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+          <td data-label="Rate" class="right ${profitClass(longRet)}">${longRet.toFixed(2)}%</td>
+          <td data-label="No of days" class="right">${days}</td>
         `;
                 tbody.appendChild(preferredTr);
             }
