@@ -28,7 +28,7 @@
             background: #e6ffe6;
         }
 
-        .holding {
+        .open {
             background: #ffe6e6;
         }
 
@@ -49,7 +49,7 @@
                 <th>진입일</th>
                 <th>청산일</th>
                 <th>진입가(보통/우선)</th>
-                <th>청산가(보통/우선)</th>
+                <th>청산가/현재가(보통/우선)</th>
                 <th>수량(보통/우선)</th>
                 <th>평가손익/실현손익</th>
                 <th>Floating Spread</th>
@@ -64,24 +64,15 @@
         </tbody>
     </table>
     <script>
-        // 네이버 실시간 가격 fetch
-        async function fetchNaverPrice(code) {
+        // trend 파일에서 마감가 fetch
+        async function fetchTrendClose(code, type) {
             try {
-                const url = `https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${code}`;
-                const res = await fetch(url);
+                const res = await fetch(`data/trends/${code}.json`);
                 const data = await res.json();
-                return data.result.areas[0].datas[0].nv || null;
-            } catch {
-                return null;
-            }
-        }
-        // trend 파일에서 마감가 fetch (실시간 실패시)
-        async function fetchTrendClose(code) {
-            try {
-                const res = await fetch(`/data/trends/${code}.json`);
-                const data = await res.json();
-                const arr = data.common_prices || data.preferred_prices;
-                if (arr && arr.length > 0) return arr[arr.length - 1];
+                if (type === 'common' && data.common_prices && data.common_prices.length > 0)
+                    return data.common_prices[data.common_prices.length - 1];
+                if (type === 'preferred' && data.preferred_prices && data.preferred_prices.length > 0)
+                    return data.preferred_prices[data.preferred_prices.length - 1];
                 return null;
             } catch {
                 return null;
@@ -93,7 +84,7 @@
             return (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
         }
         async function renderTable() {
-            const res = await fetch('/stmon/data/pair-trades.json');
+            const res = await fetch('data/pair-trades.json');
             const data = await res.json();
             const tbody = document.getElementById('pair-trades-body');
             tbody.innerHTML = '';
@@ -101,12 +92,10 @@
                 const isExited = trade.status === "Exited";
                 let commonPrice = trade.common_exit;
                 let preferredPrice = trade.preferred_exit;
-                // 보유중이면 실시간/마감가 fetch
+                // 진행중(Open)이면 trend 마감가 fetch
                 if (!isExited) {
-                    commonPrice = await fetchNaverPrice(trade.common_code);
-                    if (commonPrice === null) commonPrice = await fetchTrendClose(trade.common_code);
-                    preferredPrice = await fetchNaverPrice(trade.preferred_code);
-                    if (preferredPrice === null) preferredPrice = await fetchTrendClose(trade.preferred_code);
+                    commonPrice = await fetchTrendClose(trade.common_code, 'common');
+                    preferredPrice = await fetchTrendClose(trade.preferred_code, 'preferred');
                 }
                 // 손익 계산
                 let pnl = '-';
@@ -116,7 +105,7 @@
                     pnl = (shortPnl + longPnl).toLocaleString();
                 }
                 const tr = document.createElement('tr');
-                tr.className = isExited ? 'exited' : 'holding';
+                tr.className = isExited ? 'exited' : 'open';
                 tr.innerHTML = `
           <td>${trade.pair_name}</td>
           <td>${trade.common_code}</td>
