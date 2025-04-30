@@ -14,6 +14,8 @@
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
         "benchmark_rate_pct": 2.72,
+        "common_borrow_fee_pct": 0.5,
+        "preferred_borrow_fee_pct": 0.0,
         "common_exit": null,
         "preferred_exit": null,
         "status": "Open"
@@ -33,6 +35,8 @@
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
         "benchmark_rate_pct": 3.75,        
+        "common_borrow_fee_pct": 0.5,
+        "preferred_borrow_fee_pct": 0.0,
         "common_exit": null,
         "preferred_exit": null,
         "status": "Open"
@@ -51,7 +55,9 @@
         "stamp_bps": 20.0,
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
-        "benchmark_rate_pct": 3.83,        
+        "benchmark_rate_pct": 3.83,
+        "common_borrow_fee_pct": 0.5,
+        "preferred_borrow_fee_pct": 0.0,
         "common_exit": 164312,
         "preferred_exit": 152759,
         "status": "Exited"
@@ -71,6 +77,8 @@
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
         "benchmark_rate_pct": 3.75,
+        "common_borrow_fee_pct": 0.5,
+        "preferred_borrow_fee_pct": 0.0,
         "common_exit": 246207,
         "preferred_exit": 184498,
         "status": "Exited"
@@ -90,6 +98,8 @@
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
         "benchmark_rate_pct": 3.75,
+        "common_borrow_fee_pct": 0.5,
+        "preferred_borrow_fee_pct": 0.0,
         "common_exit": 42696,
         "preferred_exit": 23038,
         "status": "Exited"
@@ -109,6 +119,8 @@
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
         "benchmark_rate_pct": 3.75,
+        "common_borrow_fee_pct": 0.5,
+        "preferred_borrow_fee_pct": 0.0,
         "common_exit": 62150,
         "preferred_exit": 59626,
         "status": "Exited"
