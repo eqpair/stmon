@@ -93,7 +93,7 @@
             return (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
         }
         async function renderTable() {
-            const res = await fetch('/data/pair-trades.json');
+            const res = await fetch('/stmon/data/pair-trades.json');
             const data = await res.json();
             const tbody = document.getElementById('pair-trades-body');
             tbody.innerHTML = '';
