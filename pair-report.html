@@ -34,14 +34,6 @@
             background: #f9f9f9;
         }
 
-        .exited {
-            color: #888;
-        }
-
-        .open {
-            color: #222;
-        }
-
         .center {
             text-align: center;
         }
@@ -49,6 +41,19 @@
         .right {
             text-align: right;
         }
+
+        .profit-plus {
+            color: #d60000;
+            font-weight: bold;
+        }
+
+        /* 빨간색 */
+        .profit-minus {
+            color: #0050b3;
+            font-weight: bold;
+        }
+
+        /* 파란색 */
     </style>
 </head>
 
@@ -57,36 +62,27 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2">페어명</th>
-                <th rowspan="2">상태</th>
-                <th rowspan="2">진입일</th>
-                <th rowspan="2">청산일</th>
-                <th rowspan="2">합계<br>(평가/실현손익)</th>
-                <th rowspan="2">합계<br>수익률(%)</th>
-                <th>구분</th>
-                <th>종목코드</th>
-                <th>진입가</th>
-                <th>현재가/청산가</th>
-                <th>수량</th>
-                <th>차입수수료율(%)</th>
-                <th>차입수수료</th>
-                <th>개별손익</th>
-                <th>개별수익률(%)</th>
+                <th rowspan="2">Item</th>
+                <th rowspan="2">Total Profit</th>
+                <th rowspan="2">Total Rate</th>
+                <th>Position</th>
+                <th>Code</th>
+                <th>Entry D.</th>
+                <th>Exit D.</th>
+                <th>Entry P.</th>
+                <th>Exit(Current)</th>
+                <th>Q'ty</th>
+                <th>Profit</th>
+                <th>Rate</th>
             </tr>
         </thead>
         <tbody id="report-body">
             <tr>
-                <td colspan="15" class="center">데이터 불러오는 중...</td>
+                <td colspan="12" class="center">데이터 불러오는 중...</td>
             </tr>
         </tbody>
     </table>
     <script>
-        // 차입수수료 계산
-        function calcBorrowFee(entry, qty, borrowFeePct, days) {
-            if (!entry || !qty || !borrowFeePct || !days) return 0;
-            return entry * qty * (borrowFeePct / 100) * (days / 365);
-        }
-        // 손익/수익률 계산
         function calcPnL(entry, exit, qty, direction) {
             if (entry == null || exit == null || qty == null) return 0;
             return (direction === 'S' ? (entry - exit) : (exit - entry)) * qty;
@@ -97,7 +93,13 @@
                 ? ((entry - exit) / entry * 100)
                 : ((exit - entry) / entry * 100);
         }
-        // trend 파일에서 현재가(마감가) fetch (보통주 코드 기준)
+        function calcBorrowFee(entry, qty, borrowFeePct, days) {
+            if (!entry || !qty || !borrowFeePct || !days) return 0;
+            return entry * qty * (borrowFeePct / 100) * (days / 365);
+        }
+        function profitClass(val) {
+            return val > 0 ? 'profit-plus' : (val < 0 ? 'profit-minus' : '');
+        }
         async function fetchTrendClose(pair) {
             try {
                 const res = await fetch('data/trends/' + pair.common_code + '.json');
@@ -123,7 +125,6 @@
                 let commonPrice = trade.common_exit;
                 let preferredPrice = trade.preferred_exit;
                 let exitDate = trade.exit_date;
-                // Open이면 trend에서 현재가 fetch
                 if (!isExited) {
                     const trend = await fetchTrendClose(trade);
                     commonPrice = trend.commonClose;
@@ -144,22 +145,19 @@
                 // 차입수수료(보통주만, 우선주는 0)
                 const borrowFee = calcBorrowFee(trade.common_entry, trade.common_qty, trade.common_borrow_fee_pct || 0, days);
 
-                // 합계 손익/수익률
+                // 합계 손익/수익률 (차입수수료 차감)
                 const totalPnl = shortPnl + longPnl - borrowFee;
                 const totalInvest = trade.common_entry * trade.common_qty + trade.preferred_entry * trade.preferred_qty;
                 const totalRet = totalInvest ? (totalPnl / totalInvest * 100) : 0;
 
-                // 페어 요약(합계) 행
+                // 요약(합계) 행
                 const summaryTr = document.createElement('tr');
-                summaryTr.className = 'pair-summary ' + (isExited ? 'exited' : 'open');
+                summaryTr.className = 'pair-summary';
                 summaryTr.innerHTML = `
           <td>${trade.pair_name}</td>
-          <td>${trade.status}</td>
-          <td>${trade.entry_date}</td>
-          <td>${isExited ? trade.exit_date : '-'}</td>
-          <td class="right">${totalPnl.toLocaleString()}</td>
-          <td class="right">${totalRet.toFixed(2)}</td>
-          <td class="center" colspan="9">합계</td>
+          <td class="right">${Math.round(totalPnl).toLocaleString()}</td>
+          <td class="right">${totalRet.toFixed(2)}%</td>
+          <td colspan="9"></td>
         `;
                 tbody.appendChild(summaryTr);
 
@@ -170,18 +168,15 @@
           <td></td>
           <td></td>
           <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>보통주(Short)</td>
+          <td>Short</td>
           <td>${trade.common_code}</td>
+          <td>${trade.entry_date}</td>
+          <td>${isExited ? trade.exit_date : '-'}</td>
           <td class="right">${trade.common_entry?.toLocaleString() || '-'}</td>
           <td class="right">${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
           <td class="right">${trade.common_qty}</td>
-          <td class="right">${trade.common_borrow_fee_pct ? trade.common_borrow_fee_pct : 0}</td>
-          <td class="right">${Math.round(borrowFee).toLocaleString()}</td>
-          <td class="right">${Math.round(shortPnl).toLocaleString()}</td>
-          <td class="right">${shortRet.toFixed(2)}</td>
+          <td class="right ${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+          <td class="right ${profitClass(shortRet)}">${shortRet.toFixed(2)}%</td>
         `;
                 tbody.appendChild(commonTr);
 
@@ -192,23 +187,20 @@
           <td></td>
           <td></td>
           <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>우선주(Long)</td>
+          <td>Long</td>
           <td>${trade.preferred_code}</td>
+          <td>${trade.entry_date}</td>
+          <td>${isExited ? trade.exit_date : '-'}</td>
           <td class="right">${trade.preferred_entry?.toLocaleString() || '-'}</td>
           <td class="right">${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
           <td class="right">${trade.preferred_qty}</td>
-          <td class="right">0</td>
-          <td class="right">0</td>
-          <td class="right">${Math.round(longPnl).toLocaleString()}</td>
-          <td class="right">${longRet.toFixed(2)}</td>
+          <td class="right ${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+          <td class="right ${profitClass(longRet)}">${longRet.toFixed(2)}%</td>
         `;
                 tbody.appendChild(preferredTr);
             }
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="15" class="center">매매 기록이 없습니다.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" class="center">매매 기록이 없습니다.</td></tr>`;
             }
         }
         renderReport();
