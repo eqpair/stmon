@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 EQ Pair Trading REPORT</title>
+    <title>EQ Pair Trading REPORT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -23,28 +23,21 @@
             margin-right: auto;
         }
 
-        .top-bar {
-            max-width: 1100px;
-            margin: 0 auto;
-            position: relative;
-            height: 48px;
+        .last-update-wrapper {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: flex-start;
-            padding: 0.5em 0 0.5em 0.5em;
-            box-sizing: border-box;
+            margin-bottom: 1em;
+            width: 100%;
+            max-width: 1100px;
         }
 
         .last-update {
             font-size: 1em;
             color: #666;
-            margin-left: 0.5em;
         }
 
         .home-btn {
-            position: absolute;
-            top: 8px;
-            right: 0;
             background: #fff;
             color: #1976d2;
             border: 1.5px solid #1976d2;
@@ -170,12 +163,12 @@
 </head>
 
 <body>
-    <div class="top-bar">
-        <span class="last-update" id="last-update">Last update: -</span>
-        <button class="home-btn" onclick="location.href='index.html'">HOME</button>
-    </div>
-    <h1>페어 EQ Pair Trading REPORT</h1>
+    <h1>EQ Pair Trading REPORT</h1>
     <div class="report-table-wrap">
+        <div class="last-update-wrapper">
+            <span class="last-update" id="last-update">Last update: -</span>
+            <button class="home-btn" onclick="location.href='index.html'">HOME</button>
+        </div>
         <table class="report-table" id="report-table">
             <thead>
                 <tr>
