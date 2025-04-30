@@ -53,36 +53,26 @@ class TelegramBot:
 
         @self.dp.message_handler(commands=['c'])
         async def status_command(message: types.Message):
-            try:
-                pairs = self.dp.bot.get('pairs')
-                from main import StockMonitor
-                monitor = StockMonitor()
-                status = await monitor.get_all_signals()
-                await message.reply(
-                    f"📊 Current Status\n{status}", 
-                    parse_mode='HTML'
+            from main import StockMonitor
+            monitor = StockMonitor()
+            status = await monitor.get_all_signals()
+            await message.reply(
+                f"📊 Current Status\n{status}", 
+                parse_mode='HTML'
                 )
-            except Exception as e:
-                logger.error(f"Error in status command: {str(e)}")
-                await message.reply(f"Error retrieving status: {str(e)}")
 
         @self.dp.message_handler(commands=['d'])
         async def divergence_command(message: types.Message):
-            try:
-                pairs = self.dp.bot.get('pairs')
-                from main import StockMonitor
-                monitor = StockMonitor()
-                all_signals = await monitor.get_all_signals(divergence_only=True)
-                if all_signals:
-                    await message.reply(
-                        f"📊 Divergent Pairs\n{all_signals}", 
-                        parse_mode='HTML'
-                    )
-                else:
-                    await message.reply("No divergent pairs found at the moment.")
-            except Exception as e:
-                logger.error(f"Error in divergence command: {str(e)}")
-                await message.reply(f"Error retrieving divergent pairs: {str(e)}")
+            from main import StockMonitor
+            monitor = StockMonitor()
+            all_signals = await monitor.get_all_signals(divergence_only=True)
+            if all_signals:
+                await message.reply(
+                    f"📊 Divergent Pairs\n{all_signals}", 
+                    parse_mode='HTML'
+                )
+            else:
+                await message.reply("No divergent pairs found at the moment.")
 
     async def _reset_webhook(self):
         try:

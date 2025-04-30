@@ -43,15 +43,12 @@ class NPPair:
             async with session:
                 a_data = await self._fetch_stock_data(session, self.A_code)
                 b_data = await self._fetch_stock_data(session, self.B_code)
-            self._process_data(a_data, b_data)
+                self._process_data(a_data, b_data)
         except Exception as e:
             logger.error(f"Error fetching data: {str(e)}")
             raise MarketDataError(f"Failed to fetch market data: {str(e)}")
-        finally:
-            # 세션이 닫히지 않았다면 명시적으로 닫기
-            if session and not session.closed:
-                await session.close()
-
+        # finally 블록 완전히 제거 (중복 close 금지!)
+        
     async def _fetch_stock_data(self, session: aiohttp.ClientSession, code: str) -> str:
         yesterday = datetime.now() - timedelta(1)
         url = f"https://fchart.stock.naver.com/sise.nhn?symbol={code}&timeframe=day&startTime={yesterday.strftime('%Y%m%d')}&count={self.avg_period+120}&requestType=0"
