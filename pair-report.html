@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>페어 트레이딩 리포트 (세련/가독성 개선)</title>
+    <title>페어 트레이딩 리포트 (가독성 개선)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -58,24 +58,22 @@
         .card-list {
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 36px;
             justify-content: flex-start;
             margin: 0 auto 3em auto;
-            max-width: 650px;
+            max-width: 700px;
         }
 
         .pair-card {
             background: #fff;
-            border-radius: 16px;
+            border-radius: 18px;
             box-shadow: 0 3px 16px #e0e0e0;
             margin: 0.7em 0;
             width: 100%;
-            padding: 2.2em 2.3em 2em 2.3em;
+            padding: 2.3em 2.4em 2.1em 2.4em;
             display: flex;
             flex-direction: column;
-            gap: 1.1em;
-            white-space: nowrap;
-            overflow-x: auto;
+            gap: 1.2em;
         }
 
         .pair-header {
@@ -86,11 +84,10 @@
         }
 
         .pair-title {
-            font-size: 1.22em;
+            font-size: 1.25em;
             font-weight: 700;
             color: #1976d2;
             letter-spacing: -0.5px;
-            white-space: nowrap;
         }
 
         .pair-status {
@@ -100,7 +97,6 @@
             padding: 5px 16px;
             border-radius: 7px;
             background: #f3f3f3;
-            white-space: nowrap;
         }
 
         .pair-summary {
@@ -110,7 +106,6 @@
             font-size: 1.13em;
             font-weight: 600;
             margin: 0.5em 0 1em 0;
-            white-space: nowrap;
         }
 
         .profit-plus {
@@ -137,17 +132,17 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 0.6em;
-            table-layout: auto;
+            table-layout: fixed;
         }
 
         .pair-table th,
         .pair-table td {
-            padding: 10px 14px;
+            padding: 13px 8px;
             font-size: 1.08em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            word-break: break-all;
+            text-align: center;
             border-bottom: 1.5px solid #e0e0e0;
+            background: #f9f9f9;
         }
 
         .pair-table th {
@@ -157,14 +152,9 @@
             border-top: 1.5px solid #e0e0e0;
         }
 
-        .pair-table td {
-            background: #f9f9f9;
-        }
-
         .bold-green {
             color: #1ca93a;
             font-weight: bold;
-            white-space: nowrap;
         }
 
         @media (max-width: 900px) {
@@ -175,7 +165,7 @@
             .pair-card {
                 min-width: 0;
                 max-width: 100%;
-                padding: 1.5em 1.2em 1.3em 1.2em;
+                padding: 1.6em 0.8em 1.3em 0.8em;
             }
 
             .home-btn {
@@ -200,13 +190,13 @@
             .pair-table th,
             .pair-table td {
                 font-size: 0.97em;
-                padding: 7px 6px;
+                padding: 9px 4px;
             }
         }
 
         @media (max-width: 600px) {
             .pair-card {
-                padding: 1.1em 0.7em 1em 0.7em;
+                padding: 1.1em 0.3em 1em 0.3em;
             }
 
             .pair-header {
@@ -226,7 +216,7 @@
             .pair-table th,
             .pair-table td {
                 font-size: 0.93em;
-                padding: 6px 4px;
+                padding: 7px 2px;
             }
         }
     </style>
@@ -371,24 +361,24 @@
                 <td>${trade.common_code}</td>
                 <td>${trade.entry_date}</td>
                 <td>${isExited ? trade.exit_date : '-'}</td>
-                <td class="right">${trade.common_entry?.toLocaleString() || '-'}</td>
-                <td class="right${!isExited ? ' bold-green' : ''}">${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-                <td class="right">${trade.common_qty}</td>
-                <td class="right ${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-                <td class="right ${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-                <td class="right">${days}</td>
+                <td>${trade.common_entry?.toLocaleString() || '-'}</td>
+                <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+                <td>${trade.common_qty}</td>
+                <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+                <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+                <td>${days}</td>
               </tr>
               <tr>
                 <td>Long</td>
                 <td>${trade.preferred_code}</td>
                 <td>${trade.entry_date}</td>
                 <td>${isExited ? trade.exit_date : '-'}</td>
-                <td class="right">${trade.preferred_entry?.toLocaleString() || '-'}</td>
-                <td class="right${!isExited ? ' bold-green' : ''}">${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-                <td class="right">${trade.preferred_qty}</td>
-                <td class="right ${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-                <td class="right ${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
-                <td class="right">${days}</td>
+                <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
+                <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
+                <td>${trade.preferred_qty}</td>
+                <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+                <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+                <td>${days}</td>
               </tr>
             </tbody>
           </table>
