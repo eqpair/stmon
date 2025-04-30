@@ -3,42 +3,124 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>EQ Pair Trading REPORT</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="pair-report.css">
+    <title>보유중 페어 트레이딩 리포트</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 6px;
+        }
+
+        th {
+            background: #f3f3f3;
+        }
+
+        .loading {
+            color: #888;
+        }
+    </style>
 </head>
 
 <body>
-    <header>
-        <h1 class="center-title">EQ Pair Trading REPORT</h1>
-        <button class="home-btn" onclick="location.href='index.html'">HOME</button>
-    </header>
-    <main>
-        <div class="pair-table-wrap">
-            <table class="pair-table" id="pairTable">
-                <thead>
-                    <tr>
-                        <th>종목명</th>
-                        <th>합산수익</th>
-                        <th>합산수익률</th>
-                        <th>구분</th>
-                        <th>진입일</th>
-                        <th>진입가</th>
-                        <th>진입수량</th>
-                        <th>현재/청산가</th>
-                        <th>청산수량</th>
-                        <th>수익</th>
-                        <th>수익률</th>
-                        <th>청산일<br><span class="small">(소요일)</span></th>
-                        <th>상태</th>
-                    </tr>
-                </thead>
-                <tbody id="pairTableBody"></tbody>
-            </table>
-        </div>
-    </main>
-    <script src="pair-main.js"></script>
+    <h1>보유중 페어 트레이딩 리포트</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>페어명</th>
+                <th>보통주 코드</th>
+                <th>우선주 코드</th>
+                <th>진입일</th>
+                <th>진입가(보통/우선)</th>
+                <th>수량(보통/우선)</th>
+                <th>현재가(보통/우선)</th>
+                <th>평가손익</th>
+                <th>Floating Spread</th>
+                <th>Benchmark(%)</th>
+                <th>상태</th>
+            </tr>
+        </thead>
+        <tbody id="holdings-body">
+            <tr>
+                <td colspan="11" class="loading">데이터 불러오는 중...</td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        // 네이버 실시간 가격 fetch
+        async function fetchNaverPrice(code) {
+            try {
+                const url = `https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${code}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                return data.result.areas[0].datas[0].nv || null;
+            } catch {
+                return null;
+            }
+        }
+        // trend 파일에서 마감가 fetch
+        async function fetchTrendClose(code) {
+            try {
+                const res = await fetch(`/data/trends/${code}.json`);
+                const data = await res.json();
+                const arr = data.common_prices || data.preferred_prices;
+                if (arr && arr.length > 0) return arr[arr.length - 1];
+                return null;
+            } catch {
+                return null;
+            }
+        }
+        // 보유중 페어 렌더링
+        async function renderHoldings() {
+            const res = await fetch('/data/pair-trades.json');
+            const allPairs = await res.json();
+            const holdings = allPairs.filter(pair => pair.status === "Open");
+            const tbody = document.getElementById('holdings-body');
+            tbody.innerHTML = '';
+            for (const pair of holdings) {
+                // 실시간 가격 시도, 실패시 trend 마감가 폴백
+                let [commonPrice, preferredPrice] = [null, null];
+                commonPrice = await fetchNaverPrice(pair.common_code);
+                if (commonPrice === null) commonPrice = await fetchTrendClose(pair.common_code);
+                preferredPrice = await fetchNaverPrice(pair.preferred_code);
+                if (preferredPrice === null) preferredPrice = await fetchTrendClose(pair.preferred_code);
+                // 평가손익 계산
+                let pnl = '-';
+                if (commonPrice && preferredPrice) {
+                    const shortPnl = (pair.common_entry - commonPrice) * pair.common_qty;
+                    const longPnl = (preferredPrice - pair.preferred_entry) * pair.preferred_qty;
+                    pnl = (shortPnl + longPnl).toLocaleString();
+                }
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td>${pair.pair_name}</td>
+          <td>${pair.common_code}</td>
+          <td>${pair.preferred_code}</td>
+          <td>${pair.entry_date}</td>
+          <td>${pair.common_entry.toLocaleString()}<br>${pair.preferred_entry.toLocaleString()}</td>
+          <td>${pair.common_qty}<br>${pair.preferred_qty}</td>
+          <td>${commonPrice ? commonPrice.toLocaleString() : '-'}<br>${preferredPrice ? preferredPrice.toLocaleString() : '-'}</td>
+          <td>${pnl}</td>
+          <td>${pair.common_floating_spread_bps}<br>${pair.preferred_floating_spread_bps}</td>
+          <td>${pair.benchmark_rate_pct}</td>
+          <td>${pair.status}</td>
+        `;
+                tbody.appendChild(tr);
+            }
+            if (holdings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="loading">보유중인 페어가 없습니다.</td></tr>`;
+            }
+        }
+        renderHoldings();
+    </script>
 </body>
 
 </html>
