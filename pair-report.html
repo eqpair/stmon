@@ -172,7 +172,7 @@
                 summaryTr.className = 'pair-summary';
                 summaryTr.innerHTML = `
           <td>${trade.pair_name}</td>
-          <td class="right">${Math.round(totalPnl).toLocaleString()}</td>
+          <td class="right ${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
           <td class="right ${profitClass(totalRet)}">${totalRet.toFixed(2)}%</td>
           <td colspan="10"></td>
         `;
