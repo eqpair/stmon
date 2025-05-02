@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>EQ Pair Trading REPORT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* 웹폰트 추가 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
@@ -45,26 +46,6 @@
             font-size: 1em;
             color: #666;
         }
-
-        .home-btn {
-            background: #fff;
-            color: #1976d2;
-            border: 1.5px solid #1976d2;
-            border-radius: 6px;
-            padding: 8px 22px;
-            font-size: 1em;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 2px 8px #e0e0e0;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .home-btn:hover {
-            background: #1976d2;
-            color: #fff;
-        }
-
-
 
         .report-table-wrap {
             width: 100%;
@@ -182,7 +163,9 @@
     <div class="report-table-wrap">
         <div class="last-update-wrapper">
             <span class="last-update" id="last-update">Last update: -</span>
-            <button class="home-btn" onclick="location.href='index.html'">HOME</button>
+            <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <i class="fas fa-home mr-2"></i> Home
+            </a>
         </div>
         <table class="report-table" id="report-table">
             <thead>
