@@ -334,10 +334,6 @@
         </div>
     </footer>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const stockCode = urlParams.get('code');
-        const stockName = urlParams.get('name');
-
         // 마지막 업데이트 시간을 가져와 표시하는 함수
         async function fetchLastUpdateTime() {
             try {
@@ -567,12 +563,25 @@
                     }
                 }
 
+                // 2. 부분 일치 검색
+                if (!matchedSignal) {
+                    for (const signal of data.all_signals) {
+                        const normalizedSignalName = normalizeStockName(signal.stock_name);
+                        if (normalizedSignalName.includes(normalizedCurrentName) ||
+                            normalizedCurrentName.includes(normalizedSignalName)) {
+                            matchedSignal = signal;
+                            console.log("부분 일치하는 종목 발견:", normalizedSignalName);
+                            break;
+                        }
+                    }
+                }
+
                 // 3. 종목 코드로 검색
                 if (!matchedSignal && stockCode !== 'unknown') {
                     for (const signal of data.all_signals) {
                         // 종목 코드 추출 시도
                         try {
-                            const signalCode = stockCode;
+                            const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
                             if (signalCode === stockCode) {
                                 matchedSignal = signal;
                                 console.log("종목 코드로 일치하는 항목 발견:", signalCode);

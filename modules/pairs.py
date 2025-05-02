@@ -12,7 +12,6 @@ from .utils import add_weight_info  # add_weight_info 함수 임포트 추가
 from bs4 import XMLParsedAsHTMLWarning
 import warnings
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
-from modules.utils import add_weight_info
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +26,8 @@ class NPPair:
         self.LS_out_val = ls_out
         self.avg_period = avg_period
         self.data = pd.DataFrame()
-        # 종목명은 코드로부터만 생성
-        self.A_name = add_weight_info(self.A_code)
-        self.B_name = add_weight_info(self.B_code)
+        self.A_name = ""
+        self.B_name = ""
         self.T = 50
 
     async def fetch_data(self):
@@ -74,16 +72,51 @@ class NPPair:
             logger.error(f"데이터 처리 중 오류: {str(e)}")
             self.data = pd.DataFrame()  # 오류 발생 시 빈 데이터 프레임으로 설정
 
-    def _parse_stock_data(self, data, code) -> pd.DataFrame:
+    def _parse_stock_data(self, data: str, code: str) -> pd.DataFrame:
+        try:
+            soup = BeautifulSoup(data, features="html.parser")
+            chartdata = soup.find('chartdata')
+            
+            if chartdata is None:
+                raise MarketDataError(f"Failed to parse data for {code}: No chartdata found")
+                
+            # chartdata에서 name 속성을 찾고, 없으면 code를 사용
+            name = chartdata.get('name', code)
+            
             # 종목명에 가중치 정보 추가
             name = add_weight_info(code, name)
+            
+            # item들을 찾습니다
+            items = soup.find_all('item')
+            if not items:
+                raise MarketDataError(f"Failed to parse data for {code}: No items found")
             
             dates = []
             closes = []
             
+            for item in items:
+                if 'data' not in item.attrs:
+                    continue
+                    
+                data = item['data'].split('|')
+                if len(data) >= 5:  # 데이터가 충분한지 확인
+                    try:
+                        dates.append(pd.to_datetime(data[0]))
+                        closes.append(float(data[4]))
+                    except (ValueError, IndexError) as e:
+                        logger.warning(f"Skipping malformed data in {code}: {str(e)}")
+                        continue
+            
+            if not dates or not closes:
+                raise MarketDataError(f"No valid data parsed for {code}")
+                
             df = pd.DataFrame({'close': closes}, index=dates)
             df.name = name
             return df
+            
+        except Exception as e:
+            logger.error(f"Error parsing stock data for {code}: {str(e)}")
+            raise MarketDataError(f"Failed to parse stock data for {code}: {str(e)}")
 
     def _calculate_metrics(self):
         self.data['dr'] = (self.data['close_A'] - self.data['close_B']) / self.data['close_A']
