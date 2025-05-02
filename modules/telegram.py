@@ -6,6 +6,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import TELEGRAM_TOKEN, CHAT_ID
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import asyncio
+from main import monitor 
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO,
@@ -47,9 +48,6 @@ class TelegramBot:
 
         @self.dp.message_handler(commands=['c'])
         async def status_command(message: types.Message):
-            pairs = self.dp.bot.get('pairs')
-            from main import StockMonitor
-            monitor = StockMonitor()
             status = await monitor.get_all_signals()
             await message.reply(
                 f"📊 Current Status\n{status}", 
@@ -58,9 +56,6 @@ class TelegramBot:
 
         @self.dp.message_handler(commands=['d'])
         async def divergence_command(message: types.Message):
-            pairs = self.dp.bot.get('pairs')
-            from main import StockMonitor
-            monitor = StockMonitor()
             all_signals = await monitor.get_all_signals(divergence_only=True)
             if all_signals:
                 await message.reply(

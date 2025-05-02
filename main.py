@@ -381,9 +381,10 @@ class StockMonitor:
         logger.info("Shutting down Stock Monitor...")
         self.running = False
         await self.telegram_bot.stop()
+        
+monitor = StockMonitor() 
 
 async def main():
-    monitor = StockMonitor()
     try:
         await monitor.start()
     except KeyboardInterrupt:
