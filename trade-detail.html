@@ -567,19 +567,6 @@
                     }
                 }
 
-                // 2. 부분 일치 검색
-                if (!matchedSignal) {
-                    for (const signal of data.all_signals) {
-                        const normalizedSignalName = normalizeStockName(signal.stock_name);
-                        if (normalizedSignalName.includes(normalizedCurrentName) ||
-                            normalizedCurrentName.includes(normalizedSignalName)) {
-                            matchedSignal = signal;
-                            console.log("부분 일치하는 종목 발견:", normalizedSignalName);
-                            break;
-                        }
-                    }
-                }
-
                 // 3. 종목 코드로 검색
                 if (!matchedSignal && stockCode !== 'unknown') {
                     for (const signal of data.all_signals) {
