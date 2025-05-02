@@ -80,11 +80,9 @@ class NPPair:
             if chartdata is None:
                 raise MarketDataError(f"Failed to parse data for {code}: No chartdata found")
                 
-            # chartdata에서 name 속성을 찾고, 없으면 code를 사용
-            name = chartdata.get('name', code)
-            
-            # 종목명에 가중치 정보 추가
-            name = add_weight_info(code, name)
+            # 이 부분을 수정: 종목명 생성에 format_stock_name 함수 사용
+            from .utils import format_stock_name
+            name = format_stock_name(code)
             
             # item들을 찾습니다
             items = soup.find_all('item')

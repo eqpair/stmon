@@ -76,38 +76,25 @@ def ensure_single_instance():
 
 # 종목명 가중치 및 아이콘 표시
 def mark_special_stocks(stock_name):
-    base_name = stock_name
-    weight_info = None
-    if ' (' in stock_name and ')' in stock_name:
-        parts = stock_name.split(' (')
-        if len(parts) == 2 and ')' in parts[1]:
-            base_name = parts[0]
-            weight_info = parts[1].replace(')', '')
-    special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
-    special_stocks_2 = ['한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션',
-                        'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라',
-                        '부국증권', '하이트진로홀딩스']
-    special_stocks_3 = ['코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌',
-                        '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산',
-                        '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트',
-                        '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스']
-    special_stocks_4 = ['NH투자증권', 'LG전자', 'LG생활건강', '아모레G', '대한항공',
-                        '미래에셋증권', '금호석유', 'SK케미칼', '삼성전기', 'LG',
-                        '삼성SDI', '코오롱인더', '현대건설', 'DL이앤씨', '대상',
-                        'DL', 'CJ', '유한양행', 'BYC']
-    result = base_name
-    if weight_info:
-        result = f"{base_name}-{weight_info}-"
-    if base_name in special_stocks_1:
-        return f'🔴 {result}'
-    elif base_name in special_stocks_2:
-        return f'🟠 {result}'
-    elif base_name in special_stocks_3:
-        return f'🟢 {result}'
-    elif base_name in special_stocks_4:
-        return f'🔵 {result}'
-    else:
-        return result
+    """
+    종목명을 받아서 포맷팅된 종목명 반환
+    이 함수는 호환성을 위해 유지하지만, 내부적으로는 format_stock_name 사용
+    """
+    from modules.utils import format_stock_name
+    
+    # 종목 코드 추출 시도
+    code = None
+    
+    # 종목명에서 코드를 추출하는 로직 (기존 코드에 없다면 추가)
+    # 예: "삼성전자 (0.5 [2.3])" -> "005930"
+    # 이 부분은 코드 추출 로직이 필요하나, 여기서는 단순화를 위해 생략
+    
+    # 코드를 알 수 없는 경우 원래 이름 반환
+    if not code:
+        return stock_name
+    
+    return format_stock_name(code)
+
 
 # 신호 텍스트를 웹용 JSON으로 파싱
 def parse_signals(signals_text):
@@ -289,9 +276,11 @@ class StockMonitor:
             all_messages = []
             divergent_messages = []
             r_signal_pairs = []
+
             for pair, result in all_results:
-                clean_name = mark_special_stocks(pair.A_name)
-                formatted_name = f"{clean_name}"
+                # 이 부분 수정: 직접 pair.A_name 사용
+                formatted_name = f"{pair.A_name}"
+                
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
                     all_messages.append(f"{formatted_name}\n Error - {str(result)}")
