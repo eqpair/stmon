@@ -832,14 +832,6 @@
                 return stockCodeMap[cleanName];
             }
 
-            // 부분 일치 시도
-            for (const name in stockCodeMap) {
-                if (cleanName.includes(name) || name.includes(cleanName)) {
-                    console.log(`부분 일치 종목: ${name} (${stockCodeMap[name]})`);
-                    return stockCodeMap[name];
-                }
-            }
-
             console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
             return 'unknown';
         }
