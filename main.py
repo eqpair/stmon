@@ -19,7 +19,6 @@ from bs4 import BeautifulSoup
 
 from config import TICK_PAIRS, WAIT_TIME
 from modules.pairs import NPPair
-from modules.telegram import TelegramBot
 from modules.utils import is_market_time, safe_json_dump
 
 # 로그 디렉토리 생성
@@ -38,15 +37,6 @@ console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(level
 logger.addHandler(console_handler)
 logging.info("Logging initialized")
 
-monitor = None
-
-def get_monitor():
-    global monitor
-    if monitor is None:
-        monitor = StockMonitor()
-    return monitor
-
-# 중복 실행 방지 락
 def obtain_lock():
     lock_file_path = "/tmp/stmon_telegram.lock"
     try:
@@ -277,8 +267,9 @@ def commit_and_push_github(repo_path, commit_message=None):
 
 class StockMonitor:
     def __init__(self):
+        from modules.telegram import TelegramBot
         self.pairs = [NPPair(*pair) for pair in TICK_PAIRS]
-        self.telegram_bot = TelegramBot()
+        self.telegram_bot = TelegramBot(self)  # monitor 인스턴스를 넘김!
         self.running = True
         self.last_r_signal_time = {}
 
@@ -391,6 +382,7 @@ class StockMonitor:
         await self.telegram_bot.stop()
         
 async def main():
+    monitor = StockMonitor()
     try:
         await monitor.start()
     except KeyboardInterrupt:
