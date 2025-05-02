@@ -21,6 +21,8 @@ from config import TICK_PAIRS, WAIT_TIME
 from modules.pairs import NPPair
 from modules.utils import is_market_time, safe_json_dump
 
+from modules.utils import add_weight_info
+
 # 로그 디렉토리 생성
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 os.makedirs(log_dir, exist_ok=True)
@@ -75,26 +77,72 @@ def ensure_single_instance():
             pass
 
 # 종목명 가중치 및 아이콘 표시
-def mark_special_stocks(stock_name):
-    base_name = stock_name
+def mark_special_stocks(stock_code):
+    base_name = add_weight_info(stock_code)
     weight_info = None
-    if ' (' in stock_name and ')' in stock_name:
-        parts = stock_name.split(' (')
+    if ' (' in stock_code and ')' in stock_code:
+        parts = stock_code.split(' (')
         if len(parts) == 2 and ')' in parts[1]:
             base_name = parts[0]
             weight_info = parts[1].replace(')', '')
-    special_stocks_1 = ['삼성전자', '현대차', 'S-Oil', '한진칼', 'SK']
-    special_stocks_2 = ['한국금융지주', '티와이홀딩스', '삼성화재', '호텔신라', 'SK이노베이션',
-                        'GS', 'CJ제일제당', 'SK디스커버리', '롯데지주', '깨끗한나라',
-                        '부국증권', '하이트진로홀딩스']
-    special_stocks_3 = ['코오롱모빌리티그룹', '태양금속', '코오롱', '성신양회', '코오롱글로벌',
-                        '신풍제약', '한화솔루션', '한화투자증권', 'LG화학', '두산',
-                        '남선알미늄', '대원전선', '대호특수강', '한양증권', '노루페인트',
-                        '크라운해태홀딩스', '롯데칠성', '일양약품', '삼양사', 'JW중외제약', '삼양홀딩스']
-    special_stocks_4 = ['NH투자증권', 'LG전자', 'LG생활건강', '아모레G', '대한항공',
-                        '미래에셋증권', '금호석유', 'SK케미칼', '삼성전기', 'LG',
-                        '삼성SDI', '코오롱인더', '현대건설', 'DL이앤씨', '대상',
-                        'DL', 'CJ', '유한양행', 'BYC']
+    special_stocks_1 = [    '삼성전자 [0.5 // 2.3]',
+    '현대차 [0.5 // 2.4]',
+    'S-Oil [0.5 // 2.6]',
+    '한진칼 [1 // 2.1]',
+    'SK [0.5 // 2.0]']
+    special_stocks_2 = [    '한국금융지주 [1 // 2.2]',
+    '티와이홀딩스 [5.25 // 2.0]',
+    '삼성화재 [0.5 // 2.2]',
+    '호텔신라 [3 // 2.2]',
+    'SK이노베이션 [1 // 2.0]',
+    'GS [1 // 2.1]',
+    'CJ제일제당 [1 // 2.1]',
+    'SK디스커버리 [5 // 2.3]',
+    '롯데지주 [1 // 2.0]',
+    '깨끗한나라 [1.5 // 2.3]',
+    '부국증권 [5 // 2.5]',
+    '하이트진로홀딩스 [5 // 2.3]']
+    special_stocks_3 = [    '코오롱모빌리티그룹 [4.5 // 2.0]',
+    '태양금속 [5 // 2.2]',
+    '코오롱 [5 // 2.4]',
+    '성신양회 [5 // 2.2]',
+    '코오롱글로벌 [5 // 2.3]',
+    '신풍제약 [1.5 // 2.0]',
+    '한화솔루션 [1 // 2.0]',
+    '한화투자증권 [5 // 2.4]',
+    'LG화학 [0.5 // 2.4]',
+    '두산 [0.25 // 2.2]',
+    '남선알미늄 [5 // 2.3]',
+    '대원전선 [5 // 2.4]',
+    '대호특수강 [7 // 2.2]',
+    '한양증권 [0.5 // 2.1]',
+    '노루페인트 [5 // 2.3]',
+    '크라운해태홀딩스 [5 // 2.0]',
+    '롯데칠성 [1 // 2.1]',
+    '일양약품 [5 // 2.5]',
+    '삼양사 [5 // 2.2]',
+    'JW중외제약 [5 // 2.2]',
+    '삼양홀딩스 [5 // 2.1]']
+    special_stocks_4 = [    'NH투자증권 [1 // 2.2]',
+    'LG전자 [0.5 // 2.5]',
+    'LG생활건강 [0.5 // 2.4]',
+    '아모레G [0.5 // 2.3]',
+    '대한항공 [0.04 // 2.4]',
+    '미래에셋증권 [1 // 2.4]',
+    '금호석유 [0.5 // 2.4]',
+    'SK케미칼 [1 // 2.3]',
+    '삼성전기 [0.5 // 2.4]',
+    'LG [0.5 // 2.2]',
+    '삼성SDI [0.5 // 2.1]',
+    '코오롱인더 [1 // 2.0]',
+    '현대건설 [0.5 // 2.2]',
+    'DL이앤씨 [1 // 2.0]',
+    '대상 [1 // 2.1]',
+    'DL [1 // 2.2]',
+    'CJ [1 // 2.3]',
+    '유한양행 [1 // 2.2]',
+    'BYC [0.5 // 2.5]']
+
     result = base_name
     if weight_info:
         result = f"{base_name}-{weight_info}-"
@@ -290,8 +338,7 @@ class StockMonitor:
             divergent_messages = []
             r_signal_pairs = []
             for pair, result in all_results:
-                clean_name = mark_special_stocks(pair.A_name)
-                formatted_name = f"{clean_name}"
+                formatted_name = mark_special_stocks(pair.A_code)
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
                     all_messages.append(f"{formatted_name}\n Error - {str(result)}")
