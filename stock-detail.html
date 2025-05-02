@@ -246,6 +246,10 @@
     </footer>
 
     <script>
+        // URL에서 종목코드와 종목명 추출
+            const urlParams = new URLSearchParams(window.location.search);
+            const stockCode = urlParams.get('code'); // 예: '001680'
+            const stockName = urlParams.get('name'); // 예: '대상'
         // 마지막 업데이트 시간을 가져와 표시하는 함수
         async function fetchLastUpdateTime() {
             try {
@@ -485,7 +489,7 @@
                 // 5.3 종목 코드로 검색 (마지막 시도)
                 if (!matchedSignal && stockCode !== 'unknown') {
                     for (const signal of stockData.all_signals) {
-                        const signalCode = getStockCodeByName(normalizeStockName(signal.stock_name));
+                        const signalCode = stockCode;
                         if (signalCode === stockCode) {
                             matchedSignal = signal;
                             console.log("종목 코드로 일치하는 항목 발견:", signalCode);
@@ -593,7 +597,7 @@
                 let matchedItem = null;
                 for (const signal of data.all_signals) {
                     // 코드 매핑 함수를 사용하여 종목 코드 찾기
-                    const signalCode = getStockCodeByName(signal.stock_name);
+                    const signalCode = stockCode;
                     if (signalCode === stockCode) {
                         matchedItem = signal;
                         break;
