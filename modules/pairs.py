@@ -29,28 +29,16 @@ class NPPair:
         self.A_name = ""
         self.B_name = ""
         self.T = 50
-        self._session = None
-
-    async def _get_session(self) -> aiohttp.ClientSession:
-        if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession()
-        return self._session
 
     async def fetch_data(self):
-        session = None
         try:
-            session = await self._get_session()
-            async with session:
+            async with aiohttp.ClientSession() as session:
                 a_data = await self._fetch_stock_data(session, self.A_code)
                 b_data = await self._fetch_stock_data(session, self.B_code)
-            self._process_data(a_data, b_data)
+                self._process_data(a_data, b_data)
         except Exception as e:
             logger.error(f"Error fetching data: {str(e)}")
             raise MarketDataError(f"Failed to fetch market data: {str(e)}")
-        finally:
-            # 세션이 닫히지 않았다면 명시적으로 닫기
-            if session and not session.closed:
-                await session.close()
 
     async def _fetch_stock_data(self, session: aiohttp.ClientSession, code: str) -> str:
         yesterday = datetime.now() - timedelta(1)
@@ -194,8 +182,7 @@ class NPPair:
         
         for attempt in range(max_retries):
             try:
-                session = await self._get_session()
-                async with session:
+                async with aiohttp.ClientSession() as session:
                     a_price = await self._fetch_current_price(session, self.A_code)
                     b_price = await self._fetch_current_price(session, self.B_code)
                     
