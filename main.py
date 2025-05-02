@@ -371,16 +371,11 @@ class StockMonitor:
                 await asyncio.sleep(30)
 
     async def start(self):
-        try:
-            logger.info("Starting Stock Monitor...")
-            await self.telegram_bot.start(self.pairs)
-            update_task = asyncio.create_task(self.send_periodic_updates())
-            polling_task = asyncio.create_task(self.telegram_bot.start_polling())
-            await asyncio.gather(update_task, polling_task)
-        except Exception as e:
-            logger.error(f"Critical error in Stock Monitor: {str(e)}")
-            self.running = False
-            raise
+        logger.info("Starting Stock Monitor...")
+        await self.telegram_bot.start(self.pairs)
+        update_task = asyncio.create_task(self.send_periodic_updates())
+        polling_task = asyncio.create_task(self.telegram_bot.start_polling())
+        await asyncio.gather(update_task, polling_task)
 
     async def shutdown(self):
         logger.info("Shutting down Stock Monitor...")

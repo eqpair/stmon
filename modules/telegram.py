@@ -83,14 +83,10 @@ class TelegramBot:
             raise
 
     async def start(self, pairs):
-        try:
-            # Reset webhook before starting
-            await self._reset_webhook()
-            self.dp.bot['pairs'] = pairs
-            logger.info("Telegram bot started")
-        except Exception as e:
-            logger.error(f"Error starting telegram bot: {str(e)}")
-            raise
+        # polling만 쓸 경우, webhook 리셋은 여기서 한 번만!
+        await self._reset_webhook()
+        self.dp.bot['pairs'] = pairs
+        logger.info("Telegram bot started")
 
     async def send_message(self, message: str):
         try:
@@ -105,14 +101,8 @@ class TelegramBot:
             raise
 
     async def start_polling(self):
-        try:
-            # Reset webhook before polling
-            await self._reset_webhook()
-            # Start polling with clean state
-            await self.dp.start_polling(reset_webhook=True, timeout=20, relax=0.1)
-        except Exception as e:
-            logger.error(f"Error in telegram polling: {str(e)}")
-            raise
+        # 여기서는 webhook 리셋 없이 polling만 실행
+        await self.dp.start_polling(reset_webhook=True, timeout=20, relax=0.1)
 
     async def stop(self):
         try:
