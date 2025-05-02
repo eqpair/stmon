@@ -6,7 +6,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import TELEGRAM_TOKEN, CHAT_ID
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import asyncio
-from main import monitor 
+from main import get_monitor
+monitor = get_monitor()
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO,

@@ -38,6 +38,14 @@ console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(level
 logger.addHandler(console_handler)
 logging.info("Logging initialized")
 
+monitor = None
+
+def get_monitor():
+    global monitor
+    if monitor is None:
+        monitor = StockMonitor()
+    return monitor
+
 # 중복 실행 방지 락
 def obtain_lock():
     lock_file_path = "/tmp/stmon_telegram.lock"
@@ -382,8 +390,6 @@ class StockMonitor:
         self.running = False
         await self.telegram_bot.stop()
         
-monitor = StockMonitor() 
-
 async def main():
     try:
         await monitor.start()
