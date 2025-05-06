@@ -9,6 +9,7 @@
     <title>Stock Details - EQ Pairs Monitoring System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .signal-card {
             transition: all 0.3s ease;
@@ -87,6 +88,7 @@
             <p class="text-gray-600">Loading data...</p>
         </div>
 
+        <div id="content-container" class="hidden">
         <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -121,7 +123,7 @@
         <!-- Price Trend Chart -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Trend</h2>
-            <div class="chart-container">
+            <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
                 <canvas id="price-chart"></canvas>
             </div>
         </div>
@@ -140,7 +142,7 @@
                             <th>Preferred Stock Price</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="signals-table-body">
                         <tr>
                             <td>Loading history data...</td>
                         </tr>
@@ -148,6 +150,7 @@
                 </table>
             </div>
         </div>
+    </div>
     </div>
 
     <footer class="bg-white py-6 mt-8">
@@ -157,6 +160,12 @@
     </footer>
 
     <script>
+        // 종목 코드를 이름으로부터 추출하는 함수 (간단히 구현)
+        function getStockCodeByName(stockName) {
+            // 실제 구현에서는 종목 이름과 코드 매핑 데이터 필요
+            // 여기서는 더미 코드 반환
+            return stockName ? stockName.toLowerCase().replace(/\s/g, '-') : 'unknown';
+        }
         // 마지막 업데이트 시간을 가져와 표시하는 함수
         async function fetchLastUpdateTime() {
             try {
@@ -177,7 +186,14 @@
                 let formattedDate;
                 try {
                     const date = new Date(updateTime);
-                    formattedDate = date.toLocaleString();
+                    formattedDate = date.toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
                 } catch (e) {
                     formattedDate = updateTime; // 변환 실패시 원본 사용
                 }
@@ -195,6 +211,7 @@
             tempDiv.innerHTML = html;
             return tempDiv.textContent || tempDiv.innerText || '';
         }
+        
         // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => {
             // URL에서 종목 정보 추출
