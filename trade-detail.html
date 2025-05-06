@@ -40,6 +40,53 @@
         .sz-high { color: #DC2626; font-weight: bold; }
         .sz-medium { color: #EA580C; font-weight: bold; }
         .sz-low { color: #16A34A; }
+       /* 슬라이더 스타일링 추가 */
+        .slider-wrapper {
+            width: 100%; /* 부모 요소에 맞게 너비 100% 설정 */
+        }
+        input[type="range"] {
+            -webkit-appearance: none; /* 브라우저 기본 스타일 제거 */
+            appearance: none;
+            width: 100%; /* 전체 너비 사용 */
+            height: 10px; /* 트랙 높이 조정 */
+            background: #d1d5db; /* 트랙 배경색 (Tailwind gray-300) */
+            border-radius: 5px; /* 트랙 둥글게 */
+            outline: none;
+            margin: 10px 0; /* 상하 마진 추가 */
+        }
+        /* 슬라이더 thumb 스타일링 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px; /* thumb 크기 확대 */
+            height: 24px;
+            background: #3b82f6; /* thumb 색상 (Tailwind blue-500) */
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ffffff; /* thumb 테두리 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        /* 슬라이더 트랙 채우기 효과 (진행 부분) */
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #d1d5db;
+            height: 10px;
+            border-radius: 5px;
+        }
+        input[type="range"]::-moz-range-track {
+            background: #d1d5db;
+            height: 10px;
+            border-radius: 5px;
+        }
+
         @media (max-width: 1024px) {
             .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
             .grid-cols-2 { grid-template-columns: repeat(1, 1fr); }
@@ -53,6 +100,18 @@
             .text-xl { font-size: 1.2rem; }
             button, a { min-height: 44px; padding: 0.75rem 1rem; font-size: 0.875rem; }
             .flex.justify-between.items-center { flex-direction: column; gap: 10px; align-items: flex-start; }
+            /* 모바일에서 슬라이더 크기 조정 */
+            input[type="range"] {
+                height: 8px; /* 모바일에서 트랙 높이 약간 줄임 */
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                width: 20px;
+                height: 20px;
+            }
+            input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+            }
         }
     </style>
 </head>
