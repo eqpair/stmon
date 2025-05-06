@@ -468,7 +468,6 @@
         // 요약 정보 업데이트
         function updateSummary() {
             document.getElementById('total-stocks').textContent = allSignals.length;
-            document.getElementById('divergent-count').textContent = divergentSignals.length;
 
             const inSignalCount = allSignals.filter(s => s.signal && s.signal.includes('IN')).length;
             document.getElementById('in-signal-count').textContent = inSignalCount;
