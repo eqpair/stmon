@@ -374,6 +374,7 @@
         async function fetchData() {
             updateStatus('loading');
             try {
+                // stock_data.json 로드
                 const stockResponse = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
                 if (!stockResponse.ok) {
                     throw new Error(`Stock data HTTP error! status: ${stockResponse.status}`);
@@ -392,15 +393,22 @@
                 allSignals = processSignals(data.all_signals || []);
                 divergentSignals = processSignals(data.divergent_signals || []);
 
+                console.log('allSignals 로드됨:', allSignals);
+
+                // tradesData 로드
+                await fetchTradesData();
+
                 // UI 업데이트
                 updateLastUpdated(updateTime);
                 updateSummary();
+                updateRecentAlerts();
                 filterAndRenderData();
 
                 updateStatus('success');
             } catch (error) {
                 console.error('Complete data fetch error:', error);
                 updateStatus('error', error.message);
+                updateRecentAlerts(); // 오류 발생 시에도 알림 업데이트 시도
             }
         }
 
@@ -501,12 +509,14 @@
             document.getElementById('out-signal-count').textContent = outSignalCount;
         }
 
-       // 종목명 정규화 함수
+        // 종목명 정규화 함수
         function normalizeStockName(name) {
             if (!name) return '';
             // HTML 태그, 이모지 제거, 공백 유지, 대소문자 무시
             let cleanName = name.replace(/<[^>]+>/g, '').trim();
             cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
+            // 접미사 제거 (예: "-0.5", "-1")
+            cleanName = cleanName.replace(/-\d+(\.\d+)?$/, '').trim();
             return cleanName.toLowerCase();
         }
 
@@ -789,10 +799,9 @@
 
             // HTML 태그 및 이모지 제거
             let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
-            cleanName = cleanName.replace(/^[^\w\s가-힣]+ /, '').trim();  // 이모지 제거
-
-            // 가중치 및 대시 형식 제거
-            cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').trim();
+            cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
+            // 접미사 제거 (예: "-0.5", "-1")
+            cleanName = cleanName.replace(/-\d+(\.\d+)?$/, '').trim();
 
             console.log(`종목명 변환: "${stockName}" → "${cleanName}"`);
 
