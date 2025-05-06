@@ -177,29 +177,6 @@
             </div>
         </div>
 
-        <!-- Open Trades -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Open Trades</h2>
-            <div class="overflow-x-auto">
-                <table class="open-trades-table">
-                    <thead>
-                        <tr>
-                            <th>Pair Name</th>
-                            <th>Common Code</th>
-                            <th>Preferred Code</th>
-                            <th>Entry Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="open-trades">
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-500">Loading Open Trades...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
         <!-- Tab Menu -->
         <div class="mb-6">
             <div class="border-b border-gray-200">
@@ -386,12 +363,10 @@
                 tradesData = await response.json();
                 console.log('tradesData 로드됨:', tradesData);
                 updateRecentAlerts();
-                updateOpenTrades();
             } catch (error) {
                 console.error('fetchTradesData 오류:', error);
                 tradesData = [];
                 updateRecentAlerts();
-                updateOpenTrades();
             }
         }
         
@@ -534,16 +509,44 @@
         function updateRecentAlerts() {
             const alertsContainer = document.getElementById('recent-alerts');
 
-            // IN 신호와 Open 상태 매매 결합
-            const inSignals = allSignals.filter(s => s.signal && s.signal.includes('IN'));
-            const openTrades = tradesData.filter(t => t.status === 'Open').map(trade => ({
-                stock_name: trade.pair_name,
-                sz_value: 0, // SZ 값은 매매 데이터에 없으므로 0으로 설정
-                signal: 'OPEN',
-                price_a: null,
-                price_b: null,
-                timestamp: new Date().toISOString()
+            // IN 신호
+            const inSignals = allSignals.filter(s => s.signal && s.signal.includes('IN')).map(signal => ({
+                ...signal,
+                type: 'IN',
+                sortTime: signal.timestamp
             }));
+
+            // Open 상태 매매
+            const openTrades = tradesData.filter(t => t.status === 'Open').map(trade => {
+                // pair_name과 stock_name 매핑
+                const matchedSignal = allSignals.find(s =>
+                    s.stock_name.toLowerCase() === trade.pair_name.toLowerCase()
+                );
+                // SZ 값 클래스 결정
+                let szClass = '';
+                let szValue = matchedSignal ? matchedSignal.sz_value : null;
+                if (szValue >= 2.5) {
+                    szClass = 'sz-high';
+                } else if (szValue >= 1.5) {
+                    szClass = 'sz-medium';
+                } else if (szValue !== null) {
+                    szClass = 'sz-low';
+                }
+                return {
+                    stock_name: trade.pair_name,
+                    sz_value: szValue,
+                    sz_class: szClass,
+                    signal: 'OPEN',
+                    price_a: null,
+                    price_b: null,
+                    type: 'OPEN',
+                    sortTime: trade.entry_date || new Date().toISOString(),
+                    entry_date: trade.entry_date,
+                    common_code: trade.common_code,
+                    preferred_code: trade.preferred_code
+                };
+            });
+
 
             const combinedSignals = [...inSignals, ...openTrades];
 
@@ -552,8 +555,12 @@
                 return;
             }
 
-            // SZ 값 기준 내림차순 정렬 (OPEN은 SZ 값이 0이므로 뒤로)
-            combinedSignals.sort((a, b) => b.sz_value - a.sz_value);
+            // 최신순 정렬 (entry_date 또는 timestamp 기준)
+            combinedSignals.sort((a, b) => {
+                const dateA = new Date(a.sortTime);
+                const dateB = new Date(b.sortTime);
+                return dateB - dateA; // 최신이 먼저
+            });
 
             // 최대 5개의 알림 표시
             const recentSignals = combinedSignals.slice(0, 5);
@@ -574,6 +581,15 @@
                 } else if (signal.signal.includes('OPEN')) {
                     signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
                 }
+                // SZ 값 포맷팅
+                const szClass = signal.type === 'OPEN' ? signal.sz_class : (signal.sz_value >= 2.5 ? 'sz-high' : signal.sz_value >= 1.5 ? 'sz-medium' : 'sz-low');
+                const szDisplay = signal.sz_value !== null ? `<span class="font-medium ${szClass}">${signal.sz_value.toFixed(2)}</span>` : '-';
+
+                // Open 매매의 경우 추가 정보
+                const extraInfo = signal.type === 'OPEN'
+                    ? `SZ: ${szDisplay} | Entry: ${signal.entry_date || '-'} | Codes: ${signal.common_code || '-'} / ${signal.preferred_code || '-'}`
+                    : `SZ: ${szDisplay}`;
+
 
                 alertEl.innerHTML = `
                 <div class="flex-shrink-0 mt-0.5">
@@ -584,50 +600,17 @@
                 <div class="ml-3 flex-1">
                     <p class="text-sm font-medium text-gray-900">
                         <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                        class="hover:text-blue-600 hover:underline">
+                            class="hover:text-blue-600 hover:underline">
                             ${signal.stock_name}
                         </a>
                     </p>
                     <p class="mt-1 text-xs text-gray-500">
-                        ${signal.signal === 'OPEN' ? '' : `SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | `}
-                        Signal: ${signalTag}
+                        ${extraInfo} | Signal: ${signalTag}
                     </p>
                 </div>
             `;
 
                 alertsContainer.appendChild(alertEl);
-            });
-        }
-        
-        // Open Trades 업데이트
-        function updateOpenTrades() {
-            const tbody = document.getElementById('open-trades');
-            tbody.innerHTML = '';
-
-            // status가 Open인 매매만 필터링
-            const openTrades = tradesData.filter(trade => trade.status === 'Open');
-
-            if (openTrades.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">No open trades available.</td></tr>';
-                return;
-            }
-
-            openTrades.forEach(trade => {
-                const stockCode = getStockCodeByName(trade.pair_name);
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                <td>
-                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(trade.pair_name)}" 
-                        class="hover:text-blue-600 hover:underline">
-                        ${trade.pair_name || '-'}
-                    </a>
-                </td>
-                <td>${trade.common_code || '-'}</td>
-                <td>${trade.preferred_code || '-'}</td>
-                <td>${trade.entry_date || '-'}</td>
-                <td><span class="signal-tag signal-OPEN">${trade.status}</span></td>
-            `;
-                tbody.appendChild(tr);
             });
         }
 
