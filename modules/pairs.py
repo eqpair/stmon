@@ -127,6 +127,9 @@ class NPPair:
         return self._generate_signal()
 
     def _generate_signal(self) -> Optional[str]:
+        if self.data is None or self.data.empty:
+            logger.error(f"No data available for signal generation: {self.A_code} vs {self.B_code}")
+            return None
         try:
             last_row = self.data.iloc[-1]
             sz = last_row['sz']
