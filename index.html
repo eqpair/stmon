@@ -177,6 +177,29 @@
             </div>
         </div>
 
+        <!-- Open Trades -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Open Trades</h2>
+            <div class="overflow-x-auto">
+                <table class="open-trades-table">
+                    <thead>
+                        <tr>
+                            <th>Pair Name</th>
+                            <th>Common Code</th>
+                            <th>Preferred Code</th>
+                            <th>Entry Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="open-trades">
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-gray-500">Loading Open Trades...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Tab Menu -->
         <div class="mb-6">
             <div class="border-b border-gray-200">
@@ -291,6 +314,7 @@
         let allSignals = [];
         let divergentSignals = [];
         let historyData = [];
+        let tradesData = [];
         let activeTab = 'all';
         let lastUpdated = '';
 
@@ -361,31 +385,32 @@
                 }
                 tradesData = await response.json();
                 console.log('tradesData 로드됨:', tradesData);
-                return tradesData;
+                updateRecentAlerts();
+                updateOpenTrades();
             } catch (error) {
                 console.error('fetchTradesData 오류:', error);
                 tradesData = [];
-                return [];
+                updateRecentAlerts();
+                updateOpenTrades();
             }
         }
         
         // 데이터 가져오기
         async function fetchData() {
+            updateStatus('loading');
             try {
-                const response = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
-                console.log('Response status:', response.status);
+                const [stockResponse] = await Promise.all([
+                    fetch(DATA_URL + `?t=${new Date().getTime()}`),
+                    fetchTradesData()
+                ]);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!stockResponse.ok) {
+                    throw new Error(`Stock data HTTP error! status: ${stockResponse.status}`);
                 }
 
-                const data = await response.json();
+                const data = await stockResponse.json();
 
-                // 타임스탬프 디버깅용 로그
-                console.log('Raw data:', data);
-                console.log('Timestamp options:', data.timestamp, data.last_updated);
-
-                // 타임스탬프 선택 로직 개선
+                // 타임스탬프 선택 로직
                 let updateTime =
                     data.timestamp ||
                     data.last_updated ||
@@ -393,16 +418,13 @@
                         ? data.all_signals[0].timestamp
                         : null);
 
-                console.log('Selected update time:', updateTime);
-
-                // 데이터 처리 로직
+                // 데이터 처리
                 allSignals = processSignals(data.all_signals || []);
                 divergentSignals = processSignals(data.divergent_signals || []);
 
                 // UI 업데이트
                 updateLastUpdated(updateTime);
                 updateSummary();
-                updateRecentAlerts();
                 filterAndRenderData();
 
                 updateStatus('success');
@@ -574,6 +596,38 @@
             `;
 
                 alertsContainer.appendChild(alertEl);
+            });
+        }
+        
+        // Open Trades 업데이트
+        function updateOpenTrades() {
+            const tbody = document.getElementById('open-trades');
+            tbody.innerHTML = '';
+
+            // status가 Open인 매매만 필터링
+            const openTrades = tradesData.filter(trade => trade.status === 'Open');
+
+            if (openTrades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">No open trades available.</td></tr>';
+                return;
+            }
+
+            openTrades.forEach(trade => {
+                const stockCode = getStockCodeByName(trade.pair_name);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>
+                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(trade.pair_name)}" 
+                        class="hover:text-blue-600 hover:underline">
+                        ${trade.pair_name || '-'}
+                    </a>
+                </td>
+                <td>${trade.common_code || '-'}</td>
+                <td>${trade.preferred_code || '-'}</td>
+                <td>${trade.entry_date || '-'}</td>
+                <td><span class="signal-tag signal-OPEN">${trade.status}</span></td>
+            `;
+                tbody.appendChild(tr);
             });
         }
 
