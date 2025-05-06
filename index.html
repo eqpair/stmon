@@ -153,12 +153,16 @@
                         <div class="text-2xl font-bold" id="divergent-count">-</div>
                     </div>
                     <div class="p-4 bg-green-50 rounded-lg">
-                        <div class="text-green-700 text-sm font-medium mb-1">R Signal(s) Items</div>
-                        <div class="text-2xl font-bold" id="r-signal-count">-</div>
+                        <div class="text-green-700 text-sm font-medium mb-1">IN Signal(s) Items</div>
+                        <div class="text-2xl font-bold" id="in-signal-count">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">I Signal(s) Items</div>
-                        <div class="text-2xl font-bold" id="i-signal-count">-</div>
+                        <div class="text-purple-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
+                        <div class="text-2xl font-bold" id="chk-signal-count">-</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-purple-700 text-sm font-medium mb-1">OUT Signal(s) Items</div>
+                        <div class="text-2xl font-bold" id="out-signal-count">-</div>
                     </div>
                 </div>
             </div>
@@ -508,12 +512,16 @@
             document.getElementById('divergent-count').textContent = divergentSignals.length;
 
             // R 신호 카운트
-            const rSignalCount = allSignals.filter(s => s.signal && s.signal.includes('R')).length;
-            document.getElementById('r-signal-count').textContent = rSignalCount;
+            const rSignalCount = allSignals.filter(s => s.signal && s.signal.includes('IN')).length;
+            document.getElementById('in-signal-count').textContent = rSignalCount;
 
             // I 신호 카운트
-            const iSignalCount = allSignals.filter(s => s.signal && s.signal.includes('I')).length;
-            document.getElementById('i-signal-count').textContent = iSignalCount;
+            const iSignalCount = allSignals.filter(s => s.signal && s.signal.includes('CHK')).length;
+            document.getElementById('chk-signal-count').textContent = iSignalCount;
+            // I 신호 카운트
+
+            const iSignalCount = allSignals.filter(s => s.signal && s.signal.includes('OUT')).length;
+            document.getElementById('out-signal-count').textContent = iSignalCount;
         }
 
         // 최근 알림 업데이트
