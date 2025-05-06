@@ -285,7 +285,7 @@ class StockMonitor:
             chk_signal_pairs = []
 
             for pair, result in all_results:
-                formatted_name = f"{pair.A_name}"
+                formatted_name = f"<b>{pair.A_name}</b>"
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
                     continue  # 신호 없는 종목은 웹에 저장하지 않음!    
@@ -328,7 +328,7 @@ class StockMonitor:
                     # 1시간 이내 중복 알림 방지
                     if (not last_signal_time) or (current_time - last_signal_time > timedelta(hours=1)):
                         clean_name = mark_special_stocks(pair.A_name)
-                        formatted_name = f"{clean_name}"
+                        formatted_name = f"<b>{clean_name}</b>"
                         in_message = (
                             f"🚨 IN Signal Detected\n"
                             f"{formatted_name}\n"
