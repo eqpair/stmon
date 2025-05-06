@@ -59,6 +59,11 @@
             color: #D97706;
         }
 
+        .signal-OPEN {
+            background-color: #DBEAFE;
+            color: #2563EB;
+        }
+
         .sz-high {
             color: #DC2626;
             font-weight: bold;
@@ -280,6 +285,7 @@
         // 데이터 URL
         const DATA_URL = 'data/stock_data.json';
         const HISTORY_URL = 'data/history.json';
+        const TRADES_URL = 'data/pair-trades.json';
 
         // 상태 변수
         let allSignals = [];
@@ -346,6 +352,23 @@
             filterAndRenderData();
         }
 
+        // 매매 데이터 가져오기
+        async function fetchTradesData() {
+            try {
+                const response = await fetch(TRADES_URL + `?t=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                tradesData = await response.json();
+                console.log('tradesData 로드됨:', tradesData);
+                return tradesData;
+            } catch (error) {
+                console.error('fetchTradesData 오류:', error);
+                tradesData = [];
+                return [];
+            }
+        }
+        
         // 데이터 가져오기
         async function fetchData() {
             try {
@@ -485,22 +508,33 @@
             const outSignalCount = allSignals.filter(s => s.signal && s.signal.includes('OUT')).length;
             document.getElementById('out-signal-count').textContent = outSignalCount;
         }
-
         // 최근 알림 업데이트
         function updateRecentAlerts() {
             const alertsContainer = document.getElementById('recent-alerts');
 
+            // IN 신호와 Open 상태 매매 결합
             const inSignals = allSignals.filter(s => s.signal && s.signal.includes('IN'));
+            const openTrades = tradesData.filter(t => t.status === 'Open').map(trade => ({
+                stock_name: trade.pair_name,
+                sz_value: 0, // SZ 값은 매매 데이터에 없으므로 0으로 설정
+                signal: 'OPEN',
+                price_a: null,
+                price_b: null,
+                timestamp: new Date().toISOString()
+            }));
 
-            if (inSignals.length === 0) {
+            const combinedSignals = [...inSignals, ...openTrades];
+
+            if (combinedSignals.length === 0) {
                 alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
                 return;
             }
 
-            inSignals.sort((a, b) => b.sz_value - a.sz_value);
+            // SZ 값 기준 내림차순 정렬 (OPEN은 SZ 값이 0이므로 뒤로)
+            combinedSignals.sort((a, b) => b.sz_value - a.sz_value);
 
             // 최대 5개의 알림 표시
-            const recentSignals = inSignals.slice(0, 5);
+            const recentSignals = combinedSignals.slice(0, 5);
 
             alertsContainer.innerHTML = '';
 
@@ -509,29 +543,35 @@
                 const stockCode = getStockCodeByName(signal.stock_name);
 
                 const alertEl = document.createElement('div');
-                alertEl.className = 'flex items-start p-3 bg-red-50 rounded-lg';
+                alertEl.className = 'flex items-start p-3 bg-blue-50 rounded-lg';
+
+                // 신호 태그 생성
+                let signalTag = '';
+                if (signal.signal.includes('IN')) {
+                    signalTag = '<span class="signal-tag signal-IN">IN</span>';
+                } else if (signal.signal.includes('OPEN')) {
+                    signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
+                }
 
                 alertEl.innerHTML = `
-                        <div class="flex-shrink-0 mt-0.5">
-                            <span class="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600">
-                                <i class="fas fa-exclamation"></i>
-                            </span>
-                        </div>
-                        <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900">
-                                <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                                class="hover:text-blue-600 hover:underline">
-                                    ${signal.stock_name}
-                                </a>
-                            </p>
-                            <p class="mt-1 text-xs text-gray-500">
-                                SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
-                                Signal: ${signal.signal.includes('IN') ? '<span class="signal-tag signal-IN">IN</span>' : ''}
-                                ${signal.signal.includes('CHK') ? '<span class="signal-tag signal-CHK">CHK</span>' : ''}
-                                ${signal.signal.includes('OUT') ? '<span class="signal-tag signal-OUT">OUT</span>' : ''}
-                            </p>
-                        </div>
-                    `;
+                <div class="flex-shrink-0 mt-0.5">
+                    <span class="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-exclamation"></i>
+                    </span>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-medium text-gray-900">
+                        <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                        class="hover:text-blue-600 hover:underline">
+                            ${signal.stock_name}
+                        </a>
+                    </p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        ${signal.signal === 'OPEN' ? '' : `SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | `}
+                        Signal: ${signalTag}
+                    </p>
+                </div>
+            `;
 
                 alertsContainer.appendChild(alertEl);
             });

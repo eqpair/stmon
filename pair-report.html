@@ -35,6 +35,7 @@
             padding: 0.75rem;
             text-align: center;
             border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap; /* 종목명 줄바꿈 방지 */
         }
         .report-table th {
             background: #f9fafb;
@@ -58,6 +59,9 @@
         .bold-green {
         color: #16a34a;
         font-weight: bold;
+        }
+        .exited-row {
+        background-color: #f3f4f6; /* 연회색 배경 */
         }
         @media (max-width: 1024px) {
             .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
@@ -266,6 +270,9 @@
 
                 // Short(보통주) 행
                 const trShort = document.createElement('tr');
+                if (isExited) {
+                    trShort.classList.add('exited-row');
+                }
                 trShort.innerHTML = `
                     <td rowspan="2">${trade.pair_name}</td>
                     <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
@@ -286,6 +293,9 @@
 
                 // Long(우선주) 행
                 const trLong = document.createElement('tr');
+                if (isExited) {
+                    trLong.classList.add('exited-row');
+                }
                 trLong.innerHTML = `
                     <td>Long</td>
                     <td>${trade.preferred_code}</td>
