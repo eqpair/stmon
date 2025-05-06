@@ -5,7 +5,7 @@
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <!-- <meta http-equiv="Permissions-Policy" content="interest-cohort=()"> --> <!-- 호환성 문제로 주석 처리 -->
     <title>Stock Details - EQ Pairs Monitoring System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
@@ -64,8 +64,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen"
-    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans KR', sans-serif;">
+<body class="bg-gray-100 min-h-screen" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans KR', sans-serif;">
     <div class="container mx-auto px-4 py-8">
         <header class="mb-8 flex justify-between items-center">
             <div>
@@ -74,12 +73,10 @@
                 <p class="text-xs text-gray-500 mt-1">Last Updated: <span id="last-updated-time">Loading...</span></p>
             </div>
             <div class="flex space-x-2">
-                <a href="#" id="trade-button"
-                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                <a href="#" id="trade-button" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
                     <i class="fas fa-chart-line mr-2"></i> Marketability
                 </a>
-                <a href="index.html"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <a href="index.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
                 </a>
             </div>
@@ -115,8 +112,9 @@
         <!-- Chart Container -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
-            <div class="chart-container">
-                <canvas id="sz-chart"></canvas>
+            <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
+                <!-- 차트 콘텐츠 (예: Canvas 또는 Chart.js) -->
+                <canvas id="szChart"></canvas>
             </div>
         </div>
 
