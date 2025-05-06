@@ -374,15 +374,10 @@
         async function fetchData() {
             updateStatus('loading');
             try {
-                const [stockResponse] = await Promise.all([
-                    fetch(DATA_URL + `?t=${new Date().getTime()}`),
-                    fetchTradesData()
-                ]);
-
+                const stockResponse = await fetch(DATA_URL + `?t=${new Date().getTime()}`);
                 if (!stockResponse.ok) {
                     throw new Error(`Stock data HTTP error! status: ${stockResponse.status}`);
                 }
-
                 const data = await stockResponse.json();
 
                 // 타임스탬프 선택 로직
@@ -505,8 +500,22 @@
             const outSignalCount = allSignals.filter(s => s.signal && s.signal.includes('OUT')).length;
             document.getElementById('out-signal-count').textContent = outSignalCount;
         }
+
+       // 종목명 정규화 함수
+        function normalizeStockName(name) {
+            if (!name) return '';
+            // HTML 태그, 이모지 제거, 공백 유지, 대소문자 무시
+            let cleanName = name.replace(/<[^>]+>/g, '').trim();
+            cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
+            return cleanName.toLowerCase();
+        }
+
         // 최근 알림 업데이트
         function updateRecentAlerts() {
+            console.log('updateRecentAlerts 호출됨');
+            console.log('allSignals 상태:', allSignals);
+            console.log('tradesData 상태:', tradesData);
+
             const alertsContainer = document.getElementById('recent-alerts');
 
             // IN 신호
@@ -515,6 +524,8 @@
                 type: 'IN',
                 sortTime: signal.timestamp
             }));
+            
+            console.log('inSignals:', inSignals);
 
             // Open 상태 매매
             const openTrades = tradesData.filter(t => t.status === 'Open').map(trade => {
@@ -556,7 +567,12 @@
                 };
             });
 
+            console.log('openTrades:', openTrades);
+
             const combinedSignals = [...inSignals, ...openTrades];
+
+            console.log('combinedSignals:', combinedSignals);
+
 
             if (combinedSignals.length === 0) {
                 alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
@@ -576,49 +592,53 @@
             alertsContainer.innerHTML = '';
 
             recentSignals.forEach(signal => {
+                try {
                 // 종목 코드 가져오기
-                const stockCode = getStockCodeByName(signal.stock_name);
+                    const stockCode = getStockCodeByName(signal.stock_name);
 
-                const alertEl = document.createElement('div');
-                alertEl.className = 'flex items-start p-3 bg-blue-50 rounded-lg';
+                    const alertEl = document.createElement('div');
+                    alertEl.className = 'flex items-start p-3 bg-blue-50 rounded-lg';
 
-                // 신호 태그 생성
-                let signalTag = '';
-                if (signal.signal.includes('IN')) {
-                    signalTag = '<span class="signal-tag signal-IN">IN</span>';
-                } else if (signal.signal.includes('OPEN')) {
-                    signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
+                    // 신호 태그 생성
+                    let signalTag = '';
+                    if (signal.signal.includes('IN')) {
+                        signalTag = '<span class="signal-tag signal-IN">IN</span>';
+                    } else if (signal.signal.includes('OPEN')) {
+                        signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
+                    }
+                    // SZ 값 포맷팅
+                    const szClass = signal.type === 'OPEN' ? signal.sz_class : (signal.sz_value >= 2.5 ? 'sz-high' : signal.sz_value >= 1.5 ? 'sz-medium' : 'sz-low');
+                    const szDisplay = signal.sz_value !== null ? `<span class="font-medium ${szClass}">${signal.sz_value.toFixed(2)}</span>` : '-';
+
+                    // Open 매매의 경우 추가 정보
+                    const extraInfo = signal.type === 'OPEN'
+                        ? `SZ: ${szDisplay} | Entry: ${signal.entry_date || '-'} | Codes: ${signal.common_code || '-'} / ${signal.preferred_code || '-'}`
+                        : `SZ: ${szDisplay}`;
+
+
+                    alertEl.innerHTML = `
+                    <div class="flex-shrink-0 mt-0.5">
+                        <span class="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
+                            <i class="fas fa-exclamation"></i>
+                        </span>
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <p class="text-sm font-medium text-gray-900">
+                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                                class="hover:text-blue-600 hover:underline">
+                                ${signal.stock_name}
+                            </a>
+                        </p>
+                        <p class="mt-1 text-xs text-gray-500">
+                            ${extraInfo} | Signal: ${signalTag}
+                        </p>
+                    </div>
+                 `;
+
+                    alertsContainer.appendChild(alertEl);
+                } catch (error) {
+                    console.error(`알림 렌더링 오류: stock_name="${signal.stock_name}", error=`, error);
                 }
-                // SZ 값 포맷팅
-                const szClass = signal.type === 'OPEN' ? signal.sz_class : (signal.sz_value >= 2.5 ? 'sz-high' : signal.sz_value >= 1.5 ? 'sz-medium' : 'sz-low');
-                const szDisplay = signal.sz_value !== null ? `<span class="font-medium ${szClass}">${signal.sz_value.toFixed(2)}</span>` : '-';
-
-                // Open 매매의 경우 추가 정보
-                const extraInfo = signal.type === 'OPEN'
-                    ? `SZ: ${szDisplay} | Entry: ${signal.entry_date || '-'} | Codes: ${signal.common_code || '-'} / ${signal.preferred_code || '-'}`
-                    : `SZ: ${szDisplay}`;
-
-
-                alertEl.innerHTML = `
-                <div class="flex-shrink-0 mt-0.5">
-                    <span class="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
-                        <i class="fas fa-exclamation"></i>
-                    </span>
-                </div>
-                <div class="ml-3 flex-1">
-                    <p class="text-sm font-medium text-gray-900">
-                        <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                            class="hover:text-blue-600 hover:underline">
-                            ${signal.stock_name}
-                        </a>
-                    </p>
-                    <p class="mt-1 text-xs text-gray-500">
-                        ${extraInfo} | Signal: ${signalTag}
-                    </p>
-                </div>
-            `;
-
-                alertsContainer.appendChild(alertEl);
             });
         }
 
