@@ -9,232 +9,145 @@
     <title>Stock Details - EQ Pairs Monitoring System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <style>
-        .chart-container {
-            position: relative;
-            height: 300px;
+        .signal-card {
+            transition: all 0.3s ease;
+        }
+        .signal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .blink {
+            animation: blink 2s linear infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        table {
             width: 100%;
+            border-collapse: collapse;
         }
-
-        .sz-high {
-            color: #DC2626;
-            font-weight: bold;
+        th, td {
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-size: 0.875rem;
         }
-
-        .sz-medium {
-            color: #EA580C;
-            font-weight: bold;
+        thead {
+            background: #f9fafb;
         }
-
-        .sz-low {
-            color: #16A34A;
+        th {
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #6b7280;
         }
-
-        .signal-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-right: 4px;
+        tbody {
+            background: #fff;
         }
-
-        .signal-R {
-            background-color: #FEE2E2;
-            color: #DC2626;
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
         }
-
-        .signal-I {
-            background-color: #E0F2FE;
-            color: #0284C7;
-        }
-
-        .signal-O {
-            background-color: #DCFCE7;
-            color: #16A34A;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans KR", sans-serif;
-        }
-
-        /* 반응형 디자인 개선 */
         @media (max-width: 1024px) {
-            .grid-cols-2 {
-                grid-template-columns: repeat(1, 1fr);
-            }
-
-            .chart-container {
-                height: 250px;
-            }
+            .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-2 { grid-template-columns: repeat(1, 1fr); }
         }
-
         @media (max-width: 640px) {
-            .grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-
-            .flex.justify-between.items-center {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start !important;
-            }
-
-            #trade-button-container {
-                margin-left: 0 !important;
-                margin-top: 0.5rem;
-                width: 100%;
-            }
-
-            #trade-button {
-                width: 100%;
-                text-align: center;
-            }
-
-            .chart-container {
-                height: 200px;
-            }
-
-            .text-3xl {
-                font-size: 1.5rem;
-            }
-
-            .text-sm {
+            th, td {
+                padding: 0.5rem 0.75rem;
                 font-size: 0.75rem;
             }
-
-            .overflow-x-auto {
-                overflow-x: scroll;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            button,
-            a.px-4 {
-                padding: 0.75rem 1rem;
-                min-height: 44px;
-            }
-
-            .fa-chart-line,
-            .fa-arrow-left {
-                font-size: 1rem;
-            }
-
-            th,
-            td {
-                padding: 0.5rem 0.75rem !important;
-                font-size: 0.75rem !important;
-            }
+            .text-3xl { font-size: 1.5rem; }
+            .text-xl { font-size: 1.2rem; }
+            button, a { min-height: 44px; padding: 0.75rem 1rem; font-size: 0.875rem; }
+            .flex.justify-between.items-center { flex-direction: column; gap: 10px; align-items: flex-start; }
         }
     </style>
 </head>
-
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen"
+    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans KR', sans-serif;">
     <div class="container mx-auto px-4 py-8">
-        <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <header class="mb-8 flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Stock Details</h1>
                 <p class="text-sm text-gray-600">Recent 5 month trend overview</p>
-                <!-- 업데이트 정보 추가 -->
                 <p class="text-xs text-gray-500 mt-1">Last Updated: <span id="last-updated-time">Loading...</span></p>
             </div>
-            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 md:mt-0 w-full md:w-auto">
-                <div id="trade-button-container" class="w-full md:w-auto">
-                    <a href="#" id="trade-button"
-                        class="w-full md:w-auto px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center">
-                        <i class="fas fa-chart-line mr-2"></i> Marketability
-                    </a>
-                </div>
+            <div class="flex space-x-2">
+                <a href="#" id="trade-button"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                    <i class="fas fa-chart-line mr-2"></i> Marketability
+                </a>
                 <a href="index.html"
-                    class="w-full md:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
                 </a>
             </div>
         </header>
 
-        <!-- Loading Indicator -->
         <div id="loading-container" class="flex flex-col items-center justify-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4 blink"></div>
             <p class="text-gray-600">Loading data...</p>
         </div>
 
-        <!-- Content Container -->
-        <div id="content-container" class="hidden">
-            <!-- Stock Info Card -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-blue-50 rounded-lg">
-                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
-                        <div class="text-xl font-bold" id="common-price">-</div>
-                    </div>
-                    <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격 [Long]</div>
-                        <div class="text-xl font-bold" id="preferred-price">-</div>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded-lg">
-                        <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
-                        <div class="text-xl font-bold" id="sz-value">-</div>
-                    </div>
-                    <div class="p-4 bg-yellow-50 rounded-lg">
-                        <div class="text-yellow-700 text-sm font-medium mb-1">현재 시그널</div>
-                        <div class="text-xl font-bold" id="current-signal">-</div>
-                    </div>
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
+                    <div class="text-xl font-bold" id="common-price">-</div>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격 [Long]</div>
+                    <div class="text-xl font-bold" id="preferred-price">-</div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
+                    <div class="text-xl font-bold" id="sz-value">-</div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <div class="text-yellow-700 text-sm font-medium mb-1">현재 시그널</div>
+                    <div class="text-xl font-bold" id="current-signal">-</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Chart Container -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <!-- SZ Value Chart -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
-                    <div class="chart-container">
-                        <canvas id="sz-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Price Trend Chart -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Trend</h2>
-                    <div class="chart-container">
-                        <canvas id="price-chart"></canvas>
-                    </div>
-                </div>
+        <!-- Chart Container -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
+            <div class="chart-container">
+                <canvas id="sz-chart"></canvas>
             </div>
+        </div>
 
-            <!-- History Signals Table -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ History</h2>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Date</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    SZ Value</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Trend</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Common Stock Price</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Preferred Stock Price</th>
-                            </tr>
-                        </thead>
-                        <tbody id="signals-table-body" class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                    Loading history data...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Price Trend Chart -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Trend</h2>
+            <div class="chart-container">
+                <canvas id="price-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- History Signals Table -->
+        <div class="bg-white rounded-lg shadow-md p-6 signal-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ History</h2>
+            <div class="overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>SZ Value</th>
+                            <th>Trend</th>
+                            <th>Common Stock Price</th>
+                            <th>Preferred Stock Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Loading history data...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

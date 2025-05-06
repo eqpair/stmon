@@ -1,211 +1,136 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 
 <head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
     <title>EQ Pair Trading REPORT</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <style>
-        /* 웹폰트 추가 */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans KR", sans-serif;
-            background: #f8f9fa;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0;
+        .signal-card {
+            transition: all 0.3s ease;
         }
-
-        h1 {
-            font-size: 1.875rem; /* index.html의 text-3xl과 동일 */
-            font-weight: 700;
-            color: #1F2937; /* index.html의 text-gray-800과 동일 */
-            text-align: left;
-            margin: 2rem 0 0.5rem 0;
-            letter-spacing: -1px;
+        .signal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .blink {
+            animation: blink 2s linear infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .report-table {
             width: 100%;
-            max-width: 1600px;
+            border-collapse: collapse;
+            background: #fff;
         }
-
-        .last-update-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1em;
-            width: 100%;
-            max-width: 1600px;
-            padding: 0 5px;
-            /* 좌우 패딩 추가 */
-        }
-
-        .last-update {
-            font-size: 0.875rem; /* index.html의 text-sm과 동일 */
-            color: #4B5563; /* index.html의 text-gray-600과 동일 */
-        }
-
-        .last-update #last-update {
-            font-weight: 500; /* index.html의 font-medium과 동일 */
-        }
-
-        .report-table-wrap {
-            width: 100%;
-            max-width: 1600px;
-            /* 1100px에서 1600px로 증가 */
-            margin: 0 auto 3em auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: auto;
-            /* 전체 테이블을 스크롤 가능하게 설정 */
-        }
-
-        table.report-table {
-            width: 100%;
-            min-width: 1500px;
-            /* 1000px에서 1500px로 증가 */
-            margin: 0 auto;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-            table-layout: auto;
-            background: none;
-        }
-
         .report-table th,
         .report-table td {
-            padding: 16px 8px;
-            /* 4px에서 8px로 셀 패딩 증가 */
-            font-size: 1em;
+            padding: 0.75rem;
             text-align: center;
-            background: #fff;
-            border-bottom: 1.5px solid #e0e0e0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            border-bottom: 1px solid #e5e7eb;
         }
-
         .report-table th {
-            background: #f3f3f3;
-            font-weight: 700;
-            font-size: 1.07em;
-            border-top: 1.5px solid #e0e0e0;
+            background: #f9fafb;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: #6b7280;
         }
-
-        .profit-plus {
-            color: #d60000;
+        .profit-plus, .rate-plus {
+            color: #dc2626;
             font-weight: bold;
         }
-
-        .profit-minus {
-            color: #0050b3;
+        .profit-minus, .rate-minus {
+            color: #0284c7;
             font-weight: bold;
         }
-
-        .rate-plus {
-            color: #d60000;
-            font-weight: bold;
-        }
-
-        .rate-minus {
-            color: #0050b3;
-            font-weight: bold;
-        }
-
-        .bold-green {
-            color: #1ca93a;
-            font-weight: bold;
-        }
-
         .open-green {
-            color: #1ca93a !important;
-            font-weight: bold !important;
-            letter-spacing: 0.5px;
+            color: #16a34a;
+            font-weight: bold;
         }
-
-        @media (max-width: 1200px) {
-            h1 {
-                max-width: 95%;
-                font-size: 1.5rem; /* 작은 화면에서 약간 작게 */
-            }
-
-            .last-update-wrapper {
-                max-width: 95%;
-                padding: 0 10px;
-                box-sizing: border-box;
-            }
-
-            .last-update {
-                font-size: 0.75rem; /* 작은 화면에서 조정 */
-            }
-
-            .report-table th,
-            .report-table td {
-                font-size: 0.9em;
-                padding: 8px 2px;
-            }
+        @media (max-width: 1024px) {
+            .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-2 { grid-template-columns: repeat(1, 1fr); }
         }
-
-        @media (max-width: 700px) {
-            h1 {
-                font-size: 1.25rem; /* 모바일에서 더 작게 */
+        @media (max-width: 640px) {
+            .report-table th, .report-table td {
+                padding: 0.5rem;
+                font-size: 0.75rem;
             }
-
-            .last-update {
-                font-size: 0.7rem;
-            }
-
-            .report-table th,
-            .report-table td {
-                font-size: 0.8em;
-                padding: 6px 1px;
-            }
-
-            .report-table-wrap {
-                margin: 0 auto 1em auto;
-            }
+            .text-3xl { font-size: 1.5rem; }
+            .text-xl { font-size: 1.2rem; }
+            button, a { min-height: 44px; padding: 0.75rem 1rem; font-size: 0.875rem; }
+            .flex.justify-between.items-center { flex-direction: column; gap: 10px; align-items: flex-start; }
         }
     </style>
 </head>
 
-<body>
-    <h1>EQ Pair Trading REPORT</h1>
-    <div class="report-table-wrap">
-        <div class="last-update-wrapper">
-            <span class="last-update" id="last-update">Last update: -</span>
-            <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                <i class="fas fa-home mr-2"></i> Home
-            </a>
+<body class="bg-gray-100 min-h-screen"
+    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans KR', sans-serif;">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pair Trading REPORT</h1>
+                <p class="text-sm text-gray-600">Last update: <span id="last-update">Loading...</span></p>
+            </div>
+            <div class="flex space-x-2">
+                <a href="index.html"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <i class="fas fa-home mr-2"></i> Home
+                </a>
+            </div>
+        </header>
+
+        <div id="loading-container" class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4 blink"></div>
+            <p class="text-gray-600">Loading Data...</p>
         </div>
-        <table class="report-table" id="report-table">
-            <thead>
-                <tr>
-                    <th>ITEM</th>
-                    <th>T. Profit</th>
-                    <th>Rate</th>
-                    <th>Status</th>
-                    <th>Pos.</th>
-                    <th>Code</th>
-                    <th>Entry D.</th>
-                    <th>Exit D.</th>
-                    <th>Entry P.</th>
-                    <th>Exit(Curr.)</th>
-                    <th>Q'ty</th>
-                    <th>Profit</th>
-                    <th>Rate</th>
-                    <th>Days</th>
-                </tr>
-            </thead>
-            <tbody id="report-body">
-                <tr>
-                    <td colspan="14" style="text-align:center;">Loading Data...</td>
-                </tr>
-            </tbody>
-        </table>
+
+        <div class="bg-white rounded-lg shadow-md p-6 signal-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Report Table</h2>
+            <div class="overflow-x-auto">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>ITEM</th>
+                            <th>T. Profit</th>
+                            <th>Rate</th>
+                            <th>Status</th>
+                            <th>Pos.</th>
+                            <th>Code</th>
+                            <th>Entry D.</th>
+                            <th>Exit D.</th>
+                            <th>Entry P.</th>
+                            <th>Exit(Curr.)</th>
+                            <th>Q'ty</th>
+                            <th>Profit</th>
+                            <th>Rate</th>
+                            <th>Days</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="14" style="text-align:center;">Loading Data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <footer class="bg-white py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2025 EQ Pair Monitoring System.</p>
+        </div>
+    </footer>
+
     <script>
         function calcFee(entry, exit, qty, bps) {
             if (!entry || !exit || !qty || !bps) return 0;
