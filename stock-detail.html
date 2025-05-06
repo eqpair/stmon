@@ -116,7 +116,7 @@
             <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
             <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
                 <!-- 차트 콘텐츠 (예: Canvas 또는 Chart.js) -->
-                <canvas id="szChart"></canvas>
+                <canvas id="sz-chart"></canvas>
             </div>
         </div>
 
@@ -211,7 +211,7 @@
             tempDiv.innerHTML = html;
             return tempDiv.textContent || tempDiv.innerText || '';
         }
-        
+
         // 페이지 로드 이벤트
         document.addEventListener('DOMContentLoaded', () => {
             // URL에서 종목 정보 추출
