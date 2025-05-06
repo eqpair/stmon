@@ -229,7 +229,7 @@
             }
 
             const todayStr = new Date().toISOString().slice(0, 10);
-            for (const trade of data) {
+            for (const trade of tradesData) {
                 const isExited = trade.status === "Exited";
                 let commonPrice = trade.common_exit;
                 let preferredPrice = trade.preferred_exit;
