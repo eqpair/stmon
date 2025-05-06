@@ -93,7 +93,7 @@
             <p class="text-gray-600">Loading Data...</p>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6 signal-card">
+        <div id="content-container" class="bg-white rounded-lg shadow-md p-6 signal-card hidden">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Report Table</h2>
             <div class="overflow-x-auto">
                 <table class="report-table">
@@ -115,7 +115,7 @@
                             <th>Days</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="report-body">
                         <tr>
                             <td colspan="14" style="text-align:center;">Loading Data...</td>
                         </tr>
@@ -132,6 +132,8 @@
     </footer>
 
     <script>
+        let tradesData = [];
+
         function calcFee(entry, exit, qty, bps) {
             if (!entry || !exit || !qty || !bps) return 0;
             return (entry * qty + exit * qty) * (bps / 10000);
@@ -165,7 +167,8 @@
         }
         async function fetchTrendClose(pair) {
             try {
-                const res = await fetch('data/trends/' + pair.common_code + '.json');
+                const res = await fetch(`data/trends/${pair.common_code}.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`트렌드 데이터 로드 실패: ${res.status}`);
                 const data = await res.json();
                 let commonClose = null, preferredClose = null;
                 if (data.common_prices && data.common_prices.length > 0)
@@ -173,28 +176,58 @@
                 if (data.preferred_prices && data.preferred_prices.length > 0)
                     preferredClose = data.preferred_prices[data.preferred_prices.length - 1];
                 return { commonClose, preferredClose };
-            } catch {
+            } catch (error) {
+                console.error('fetchTrendClose 오류:', error);
                 return { commonClose: null, preferredClose: null };
             }
         }
+        
         async function updateLastUpdate() {
             try {
-                const res = await fetch('data/stock_data.json');
+                const res = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`마지막 업데이트 데이터 로드 실패: ${res.status}`);
                 const data = await res.json();
                 let last = data.last_updated || data.timestamp || '';
                 if (last) {
-                    document.getElementById('last-update').textContent = 'Last update: ' + last;
+                    const formattedDate = new Date(last).toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    document.getElementById('last-update').textContent = formattedDate;
                 }
-            } catch {
-                document.getElementById('last-update').textContent = 'Last update: -';
+            } catch (error) {
+                console.error('updateLastUpdate 오류:', error);
+                document.getElementById('last-update').textContent = '알 수 없음';
             }
         }
+
+        async function fetchTradesData() {
+            try {
+                const res = await fetch(`data/pair-trades.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`매매 데이터 로드 실패: ${res.status}`);
+                tradesData = await res.json();
+                console.log('tradesData 로드됨:', tradesData);
+                return tradesData;
+            } catch (error) {
+                console.error('fetchTradesData 오류:', error);
+                tradesData = [];
+                return [];
+            }
+        }
+
         async function renderTable() {
-            await updateLastUpdate();
-            const res = await fetch('data/pair-trades.json');
-            const data = await res.json();
             const tbody = document.getElementById('report-body');
-            tbody.innerHTML = '';
+            tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;">데이터 로딩 중...</td></tr>';
+
+            if (tradesData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
+                return;
+            }
+
             const todayStr = new Date().toISOString().slice(0, 10);
             for (const trade of data) {
                 const isExited = trade.status === "Exited";
@@ -231,44 +264,71 @@
                 // Short(보통주) 행
                 const trShort = document.createElement('tr');
                 trShort.innerHTML = `
-          <td rowspan="2">${trade.pair_name}</td>
-          <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
-          <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
-          <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
-          <td>Short</td>
-          <td>${trade.common_code}</td>
-          <td>${trade.entry_date}</td>
-          <td>${isExited ? trade.exit_date : '-'}</td>
-          <td>${trade.common_entry?.toLocaleString() || '-'}</td>
-          <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-          <td>${trade.common_qty}</td>
-          <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-          <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-          <td>${days}</td>
-        `;
+                    <td rowspan="2">${trade.pair_name}</td>
+                    <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+                    <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+                    <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
+                    <td>Short</td>
+                    <td>${trade.common_code}</td>
+                    <td>${trade.entry_date}</td>
+                    <td>${isExited ? trade.exit_date : '-'}</td>
+                    <td>${trade.common_entry?.toLocaleString() || '-'}</td>
+                    <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+                    <td>${trade.common_qty}</td>
+                    <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+                    <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+                    <td>${days}</td>
+                `;
                 tbody.appendChild(trShort);
 
                 // Long(우선주) 행
                 const trLong = document.createElement('tr');
                 trLong.innerHTML = `
-          <td>Long</td>
-          <td>${trade.preferred_code}</td>
-          <td>${trade.entry_date}</td>
-          <td>${isExited ? trade.exit_date : '-'}</td>
-          <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
-          <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-          <td>${trade.preferred_qty}</td>
-          <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-          <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
-          <td>${days}</td>
-        `;
+                    <td>Long</td>
+                    <td>${trade.preferred_code}</td>
+                    <td>${trade.entry_date}</td>
+                    <td>${isExited ? trade.exit_date : '-'}</td>
+                    <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
+                    <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
+                    <td>${trade.preferred_qty}</td>
+                    <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+                    <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+                    <td>${days}</td>
+                `;
                 tbody.appendChild(trLong);
             }
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;">매매 기록이 없습니다.</td></tr>`;
+        }
+
+        async function init() {
+            try {
+                document.getElementById('loading-container').style.display = 'flex';
+                document.getElementById('content-container').classList.add('hidden');
+
+                await updateLastUpdate();
+                await fetchTradesData();
+                await renderTable();
+
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
+            } catch (error) {
+                console.error('초기화 오류:', error);
+                document.getElementById('loading-container').innerHTML = `
+                    <div class="text-red-500 text-center">
+                        <p>데이터를 로드할 수 없습니다.</p>
+                        <p>${error.message}</p>
+                        <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                            다시 시도
+                        </button>
+                        <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                            메인 페이지로 돌아가기
+                        </button>
+                    </div>
+                `;
             }
         }
-        renderTable();
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 
