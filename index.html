@@ -512,16 +512,16 @@
             document.getElementById('divergent-count').textContent = divergentSignals.length;
 
             // R 신호 카운트
-            const rSignalCount = allSignals.filter(s => s.signal && s.signal.includes('IN')).length;
-            document.getElementById('in-signal-count').textContent = rSignalCount;
+            const inSignalCount = allSignals.filter(s => s.signal && s.signal.includes('IN')).length;
+            document.getElementById('in-signal-count').textContent = inSignalCount;
 
             // I 신호 카운트
-            const iSignalCount = allSignals.filter(s => s.signal && s.signal.includes('CHK')).length;
-            document.getElementById('chk-signal-count').textContent = iSignalCount;
+            const chkSignalCount = allSignals.filter(s => s.signal && s.signal.includes('CHK')).length;
+            document.getElementById('chk-signal-count').textContent = chkSignalCount;
             // I 신호 카운트
 
-            const iSignalCount = allSignals.filter(s => s.signal && s.signal.includes('OUT')).length;
-            document.getElementById('out-signal-count').textContent = iSignalCount;
+            const outSignalCount = allSignals.filter(s => s.signal && s.signal.includes('OUT')).length;
+            document.getElementById('out-signal-count').textContent = outSignalCount;
         }
 
         // 최근 알림 업데이트
