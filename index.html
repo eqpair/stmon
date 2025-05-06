@@ -544,18 +544,16 @@
             document.getElementById('total-stocks').textContent = (allSignals?.length ?? 0);
             document.getElementById('divergent-count').textContent = (divergentSignals?.length ?? 0);
 
-            // IN 신호 카운트
-            const inSignalCount = allSignals.filter(s => s.signal && s.signal.toUpperCase() === 'IN').length;
+            const inSignalCount = (allSignals || []).filter(s => s.signal && s.signal.toUpperCase() === 'IN').length;
             document.getElementById('in-signal-count').textContent = inSignalCount;
 
-            // CHK 신호 카운트
-            const chkSignalCount = allSignals.filter(s => s.signal && s.signal.toUpperCase() === 'CHK').length;
+            const chkSignalCount = (allSignals || []).filter(s => s.signal && s.signal.toUpperCase() === 'CHK').length;
             document.getElementById('chk-signal-count').textContent = chkSignalCount;
 
-            // OUT 신호 카운트
-            const outSignalCount = allSignals.filter(s => s.signal && s.signal.toUpperCase() === 'OUT').length;
+            const outSignalCount = (allSignals || []).filter(s => s.signal && s.signal.toUpperCase() === 'OUT').length;
             document.getElementById('out-signal-count').textContent = outSignalCount;
         }
+
 
         // 최근 알림 업데이트
         function updateRecentAlerts() {
