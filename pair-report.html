@@ -55,6 +55,10 @@
             color: #16a34a;
             font-weight: bold;
         }
+        .bold-green {
+        color: #16a34a;
+        font-weight: bold;
+        }
         @media (max-width: 1024px) {
             .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
             .grid-cols-2 { grid-template-columns: repeat(1, 1fr); }
@@ -221,7 +225,7 @@
 
         async function renderTable() {
             const tbody = document.getElementById('report-body');
-            tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;">데이터 로딩 중...</td></tr>';
+            tbody.innerHTML = ''; // 초기 메시지 제거 후 테이블 비우기
 
             if (tradesData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
