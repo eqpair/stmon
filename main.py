@@ -288,7 +288,7 @@ class StockMonitor:
                 formatted_name = f"{pair.A_name}"
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
-                    all_messages.append(f"{formatted_name}\n Error - {str(result)}")
+                    continue  # 신호 없는 종목은 웹에 저장하지 않음!    
                 elif result:
                     signal_info = result
                     all_messages.append(f"{formatted_name}\n{signal_info}")
@@ -316,7 +316,7 @@ class StockMonitor:
                     except (ValueError, IndexError):
                         continue
                 else:
-                    all_messages.append(f"{formatted_name}\n No signal")
+                    continue  # 신호 없는 종목은 웹에 저장하지 않음!
 
             # IN 신호 텔레그램 알림
             for pair, signal_info in in_signal_pairs:
