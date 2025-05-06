@@ -291,7 +291,7 @@ class StockMonitor:
                     all_messages.append(f"{formatted_name}\n Error - {str(result)}")
                 elif result:
                     signal_info = result
-                    all_messages.append(f"{formatted_name}\n {signal_info}")
+                    all_messages.append(f"{formatted_name}\n{signal_info}")
 
                     try:
                         # sz, 신호명, 가격정보 파싱
