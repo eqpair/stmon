@@ -264,63 +264,90 @@ class StockMonitor:
         try:
             batch_size = 5
             all_results = []
+
             for i in range(0, len(self.pairs), batch_size):
                 logger.info(f"처리 중인 배치: {i+1}~{min(i+batch_size, len(self.pairs))} / {len(self.pairs)}")
                 batch_pairs = self.pairs[i:i+batch_size]
                 batch_tasks = [asyncio.create_task(pair.get_signal_now()) for pair in batch_pairs]
                 batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+
                 for pair, result in zip(batch_pairs, batch_results):
                     all_results.append((pair, result))
+
                 if i + batch_size < len(self.pairs):
                     await asyncio.sleep(3)
+
             all_messages = []
             divergent_messages = []
-            r_signal_pairs = []
+
+            in_signal_pairs = []
+            out_signal_pairs = []
+            chk_signal_pairs = []
 
             for pair, result in all_results:
-                # 이 부분 수정: 직접 pair.A_name 사용
                 formatted_name = f"{pair.A_name}"
-                
                 if isinstance(result, Exception):
                     logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
                     all_messages.append(f"{formatted_name}\n Error - {str(result)}")
                 elif result:
                     signal_info = result
                     all_messages.append(f"{formatted_name}\n {signal_info}")
+
                     try:
-                        sz_value = float(signal_info.split('/')[0].strip())
-                        if sz_value >= 2:
+                        # sz, 신호명, 가격정보 파싱
+                        signal_parts = signal_info.split('/')
+                        sz_value = float(signal_parts[0].strip())
+                        signal_type = signal_parts[1].strip()
+                        # sl_in, sl_out은 pair 객체의 값 사용
+                        sl_in = pair.SL_in_val
+                        sl_out = pair.SL_out_val
+
+                        # divergent 기준: sz ≥ sl_in
+                        if sz_value >= sl_in:
                             divergent_messages.append(f"{formatted_name}\n {signal_info}")
-                        if 'R' in signal_info.split('/')[1]:
-                            r_signal_pairs.append((pair, signal_info))
+
+                        # 신호명 분류(혹시 신호 생성부에서 잘못된 값이 들어올 때도 sl_in/sl_out 기준으로 재분류)
+                        if sz_value >= sl_in:
+                            in_signal_pairs.append((pair, signal_info))
+                        elif sz_value <= sl_out:
+                            out_signal_pairs.append((pair, signal_info))
+                        else:
+                            chk_signal_pairs.append((pair, signal_info))
                     except (ValueError, IndexError):
                         continue
                 else:
                     all_messages.append(f"{formatted_name}\n No signal")
-            for pair, signal_info in r_signal_pairs:
+
+            # IN 신호 텔레그램 알림
+            for pair, signal_info in in_signal_pairs:
                 try:
                     parts = signal_info.split('/')
                     sz = float(parts[0].strip())
                     current_time = datetime.now()
                     last_signal_time = self.last_r_signal_time.get(pair.A_name)
+                    # 1시간 이내 중복 알림 방지
                     if (not last_signal_time) or (current_time - last_signal_time > timedelta(hours=1)):
                         clean_name = mark_special_stocks(pair.A_name)
                         formatted_name = f"{clean_name}"
-                        r_message = (
-                            f"🚨 R Signal Detected\n"
+                        in_message = (
+                            f"🚨 IN Signal Detected\n"
                             f"{formatted_name}\n"
                             f" {signal_info}\n"
                         )
-                        await self.telegram_bot.send_message(r_message)
+                        await self.telegram_bot.send_message(in_message)
                         self.last_r_signal_time[pair.A_name] = current_time
                 except Exception as e:
-                    logger.error(f"Error processing R signal for {pair.A_name}: {str(e)}")
+                    logger.error(f"Error processing IN signal for {pair.A_name}: {str(e)}")
+
             all_signals = "\n".join(all_messages)
             divergent_signals = "\n".join(divergent_messages) if divergent_messages else "No divergent pairs found at the moment."
+
             return all_signals, divergent_signals
+
         except Exception as e:
             logger.error(f"Error in get_signals_with_divergent: {str(e)}")
             raise
+
 
     async def get_all_signals(self, divergence_only: bool = False) -> str:
         try:

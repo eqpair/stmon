@@ -46,17 +46,17 @@
             margin-right: 4px;
         }
 
-        .signal-R {
+        .signal-IN {
             background-color: #FEE2E2;
             color: #DC2626;
         }
 
-        .signal-I {
+        .signal-CHK {
             background-color: #E0F2FE;
             color: #0284C7;
         }
 
-        .signal-O {
+        .signal-OUT {
             background-color: #DCFCE7;
             color: #16A34A;
         }
@@ -154,12 +154,16 @@
                         <div class="text-2xl font-bold" id="divergent-count">-</div>
                     </div>
                     <div class="p-4 bg-green-50 rounded-lg">
-                        <div class="text-green-700 text-sm font-medium mb-1">R Signal(s) Items</div>
-                        <div class="text-2xl font-bold" id="r-signal-count">-</div>
+                        <div class="text-green-700 text-sm font-medium mb-1">IN Signal(s) Items</div>
+                        <div class="text-2xl font-bold" id="in-signal-count">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">I Signal(s) Items</div>
-                        <div class="text-2xl font-bold" id="i-signal-count">-</div>
+                        <div class="text-purple-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
+                        <div class="text-2xl font-bold" id="chk-signal-count">-</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-purple-700 text-sm font-medium mb-1">OUT Signal(s) Items</div>
+                        <div class="text-2xl font-bold" id="out-signal-count">-</div>
                     </div>
                 </div>
             </div>
@@ -202,9 +206,9 @@
                 <select id="filter-signal"
                     class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     <option value="all">All Signals</option>
-                    <option value="R">R Signal(s)</option>
-                    <option value="I">I Signal(s)</option>
-                    <option value="O">O Signal(s)</option>
+                    <option value="R">IN Signal(s)</option>
+                    <option value="I">CHK Signal(s)</option>
+                    <option value="O">OUT Signal(s)</option>
                 </select>
                 <select id="sort-option"
                     class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -424,34 +428,51 @@
             }
         }
 
-        // 신호 재계산 함수 추가
         function processSignals(signals) {
-            return signals.map(signal => {
-                // 기존 신호 정보 유지
-                const processedSignal = { ...signal };
+            // 신호별로 항목을 담을 배열
+            var inSignals = [];
+            var chkSignals = [];
+            var outSignals = [];
 
-                // SZ 값에 따라 신호 재계산
-                let newSignal = '';
+            // 신호 데이터 반복
+            signals.forEach(function (signal) {
+                // 신호명 추출 (대소문자 구분 없이)
+                var signalType = (signal.signal || '').trim().toUpperCase();
 
-                // R 신호 (SZ 값이 2.0 이상)
-                if (signal.sz_value >= 2.0) {
-                    newSignal += 'R';
+                if (signalType === "IN") {
+                    inSignals.push(signal);
+                } else if (signalType === "OUT") {
+                    outSignals.push(signal);
+                } else if (signalType === "CHK") {
+                    chkSignals.push(signal);
                 }
+            });
 
-                // I 신호 (SZ 값이 1.5 이상이고 2.5 미만)
-                if (signal.sz_value >= 1.5 && signal.sz_value < 2.5) {
-                    newSignal += 'I';
-                }
+            // 각 영역에 신호 표시 (예: #in-signals, #chk-signals, #out-signals)
+            renderSignalList('in-signals', inSignals);
+            renderSignalList('chk-signals', chkSignals);
+            renderSignalList('out-signals', outSignals);
 
-                // O 신호 (SZ 값이 0.5 미만)
-                if (signal.sz_value < 0.5) {
-                    newSignal += 'O';
-                }
+            // 전체 신호 테이블 등 다른 UI 업데이트도 필요하면 여기에 추가
+        }
 
-                // 새로 계산된 신호 할당
-                processedSignal.signal = newSignal;
-
-                return processedSignal;
+        // 신호 리스트를 해당 영역에 표시하는 함수 예시
+        function renderSignalList(elementId, signalList) {
+            var container = document.getElementById(elementId);
+            if (!container) return;
+            container.innerHTML = '';
+            signalList.forEach(function (signal) {
+                var item = document.createElement('div');
+                item.className = 'signal-item';
+                item.innerHTML =
+                    '<span class="signal-stock">' + (signal.stock_name || '') + '</span> ' +
+                    '<span class="signal-sz">' + (signal.sz_value != null ? signal.sz_value.toFixed(2) : '') + '</span> ' +
+                    '<span class="signal-type">' + (signal.signal || '') + '</span> ' +
+                    '<span class="signal-price">' +
+                    (signal.price_a != null ? signal.price_a : '') + ', ' +
+                    (signal.price_b != null ? signal.price_b : '') +
+                    '</span>';
+                container.appendChild(item);
             });
         }
 
@@ -523,13 +544,17 @@
             document.getElementById('total-stocks').textContent = allSignals.length;
             document.getElementById('divergent-count').textContent = divergentSignals.length;
 
-            // R 신호 카운트
-            const rSignalCount = allSignals.filter(s => s.signal && s.signal.includes('R')).length;
-            document.getElementById('r-signal-count').textContent = rSignalCount;
+            // IN 신호 카운트
+            const inSignalCount = allSignals.filter(s => s.signal && s.signal.toUpperCase() === 'IN').length;
+            document.getElementById('in-signal-count').textContent = inSignalCount;
 
-            // I 신호 카운트
-            const iSignalCount = allSignals.filter(s => s.signal && s.signal.includes('I')).length;
-            document.getElementById('i-signal-count').textContent = iSignalCount;
+            // CHK 신호 카운트
+            const chkSignalCount = allSignals.filter(s => s.signal && s.signal.toUpperCase() === 'CHK').length;
+            document.getElementById('chk-signal-count').textContent = chkSignalCount;
+
+            // OUT 신호 카운트
+            const outSignalCount = allSignals.filter(s => s.signal && s.signal.toUpperCase() === 'OUT').length;
+            document.getElementById('out-signal-count').textContent = outSignalCount;
         }
 
         // 최근 알림 업데이트
@@ -574,9 +599,9 @@
                             </p>
                             <p class="mt-1 text-xs text-gray-500">
                                 SZ: <span class="font-medium sz-high">${signal.sz_value.toFixed(2)}</span> | 
-                                Signal: ${signal.signal.includes('R') ? '<span class="signal-tag signal-R">R</span>' : ''}
-                                ${signal.signal.includes('I') ? '<span class="signal-tag signal-I">I</span>' : ''}
-                                ${signal.signal.includes('O') ? '<span class="signal-tag signal-O">O</span>' : ''}
+                                Signal: ${signal.signal.includes('R') ? '<span class="signal-tag signal-IN">IN</span>' : ''}
+                                ${signal.signal.includes('I') ? '<span class="signal-tag signal-CHK">CHK</span>' : ''}
+                                ${signal.signal.includes('O') ? '<span class="signal-tag signal-OUT">OUT</span>' : ''}
                             </p>
                         </div>
                     `;
@@ -658,14 +683,14 @@
                 // 신호 태그 생성
                 let signalTags = '';
                 if (signal.signal) {
-                    if (signal.signal.includes('R')) {
-                        signalTags += '<span class="signal-tag signal-R">R</span>';
+                    if (signal.signal.includes('IN')) {
+                        signalTags += '<span class="signal-tag signal-IN">IN</span>';
                     }
-                    if (signal.signal.includes('I')) {
-                        signalTags += '<span class="signal-tag signal-I">I</span>';
+                    if (signal.signal.includes('CHK')) {
+                        signalTags += '<span class="signal-tag signal-CHK">CHK</span>';
                     }
-                    if (signal.signal.includes('O')) {
-                        signalTags += '<span class="signal-tag signal-O">O</span>';
+                    if (signal.signal.includes('OUT')) {
+                        signalTags += '<span class="signal-tag signal-OUT">OUT</span>';
                     }
                 }
 
@@ -922,14 +947,14 @@
                 // 신호 태그 생성
                 let signalTags = '';
                 if (item.signal) {
-                    if (item.signal.includes('R')) {
-                        signalTags += '<span class="signal-tag signal-R">R</span>';
+                    if (item.signal.includes('IN')) {
+                        signalTags += '<span class="signal-tag signal-IN">IN</span>';
                     }
-                    if (item.signal.includes('I')) {
-                        signalTags += '<span class="signal-tag signal-I">I</span>';
+                    if (item.signal.includes('CHK')) {
+                        signalTags += '<span class="signal-tag signal-CHK">CHK</span>';
                     }
-                    if (item.signal.includes('O')) {
-                        signalTags += '<span class="signal-tag signal-O">O</span>';
+                    if (item.signal.includes('OUT')) {
+                        signalTags += '<span class="signal-tag signal-OUT">OUT</span>';
                     }
                 }
 

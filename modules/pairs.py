@@ -129,46 +129,21 @@ class NPPair:
     def _generate_signal(self) -> Optional[str]:
         try:
             last_row = self.data.iloc[-1]
-            prev_row = self.data.iloc[-2]
-            
             sz = last_row['sz']
-            self.T = (sz * 10) + 50
 
-            signal_conditions = {
-                'SL_R': sz > self.SL_in_val,
-                'LS_R': sz < self.LS_in_val,
-                'SL_O': sz <= self.SL_out_val,
-                'LS_O': sz >= self.LS_out_val,
-                'SL_I': (sz > self.SL_in_val and 
-                        self.T > 70 and 
-                        sz < prev_row['sz'] and 
-                        last_row['dr'] > last_row['dr_avg'] + (last_row['std'] * self.SL_in_val)),
-                'LS_I': (sz < self.LS_in_val and 
-                        self.T < 30 and 
-                        sz > prev_row['sz'] and 
-                        last_row['dr'] < last_row['dr_avg'] + (last_row['std'] * self.LS_in_val))
-            }
-            
-            # 이 부분을 수정: 신호 생성 방식 통일
-            signal_parts = []
-            if signal_conditions['SL_R'] or signal_conditions['LS_R']:
-                signal_parts.append('R')
-            if signal_conditions['SL_I'] or signal_conditions['LS_I']:
-                signal_parts.append('I')
-            if signal_conditions['SL_O'] or signal_conditions['LS_O']:
-                signal_parts.append('O')
-                
-            signal_info = ''.join(signal_parts)
+            # 새로운 신호 로직
+            if sz >= self.SL_in_val:
+                signal = "IN"
+            elif sz <= self.SL_out_val:
+                signal = "OUT"
+            else:
+                signal = "CHK"
+
             price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
             ratio_info = f"{sz:.2f}"
-            
-            # 포맷 수정: sz/신호/가격 형식으로 통일
-            if signal_info:
-                return f"{ratio_info} / {signal_info} / {price_info}"
-            
-            # 신호가 없더라도 SZ 값만 반환
-            return f"{ratio_info} / / {price_info}"
-            
+
+            return f"{ratio_info} / {signal} / {price_info}"
+
         except Exception as e:
             logger.error(f"Error generating signal: {str(e)}")
             raise
