@@ -518,10 +518,19 @@
 
             // Open 상태 매매
             const openTrades = tradesData.filter(t => t.status === 'Open').map(trade => {
+                // 종목명 정규화
+                const tradeName = normalizeStockName(trade.pair_name);
                 // pair_name과 stock_name 매핑
-                const matchedSignal = allSignals.find(s =>
-                    s.stock_name.toLowerCase() === trade.pair_name.toLowerCase()
-                );
+                const matchedSignal = allSignals.find(s => {
+                    const stockName = normalizeStockName(s.stock_name);
+                    return stockName === tradeName;
+                });
+                // 디버깅 로그
+                if (!matchedSignal) {
+                    console.warn(`SZ 값 매핑 실패: pair_name="${trade.pair_name}"`);
+                } else {
+                    console.log(`SZ 값 매핑 성공: pair_name="${trade.pair_name}", sz_value=${matchedSignal.sz_value}`);
+                }
                 // SZ 값 클래스 결정
                 let szClass = '';
                 let szValue = matchedSignal ? matchedSignal.sz_value : null;
@@ -546,7 +555,6 @@
                     preferred_code: trade.preferred_code
                 };
             });
-
 
             const combinedSignals = [...inSignals, ...openTrades];
 
