@@ -644,7 +644,7 @@
 
                     // Open 매매의 경우 추가 정보
                     const extraInfo = signal.type === 'OPEN'
-                        ? `SZ: ${szDisplay} | 진입: ${signal.entry_date || '-'}`
+                        ? `SZ: ${szDisplay} | Entry D.: ${signal.entry_date || '-'}`
                         : `SZ: ${szDisplay}`;
 
                     alertEl.innerHTML = `
@@ -657,12 +657,11 @@
                         <p class="text-sm font-medium text-gray-900">
                             <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
                             class="hover:text-blue-600 hover:underline">
-                                ${signal.stock_name}
+                                ${signal.stock_name} <span class="text-xs text-gray-500">(${stockCode})</span>
                             </a>
-                            <span class="text-xs text-gray-500 block">코드: ${stockCode}</span>
                         </p>
                         <p class="mt-1 text-xs text-gray-500">
-                            ${extraInfo} | 신호: ${signalTag}
+                            ${extraInfo} | Signal: ${signalTag}
                         </p>
                     </div>
                 `;
@@ -790,8 +789,8 @@
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-lg font-medium text-gray-900">
                             <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
-                            class="hover:text-blue-600 hover:underline">
-                                ${displayStockName}
+                            class = "hover:text-blue-600 hover:underline">
+                                ${displayStockName} <span class="text-sm text-gray-500">(${stockCode})</span>
                             </a>
                         </h3>
                         <div>${signalTags}</div>
@@ -963,7 +962,7 @@
             const historyToRender = filteredHistory || historyData;
 
             if (!historyToRender || historyToRender.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">히스토리 데이터가 없습니다</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">히스토리 데이터가 없습니다</td></tr>';
                 return;
             }
 
@@ -1047,7 +1046,7 @@
                     }
                 }
 
-                // SZ 값에 따른 클래스
+                // SZ 값에 따른 class
                 let szClass = 'sz-low';
                 if (item.sz_value >= 2.5) {
                     szClass = 'sz-high';
@@ -1063,13 +1062,14 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
                     class="hover:text-blue-600 hover:underline">
-                        ${item.stock_name}
+                        ${item.stock_name} <span class="text-sm text-gray-500">(${stockCode})</span>
                     </a>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stockCode}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
                 <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text
+
+    -gray-500">
                     ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
                     ${item.price_b ? item.price_b.toLocaleString() : '-'}
                 </td>
@@ -1082,7 +1082,7 @@
             if (allHistory.length > 200) {
                 const infoRow = document.createElement('tr');
                 infoRow.innerHTML = `
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500 bg-gray-50">
+                <td colspan="5" class="px-6 py-4 text-center text-gray-500 bg-gray-50">
                     <i class="fas fa-info-circle mr-2"></i>
                     최근 1년간 수집된 총 ${allHistory.length}개 중 200개만 표시됩니다. 특정 종목만 보려면 검색창을 사용하세요.
                 </td>
