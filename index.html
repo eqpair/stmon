@@ -58,7 +58,9 @@
             background-color: #FEF3C7;
             color: #D97706;
         }
-
+        .signal-open-bg {
+            background-color: #FEF3C7; /* 노란색 배경 */
+        }
         .signal-OPEN {
             background-color: #DBEAFE;
             color: #2563EB;
@@ -356,7 +358,7 @@
 
             filterAndRenderData();
         }
-        
+
         // 데이터 필터링 및 렌더링
         function filterAndRenderData() {
             if (activeTab === 'all') {
@@ -611,8 +613,8 @@
                 return dateB - dateA; // 최신이 먼저
             });
 
-            // 최대 10개의 알림 표시
-            const recentSignals = combinedSignals.slice(0, 10);
+            // 최대 20개의 알림 표시
+            const recentSignals = combinedSignals.slice(0, 20);
 
             alertsContainer.innerHTML = '';
 
@@ -622,7 +624,8 @@
                     const stockCode = getStockCodeByName(signal.stock_name);
 
                     const alertEl = document.createElement('div');
-                    alertEl.className = 'flex items-start p-3 bg-blue-50 rounded-lg';
+                    // Open 신호일 경우 signal-open-bg 클래스 추가
+                    alertEl.className = `flex items-start p-3 rounded-lg ${signal.signal.includes('OPEN') ? 'signal-open-bg' : 'bg-blue-50'}`;
 
                     // 신호 태그 생성
                     let signalTag = '';
