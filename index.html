@@ -443,7 +443,19 @@
 
         // 신호 처리 함수
         function processSignals(signals) {
-            return signals; // 백엔드에서 이미 올바른 시그널 제공
+            // 신호가 없거나 빈 배열인 경우 빈 배열 반환
+            if (!signals || !Array.isArray(signals)) {
+                console.warn('신호 데이터가 유효하지 않음:', signals);
+                return [];
+            }
+            // 모든 필수 필드가 있는지 확인하고 필터링
+            return signals.filter(signal => {
+                if (!signal.stock_name || !signal.signal || signal.sz_value === undefined) {
+                    console.warn('유효하지 않은 신호 데이터:', signal);
+                    return false;
+                }
+                return true;
+            });
         }
 
         // 히스토리 데이터 가져오기
@@ -511,37 +523,37 @@
             switch (status) {
                 case 'loading':
                     indicator.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink';
-                    text.textContent = 'Loading data...';
+                    text.textContent = '데이터 로드 중...';
                     break;
                 case 'success':
                     indicator.className = 'w-3 h-3 rounded-full bg-green-500 mr-2';
-                    text.textContent = 'Data loaded successfully';
+                    text.textContent = '데이터 로드 성공';
                     break;
                 case 'error':
                     indicator.className = 'w-3 h-3 rounded-full bg-red-500 mr-2';
-                    text.textContent = message || 'Failed to load data';
+                    text.textContent = message || '데이터 로드 실패';
                     break;
             }
         }
 
         // 요약 정보 업데이트
         function updateSummary() {
-            document.getElementById('total-stocks').textContent = allSignals.length;
+            document.getElementById('total-stocks').textContent = allSignals.length || '-';
 
             const inSignalCount = allSignals.filter(s => s.signal && s.signal.includes('IN')).length;
-            document.getElementById('in-signal-count').textContent = inSignalCount;
+            document.getElementById('in-signal-count').textContent = inSignalCount || '-';
 
             const chkSignalCount = allSignals.filter(s => s.signal && s.signal.includes('CHK')).length;
-            document.getElementById('chk-signal-count').textContent = chkSignalCount;
+            document.getElementById('chk-signal-count').textContent = chkSignalCount || '-';
 
             const outSignalCount = allSignals.filter(s => s.signal && s.signal.includes('OUT')).length;
-            document.getElementById('out-signal-count').textContent = outSignalCount;
+            document.getElementById('out-signal-count').textContent = outSignalCount || '-';
         }
 
         // 종목명 정규화 함수
         function normalizeStockName(name) {
             if (!name) return '';
-            // HTML 태그, 이모지 제거, 공백 유지, 대소문자 무시
+            // HTML 태그, 이모지 제거, 공백 유지
             let cleanName = name.replace(/<[^>]+>/g, '').trim();
             cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
             // 접미사 제거 (예: "-0.5", "-1")
@@ -556,6 +568,12 @@
             console.log('tradesData 상태:', tradesData);
 
             const alertsContainer = document.getElementById('recent-alerts');
+
+            // 데이터가 없거나 로드되지 않은 경우
+            if (!allSignals || !tradesData) {
+                alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">데이터를 로드하지 못했습니다</div>';
+                return;
+            }
 
             // IN 신호
             const inSignals = allSignals
@@ -678,10 +696,16 @@
             const signalFilter = document.getElementById('filter-signal').value;
             const sortOption = document.getElementById('sort-option').value;
 
+            // 신호가 없거나 빈 배열인 경우 처리
+            if (!signals || !Array.isArray(signals)) {
+                console.warn('필터링할 신호 데이터가 없음');
+                return [];
+            }
+
             // 검색 및 필터 적용
             let filtered = signals.filter(signal => {
                 // 검색어 필터
-                if (searchTerm && !signal.stock_name.toLowerCase().includes(searchTerm)) {
+                if (searchTerm && (!signal.stock_name || !signal.stock_name.toLowerCase().includes(searchTerm))) {
                     return false;
                 }
 
@@ -697,13 +721,13 @@
             filtered.sort((a, b) => {
                 switch (sortOption) {
                     case 'sz-desc':
-                        return b.sz_value - a.sz_value;
+                        return (b.sz_value || 0) - (a.sz_value || 0);
                     case 'sz-asc':
-                        return a.sz_value - b.sz_value;
+                        return (a.sz_value || 0) - (b.sz_value || 0);
                     case 'name-asc':
-                        return a.stock_name.localeCompare(b.stock_name);
+                        return (a.stock_name || '').localeCompare(b.stock_name || '');
                     case 'name-desc':
-                        return b.stock_name.localeCompare(b.stock_name);
+                        return (b.stock_name || '').localeCompare(a.stock_name || '');
                     default:
                         return 0;
                 }
@@ -718,7 +742,7 @@
             const screenWidth = window.innerWidth;
 
             if (!signals || signals.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No data to display</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">표시할 데이터가 없습니다</div>';
                 return;
             }
 
@@ -754,7 +778,7 @@
                 }
 
                 // 종목명 처리
-                let displayStockName = signal.stock_name;
+                let displayStockName = signal.stock_name || '-';
                 let baseStockName = displayStockName;
 
                 if (baseStockName.startsWith('🔴 ') || baseStockName.startsWith('🟠 ') ||
@@ -782,7 +806,7 @@
                     <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
                         <div>
                             <span class="text-gray-500">SZ Value:</span>
-                            <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
+                            <span class="${szClass}">${signal.sz_value ? signal.sz_value.toFixed(2) : '-'}</span>
                         </div>
                         <div>
                             <span class="text-gray-500">Price:</span>
@@ -841,9 +865,7 @@
                 '티와이홀딩스': '363280',
                 '미래에셋증권': '006800',
                 '동부건설': '005960',
-                '크라운제과': '264
-
-900',
+                '크라운제과': '264900',
                 '두산': '000150',
                 '남선알미늄': '008350',
                 '금호석유': '011780',
@@ -940,7 +962,7 @@
             sortedHistory.forEach(item => {
                 const itemDate = new Date(item.timestamp);
                 if (itemDate >= oneYearAgo) {
-                    if (searchTerm && !item.stock_name.toLowerCase().includes(searchTerm)) {
+                    if (searchTerm && (!item.stock_name || !item.stock_name.toLowerCase().includes(searchTerm))) {
                         return;
                     }
 
@@ -1001,9 +1023,9 @@
                 row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
+                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name || '-')}" 
                     class="hover:text-blue-600 hover:underline">
-                        ${item.stock_name} <span class="text-sm text-gray-500">${stockCode}</span>
+                        ${item.stock_name || '-'} <span class="text-sm text-gray-500">${stockCode}</span>
                     </a>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
