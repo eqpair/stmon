@@ -509,6 +509,7 @@
                 preferredPrices: []
             }
         };
+        
         async function loadAndProcessStockData(stockCode, stockName) {
             console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
             try {
@@ -516,7 +517,24 @@
                 document.getElementById('content-container').classList.add('hidden');
                 fetchLastUpdateTime();
 
-                // 현재 정보 설정
+                // trade-button 및 pair-report-button 요소 확인
+                const tradeButton = document.getElementById('trade-button');
+                if (tradeButton) {
+                    tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
+                } else {
+                    console.warn('trade-button 요소를 찾을 수 없습니다.');
+                }
+
+                const pairReportButton = document.getElementById('pair-report-button');
+                if (pairReportButton) {
+                    pairReportButton.href = `pair-report.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
+                } else {
+                    console.warn('pair-report-button 요소를 찾을 수 없습니다.');
+                }
+
+                const trendData = await loadStockData(stockCode, stockName);
+                const realtimeData = await fetchRealtimeData(stockCode, stockName);
+
                 stockData.current = {
                     commonPrice: realtimeData.commonPrice ||
                         (trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
@@ -525,24 +543,22 @@
                     szValue: realtimeData.szValue || 0,
                     signal: realtimeData.signal || '',
                     discountRate: calculateDiscountRate(
-                        realtimeData.commonPrice || trendData.common_prices[trendData.common_prices.length - 1],
-                        realtimeData.preferredPrice || trendData.preferred_prices[trendData.preferred_prices.length - 1]
+                        realtimeData.commonPrice || (trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
+                        realtimeData.preferredPrice || (trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)
                     )
                 };
 
-                // 히스토리 데이터 설정
                 stockData.history.dates = trendData.dates.slice(-150);
                 stockData.history.discountRates = trendData.discount_rates.slice(-150);
+                stockData.history.commonPrices = trendData.common_prices.slice(-150);
+                stockData.history.preferredPrices = trendData.preferred_prices.slice(-150);
                 const windowData = trendData.discount_rates.slice(-250, -1);
                 stockData.history.mean = calculateMean(windowData);
                 stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
                 stockData.history.szValues = trendData.sz_values ? trendData.sz_values.slice(-150) :
                     calculateSZValues(trendData.discount_rates, stockData.history.mean, stockData.history.stdDev).slice(-150);
 
-                // 현재 정보 업데이트
                 updateCurrentInfo();
-
-                // 차트 및 히스토리 렌더링
                 renderCharts(trendData);
                 renderHistoryData(trendData);
 
@@ -553,7 +569,8 @@
                 document.getElementById('loading-container').innerHTML = `
                 <div class="text-red-500 text-center">
                     <p>데이터를 로드할 수 없습니다.</p>
-                    <p>${error.message}</p>
+                    <p>오류: ${error.message}</p>
+                    <p>상세: ${error.stack}</p>
                     <div class="mt-4 flex justify-center space-x-4">
                         <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-500 text-white rounded">다시 시도</button>
                         <button onclick="window.location.href='index.html'" class="px-4 py-2 bg-gray-500 text-white rounded">메인 페이지로 돌아가기</button>
@@ -674,6 +691,7 @@
                     throw new Error(`실시간 데이터를 가져올 수 없습니다: ${response.status}`);
                 }
                 const data = await response.json();
+
                 const normalizeStockName = (name) => {
                     if (!name) return '';
                     let cleanName = name.replace(/<[^>]+>/g, '');
@@ -681,8 +699,10 @@
                     cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
                     return cleanName.trim();
                 };
+
                 const normalizedCurrentName = normalizeStockName(stockName);
                 let matchedSignal = null;
+
                 for (const signal of data.all_signals) {
                     const normalizedSignalName = normalizeStockName(signal.stock_name);
                     if (normalizedSignalName === normalizedCurrentName) {
@@ -691,6 +711,7 @@
                         break;
                     }
                 }
+
                 if (!matchedSignal) {
                     for (const signal of data.all_signals) {
                         const normalizedSignalName = normalizeStockName(signal.stock_name);
@@ -702,6 +723,7 @@
                         }
                     }
                 }
+
                 if (!matchedSignal && stockCode !== 'unknown') {
                     for (const signal of data.all_signals) {
                         try {
@@ -716,10 +738,17 @@
                         }
                     }
                 }
+
                 if (!matchedSignal) {
                     console.warn("일치하는 종목을 찾을 수 없음:", stockName, stockCode);
-                    return {};
+                    return {
+                        commonPrice: null,
+                        preferredPrice: null,
+                        szValue: 0,
+                        signal: ''
+                    };
                 }
+
                 return {
                     commonPrice: matchedSignal.price_a || null,
                     preferredPrice: matchedSignal.price_b || null,
@@ -728,9 +757,15 @@
                 };
             } catch (error) {
                 console.error('실시간 데이터 가져오기 오류:', error);
-                return {};
+                return {
+                    commonPrice: null,
+                    preferredPrice: null,
+                    szValue: 0,
+                    signal: ''
+                };
             }
         }
+
         function calculateDiscountRate(commonPrice, preferredPrice) {
             if (!commonPrice || !preferredPrice || commonPrice === 0) {
                 return 0;
