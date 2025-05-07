@@ -185,6 +185,10 @@
                         class="tab-button active py-4 px-6 border-b-2 border-blue-500 font-medium text-blue-600 focus:outline-none">
                         All Items
                     </button>
+                    <button id="tab-divergent"
+                        class="tab-button py-4 px-6 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none">
+                        Divergent Pairs
+                    </button>
                     <button id="tab-history"
                         class="tab-button py-4 px-6 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none">
                         History
@@ -351,6 +355,17 @@
             }
 
             filterAndRenderData();
+        }
+        
+        // 데이터 필터링 및 렌더링
+        function filterAndRenderData() {
+            if (activeTab === 'all') {
+                renderSignals(filterSignals(allSignals), 'all-signals-container');
+            } else if (activeTab === 'divergent') {
+                renderSignals(filterSignals(divergentSignals), 'divergent-signals-container');
+            } else if (activeTab === 'history') {
+                renderHistoryData(filterSignals(historyData));
+            }
         }
 
         // 매매 데이터 가져오기
@@ -596,8 +611,8 @@
                 return dateB - dateA; // 최신이 먼저
             });
 
-            // 최대 5개의 알림 표시
-            const recentSignals = combinedSignals.slice(0, 5);
+            // 최대 10개의 알림 표시
+            const recentSignals = combinedSignals.slice(0, 10);
 
             alertsContainer.innerHTML = '';
 
@@ -622,7 +637,7 @@
 
                     // Open 매매의 경우 추가 정보
                     const extraInfo = signal.type === 'OPEN'
-                        ? `SZ: ${szDisplay} | Entry: ${signal.entry_date || '-'} | Codes: ${signal.common_code || '-'} / ${signal.preferred_code || '-'}`
+                        ? `SZ: ${szDisplay} | Entry: ${signal.entry_date || '-'}`
                         : `SZ: ${szDisplay}`;
 
 
