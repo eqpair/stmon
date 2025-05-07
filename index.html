@@ -253,9 +253,6 @@
                                     Item</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Code</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     SZ Value</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -790,7 +787,7 @@
                         <h3 class="text-lg font-medium text-gray-900">
                             <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
                             class = "hover:text-blue-600 hover:underline">
-                                ${displayStockName} <span class="text-sm text-gray-500">(${stockCode})</span>
+                                ${displayStockName} <span class="text-sm text-gray-500">${stockCode}</span>
                             </a>
                         </h3>
                         <div>${signalTags}</div>
@@ -1062,7 +1059,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
                     class="hover:text-blue-600 hover:underline">
-                        ${item.stock_name} <span class="text-sm text-gray-500">(${stockCode})</span>
+                        ${item.stock_name} <span class="text-sm text-gray-500">${stockCode}</span>
                     </a>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
