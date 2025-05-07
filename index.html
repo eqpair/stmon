@@ -172,7 +172,7 @@
                         <div class="text-2xl font-bold" id="in-signal-count">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
+                        <div class="text-purple EMBEDDED_CODE-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
                         <div class="text-2xl font-bold" id="chk-signal-count">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
@@ -475,7 +475,7 @@
             }
         }
         // 마지막 업데이트 시간 표시
-        function updateLastUpdated(timestamp) {
+        function updateLastUpdated(timestamp Ascending () {
             const el = document.getElementById('lastUpdated');
             if (!timestamp) {
                 el.textContent = '업데이트 정보 없음';
@@ -558,57 +558,64 @@
             const alertsContainer = document.getElementById('recent-alerts');
 
             // IN 신호
-            const inSignals = allSignals.filter(s => s.signal && s.signal.includes('IN')).map(signal => ({
-                ...signal,
-                type: 'IN',
-                sortTime: signal.timestamp
-            }));
+            const inSignals = allSignals
+                .filter(s => s.signal && s.signal.includes('IN'))
+                .map(signal => ({
+                    ...signal,
+                    type: 'IN',
+                    sortTime: signal.timestamp
+                }))
+                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime)); // 최신순 정렬
 
             console.log('inSignals:', inSignals);
 
             // Open 상태 매매
-            const openTrades = tradesData.filter(t => t.status === 'Open').map(trade => {
-                // 종목명 정규화
-                const tradeName = normalizeStockName(trade.pair_name);
-                // pair_name과 stock_name 매핑
-                const matchedSignal = allSignals.find(s => {
-                    const stockName = normalizeStockName(s.stock_name);
-                    return stockName === tradeName;
-                });
-                // 디버깅 로그
-                if (!matchedSignal) {
-                    console.warn(`SZ 값 매핑 실패: pair_name="${trade.pair_name}"`);
-                } else {
-                    console.log(`SZ 값 매핑 성공: pair_name="${trade.pair_name}", sz_value=${matchedSignal.sz_value}`);
-                }
-                // SZ 값 클래스 결정
-                let szClass = '';
-                let szValue = matchedSignal ? matchedSignal.sz_value : null;
-                if (szValue >= 2.5) {
-                    szClass = 'sz-high';
-                } else if (szValue >= 1.5) {
-                    szClass = 'sz-medium';
-                } else if (szValue !== null) {
-                    szClass = 'sz-low';
-                }
-                return {
-                    stock_name: trade.pair_name,
-                    sz_value: szValue,
-                    sz_class: szClass,
-                    signal: 'OPEN',
-                    price_a: null,
-                    price_b: null,
-                    type: 'OPEN',
-                    sortTime: trade.entry_date || new Date().toISOString(),
-                    entry_date: trade.entry_date,
-                    common_code: trade.common_code,
-                    preferred_code: trade.preferred_code
-                };
-            });
+            const openTrades = tradesData
+                .filter(t => t.status === 'Open')
+                .map(trade => {
+                    // 종목명 정규화
+                    const tradeName = normalizeStockName(trade.pair_name);
+                    // pair_name과 stock_name 매핑
+                    const matchedSignal = allSignals.find(s => {
+                        const stockName = normalizeStockName(s.stock_name);
+                        return stockName === tradeName;
+                    });
+                    // 디버깅 로그
+                    if (!matchedSignal) {
+                        console.warn(`SZ 값 매핑 실패: pair_name="${trade.pair_name}"`);
+                    } else {
+                        console.log(`SZ 값 매핑 성공: pair_name="${trade.pair_name}", sz_value=${matchedSignal.sz_value}`);
+                    }
+                    // SZ 값 클래스 결정
+                    let szClass = '';
+                    let szValue = matchedSignal ? matchedSignal.sz_value : null;
+                    if (szValue >= 2.5) {
+                        szClass = 'sz-high';
+                    } else if (szValue >= 1.5) {
+                        szClass = 'sz-medium';
+                    } else if (szValue !== null) {
+                        szClass = 'sz-low';
+                    }
+                    return {
+                        stock_name: trade.pair_name,
+                        sz_value: szValue,
+                        sz_class: szClass,
+                        signal: 'OPEN',
+                        price_a: null,
+                        price_b: null,
+                        type: 'OPEN',
+                        sortTime: trade.entry_date || new Date().toISOString(),
+                        entry_date: trade.entry_date,
+                        common_code: trade.common_code,
+                        preferred_code: trade.preferred_code
+                    };
+                })
+                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime)); // 최신순 정렬
 
             console.log('openTrades:', openTrades);
 
-            const combinedSignals = [...inSignals, ...openTrades];
+            // OPEN 신호와 IN 신호를 순서대로 결합 (OPEN 먼저)
+            const combinedSignals = [...openTrades, ...inSignals];
 
             console.log('combinedSignals:', combinedSignals);
 
@@ -616,13 +623,6 @@
                 alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
                 return;
             }
-
-            // 최신순 정렬 (entry_date 또는 timestamp 기준)
-            combinedSignals.sort((a, b) => {
-                const dateA = new Date(a.sortTime);
-                const dateB = new Date(b.sortTime);
-                return dateB - dateA; // 최신이 먼저
-            });
 
             // 최대 20개의 알림 표시
             const recentSignals = combinedSignals.slice(0, 20);
