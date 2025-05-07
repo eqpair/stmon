@@ -520,6 +520,10 @@
                 const trendData = await loadStockData(stockCode, stockName);
                 console.log('Loaded trendData:', trendData);
 
+                if (!trendData.dates.length) {
+                    throw new Error('트렌드 데이터가 비어 있습니다.');
+                }
+
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
 
                 stockData.current = {
@@ -591,7 +595,7 @@
             `;
             }
         }
-
+        
         function renderPriceChart(dates, commonPrices, preferredPrices, chartHeight, pointRadius) {
             const ctx = document.getElementById('price-chart').getContext('2d');
             const screenWidth = window.innerWidth;
@@ -889,9 +893,11 @@
 
         async function loadStockData(stockCode, stockName) {
             try {
+                stockCode = stockCode.toLowerCase();
                 const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
                 const trendDataUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
                 console.log(`Loading trend data from: ${trendDataUrl}`);
+
                 const trendDataResponse = await fetch(trendDataUrl, {
                     cache: 'no-store',
                     headers: {
@@ -900,9 +906,41 @@
                         'Expires': '0'
                     }
                 });
+
                 if (!trendDataResponse.ok) {
-                    throw new Error(`트렌드 데이터 로드 실패: ${stockName} (${trendDataResponse.status})`);
+                    console.error(`트렌드 데이터 로드 실패: ${stockName} (${trendDataResponse.status}) - URL: ${trendDataUrl}`);
+                    const fallbackUrl = `${baseUrl}/data/trends/default.json?t=${new Date().getTime()}`;
+                    console.log(`대체 데이터 로드 시도: ${fallbackUrl}`);
+                    const fallbackResponse = await fetch(fallbackUrl, {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
+                        }
+                    });
+                    if (!fallbackResponse.ok) {
+                        throw new Error(`대체 데이터 로드 실패: ${stockName} (${fallbackResponse.status})`);
+                    }
+                    const fallbackDataText = await fallbackResponse.text();
+                    const cleanedFallbackDataText = fallbackDataText
+                        .replace(/"NaN"/g, 'null')
+                        .replace(/NaN/g, 'null')
+                        .replace(/Infinity/g, 'null')
+                        .replace(/-Infinity/g, 'null');
+                    const trendData = JSON.parse(cleanedFallbackDataText, (key, value) => {
+                        if (value === null || value === undefined ||
+                            (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
+                            return null;
+                        }
+                        if (typeof value === 'number' && !isFinite(value)) {
+                            return null;
+                        }
+                        return value;
+                    });
+                    return trendData;
                 }
+
                 const trendDataText = await trendDataResponse.text();
                 const cleanedTrendDataText = trendDataText
                     .replace(/"NaN"/g, 'null')
@@ -920,18 +958,15 @@
                     return value;
                 });
 
-                // 데이터 검증
                 if (!trendData.dates || !trendData.common_prices || !trendData.preferred_prices || !trendData.discount_rates) {
                     throw new Error('트렌드 데이터 형식이 올바르지 않습니다.');
                 }
 
-                // discount_rates 유효성 검사
                 if (!trendData.discount_rates || trendData.discount_rates.every(val => val === null || isNaN(val))) {
                     console.warn(`discount_rates가 유효하지 않습니다. 대체 데이터 사용: ${stockCode}`);
                     trendData.discount_rates = Array(trendData.dates.length).fill(0);
                 }
 
-                // sz_values가 없으면 로그 출력
                 if (!trendData.sz_values) {
                     console.log(`sz_values가 제공되지 않음. discount_rates로 SZ 값 계산: ${stockCode}`);
                 }
@@ -939,6 +974,18 @@
                 return trendData;
             } catch (error) {
                 console.error('loadStockData 오류:', error);
+                document.getElementById('loading-container').innerHTML = `
+                <div class="text-red-500 text-center">
+                    <p>트렌드 데이터를 로드할 수 없습니다.</p>
+                    <p>오류: ${error.message}</p>
+                    <p>종목 코드: ${stockCode}, 이름: ${stockName}</p>
+                    <p>파일 경로: /stmon/data/trends/${stockCode}.json</p>
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-500 text-white rounded">다시 시도</button>
+                        <button onclick="window.location.href='index.html'" class="px-4 py-2 bg-gray-500 text-white rounded">메인 페이지로 돌아가기</button>
+                    </div>
+                </div>
+            `;
                 return {
                     dates: [],
                     common_prices: [],
