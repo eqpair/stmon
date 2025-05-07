@@ -85,13 +85,17 @@
         <header class="mb-8">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Trading REPORT</h1>
-                <p class="text-sm text-gray-600">Last update: <span id="last-update">Loading...</span></p>
-            </div>
-            <div class="flex space-x-2">
-                <a href="index.html"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="fas fa-home mr-2"></i> Home
                 </a>
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+                <span class="mr-2">Last Update:</span>
+                <span id="lastUpdated" class="font-medium"></span>
+                <div class="ml-4 flex items-center">
+                    <div id="status-indicator" class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+                    <span id="status-text">Loading Data...</span>
+                </div>
             </div>
         </header>
 
