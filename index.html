@@ -808,6 +808,32 @@
                         Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
                     </div>
                 `;
+                // 카드 내용 - 종목명에 링크 추가, 종목 코드 표시
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-medium text-gray-900">
+                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
+                            class="hover:text-blue-600 hover:underline">
+                                ${displayStockName}
+                            </a>
+                            <span class="text-sm text-gray-500 block">${stockCode}</span>
+                        </h3>
+                        <div>${signalTags}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+                        <div>
+                            <span class="text-gray-500">SZ Value:</span>
+                            <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Price:</span>
+                            <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-2">
+                        Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
+                    </div>
+                `;
 
                 container.appendChild(card);
             });
