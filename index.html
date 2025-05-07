@@ -145,7 +145,7 @@
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Monitoring System</h1>
                 <a href="pair-report.html"
                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-chart-line mr-2"></i> Ｒeport
+                    <i class="fas fa-chart-line mr-2"></i> Report
                 </a>
             </div>
             <div class="flex items-center text-sm text-gray-600">
@@ -632,9 +632,13 @@
 
             console.log('openTrades:', openTrades);
 
-            // OPEN 신호와 IN 신호를 순서대로 결합 (OPEN 먼저)
-            const combinedSignals = [...openTrades, ...inSignals];
-
+            const combinedSignals = [...openTrades, ...inSignals].sort((a, b) => {
+                // OPEN 상태를 우선으로 정렬 (OPEN이 위로 오도록)
+                if (a.type === 'OPEN' && b.type !== 'OPEN') return -1;
+                if (b.type === 'OPEN' && a.type !== 'OPEN') return 1;
+                // 동일한 상태 내에서는 시간순으로 정렬 (최신순)
+                return new Date(b.sortTime) - new Date(a.sortTime);
+            });
             console.log('combinedSignals:', combinedSignals);
 
             if (combinedSignals.length === 0) {
