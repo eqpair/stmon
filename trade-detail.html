@@ -516,12 +516,6 @@
                 document.getElementById('content-container').classList.add('hidden');
                 fetchLastUpdateTime();
 
-                // Marketability 버튼 링크 설정
-                document.getElementById('trade-button').href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
-
-                const trendData = await loadStockData(stockCode, stockName);
-                const realtimeData = await fetchRealtimeData(stockCode, stockName);
-
                 // 현재 정보 설정
                 stockData.current = {
                     commonPrice: realtimeData.commonPrice ||
