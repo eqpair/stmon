@@ -538,11 +538,22 @@
                 stockData.history.commonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 stockData.history.preferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
                 const windowData = trendData.discount_rates ? trendData.discount_rates.slice(-250, -1) : [];
+
+                if (!windowData.length) {
+                    console.warn('windowData is empty. Mean and StdDev will be set to 0.');
+                }
+
                 stockData.history.mean = calculateMean(windowData);
                 stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
+
+                console.log('Mean:', stockData.history.mean, 'StdDev:', stockData.history.stdDev);
+                console.log('Discount Rates:', trendData.discount_rates);
+
                 stockData.history.szValues = trendData.sz_values ?
-                    trendData.sz_values.slice(-150).map((value, index) => ({ index, value })) :
+                    trendData.sz_values.slice(-150).map((value, index) => ({ index, value: value ?? null })) :
                     calculateSZValues(trendData.discount_rates || [], stockData.history.mean, stockData.history.stdDev).slice(-150);
+
+                console.log('Calculated SZ Values:', stockData.history.szValues);
 
                 updateCurrentInfo();
                 renderCharts(trendData);
@@ -700,39 +711,47 @@
 
                 const szValues = stockData.history.szValues;
                 const szValueMap = {};
-                szValues.forEach((item, idx) => {
-                    szValueMap[item.index] = item.value ?? 0;
+                szValues.forEach((item) => {
+                    szValueMap[item.index] = item.value !== null && item.value !== undefined ? item.value : null;
                 });
 
                 for (const i of displayIndices) {
                     const date = trendData.dates[i];
-                    const szValue = szValueMap[i] !== undefined ? szValueMap[i] : 0;
+                    const szValue = szValueMap[i] !== undefined && szValueMap[i] !== null ? szValueMap[i] : null;
 
-                    let szClass = 'text-green-600';
-                    if (szValue >= 2.5) {
-                        szClass = 'text-red-600 font-bold';
-                    } else if (szValue >= 1.5) {
-                        szClass = 'text-orange-600 font-bold';
+                    let szDisplay = 'N/A';
+                    let szClass = 'text-gray-500';
+                    if (szValue !== null) {
+                        szDisplay = szValue.toFixed(2);
+                        if (szValue >= 2.5) {
+                            szClass = 'text-red-600 font-bold';
+                        } else if (szValue >= 1.5) {
+                            szClass = 'text-orange-600 font-bold';
+                        } else {
+                            szClass = 'text-green-600';
+                        }
                     }
 
                     let trendIcon = '-';
                     if (displayIndices.indexOf(i) < displayIndices.length - 1) {
                         const prevIndex = displayIndices[displayIndices.indexOf(i) + 1];
-                        const prevSZ = szValueMap[prevIndex] ?? 0;
+                        const prevSZ = szValueMap[prevIndex] !== undefined && szValueMap[prevIndex] !== null ? szValueMap[prevIndex] : null;
 
-                        if (szValue > prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                        } else if (szValue < prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
-                        } else {
-                            trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
+                        if (szValue !== null && prevSZ !== null) {
+                            if (szValue > prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                            } else if (szValue < prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                            } else {
+                                trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
+                            }
                         }
                     }
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szDisplay}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
@@ -919,13 +938,16 @@
         }
         function calculateSZValues(discountRates, mean, stdDev) {
             if (!discountRates || discountRates.length === 0) {
+                console.warn('discountRates가 비어 있습니다. SZ 값은 0으로 설정됩니다.');
                 return Array(discountRates.length).fill({ index: 0, value: 0 });
             }
             return discountRates.map((rate, index) => {
                 if (rate === null || isNaN(rate)) {
+                    console.debug(`discountRates[${index}] is invalid: ${rate}`);
                     return { index, value: null };
                 }
                 if (stdDev === 0) {
+                    console.warn(`stdDev is 0 at index ${index}. SZ value will be 0.`);
                     return { index, value: 0 };
                 }
                 const szValue = (rate - mean) / stdDev;
