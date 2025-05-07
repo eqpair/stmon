@@ -632,48 +632,37 @@
 
             console.log('openTrades:', openTrades);
 
-            // OPEN 신호와 IN 신호를 순서대로 결합 (OPEN 먼저)
-            const combinedSignals = [...openTrades, ...inSignals];
-
-            console.log('combinedSignals:', combinedSignals);
-
-            if (combinedSignals.length === 0) {
+            if (openTrades.length === 0 && inSignals.length === 0) {
                 alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
                 return;
             }
 
-            // 최대 20개의 알림 표시
-            const recentSignals = combinedSignals.slice(0, 20);
+            // 최대 20개의 알림 표시 (OPEN + IN)
+            const maxAlerts = 20;
+            const openSignalsToShow = openTrades.slice(0, Math.min(4, openTrades.length)); // 첫 줄에 최대 4개
+            const inSignalsToShow = inSignals.slice(0, maxAlerts - openSignalsToShow.length); // 나머지 IN 신호
 
             alertsContainer.innerHTML = '';
 
-            recentSignals.forEach(signal => {
-                try {
-                    // 종목 코드 가져오기
-                    const stockCode = getStockCodeByName(signal.stock_name);
+            // 첫 줄에 OPEN 신호 렌더링
+            if (openSignalsToShow.length > 0) {
+                const openRow = document.createElement('div');
+                openRow.className = 'grid grid-cols-4 gap-4 mb-4'; // 첫 줄 스타일
 
-                    const alertEl = document.createElement('div');
-                    alertEl.className = `p-4 rounded-lg ${signal.signal.includes('OPEN') ? 'signal-open-bg' : 'bg-blue-50'}`;
+                openSignalsToShow.forEach(signal => {
+                    try {
+                        const stockCode = getStockCodeByName(signal.stock_name);
+                        const alertEl = document.createElement('div');
+                        alertEl.className = `p-4 rounded-lg signal-open-bg`;
 
-                    // 신호 태그 생성
-                    let signalTag = '';
-                    if (signal.signal.includes('IN')) {
-                        signalTag = '<span class="signal-tag signal-IN">IN</span>';
-                    } else if (signal.signal.includes('OPEN')) {
-                        signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
-                    }
-                    // SZ 값 포맷팅
-                    const szClass = signal.type === 'OPEN' ? signal.sz_class : (signal.sz_value >= 2.5 ? 'sz-high' : signal.sz_value >= 1.5 ? 'sz-medium' : 'sz-low');
-                    const szDisplay = signal.sz_value !== null
-                        ? `<span class="${szClass} ${signal.type === 'OPEN' ? 'font-bold' : ''}">${signal.sz_value.toFixed(2)}</span>`
-                        : '-';
+                        let signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
+                        const szClass = signal.sz_class;
+                        const szDisplay = signal.sz_value !== null
+                            ? `<span class="${szClass} font-bold">${signal.sz_value.toFixed(2)}</span>`
+                            : '-';
+                        const extraInfo = `SZ: ${szDisplay} | Entry D.: ${signal.entry_date || '-'}`;
 
-                    // Open 매매의 경우 추가 정보
-                    const extraInfo = signal.type === 'OPEN'
-                        ? `SZ: ${szDisplay} | Entry D.: ${signal.entry_date || '-'}`
-                        : `SZ: ${szDisplay}`;
-
-                    alertEl.innerHTML = `
+                        alertEl.innerHTML = `
                         <div class="text-blue-700 text-sm font-medium mb-1">
                             <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" class="hover:text-blue-600 hover:underline">
                                 ${signal.stock_name}
@@ -683,11 +672,52 @@
                         <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
                     `;
 
-                    alertsContainer.appendChild(alertEl);
-                } catch (error) {
-                    console.error(`알림 렌더링 오류: stock_name="${signal.stock_name}", error=`, error);
-                }
-            });
+                        openRow.appendChild(alertEl);
+                    } catch (error) {
+                        console.error(`OPEN 알림 렌더링 오류: stock_name="${signal.stock_name}", error=`, error);
+                    }
+                });
+
+                alertsContainer.appendChild(openRow);
+            }
+
+            // IN 신호를 4개씩 행으로 렌더링
+            for (let i = 0; i < inSignalsToShow.length; i += 4) {
+                const inRow = document.createElement('div');
+                inRow.className = 'grid grid-cols-4 gap-4 mb-4';
+
+                const rowSignals = inSignalsToShow.slice(i, i + 4);
+                rowSignals.forEach(signal => {
+                    try {
+                        const stockCode = getStockCodeByName(signal.stock_name);
+                        const alertEl = document.createElement('div');
+                        alertEl.className = `p-4 rounded-lg bg-blue-50`;
+
+                        let signalTag = '<span class="signal-tag signal-IN">IN</span>';
+                        const szClass = signal.sz_value >= 2.5 ? 'sz-high' : signal.sz_value >= 1.5 ? 'sz-medium' : 'sz-low';
+                        const szDisplay = signal.sz_value !== null
+                            ? `<span class="${szClass}">${signal.sz_value.toFixed(2)}</span>`
+                            : '-';
+                        const extraInfo = `SZ: ${szDisplay}`;
+
+                        alertEl.innerHTML = `
+                        <div class="text-blue-700 text-sm font-medium mb-1">
+                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" class="hover:text-blue-600 hover:underline">
+                                ${signal.stock_name}
+                            </a>
+                            <span class="text-xs text-gray-500">${stockCode}</span>
+                        </div>
+                        <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
+                    `;
+
+                        inRow.appendChild(alertEl);
+                    } catch (error) {
+                        console.error(`IN 알림 렌더링 오류: stock_name="${signal.stock_name}", error=`, error);
+                    }
+                });
+
+                alertsContainer.appendChild(inRow);
+            }
         }
 
         // 신호 필터링
