@@ -253,6 +253,9 @@
                                     Item</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Code</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     SZ Value</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -551,7 +554,7 @@
                 type: 'IN',
                 sortTime: signal.timestamp
             }));
-            
+
             console.log('inSignals:', inSignals);
 
             // Open 상태 매매
@@ -600,9 +603,8 @@
 
             console.log('combinedSignals:', combinedSignals);
 
-
             if (combinedSignals.length === 0) {
-                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">No Recent Notifications</div>';
+                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
                 return;
             }
 
@@ -620,7 +622,7 @@
 
             recentSignals.forEach(signal => {
                 try {
-                // 종목 코드 가져오기
+                    // 종목 코드 가져오기
                     const stockCode = getStockCodeByName(signal.stock_name);
 
                     const alertEl = document.createElement('div');
@@ -642,9 +644,8 @@
 
                     // Open 매매의 경우 추가 정보
                     const extraInfo = signal.type === 'OPEN'
-                        ? `SZ: ${szDisplay} | Entry: ${signal.entry_date || '-'}`
+                        ? `SZ: ${szDisplay} | 진입: ${signal.entry_date || '-'}`
                         : `SZ: ${szDisplay}`;
-
 
                     alertEl.innerHTML = `
                     <div class="flex-shrink-0 mt-0.5">
@@ -655,15 +656,16 @@
                     <div class="ml-3 flex-1">
                         <p class="text-sm font-medium text-gray-900">
                             <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                                class="hover:text-blue-600 hover:underline">
+                            class="hover:text-blue-600 hover:underline">
                                 ${signal.stock_name}
                             </a>
+                            <span class="text-xs text-gray-500 block">코드: ${stockCode}</span>
                         </p>
                         <p class="mt-1 text-xs text-gray-500">
-                            ${extraInfo} | Signal: ${signalTag}
+                            ${extraInfo} | 신호: ${signalTag}
                         </p>
                     </div>
-                 `;
+                `;
 
                     alertsContainer.appendChild(alertEl);
                 } catch (error) {
@@ -961,7 +963,7 @@
             const historyToRender = filteredHistory || historyData;
 
             if (!historyToRender || historyToRender.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No history data to display</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">히스토리 데이터가 없습니다</td></tr>';
                 return;
             }
 
@@ -1057,20 +1059,21 @@
                 const stockCode = getStockCodeByName(item.stock_name);
 
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
-                        class="hover:text-blue-600 hover:underline">
-                            ${item.stock_name}
-                        </a>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
-                        ${item.price_b ? item.price_b.toLocaleString() : '-'}
-                    </td>
-                `;
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
+                    class="hover:text-blue-600 hover:underline">
+                        ${item.stock_name}
+                    </a>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stockCode}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
+                    ${item.price_b ? item.price_b.toLocaleString() : '-'}
+                </td>
+            `;
 
                 tableBody.appendChild(row);
             });
@@ -1079,7 +1082,7 @@
             if (allHistory.length > 200) {
                 const infoRow = document.createElement('tr');
                 infoRow.innerHTML = `
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500 bg-gray-50">
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500 bg-gray-50">
                     <i class="fas fa-info-circle mr-2"></i>
                     최근 1년간 수집된 총 ${allHistory.length}개 중 200개만 표시됩니다. 특정 종목만 보려면 검색창을 사용하세요.
                 </td>
