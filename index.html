@@ -172,7 +172,7 @@
                         <div class="text-2xl font-bold" id="in-signal-count">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple EMBEDDED_CODE-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
+                        <div class="text-purple-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
                         <div class="text-2xl font-bold" id="chk-signal-count">-</div>
                     </div>
                     <div class="p-4 bg-purple-50 rounded-lg">
@@ -475,7 +475,7 @@
             }
         }
         // 마지막 업데이트 시간 표시
-        function updateLastUpdated(timestamp Ascending () {
+        function updateLastUpdated(timestamp) {
             const el = document.getElementById('lastUpdated');
             if (!timestamp) {
                 el.textContent = '업데이트 정보 없음';
@@ -656,7 +656,12 @@
                         : `SZ: ${szDisplay}`;
 
                     alertEl.innerHTML = `
-                        <div class="text-blue-700 text-sm font-medium mb-1">${signal.stock_name} <span class="text-xs text-gray-500">${stockCode}</span></div>
+                        <div class="text-blue-700 text-sm font-medium mb-1">
+                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" class="hover:text-blue-600 hover:underline">
+                                ${signal.stock_name}
+                            </a>
+                            <span class="text-xs text-gray-500">${stockCode}</span>
+                        </div>
                         <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
                     `;
 
@@ -836,7 +841,9 @@
                 '티와이홀딩스': '363280',
                 '미래에셋증권': '006800',
                 '동부건설': '005960',
-                '크라운제과': '264900',
+                '크라운제과': '264
+
+900',
                 '두산': '000150',
                 '남선알미늄': '008350',
                 '금호석유': '011780',
