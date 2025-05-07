@@ -50,17 +50,21 @@
             background-color: #FEE2E2;
             color: #DC2626;
         }
+
         .signal-OUT {
             background-color: #DCFCE7;
             color: #16A34A;
         }
+
         .signal-CHK {
             background-color: #FEF3C7;
             color: #D97706;
         }
+
         .signal-open-bg {
-            background-color: #FFF9DB; /* 노란색 배경 */
+            background-color: #FFF9DB;
         }
+
         .signal-OPEN {
             background-color: #DBEAFE;
             color: #2563EB;
@@ -85,10 +89,18 @@
             .grid-cols-3 {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 640px) {
             .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-cols-4 {
                 grid-template-columns: 1fr;
             }
 
@@ -133,7 +145,7 @@
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Monitoring System</h1>
                 <a href="pair-report.html"
                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-chart-line mr-2"></i> Report
+                    <i class="fas fa-chart-line mr-2"></i> Trading Reports
                 </a>
             </div>
             <div class="flex items-center text-sm text-gray-600">
@@ -146,11 +158,11 @@
             </div>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="mb-8">
             <!-- Monitoring Summary Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Monitoring Summary</h2>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-4 gap-4">
                     <div class="p-4 bg-blue-50 rounded-lg">
                         <div class="text-blue-700 text-sm font-medium mb-1">Monitoring Items</div>
                         <div class="text-2xl font-bold" id="total-stocks">-</div>
@@ -173,8 +185,8 @@
             <!-- Recent Notifications -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Notifications</h2>
-                <div id="recent-alerts" class="space-y-3">
-                    <div class="text-gray-500 text-center py-4">Loading Notification Data...</div>
+                <div id="recent-alerts" class="grid grid-cols-4 gap-4">
+                    <div class="col-span-full text-gray-500 text-center py-4">Loading Notification Data...</div>
                 </div>
             </div>
         </div>
@@ -386,7 +398,7 @@
                 updateRecentAlerts();
             }
         }
-        
+
         // 데이터 가져오기
         async function fetchData() {
             updateStatus('loading');
@@ -601,7 +613,7 @@
             console.log('combinedSignals:', combinedSignals);
 
             if (combinedSignals.length === 0) {
-                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
+                alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
                 return;
             }
 
@@ -623,8 +635,7 @@
                     const stockCode = getStockCodeByName(signal.stock_name);
 
                     const alertEl = document.createElement('div');
-                    // Open 신호일 경우 signal-open-bg 클래스 추가
-                    alertEl.className = `flex items-start p-3 rounded-lg ${signal.signal.includes('OPEN') ? 'signal-open-bg' : 'bg-blue-50'}`;
+                    alertEl.className = `p-4 rounded-lg ${signal.signal.includes('OPEN') ? 'signal-open-bg' : 'bg-blue-50'}`;
 
                     // 신호 태그 생성
                     let signalTag = '';
@@ -645,40 +656,15 @@
                         : `SZ: ${szDisplay}`;
 
                     alertEl.innerHTML = `
-                    <div class="flex-shrink-0 mt-0.5">
-                        <span class="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
-                            <i class="fas fa-exclamation"></i>
-                        </span>
-                    </div>
-                    <div class="ml-3 flex-1">
-                        <p class="text-sm font-medium text-gray-900">
-                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                            class="hover:text-blue-600 hover:underline">
-                                ${signal.stock_name} <span class="text-xs text-gray-500">${stockCode}</span>
-                            </a>
-                        </p>
-                        <p class="mt-1 text-xs text-gray-500">
-                            ${extraInfo} | Signal: ${signalTag}
-                        </p>
-                    </div>
-                `;
+                        <div class="text-blue-700 text-sm font-medium mb-1">${signal.stock_name} <span class="text-xs text-gray-500">${stockCode}</span></div>
+                        <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
+                    `;
 
                     alertsContainer.appendChild(alertEl);
                 } catch (error) {
                     console.error(`알림 렌더링 오류: stock_name="${signal.stock_name}", error=`, error);
                 }
             });
-        }
-
-        // 데이터 필터링 및 렌더링
-        function filterAndRenderData() {
-            if (activeTab === 'all') {
-                renderSignals(filterSignals(allSignals), 'all-signals-container');
-            } else if (activeTab === 'divergent') {
-                renderSignals(filterSignals(divergentSignals), 'divergent-signals-container');
-            } else if (activeTab === 'history') {
-                renderHistoryData(filterSignals(historyData));
-            }
         }
 
         // 신호 필터링
@@ -712,7 +698,7 @@
                     case 'name-asc':
                         return a.stock_name.localeCompare(b.stock_name);
                     case 'name-desc':
-                        return b.stock_name.localeCompare(a.stock_name);
+                        return b.stock_name.localeCompare(b.stock_name);
                     default:
                         return 0;
                 }
@@ -721,7 +707,7 @@
             return filtered;
         }
 
-        // 신호 데이터 렌더링 함수 - 아이콘과 가중치 정보 표시
+        // 신호 데이터 렌더링 함수
         function renderSignals(signals, containerId) {
             const container = document.getElementById(containerId);
             const screenWidth = window.innerWidth;
@@ -762,55 +748,25 @@
                     szClass = 'sz-medium';
                 }
 
-                // 종목명 처리 - 아이콘이 이미 포함된 경우 그대로 사용
+                // 종목명 처리
                 let displayStockName = signal.stock_name;
-
-                // 종목 코드 추출 - 아이콘과 가중치를 고려하여 기본 종목명 추출
                 let baseStockName = displayStockName;
 
-                // 아이콘 제거 (있는 경우)
                 if (baseStockName.startsWith('🔴 ') || baseStockName.startsWith('🟠 ') ||
                     baseStockName.startsWith('🟢 ') || baseStockName.startsWith('🔵 ')) {
                     baseStockName = baseStockName.substring(2).trim();
                 }
 
-                // 가중치 정보 제거 (기본명만 남김)
                 if (baseStockName.includes('-')) {
                     baseStockName = baseStockName.split('-')[0].trim();
                 }
 
                 const stockCode = getStockCodeByName(baseStockName);
 
-                // 카드 내용 - 종목명에 링크 추가
                 card.innerHTML = `
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-lg font-medium text-gray-900">
-                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
-                            class = "hover:text-blue-600 hover:underline">
-                                ${displayStockName} <span class="text-sm text-gray-500">${stockCode}</span>
-                            </a>
-                        </h3>
-                        <div>${signalTags}</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
-                        <div>
-                            <span class="text-gray-500">SZ Value:</span>
-                            <span class="${szClass}">${signal.sz_value.toFixed(2)}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Price:</span>
-                            <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
-                        </div>
-                    </div>
-                    <div class="text-xs text-gray-500 mt-2">
-                        Pair Price: ${signal.price_b ? signal.price_b.toLocaleString() : '-'}
-                    </div>
-                `;
-                // 카드 내용 - 종목명에 링크 추가, 종목 코드 표시
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="text-lg font-medium text-gray-900">
-                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
+                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
                             class="hover:text-blue-600 hover:underline">
                                 ${displayStockName}
                             </a>
@@ -844,7 +800,6 @@
             // HTML 태그 및 이모지 제거
             let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
             cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
-            // 접미사 제거 (예: "-0.5", "-1")
             cleanName = cleanName.replace(/-\d+(\.\d+)?$/, '').trim();
 
             console.log(`종목명 변환: "${stockName}" → "${cleanName}"`);
@@ -937,12 +892,10 @@
                 '동원시스템즈': '014820'
             };
 
-            // 정확한 일치
             if (stockCodeMap[cleanName]) {
                 return stockCodeMap[cleanName];
             }
 
-            // 부분 일치 시도
             for (const name in stockCodeMap) {
                 if (cleanName.includes(name) || name.includes(cleanName)) {
                     console.log(`부분 일치 종목: ${name} (${stockCodeMap[name]})`);
@@ -953,7 +906,8 @@
             console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
             return 'unknown';
         }
-        // 히스토리 데이터 렌더링 함수 수정 - SZ 값 추이를 더 잘 보여주도록 변경
+
+        // 히스토리 데이터 렌더링 함수
         function renderHistoryData(filteredHistory = null) {
             const tableBody = document.getElementById('history-table-body');
             const historyToRender = filteredHistory || historyData;
@@ -965,62 +919,48 @@
 
             tableBody.innerHTML = '';
 
-            // 1. 데이터를 최신순으로 정렬
             const sortedHistory = [...historyToRender].sort((a, b) => {
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
 
-            // 2. 1년 전 날짜 계산
             const oneYearAgo = new Date();
             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-            // 3. 종목별로 그룹화하면서 1년 내 데이터만 선택
             const stockHistoryMap = {};
 
-            // 현재 검색어 가져오기
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
 
             sortedHistory.forEach(item => {
                 const itemDate = new Date(item.timestamp);
                 if (itemDate >= oneYearAgo) {
-                    // 검색어가 있는 경우 해당 종목만 필터링
                     if (searchTerm && !item.stock_name.toLowerCase().includes(searchTerm)) {
                         return;
                     }
 
-                    // 종목별 그룹화
                     if (!stockHistoryMap[item.stock_name]) {
                         stockHistoryMap[item.stock_name] = [];
                     }
 
-                    // 모든 데이터 포함 (시그널이 없어도 SZ 값 추이를 보기 위해)
-                    // 종목별로 최대 30개 데이터만 저장 (성능 고려)
                     if (stockHistoryMap[item.stock_name].length < 30) {
                         stockHistoryMap[item.stock_name].push(item);
                     }
                 }
             });
 
-            // 4. 다시 단일 배열로 변환
             let allHistory = [];
             for (const stockName in stockHistoryMap) {
-                // 각 종목의 데이터를 추가
                 allHistory = allHistory.concat(stockHistoryMap[stockName]);
             }
 
-            // 5. 다시 날짜순 정렬
             allHistory.sort((a, b) => {
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
 
-            // 6. 최대 200개 데이터로 제한 (성능 고려하되 충분한 데이터 제공)
             const displayHistory = allHistory.slice(0, 200);
 
-            // 테이블에 데이터 추가
             displayHistory.forEach(item => {
                 const row = document.createElement('tr');
 
-                // 날짜 포맷팅
                 let timestamp = item.timestamp;
                 try {
                     const date = new Date(timestamp);
@@ -1029,7 +969,6 @@
                     // 포맷팅 실패 시 원본 사용
                 }
 
-                // 신호 태그 생성
                 let signalTags = '';
                 if (item.signal) {
                     if (item.signal.includes('IN')) {
@@ -1043,7 +982,6 @@
                     }
                 }
 
-                // SZ 값에 따른 class
                 let szClass = 'sz-low';
                 if (item.sz_value >= 2.5) {
                     szClass = 'sz-high';
@@ -1051,22 +989,19 @@
                     szClass = 'sz-medium';
                 }
 
-                // 종목 코드 가져오기
                 const stockCode = getStockCodeByName(item.stock_name);
 
                 row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
+                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
                     class="hover:text-blue-600 hover:underline">
                         ${item.stock_name} <span class="text-sm text-gray-500">${stockCode}</span>
                     </a>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
                 <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text
-
-    -gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
                     ${item.price_b ? item.price_b.toLocaleString() : '-'}
                 </td>
@@ -1075,7 +1010,6 @@
                 tableBody.appendChild(row);
             });
 
-            // 데이터가 많은 경우 표시 개수 안내
             if (allHistory.length > 200) {
                 const infoRow = document.createElement('tr');
                 infoRow.innerHTML = `
@@ -1088,6 +1022,7 @@
             }
         }
     </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'93bf0e99fabfbd2f',t:'MTc0NjYwMzQ5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>
