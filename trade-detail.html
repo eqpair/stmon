@@ -137,6 +137,29 @@
             -webkit-appearance: none;
             margin: 0;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+        thead {
+            background: #f9fafb;
+        }
+        th {
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #6b7280;
+        }
+        tbody {
+            background: #fff;
+        }
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
 
         @media (max-width: 1024px) {
             .grid-cols-3 {
@@ -229,9 +252,8 @@
                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="fas fa-home mr-2"></i> Home
                 </a>
-                <a href="javascript:history.back()"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                <a href="pair-report.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i> Report
                 </a>
             </div>
         </header>
@@ -361,10 +383,42 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ value trend</h2>
-                <div class="chart-container">
+            <!-- SZ Value Trend -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
+                <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
                     <canvas id="sz-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Price Trend -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Trend</h2>
+                <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
+                    <canvas id="price-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- SZ History -->
+            <div class="bg-white rounded-lg shadow-md p-6 signal-card">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ History</h2>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>SZ Value</th>
+                                <th>Trend</th>
+                                <th>Common Stock Price</th>
+                                <th>Preferred Stock Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="signals-table-body">
+                            <tr>
+                                <td>Loading history data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -429,26 +483,30 @@
                 window.location.href = 'index.html';
                 return;
             }
-            document.title = `${stockName} - Scenario Analysis`;
+            document.title = `${stockName} - Stock Details & Scenario Analysis`;
             document.getElementById('stock-name').textContent = stockName;
             loadAndProcessStockData(stockCode, stockName);
             setupSliderListeners();
             document.getElementById('reset-sliders-button').addEventListener('click', resetSliders);
             document.getElementById('calculate-button').addEventListener('click', calculateManualScenario);
         });
+
         let stockData = {
             current: {
                 commonPrice: 0,
                 preferredPrice: 0,
                 szValue: 0,
-                discountRate: 0
+                discountRate: 0,
+                signal: ''
             },
             history: {
                 dates: [],
                 szValues: [],
                 discountRates: [],
                 mean: 0,
-                stdDev: 0
+                stdDev: 0,
+                commonPrices: [],
+                preferredPrices: []
             }
         };
         async function loadAndProcessStockData(stockCode, stockName) {
@@ -457,20 +515,28 @@
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
                 fetchLastUpdateTime();
+
+                // Marketability 버튼 링크 설정
+                document.getElementById('trade-button').href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
+
                 const trendData = await loadStockData(stockCode, stockName);
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
+
+                // 현재 정보 설정
                 stockData.current = {
                     commonPrice: realtimeData.commonPrice ||
                         (trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
                     preferredPrice: realtimeData.preferredPrice ||
                         (trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
                     szValue: realtimeData.szValue || 0,
-                    signal: realtimeData.signal || ''
+                    signal: realtimeData.signal || '',
+                    discountRate: calculateDiscountRate(
+                        realtimeData.commonPrice || trendData.common_prices[trendData.common_prices.length - 1],
+                        realtimeData.preferredPrice || trendData.preferred_prices[trendData.preferred_prices.length - 1]
+                    )
                 };
-                stockData.current.discountRate = calculateDiscountRate(
-                    stockData.current.commonPrice,
-                    stockData.current.preferredPrice
-                );
+
+                // 히스토리 데이터 설정
                 stockData.history.dates = trendData.dates.slice(-150);
                 stockData.history.discountRates = trendData.discount_rates.slice(-150);
                 const windowData = trendData.discount_rates.slice(-250, -1);
@@ -478,29 +544,126 @@
                 stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
                 stockData.history.szValues = trendData.sz_values ? trendData.sz_values.slice(-150) :
                     calculateSZValues(trendData.discount_rates, stockData.history.mean, stockData.history.stdDev).slice(-150);
+
+                // 현재 정보 업데이트
                 updateCurrentInfo();
-                renderSZChart();
+
+                // 차트 및 히스토리 렌더링
+                renderCharts(trendData);
+                renderHistoryData(trendData);
+
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
             } catch (error) {
                 console.error('데이터 로드 및 처리 오류:', error);
-                const loadingContainer = document.getElementById('loading-container');
-                loadingContainer.innerHTML = `
+                document.getElementById('loading-container').innerHTML = `
                 <div class="text-red-500 text-center">
                     <p>데이터를 로드할 수 없습니다.</p>
                     <p>${error.message}</p>
-                    <button onclick="window.location.reload()" 
-                            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                        다시 시도
-                    </button>
-                    <button onclick="window.location.href='index.html'" 
-                            class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
-                        메인 페이지로 돌아가기
-                    </button>
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-500 text-white rounded">다시 시도</button>
+                        <button onclick="window.location.href='index.html'" class="px-4 py-2 bg-gray-500 text-white rounded">메인 페이지로 돌아가기</button>
+                    </div>
                 </div>
             `;
             }
         }
+
+        function renderCharts(trendData) {
+                try {
+                    const screenWidth = window.innerWidth;
+                    const isMobile = screenWidth <= 640;
+                    const chartHeight = isMobile ? 250 : 300;
+                    const pointRadius = isMobile ? 0 : 1;
+
+                    const recentDates = trendData.dates.slice(-150);
+                    const recentCommonPrices = trendData.common_prices.slice(-150);
+                    const recentPreferredPrices = trendData.preferred_prices.slice(-150);
+
+                    if (!recentDates.length || !recentCommonPrices.length || !recentPreferredPrices.length) {
+                        throw new Error('차트 렌더링을 위한 데이터가 부족합니다.');
+                    }
+
+                    renderSZChart(trendData.dates, trendData.discount_rates, chartHeight, pointRadius);
+                    renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices, chartHeight, pointRadius);
+                } catch (error) {
+                    console.error('차트 렌더링 오류:', error);
+                    document.getElementById('sz-chart').parentElement.innerHTML = '<p class="text-red-500 text-center">차트 데이터를 로드할 수 없습니다.</p>';
+                    document.getElementById('price-chart').parentElement.innerHTML = '<p class="text-red-500 text-center">차트 데이터를 로드할 수 없습니다.</p>';
+                }
+            }
+
+        function renderHistoryData(trendData) {
+                try {
+                    const tableBody = document.getElementById('signals-table-body');
+                    const fiveMonthsInDays = 150;
+                    const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
+                    const displayDates = [];
+                    for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
+                        displayDates.push(i);
+                    }
+
+                    if (!trendData || !trendData.dates || trendData.dates.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                        return;
+                    }
+
+                    tableBody.innerHTML = '';
+
+                    const calculatedSZ = calculateSZValues(trendData.discount_rates);
+                    const szValueMap = {};
+                    calculatedSZ.forEach(item => {
+                        szValueMap[item.index] = item.value ?? 0;
+                    });
+
+                    for (const i of displayDates) {
+                        const row = document.createElement('tr');
+                        const date = trendData.dates[i];
+                        const szValue = szValueMap[i] ?? 0;
+
+                        if (szValue === undefined) continue;
+
+                        let szClass = 'text-green-600';
+                        if (szValue >= 2.5) {
+                            szClass = 'text-red-600 font-bold';
+                        } else if (szValue >= 1.5) {
+                            szClass = 'text-orange-600 font-bold';
+                        }
+
+                        let trendIcon = '-';
+                        if (displayDates.indexOf(i) < displayDates.length - 1) {
+                            const prevIndex = displayDates[displayDates.indexOf(i) + 1];
+                            const prevSZ = szValueMap[prevIndex] ?? 0;
+
+                            if (szValue > prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                            } else if (szValue < prevSZ) {
+                                trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                            } else {
+                                trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
+                            }
+                        }
+
+                        row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+            `;
+
+                        tableBody.appendChild(row);
+                    }
+
+                    if (tableBody.children.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                    }
+                } catch (error) {
+                    console.error('히스토리 데이터 렌더링 오류:', error);
+                    document.getElementById('signals-table-body').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
+                }
+            }
+
         async function fetchRealtimeData(stockCode, stockName) {
             try {
                 const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';

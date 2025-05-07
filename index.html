@@ -652,7 +652,7 @@
                     </div>
                     <div class="ml-3 flex-1">
                         <p class="text-sm font-medium text-gray-900">
-                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
                             class="hover:text-blue-600 hover:underline">
                                 ${signal.stock_name} <span class="text-xs text-gray-500">${stockCode}</span>
                             </a>
@@ -785,7 +785,7 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-lg font-medium text-gray-900">
-                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
+                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
                             class = "hover:text-blue-600 hover:underline">
                                 ${displayStockName} <span class="text-sm text-gray-500">${stockCode}</span>
                             </a>
@@ -810,7 +810,7 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-lg font-medium text-gray-900">
-                            <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
+                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}" 
                             class="hover:text-blue-600 hover:underline">
                                 ${displayStockName}
                             </a>
@@ -1057,7 +1057,7 @@
                 row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <a href="stock-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
+                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name)}" 
                     class="hover:text-blue-600 hover:underline">
                         ${item.stock_name} <span class="text-sm text-gray-500">${stockCode}</span>
                     </a>
