@@ -561,6 +561,13 @@
 
                 if (stockData.history.szValues.every(item => item.value === null || item.value === undefined)) {
                     console.error('SZ 값이 모두 null입니다. 데이터 소스를 확인하세요.');
+                    if (stockData.current.discountRate !== 0) {
+                        console.log('대체 SZ 값 생성: 현재 discountRate 사용');
+                        stockData.history.szValues = stockData.history.dates.map((_, index) => ({
+                            index,
+                            value: calculateSZValue(stockData.current.discountRate)
+                        }));
+                    }
                 }
 
                 updateCurrentInfo();
@@ -884,7 +891,15 @@
             try {
                 const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
                 const trendDataUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
-                const trendDataResponse = await fetch(trendDataUrl);
+                console.log(`Loading trend data from: ${trendDataUrl}`);
+                const trendDataResponse = await fetch(trendDataUrl, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
                 if (!trendDataResponse.ok) {
                     throw new Error(`트렌드 데이터 로드 실패: ${stockName} (${trendDataResponse.status})`);
                 }
@@ -908,6 +923,17 @@
                 // 데이터 검증
                 if (!trendData.dates || !trendData.common_prices || !trendData.preferred_prices || !trendData.discount_rates) {
                     throw new Error('트렌드 데이터 형식이 올바르지 않습니다.');
+                }
+
+                // discount_rates 유효성 검사
+                if (!trendData.discount_rates || trendData.discount_rates.every(val => val === null || isNaN(val))) {
+                    console.warn(`discount_rates가 유효하지 않습니다. 대체 데이터 사용: ${stockCode}`);
+                    trendData.discount_rates = Array(trendData.dates.length).fill(0);
+                }
+
+                // sz_values가 없으면 로그 출력
+                if (!trendData.sz_values) {
+                    console.log(`sz_values가 제공되지 않음. discount_rates로 SZ 값 계산: ${stockCode}`);
                 }
 
                 return trendData;
