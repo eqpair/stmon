@@ -518,6 +518,8 @@
                 fetchLastUpdateTime();
 
                 const trendData = await loadStockData(stockCode, stockName);
+                console.log('Loaded trendData:', trendData);
+
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
 
                 stockData.current = {
@@ -541,6 +543,8 @@
 
                 if (!windowData.length) {
                     console.warn('windowData is empty. Mean and StdDev will be set to 0.');
+                } else if (windowData.every(val => val === windowData[0])) {
+                    console.warn('windowData has identical values. StdDev will be 0.');
                 }
 
                 stockData.history.mean = calculateMean(windowData);
@@ -554,6 +558,10 @@
                     calculateSZValues(trendData.discount_rates || [], stockData.history.mean, stockData.history.stdDev).slice(-150);
 
                 console.log('Calculated SZ Values:', stockData.history.szValues);
+
+                if (stockData.history.szValues.every(item => item.value === null || item.value === undefined)) {
+                    console.error('SZ 값이 모두 null입니다. 데이터 소스를 확인하세요.');
+                }
 
                 updateCurrentInfo();
                 renderCharts(trendData);
@@ -710,8 +718,13 @@
                 tableBody.innerHTML = '';
 
                 const szValues = stockData.history.szValues;
+                if (szValues.every(item => item.value === null || item.value === undefined)) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">SZ 값 데이터를 계산할 수 없습니다. discount_rates 또는 sz_values 데이터를 확인하세요.</td></tr>';
+                    return;
+                }
+
                 const szValueMap = {};
-                szValues.forEach((item) => {
+                szValues.forEach((item, idx) => {
                     szValueMap[item.index] = item.value !== null && item.value !== undefined ? item.value : null;
                 });
 
@@ -938,8 +951,13 @@
         }
         function calculateSZValues(discountRates, mean, stdDev) {
             if (!discountRates || discountRates.length === 0) {
-                console.warn('discountRates가 비어 있습니다. SZ 값은 0으로 설정됩니다.');
-                return Array(discountRates.length).fill({ index: 0, value: 0 });
+                console.warn('discountRates가 비어 있습니다. SZ 값은 null로 설정됩니다.');
+                return Array(discountRates?.length || 150).fill({ index: 0, value: null });
+            }
+            const validRates = discountRates.filter(rate => rate !== null && !isNaN(rate));
+            if (!validRates.length) {
+                console.warn('discountRates에 유효한 값이 없습니다. SZ 값은 null로 설정됩니다.');
+                return discountRates.map((_, index) => ({ index, value: null }));
             }
             return discountRates.map((rate, index) => {
                 if (rate === null || isNaN(rate)) {
@@ -947,11 +965,11 @@
                     return { index, value: null };
                 }
                 if (stdDev === 0) {
-                    console.warn(`stdDev is 0 at index ${index}. SZ value will be 0.`);
-                    return { index, value: 0 };
+                    console.warn(`stdDev is 0 at index ${index}. Using raw discount rate as SZ value.`);
+                    return { index, value: rate }; // 대체 로직: rate 값을 사용
                 }
                 const szValue = (rate - mean) / stdDev;
-                return { index, value: szValue };
+                return { index, value: isFinite(szValue) ? szValue : null };
             });
         }
         function calculateSZValue(discountRate) {
