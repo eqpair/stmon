@@ -520,10 +520,6 @@
                 const trendData = await loadStockData(stockCode, stockName);
                 console.log('Loaded trendData:', trendData);
 
-                if (!trendData.dates.length) {
-                    throw new Error('트렌드 데이터가 비어 있습니다.');
-                }
-
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
 
                 stockData.current = {
@@ -557,22 +553,9 @@
                 console.log('Mean:', stockData.history.mean, 'StdDev:', stockData.history.stdDev);
                 console.log('Discount Rates:', trendData.discount_rates);
 
-                stockData.history.szValues = trendData.sz_values ?
-                    trendData.sz_values.slice(-150).map((value, index) => ({ index, value: value ?? null })) :
-                    calculateSZValues(trendData.discount_rates || [], stockData.history.mean, stockData.history.stdDev).slice(-150);
+                stockData.history.szValues = calculateSZValues(trendData.discount_rates || []).slice(-150);
 
                 console.log('Calculated SZ Values:', stockData.history.szValues);
-
-                if (stockData.history.szValues.every(item => item.value === null || item.value === undefined)) {
-                    console.error('SZ 값이 모두 null입니다. 데이터 소스를 확인하세요.');
-                    if (stockData.current.discountRate !== 0) {
-                        console.log('대체 SZ 값 생성: 현재 discountRate 사용');
-                        stockData.history.szValues = stockData.history.dates.map((_, index) => ({
-                            index,
-                            value: calculateSZValue(stockData.current.discountRate)
-                        }));
-                    }
-                }
 
                 updateCurrentInfo();
                 renderCharts(trendData);
@@ -595,7 +578,7 @@
             `;
             }
         }
-        
+
         function renderPriceChart(dates, commonPrices, preferredPrices, chartHeight, pointRadius) {
             const ctx = document.getElementById('price-chart').getContext('2d');
             const screenWidth = window.innerWidth;
@@ -728,54 +711,43 @@
 
                 tableBody.innerHTML = '';
 
-                const szValues = stockData.history.szValues;
-                if (szValues.every(item => item.value === null || item.value === undefined)) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">SZ 값 데이터를 계산할 수 없습니다. discount_rates 또는 sz_values 데이터를 확인하세요.</td></tr>';
-                    return;
-                }
-
+                const calculatedSZ = calculateSZValues(trendData.discount_rates);
                 const szValueMap = {};
-                szValues.forEach((item, idx) => {
-                    szValueMap[item.index] = item.value !== null && item.value !== undefined ? item.value : null;
+                calculatedSZ.forEach(item => {
+                    szValueMap[item.index] = item.value ?? 0;
                 });
 
                 for (const i of displayIndices) {
                     const date = trendData.dates[i];
-                    const szValue = szValueMap[i] !== undefined && szValueMap[i] !== null ? szValueMap[i] : null;
+                    const szValue = szValueMap[i] ?? 0;
 
-                    let szDisplay = 'N/A';
-                    let szClass = 'text-gray-500';
-                    if (szValue !== null) {
-                        szDisplay = szValue.toFixed(2);
-                        if (szValue >= 2.5) {
-                            szClass = 'text-red-600 font-bold';
-                        } else if (szValue >= 1.5) {
-                            szClass = 'text-orange-600 font-bold';
-                        } else {
-                            szClass = 'text-green-600';
-                        }
+                    if (szValue === undefined) continue;
+
+                    let szClass = 'text-green-600';
+                    if (szValue >= 2.5) {
+                        szClass = 'text-red-600 font-bold';
+                    } else if (szValue >= 1.5) {
+                        szClass = 'text-orange-600 font-bold';
                     }
 
                     let trendIcon = '-';
                     if (displayIndices.indexOf(i) < displayIndices.length - 1) {
                         const prevIndex = displayIndices[displayIndices.indexOf(i) + 1];
-                        const prevSZ = szValueMap[prevIndex] !== undefined && szValueMap[prevIndex] !== null ? szValueMap[prevIndex] : null;
+                        const prevSZ = szValueMap[prevIndex] ?? 0;
 
-                        if (szValue !== null && prevSZ !== null) {
-                            if (szValue > prevSZ) {
-                                trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                            } else if (szValue < prevSZ) {
-                                trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
-                            } else {
-                                trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
-                            }
+                        if (szValue > prevSZ) {
+                            trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                        } else if (szValue < prevSZ) {
+                            trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                        } else {
+                            trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
                         }
                     }
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szDisplay}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
@@ -891,44 +863,35 @@
             return (commonPrice - preferredPrice) / commonPrice;
         }
 
+        function getStockCodeByName(stockName) {
+            return stockName ? stockName.toLowerCase().replace(/\s/g, '-') : 'unknown';
+        }
+
         async function loadStockData(stockCode, stockName) {
             try {
-                stockCode = stockCode.toLowerCase();
+                // stockCode를 stock-detail.html과 동일하게 처리
+                stockCode = getStockCodeByName(stockCode);
                 const baseUrl = window.location.hostname.includes('github.io') ? '/stmon' : '';
                 const trendDataUrl = `${baseUrl}/data/trends/${stockCode}.json?t=${new Date().getTime()}`;
                 console.log(`Loading trend data from: ${trendDataUrl}`);
 
-                const trendDataResponse = await fetch(trendDataUrl, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-
+                const trendDataResponse = await fetch(trendDataUrl);
                 if (!trendDataResponse.ok) {
-                    console.error(`트렌드 데이터 로드 실패: ${stockName} (${trendDataResponse.status}) - URL: ${trendDataUrl}`);
-                    const fallbackUrl = `${baseUrl}/data/trends/default.json?t=${new Date().getTime()}`;
-                    console.log(`대체 데이터 로드 시도: ${fallbackUrl}`);
-                    const fallbackResponse = await fetch(fallbackUrl, {
-                        cache: 'no-store',
-                        headers: {
-                            'Cache-Control': 'no-cache, no-store, must-revalidate',
-                            'Pragma': 'no-cache',
-                            'Expires': '0'
-                        }
-                    });
-                    if (!fallbackResponse.ok) {
-                        throw new Error(`대체 데이터 로드 실패: ${stockName} (${fallbackResponse.status})`);
-                    }
-                    const fallbackDataText = await fallbackResponse.text();
-                    const cleanedFallbackDataText = fallbackDataText
-                        .replace(/"NaN"/g, 'null')
-                        .replace(/NaN/g, 'null')
-                        .replace(/Infinity/g, 'null')
-                        .replace(/-Infinity/g, 'null');
-                    const trendData = JSON.parse(cleanedFallbackDataText, (key, value) => {
+                    console.error(`트렌드 데이터 요청 실패: ${trendDataResponse.status}`);
+                    throw new Error(`트렌드 데이터를 로드할 수 없습니다: ${stockName} (${trendDataResponse.status})`);
+                }
+
+                const trendDataText = await trendDataResponse.text();
+                console.log(`응답 데이터 샘플: ${trendDataText.substring(0, 100)}...`);
+
+                const cleanedTrendDataText = trendDataText
+                    .replace(/"NaN"/g, 'null')
+                    .replace(/NaN/g, 'null')
+                    .replace(/Infinity/g, 'null')
+                    .replace(/-Infinity/g, 'null');
+
+                try {
+                    return JSON.parse(cleanedTrendDataText, (key, value) => {
                         if (value === null || value === undefined ||
                             (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
                             return null;
@@ -938,61 +901,13 @@
                         }
                         return value;
                     });
-                    return trendData;
+                } catch (parseError) {
+                    console.error('트렌드 데이터 JSON 파싱 오류:', parseError);
+                    throw new Error(`JSON 파싱 중 오류 발생: ${parseError.message}`);
                 }
-
-                const trendDataText = await trendDataResponse.text();
-                const cleanedTrendDataText = trendDataText
-                    .replace(/"NaN"/g, 'null')
-                    .replace(/NaN/g, 'null')
-                    .replace(/Infinity/g, 'null')
-                    .replace(/-Infinity/g, 'null');
-                const trendData = JSON.parse(cleanedTrendDataText, (key, value) => {
-                    if (value === null || value === undefined ||
-                        (typeof value === 'string' && (value === 'NaN' || value === 'Infinity' || value === '-Infinity'))) {
-                        return null;
-                    }
-                    if (typeof value === 'number' && !isFinite(value)) {
-                        return null;
-                    }
-                    return value;
-                });
-
-                if (!trendData.dates || !trendData.common_prices || !trendData.preferred_prices || !trendData.discount_rates) {
-                    throw new Error('트렌드 데이터 형식이 올바르지 않습니다.');
-                }
-
-                if (!trendData.discount_rates || trendData.discount_rates.every(val => val === null || isNaN(val))) {
-                    console.warn(`discount_rates가 유효하지 않습니다. 대체 데이터 사용: ${stockCode}`);
-                    trendData.discount_rates = Array(trendData.dates.length).fill(0);
-                }
-
-                if (!trendData.sz_values) {
-                    console.log(`sz_values가 제공되지 않음. discount_rates로 SZ 값 계산: ${stockCode}`);
-                }
-
-                return trendData;
             } catch (error) {
                 console.error('loadStockData 오류:', error);
-                document.getElementById('loading-container').innerHTML = `
-                <div class="text-red-500 text-center">
-                    <p>트렌드 데이터를 로드할 수 없습니다.</p>
-                    <p>오류: ${error.message}</p>
-                    <p>종목 코드: ${stockCode}, 이름: ${stockName}</p>
-                    <p>파일 경로: /stmon/data/trends/${stockCode}.json</p>
-                    <div class="mt-4 flex justify-center space-x-4">
-                        <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-500 text-white rounded">다시 시도</button>
-                        <button onclick="window.location.href='index.html'" class="px-4 py-2 bg-gray-500 text-white rounded">메인 페이지로 돌아가기</button>
-                    </div>
-                </div>
-            `;
-                return {
-                    dates: [],
-                    common_prices: [],
-                    preferred_prices: [],
-                    discount_rates: [],
-                    sz_values: []
-                };
+                throw error;
             }
         }
 
@@ -1022,28 +937,29 @@
             const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / validData.length;
             return Math.sqrt(variance);
         }
-        function calculateSZValues(discountRates, mean, stdDev) {
-            if (!discountRates || discountRates.length === 0) {
-                console.warn('discountRates가 비어 있습니다. SZ 값은 null로 설정됩니다.');
-                return Array(discountRates?.length || 150).fill({ index: 0, value: null });
-            }
-            const validRates = discountRates.filter(rate => rate !== null && !isNaN(rate));
-            if (!validRates.length) {
-                console.warn('discountRates에 유효한 값이 없습니다. SZ 값은 null로 설정됩니다.');
-                return discountRates.map((_, index) => ({ index, value: null }));
-            }
-            return discountRates.map((rate, index) => {
-                if (rate === null || isNaN(rate)) {
-                    console.debug(`discountRates[${index}] is invalid: ${rate}`);
-                    return { index, value: null };
+        function calculateSZValues(discountRates) {
+            const avgPeriod = 249;
+            const result = [];
+
+            for (let i = avgPeriod + 1; i < discountRates.length; i++) {
+                const windowData = discountRates.slice(i - avgPeriod - 1, i - 1);
+                const mean = windowData.reduce((sum, val) => sum + (val ?? 0), 0) / windowData.length;
+
+                let sumSquaredDiff = 0;
+                for (let j = 0; j < windowData.length; j++) {
+                    const val = windowData[j] ?? 0;
+                    sumSquaredDiff += Math.pow(val - mean, 2);
                 }
-                if (stdDev === 0) {
-                    console.warn(`stdDev is 0 at index ${index}. Using raw discount rate as SZ value.`);
-                    return { index, value: rate }; // 대체 로직: rate 값을 사용
-                }
-                const szValue = (rate - mean) / stdDev;
-                return { index, value: isFinite(szValue) ? szValue : null };
-            });
+                const stdDev = Math.sqrt(sumSquaredDiff / windowData.length);
+
+                const sz = stdDev !== 0 ? ((discountRates[i] ?? 0) - mean) / stdDev : 0;
+                result.push({
+                    index: i,
+                    value: sz
+                });
+            }
+
+            return result;
         }
         function calculateSZValue(discountRate) {
             if (stockData.history.stdDev === 0) return 0;
