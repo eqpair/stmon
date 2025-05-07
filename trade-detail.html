@@ -356,12 +356,12 @@
                         </h3>
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div class="p-4 bg-white rounded-lg shadow">
-                                <div class="text-gray-700 text-sm font-medium mb-1">조정된 괴리율</div>
-                                <div class="text-xl font-bold" id="adjusted-discount-rate">-</div>
-                            </div>
-                            <div class="p-4 bg-white rounded-lg shadow">
                                 <div class="text-gray-700 text-sm font-medium mb-1">조정된 SZ 값</div>
                                 <div class="text-xl font-bold" id="adjusted-sz-value">-</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-lg shadow">
+                                <div class="text-gray-700 text-sm font-medium mb-1">조정된 괴리율</div>
+                                <div class="text-xl font-bold" id="adjusted-discount-rate">-</div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mb-4">
@@ -517,34 +517,19 @@
                 document.getElementById('content-container').classList.add('hidden');
                 fetchLastUpdateTime();
 
-                // 버튼 링크 설정
-                const tradeButton = document.getElementById('trade-button');
-                if (tradeButton) {
-                    tradeButton.href = `trade-detail.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
-                } else {
-                    console.warn('trade-button 요소를 찾을 수 없습니다.');
-                }
-
-                const pairReportButton = document.getElementById('pair-report-button');
-                if (pairReportButton) {
-                    pairReportButton.href = `pair-report.html?code=${stockCode}&name=${encodeURIComponent(stockName)}`;
-                } else {
-                    console.warn('pair-report-button 요소를 찾을 수 없습니다.');
-                }
-
                 const trendData = await loadStockData(stockCode, stockName);
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
 
                 stockData.current = {
                     commonPrice: realtimeData.commonPrice ||
-                        (trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
+                        (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
                     preferredPrice: realtimeData.preferredPrice ||
-                        (trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
+                        (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
                     szValue: realtimeData.szValue || 0,
                     signal: realtimeData.signal || '',
                     discountRate: calculateDiscountRate(
-                        realtimeData.commonPrice || (trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
-                        realtimeData.preferredPrice || (trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)
+                        realtimeData.commonPrice || (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
+                        realtimeData.preferredPrice || (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)
                     )
                 };
 
@@ -555,7 +540,8 @@
                 const windowData = trendData.discount_rates ? trendData.discount_rates.slice(-250, -1) : [];
                 stockData.history.mean = calculateMean(windowData);
                 stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
-                stockData.history.szValues = trendData.sz_values ? trendData.sz_values.slice(-150) :
+                stockData.history.szValues = trendData.sz_values ?
+                    trendData.sz_values.slice(-150).map((value, index) => ({ index, value })) :
                     calculateSZValues(trendData.discount_rates || [], stockData.history.mean, stockData.history.stdDev).slice(-150);
 
                 updateCurrentInfo();
@@ -680,13 +666,13 @@
                 const recentDates = trendData.dates ? trendData.dates.slice(-150) : [];
                 const recentCommonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 const recentPreferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
-                const recentDiscountRates = trendData.discount_rates ? trendData.discount_rates.slice(-150) : [];
+                const recentSzValues = stockData.history.szValues || [];
 
-                if (!recentDates.length || !recentCommonPrices.length || !recentPreferredPrices.length || !recentDiscountRates.length) {
-                    throw new Error(`차트 렌더링을 위한 데이터가 부족합니다: dates=${recentDates.length}, common_prices=${recentCommonPrices.length}, preferred_prices=${recentPreferredPrices.length}, discount_rates=${recentDiscountRates.length}`);
+                if (!recentDates.length || !recentCommonPrices.length || !recentPreferredPrices.length || !recentSzValues.length) {
+                    throw new Error(`차트 렌더링을 위한 데이터가 부족합니다: dates=${recentDates.length}, common_prices=${recentCommonPrices.length}, preferred_prices=${recentPreferredPrices.length}, sz_values=${recentSzValues.length}`);
                 }
 
-                renderSZChart(recentDates, recentDiscountRates, chartHeight, pointRadius);
+                renderSZChart(recentDates, recentSzValues, chartHeight, pointRadius);
                 renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices, chartHeight, pointRadius);
             } catch (error) {
                 console.error('차트 렌더링 오류:', error);
@@ -696,75 +682,73 @@
         }
 
         function renderHistoryData(trendData) {
-                try {
-                    const tableBody = document.getElementById('signals-table-body');
-                    const fiveMonthsInDays = 150;
-                    const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-                    const displayDates = [];
-                    for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
-                        displayDates.push(i);
-                    }
-
-                    if (!trendData || !trendData.dates || trendData.dates.length === 0) {
-                        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                        return;
-                    }
-
-                    tableBody.innerHTML = '';
-
-                    const calculatedSZ = calculateSZValues(trendData.discount_rates);
-                    const szValueMap = {};
-                    calculatedSZ.forEach(item => {
-                        szValueMap[item.index] = item.value ?? 0;
-                    });
-
-                    for (const i of displayDates) {
-                        const row = document.createElement('tr');
-                        const date = trendData.dates[i];
-                        const szValue = szValueMap[i] ?? 0;
-
-                        if (szValue === undefined) continue;
-
-                        let szClass = 'text-green-600';
-                        if (szValue >= 2.5) {
-                            szClass = 'text-red-600 font-bold';
-                        } else if (szValue >= 1.5) {
-                            szClass = 'text-orange-600 font-bold';
-                        }
-
-                        let trendIcon = '-';
-                        if (displayDates.indexOf(i) < displayDates.length - 1) {
-                            const prevIndex = displayDates[displayDates.indexOf(i) + 1];
-                            const prevSZ = szValueMap[prevIndex] ?? 0;
-
-                            if (szValue > prevSZ) {
-                                trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                            } else if (szValue < prevSZ) {
-                                trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
-                            } else {
-                                trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
-                            }
-                        }
-
-                        row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
-            `;
-
-                        tableBody.appendChild(row);
-                    }
-
-                    if (tableBody.children.length === 0) {
-                        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                    }
-                } catch (error) {
-                    console.error('히스토리 데이터 렌더링 오류:', error);
-                    document.getElementById('signals-table-body').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
+            try {
+                const tableBody = document.getElementById('signals-table-body');
+                const fiveMonthsInDays = 150;
+                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
+                const displayIndices = [];
+                for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
+                    displayIndices.push(i);
                 }
+
+                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                    return;
+                }
+
+                tableBody.innerHTML = '';
+
+                const szValues = stockData.history.szValues;
+                const szValueMap = {};
+                szValues.forEach((item, idx) => {
+                    szValueMap[item.index] = item.value ?? 0;
+                });
+
+                for (const i of displayIndices) {
+                    const date = trendData.dates[i];
+                    const szValue = szValueMap[i] !== undefined ? szValueMap[i] : 0;
+
+                    let szClass = 'text-green-600';
+                    if (szValue >= 2.5) {
+                        szClass = 'text-red-600 font-bold';
+                    } else if (szValue >= 1.5) {
+                        szClass = 'text-orange-600 font-bold';
+                    }
+
+                    let trendIcon = '-';
+                    if (displayIndices.indexOf(i) < displayIndices.length - 1) {
+                        const prevIndex = displayIndices[displayIndices.indexOf(i) + 1];
+                        const prevSZ = szValueMap[prevIndex] ?? 0;
+
+                        if (szValue > prevSZ) {
+                            trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                        } else if (szValue < prevSZ) {
+                            trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                        } else {
+                            trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
+                        }
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
+                `;
+
+                    tableBody.appendChild(row);
+                }
+
+                if (tableBody.children.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
+                }
+            } catch (error) {
+                console.error('히스토리 데이터 렌더링 오류:', error);
+                document.getElementById('signals-table-body').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
             }
+        }
 
         async function fetchRealtimeData(stockCode, stockName) {
             try {
@@ -934,11 +918,18 @@
             return Math.sqrt(variance);
         }
         function calculateSZValues(discountRates, mean, stdDev) {
-            if (!discountRates || discountRates.length === 0) return [];
-            return discountRates.map(rate => {
-                if (rate === null || isNaN(rate)) return null;
-                if (stdDev === 0) return 0;
-                return (rate - mean) / stdDev;
+            if (!discountRates || discountRates.length === 0) {
+                return Array(discountRates.length).fill({ index: 0, value: 0 });
+            }
+            return discountRates.map((rate, index) => {
+                if (rate === null || isNaN(rate)) {
+                    return { index, value: null };
+                }
+                if (stdDev === 0) {
+                    return { index, value: 0 };
+                }
+                const szValue = (rate - mean) / stdDev;
+                return { index, value: szValue };
             });
         }
         function calculateSZValue(discountRate) {
@@ -977,16 +968,10 @@
             document.getElementById('preferred-price-percent').textContent = '0%';
         }
 
-        function renderSZChart(dates, discountRates, chartHeight, pointRadius) {
+        function renderSZChart(dates, szValues, chartHeight, pointRadius) {
             const ctx = document.getElementById('sz-chart').getContext('2d');
             const screenWidth = window.innerWidth;
             const isMobile = screenWidth <= 640;
-
-            // SZ 값 계산
-            const windowData = discountRates.slice(-250, -1);
-            const mean = calculateMean(windowData);
-            const stdDev = calculateStdDev(windowData, mean);
-            const szValues = calculateSZValues(discountRates, mean, stdDev).slice(-150);
 
             new Chart(ctx, {
                 type: 'line',
@@ -995,7 +980,7 @@
                     datasets: [
                         {
                             label: 'SZ Value',
-                            data: szValues,
+                            data: szValues.map(item => item.value),
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 2,
