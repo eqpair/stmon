@@ -620,18 +620,14 @@
                 .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
 
             alertsContainer.innerHTML = '';
-            alertsContainer.className = ''; // grid 제거하여 세로로 쌓이도록 설정
 
-            // OPEN ITEMS 블록
-            const openBlock = document.createElement('div');
-            openBlock.className = 'bg-white rounded-lg shadow-md p-6 mb-6';
-            const openTitle = document.createElement('h2');
-            openTitle.className = 'text-xl font-semibold text-gray-800 mb-4';
-            openTitle.textContent = 'OPEN ITEMS';
-            openBlock.appendChild(openTitle);
-
+            // OPEN과 IN 신호를 별도로 표시 (제목과 블록 제거)
+            // OPEN 신호
             if (openTrades.length === 0) {
-                openBlock.innerHTML += '<div class="text-gray-500 text-center py-4">최근 OPEN 알림이 없습니다</div>';
+                const noDataDiv = document.createElement('div');
+                noDataDiv.className = 'col-span-full text-gray-500 text-center py-4';
+                noDataDiv.textContent = '최근 OPEN 알림이 없습니다';
+                alertsContainer.appendChild(noDataDiv);
             } else {
                 for (let i = 0; i < openTrades.length; i += 4) {
                     const row = document.createElement('div');
@@ -663,21 +659,16 @@
                         row.appendChild(emptyEl);
                         rowSignals.push(null);
                     }
-                    openBlock.appendChild(row);
+                    alertsContainer.appendChild(row);
                 }
             }
-            alertsContainer.appendChild(openBlock);
 
-            // IN ITEMS 블록
-            const inBlock = document.createElement('div');
-            inBlock.className = 'bg-white rounded-lg shadow-md p-6 mb-6';
-            const inTitle = document.createElement('h2');
-            inTitle.className = 'text-xl font-semibold text-gray-800 mb-4';
-            inTitle.textContent = 'IN ITEMS';
-            inBlock.appendChild(inTitle);
-
+            // IN 신호
             if (inSignals.length === 0) {
-                inBlock.innerHTML += '<div class="text-gray-500 text-center py-4">최근 IN 알림이 없습니다</div>';
+                const noDataDiv = document.createElement('div');
+                noDataDiv.className = 'col-span-full text-gray-500 text-center py-4';
+                noDataDiv.textContent = '최근 IN 알림이 없습니다';
+                alertsContainer.appendChild(noDataDiv);
             } else {
                 for (let i = 0; i < inSignals.length; i += 4) {
                     const row = document.createElement('div');
@@ -710,10 +701,9 @@
                         row.appendChild(emptyEl);
                         rowSignals.push(null);
                     }
-                    inBlock.appendChild(row);
+                    alertsContainer.appendChild(row);
                 }
             }
-            alertsContainer.appendChild(inBlock);
         }
 
         // 신호 필터링
