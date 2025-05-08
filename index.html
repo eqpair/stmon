@@ -662,9 +662,9 @@
                 return signals.slice(4); // 남은 신호 반환
             };
 
-            // OPEN 알림 먼저 렌더링 (첫 줄)
+            // OPEN 알림 렌더링 (4개씩 여러 줄 가능)
             let remainingOpen = openTrades;
-            if (remainingOpen.length > 0) {
+            while (remainingOpen.length > 0) {
                 remainingOpen = renderRow(remainingOpen, alertsContainer);
             }
 
