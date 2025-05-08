@@ -137,33 +137,26 @@
             -webkit-appearance: none;
             margin: 0;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
-        th,
-        td {
+        th, td {
             padding: 0.75rem 1.5rem;
             text-align: left;
             font-size: 0.875rem;
         }
-
         thead {
             background: #f9fafb;
         }
-
         th {
             font-weight: 500;
             text-transform: uppercase;
             color: #6b7280;
         }
-
         tbody {
             background: #fff;
         }
-
         tbody tr {
             border-bottom: 1px solid #e5e7eb;
         }
@@ -259,8 +252,7 @@
                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="fas fa-home mr-2"></i> Home
                 </a>
-                <a href="pair-report.html"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <a href="pair-report.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     <i class="fas fa-chart-line mr-2"></i> Report
                 </a>
             </div>
@@ -302,7 +294,8 @@
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 보통주 [Short] ◀
-                                <span class="text-xs text-gray-500">(현재: <span id="common-base-price">-</span>원)</span>
+                                <span class="text-xs text-gray-500">(현재: <span
+                                        id="common-base-price">-</span>원)</span>
                             </label>
                             <div class="slider-wrapper">
                                 <input type="range" id="common-price-slider" class="slider mb-2" min="-5" max="5"
@@ -390,19 +383,22 @@
                     </div>
                 </div>
             </div>
-            <!-- SZ Value Trend -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
-                <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
-                    <canvas id="sz-chart"></canvas>
+            <!-- 기존 코드에서 두 차트 영역을 아래처럼 묶어줍니다 -->
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <!-- SZ Value Trend -->
+                <div class="bg-white rounded-lg shadow-md p-6 signal-card">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
+                    <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
+                        <canvas id="sz-chart"></canvas>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Price Trend -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6 signal-card">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Trend</h2>
-                <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
-                    <canvas id="price-chart"></canvas>
+                <!-- Price Trend -->
+                <div class="bg-white rounded-lg shadow-md p-6 signal-card">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Trend</h2>
+                    <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
+                        <canvas id="price-chart"></canvas>
+                    </div>
                 </div>
             </div>
 
