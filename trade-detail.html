@@ -518,27 +518,22 @@
         };
 
         async function loadAndProcessStockData(stockCode, stockName) {
-            console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
             try {
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
                 fetchLastUpdateTime();
 
                 const trendData = await loadStockData(stockCode, stockName);
-                console.log('Loaded trendData:', trendData);
-
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
 
                 stockData.current = {
-                    commonPrice: realtimeData.commonPrice ||
-                        (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
-                    preferredPrice: realtimeData.preferredPrice ||
-                        (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
+                    commonPrice: realtimeData.commonPrice || (trendData.common_prices?.length ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
+                    preferredPrice: realtimeData.preferredPrice || (trendData.preferred_prices?.length ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
                     szValue: realtimeData.szValue || 0,
                     signal: realtimeData.signal || '',
                     discountRate: calculateDiscountRate(
-                        realtimeData.commonPrice || (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
-                        realtimeData.preferredPrice || (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)
+                        realtimeData.commonPrice || (trendData.common_prices?.length ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
+                        realtimeData.preferredPrice || (trendData.preferred_prices?.length ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)
                     )
                 };
 
@@ -546,27 +541,11 @@
                 stockData.history.discountRates = trendData.discount_rates ? trendData.discount_rates.slice(-150) : [];
                 stockData.history.commonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 stockData.history.preferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
-                const windowData = trendData.discount_rates ? trendData.discount_rates.slice(-250, -1) : [];
 
-                if (!windowData.length) {
-                    console.warn('windowData is empty. Mean and StdDev will be set to 0.');
-                } else if (windowData.every(val => val === windowData[0])) {
-                    console.warn('windowData has identical values. StdDev will be 0.');
-                }
-
-                stockData.history.mean = calculateMean(windowData);
-                stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
-
-                console.log('Mean:', stockData.history.mean, 'StdDev:', stockData.history.stdDev);
-                console.log('Discount Rates:', trendData.discount_rates);
-
-                stockData.history.szValues = calculateSZValues(trendData.discount_rates || []).slice(-150);
-
-                console.log('Calculated SZ Values:', stockData.history.szValues);
-
+                // SZ 값은 renderHistoryData에서 계산
+                renderHistoryData(trendData); // 먼저 히스토리 데이터를 렌더링해 SZ 값을 계산
+                renderCharts(trendData); // 이후 차트를 렌더링
                 updateCurrentInfo();
-                renderCharts(trendData);
-                renderHistoryData(trendData);
 
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
@@ -707,7 +686,7 @@
                 const fiveMonthsInDays = 150;
                 const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
                 const displayIndices = [];
-                for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
+                for (let i = trendData.dates.length - 1; i >= startIndex; i--) {
                     displayIndices.push(i);
                 }
 
@@ -716,13 +695,15 @@
                     return;
                 }
 
-                tableBody.innerHTML = '';
-
+                // SZ 값 계산 및 stockData.history.szValues에 저장
                 const calculatedSZ = calculateSZValues(trendData.discount_rates);
+                stockData.history.szValues = calculatedSZ.slice(-150); // 최근 150일 데이터로 제한
                 const szValueMap = {};
                 calculatedSZ.forEach(item => {
                     szValueMap[item.index] = item.value ?? 0;
                 });
+
+                tableBody.innerHTML = '';
 
                 for (const i of displayIndices) {
                     const date = trendData.dates[i];
@@ -741,7 +722,6 @@
                     if (displayIndices.indexOf(i) < displayIndices.length - 1) {
                         const prevIndex = displayIndices[displayIndices.indexOf(i) + 1];
                         const prevSZ = szValueMap[prevIndex] ?? 0;
-
                         if (szValue > prevSZ) {
                             trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
                         } else if (szValue < prevSZ) {
@@ -759,7 +739,6 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
                 `;
-
                     tableBody.appendChild(row);
                 }
 
@@ -768,7 +747,7 @@
                 }
             } catch (error) {
                 console.error('히스토리 데이터 렌더링 오류:', error);
-                document.getElementById('signals-table-body').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
             }
         }
 
@@ -1016,7 +995,7 @@
                     datasets: [
                         {
                             label: 'SZ Value',
-                            data: szValues.map(item => item.value),
+                            data: szValues.map(item => item.value), // SZ History에서 계산된 값 사용
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 2,
