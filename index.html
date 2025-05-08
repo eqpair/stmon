@@ -620,14 +620,11 @@
                 .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
 
             alertsContainer.innerHTML = '';
+            alertsContainer.className = ''; // grid 제거하여 세로로 쌓이도록 설정
 
-            // OPEN과 IN 신호를 별도로 표시 (제목과 블록 제거)
-            // OPEN 신호
+            // OPEN ITEMS 블록
             if (openTrades.length === 0) {
-                const noDataDiv = document.createElement('div');
-                noDataDiv.className = 'col-span-full text-gray-500 text-center py-4';
-                noDataDiv.textContent = '최근 OPEN 알림이 없습니다';
-                alertsContainer.appendChild(noDataDiv);
+                openBlock.innerHTML += '<div class="text-gray-500 text-center py-4">최근 OPEN 알림이 없습니다</div>';
             } else {
                 for (let i = 0; i < openTrades.length; i += 4) {
                     const row = document.createElement('div');
@@ -659,16 +656,14 @@
                         row.appendChild(emptyEl);
                         rowSignals.push(null);
                     }
-                    alertsContainer.appendChild(row);
+                    openBlock.appendChild(row);
                 }
             }
+            alertsContainer.appendChild(openBlock);
 
-            // IN 신호
+            // IN ITEMS 블록
             if (inSignals.length === 0) {
-                const noDataDiv = document.createElement('div');
-                noDataDiv.className = 'col-span-full text-gray-500 text-center py-4';
-                noDataDiv.textContent = '최근 IN 알림이 없습니다';
-                alertsContainer.appendChild(noDataDiv);
+                inBlock.innerHTML += '<div class="text-gray-500 text-center py-4">최근 IN 알림이 없습니다</div>';
             } else {
                 for (let i = 0; i < inSignals.length; i += 4) {
                     const row = document.createElement('div');
@@ -701,9 +696,10 @@
                         row.appendChild(emptyEl);
                         rowSignals.push(null);
                     }
-                    alertsContainer.appendChild(row);
+                    inBlock.appendChild(row);
                 }
             }
+            alertsContainer.appendChild(inBlock);
         }
 
         // 신호 필터링
