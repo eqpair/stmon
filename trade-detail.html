@@ -520,66 +520,42 @@
         };
 
         async function loadAndProcessStockData(stockCode, stockName) {
-            console.log(`데이터 로드 시작 - 코드: ${stockCode}, 이름: ${stockName}`);
             try {
                 document.getElementById('loading-container').style.display = 'flex';
                 document.getElementById('content-container').classList.add('hidden');
                 fetchLastUpdateTime();
 
                 const trendData = await loadStockData(stockCode, stockName);
-                console.log('Loaded trendData:', trendData);
-
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
 
-                // 1. 오늘 날짜 구하기
+                // 오늘 날짜와 실시간 데이터 추가
                 const today = new Date().toISOString().slice(0, 10);
-                
-                // 2. 실시간 가격 가져오기
                 const latestCommon = realtimeData.commonPrice;
                 const latestPreferred = realtimeData.preferredPrice;
                 const newDiscountRate = calculateDiscountRate(latestCommon, latestPreferred);
 
-                // 3. trendData에 오늘 데이터가 없으면 추가
                 if (trendData.dates[trendData.dates.length - 1] !== today) {
                     trendData.dates.push(today);
                     trendData.common_prices.push(latestCommon);
                     trendData.preferred_prices.push(latestPreferred);
                     trendData.discount_rates.push(newDiscountRate);
                 }
-                stockData.current = {
-                    commonPrice: realtimeData.commonPrice ||
-                        (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
-                    preferredPrice: realtimeData.preferredPrice ||
-                        (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0),
-                    szValue: realtimeData.szValue || 0,
-                    signal: realtimeData.signal || '',
-                    discountRate: calculateDiscountRate(
-                        realtimeData.commonPrice || (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
-                        realtimeData.preferredPrice || (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)
-                    )
-                };
 
+                // SZ 값 계산
                 stockData.history.dates = trendData.dates ? trendData.dates.slice(-150) : [];
                 stockData.history.discountRates = trendData.discount_rates ? trendData.discount_rates.slice(-150) : [];
                 stockData.history.commonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 stockData.history.preferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
-                const windowData = trendData.discount_rates ? trendData.discount_rates.slice(-250, -1) : [];
-
-                if (!windowData.length) {
-                    console.warn('windowData is empty. Mean and StdDev will be set to 0.');
-                } else if (windowData.every(val => val === windowData[0])) {
-                    console.warn('windowData has identical values. StdDev will be 0.');
-                }
-
-                stockData.history.mean = calculateMean(windowData);
-                stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
-
-                console.log('Mean:', stockData.history.mean, 'StdDev:', stockData.history.stdDev);
-                console.log('Discount Rates:', trendData.discount_rates);
-
                 stockData.history.szValues = calculateSZValues(trendData.discount_rates || []).slice(-150);
 
-                console.log('Calculated SZ Values:', stockData.history.szValues);
+                // 현재 정보 설정
+                stockData.current = {
+                    commonPrice: realtimeData.commonPrice || trendData.common_prices[trendData.common_prices.length - 1],
+                    preferredPrice: realtimeData.preferredPrice || trendData.preferred_prices[trendData.preferred_prices.length - 1],
+                    szValue: calculateSZValue(newDiscountRate),
+                    signal: realtimeData.signal || '',
+                    discountRate: newDiscountRate
+                };
 
                 updateCurrentInfo();
                 renderCharts(trendData);
