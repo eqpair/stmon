@@ -541,7 +541,8 @@
                     )
                 };
 
-                stockData.history.dates = trendData.dates ? trendData.dates.slice(-150) : [];
+                stockData.history.dates = trendData.dates.slice(-150);
+                stockData.history.szValues = calculateSZValues(trendData.discount_rates, trendData.dates);
                 stockData.history.discountRates = trendData.discount_rates ? trendData.discount_rates.slice(-150) : [];
                 stockData.history.commonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 stockData.history.preferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
@@ -566,6 +567,10 @@
                     </div>
                 </div>
             `;
+                console.log('Dates length:', stockData.history.dates.length);
+                console.log('SZ Values length:', stockData.history.szValues.length);
+                console.log('Sample Dates:', stockData.history.dates.slice(0, 5));
+                console.log('Sample SZ Values:', stockData.history.szValues.slice(0, 5));
             }
         }
 
@@ -666,10 +671,10 @@
                 const chartHeight = isMobile ? 250 : 300;
                 const pointRadius = isMobile ? 0 : 1;
 
-                const recentDates = trendData.dates ? trendData.dates.slice(-150) : [];
+                const recentDates = stockData.history.dates;
                 const recentCommonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 const recentPreferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
-                const recentSzValues = stockData.history.szValues || [];
+                const recentSzValues = stockData.history.szValues;
 
                 if (!recentDates.length || !recentCommonPrices.length || !recentPreferredPrices.length || !recentSzValues.length) {
                     throw new Error(`차트 렌더링을 위한 데이터가 부족합니다: dates=${recentDates.length}, common_prices=${recentCommonPrices.length}, preferred_prices=${recentPreferredPrices.length}, sz_values=${recentSzValues.length}`);
@@ -685,73 +690,46 @@
         }
 
         function renderHistoryData(trendData) {
-            try {
-                const tableBody = document.getElementById('signals-table-body');
-                const fiveMonthsInDays = 150;
-                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-                const displayIndices = [];
-                for (let i = trendData.dates.length - 1; i >= startIndex; i--) {
-                    displayIndices.push(i);
+            const tableBody = document.getElementById('signals-table-body');
+            const szValues = calculateSZValues(trendData.discount_rates, trendData.dates);
+            tableBody.innerHTML = '';
+
+            szValues.forEach(item => {
+                const szValue = item.value ?? 0;
+                let szClass = 'text-green-600';
+                if (szValue >= 2.5) {
+                    szClass = 'text-red-600 font-bold';
+                } else if (szValue >= 1.5) {
+                    szClass = 'text-orange-600 font-bold';
                 }
 
-                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                    return;
-                }
-
-                // SZ 값 계산 및 stockData.history.szValues에 저장
-                const calculatedSZ = calculateSZValues(trendData.discount_rates);
-                stockData.history.szValues = calculatedSZ.slice(-150); // 최근 150일 데이터로 제한
-                const szValueMap = {};
-                calculatedSZ.forEach(item => {
-                    szValueMap[item.index] = item.value ?? 0;
-                });
-
-                tableBody.innerHTML = '';
-
-                for (const i of displayIndices) {
-                    const date = trendData.dates[i];
-                    const szValue = szValueMap[i] ?? 0;
-
-                    if (szValue === undefined) continue;
-
-                    let szClass = 'text-green-600';
-                    if (szValue >= 2.5) {
-                        szClass = 'text-red-600 font-bold';
-                    } else if (szValue >= 1.5) {
-                        szClass = 'text-orange-600 font-bold';
+                // 추세 계산 (이전 값과 비교)
+                let trendIcon = '-';
+                const prevItem = szValues[szValues.indexOf(item) - 1];
+                if (prevItem) {
+                    const prevSZ = prevItem.value ?? 0;
+                    if (szValue > prevSZ) {
+                        trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                    } else if (szValue < prevSZ) {
+                        trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                    } else {
+                        trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
                     }
-
-                    let trendIcon = '-';
-                    if (displayIndices.indexOf(i) < displayIndices.length - 1) {
-                        const prevIndex = displayIndices[displayIndices.indexOf(i) + 1];
-                        const prevSZ = szValueMap[prevIndex] ?? 0;
-                        if (szValue > prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
-                        } else if (szValue < prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
-                        } else {
-                            trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
-                        }
-                    }
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
-                `;
-                    tableBody.appendChild(row);
                 }
 
-                if (tableBody.children.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                }
-            } catch (error) {
-                console.error('히스토리 데이터 렌더링 오류:', error);
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.date}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[trendData.dates.indexOf(item.date)] ?? 0).toLocaleString()} KRW</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[trendData.dates.indexOf(item.date)] ?? 0).toLocaleString()} KRW</td>
+            `;
+                tableBody.appendChild(row);
+            });
+
+            if (tableBody.children.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
             }
         }
 
@@ -880,6 +858,13 @@
                     .replace(/Infinity/g, 'null')
                     .replace(/-Infinity/g, 'null');
 
+                const trendData = await fetch(trendDataUrl).then(res => res.json());
+                console.log('Trend Data Sample:', {
+                    dates: trendData.dates.slice(0, 5),
+                    discount_rates: trendData.discount_rates.slice(0, 5)
+                });
+                return trendData;
+
                 try {
                     return JSON.parse(cleanedTrendDataText, (key, value) => {
                         if (value === null || value === undefined ||
@@ -927,7 +912,7 @@
             const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / validData.length;
             return Math.sqrt(variance);
         }
-        function calculateSZValues(discountRates) {
+        function calculateSZValues(discountRates, dates) {
             const avgPeriod = 249;
             const result = [];
 
@@ -945,11 +930,11 @@
                 const sz = stdDev !== 0 ? ((discountRates[i] ?? 0) - mean) / stdDev : 0;
                 result.push({
                     index: i,
+                    date: dates[i], // 날짜를 직접 저장
                     value: sz
                 });
             }
-
-            return result;
+            return result.slice(-150); // 최근 150일 데이터
         }
         function calculateSZValue(discountRate) {
             if (stockData.history.stdDev === 0) return 0;
@@ -995,11 +980,11 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dates,
+                    labels: szValues.map(item => item.date), // 날짜 직접 사용
                     datasets: [
                         {
                             label: 'SZ Value',
-                            data: szValues.map(item => item.value), // SZ History에서 계산된 값 사용
+                            data: szValues.map(item => item.value),
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 2,
