@@ -550,12 +550,11 @@
                 stockData.history.mean = calculateMean(windowData);
                 stockData.history.stdDev = calculateStdDev(windowData, stockData.history.mean);
 
-                console.log('Mean:', stockData.history.mean, 'StdDev:', stockData.history.stdDev);
-                console.log('Discount Rates:', trendData.discount_rates);
+                // SZ History와 동일한 방식으로 SZ 값 계산
+                const szValues = calculateSZValues(trendData.discount_rates || []);
+                stockData.history.szValues = szValues.slice(-150); // 최근 150일 데이터만 사용
 
-                stockData.history.szValues = calculateSZValues(trendData.discount_rates || []).slice(-150);
-
-                console.log('Calculated SZ Values:', stockData.history.szValues);
+                console.log('stockData.history.szValues:', stockData.history.szValues); // 디버깅 로그 추가
 
                 updateCurrentInfo();
                 renderCharts(trendData);
@@ -577,6 +576,8 @@
                 </div>
             `;
             }
+            // 주기적으로 데이터 갱신 (5분마다)
+            setTimeout(() => loadAndProcessStockData(stockCode, stockName), 5 * 60 * 1000);
         }
 
         function renderPriceChart(dates, commonPrices, preferredPrices, chartHeight, pointRadius) {
@@ -679,7 +680,10 @@
                 const recentDates = trendData.dates ? trendData.dates.slice(-150) : [];
                 const recentCommonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 const recentPreferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
-                const recentSzValues = stockData.history.szValues || [];
+                const recentSzValues = calculateSZValues(trendData.discount_rates || []).slice(-150); // SZ History와 동일한 로직
+
+                console.log('renderCharts - recentDates:', recentDates);
+                console.log('renderCharts - recentSzValues:', recentSzValues);
 
                 if (!recentDates.length || !recentCommonPrices.length || !recentPreferredPrices.length || !recentSzValues.length) {
                     throw new Error(`차트 렌더링을 위한 데이터가 부족합니다: dates=${recentDates.length}, common_prices=${recentCommonPrices.length}, preferred_prices=${recentPreferredPrices.length}, sz_values=${recentSzValues.length}`);
@@ -941,6 +945,13 @@
             const avgPeriod = 249;
             const result = [];
 
+            console.log('calculateSZValues - discountRates length:', discountRates.length);
+
+            if (!discountRates || discountRates.length < avgPeriod + 1) {
+                console.warn('calculateSZValues: discountRates가 충분히 길지 않음');
+                return [];
+            }
+
             for (let i = avgPeriod + 1; i < discountRates.length; i++) {
                 const windowData = discountRates.slice(i - avgPeriod - 1, i - 1);
                 const mean = windowData.reduce((sum, val) => sum + (val ?? 0), 0) / windowData.length;
@@ -959,6 +970,7 @@
                 });
             }
 
+            console.log('calculateSZValues - result:', result);
             return result;
         }
         function calculateSZValue(discountRate) {
@@ -1002,14 +1014,24 @@
             const screenWidth = window.innerWidth;
             const isMobile = screenWidth <= 640;
 
-            new Chart(ctx, {
+            // 기존 차트 제거
+            if (window.szChart instanceof Chart) {
+                window.szChart.destroy();
+            }
+
+            // SZ 값 배열 확인
+            const szData = szValues.map(item => item.value !== undefined ? item.value : 0);
+            console.log('renderSZChart - dates:', dates);
+            console.log('renderSZChart - szData:', szData);
+
+            window.szChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: dates,
                     datasets: [
                         {
                             label: 'SZ Value',
-                            data: szValues.map(item => item.value),
+                            data: szData,
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 2,
