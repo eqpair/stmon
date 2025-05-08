@@ -569,13 +569,11 @@
 
             const alertsContainer = document.getElementById('recent-alerts');
 
-            // 데이터가 없거나 로드되지 않은 경우
             if (!allSignals || !tradesData) {
                 alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">데이터를 로드하지 못했습니다</div>';
                 return;
             }
 
-            // IN 신호
             const inSignals = allSignals
                 .filter(s => s.signal && s.signal.includes('IN'))
                 .map(signal => ({
@@ -585,7 +583,6 @@
                 }))
                 .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
 
-            // Open 상태 매매
             const openTrades = tradesData
                 .filter(t => t.status === 'Open')
                 .map(trade => {
@@ -621,15 +618,19 @@
 
             alertsContainer.innerHTML = '';
 
-            // OPEN 신호 렌더링
+            // OPEN 신호 섹션
+            const openTitle = document.createElement('h3');
+            openTitle.className = 'text-lg font-semibold text-gray-800 mt-6 mb-4';
+            openTitle.textContent = 'OPEN ITEMS';
+            alertsContainer.appendChild(openTitle);
+
             if (openTrades.length === 0) {
                 alertsContainer.innerHTML += '<div class="col-span-full text-gray-500 text-center py-4">최근 OPEN 알림이 없습니다</div>';
             } else {
-                // OPEN 신호를 4개씩 묶어서 행으로 렌더링
                 for (let i = 0; i < openTrades.length; i += 4) {
                     const row = document.createElement('div');
-                    row.className = 'grid grid-cols-4 gap-4 mb-4'; // 행 스타일: 4열 그리드, 아래 여백 추가
-                    const rowSignals = openTrades.slice(i, i + 4); // 4개씩 자르기
+                    row.className = 'grid grid-cols-4 gap-4 mb-4';
+                    const rowSignals = openTrades.slice(i, i + 4);
                     rowSignals.forEach(signal => {
                         const alertEl = document.createElement('div');
                         alertEl.className = 'p-4 rounded-lg signal-open-bg';
@@ -650,10 +651,9 @@
                     `;
                         row.appendChild(alertEl);
                     });
-                    // 빈 칸 채우기 (4개 미만일 경우)
                     while (rowSignals.length < 4) {
                         const emptyEl = document.createElement('div');
-                        emptyEl.className = 'p-4'; // 빈 공간 유지
+                        emptyEl.className = 'p-4';
                         row.appendChild(emptyEl);
                         rowSignals.push(null);
                     }
@@ -661,15 +661,19 @@
                 }
             }
 
-            // IN 신호 렌더링
+            // IN 신호 섹션
+            const inTitle = document.createElement('h3');
+            inTitle.className = 'text-lg font-semibold text-gray-800 mt-6 mb-4';
+            inTitle.textContent = 'IN ITEMS';
+            alertsContainer.appendChild(inTitle);
+
             if (inSignals.length === 0) {
                 alertsContainer.innerHTML += '<div class="col-span-full text-gray-500 text-center py-4">최근 IN 알림이 없습니다</div>';
             } else {
-                // IN 신호를 4개씩 묶어서 행으로 렌더링
                 for (let i = 0; i < inSignals.length; i += 4) {
                     const row = document.createElement('div');
-                    row.className = 'grid grid-cols-4 gap-4 mb-4'; // 행 스타일: 4열 그리드, 아래 여백 추가
-                    const rowSignals = inSignals.slice(i, i + 4); // 4개씩 자르기
+                    row.className = 'grid grid-cols-4 gap-4 mb-4';
+                    const rowSignals = inSignals.slice(i, i + 4);
                     rowSignals.forEach(signal => {
                         const alertEl = document.createElement('div');
                         alertEl.className = 'p-4 rounded-lg bg-blue-50';
@@ -691,10 +695,9 @@
                     `;
                         row.appendChild(alertEl);
                     });
-                    // 빈 칸 채우기 (4개 미만일 경우)
                     while (rowSignals.length < 4) {
                         const emptyEl = document.createElement('div');
-                        emptyEl.className = 'p-4'; // 빈 공간 유지
+                        emptyEl.className = 'p-4';
                         row.appendChild(emptyEl);
                         rowSignals.push(null);
                     }
