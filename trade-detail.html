@@ -531,6 +531,21 @@
 
                 const realtimeData = await fetchRealtimeData(stockCode, stockName);
 
+                // 1. 오늘 날짜 구하기
+                const today = new Date().toISOString().slice(0, 10);
+                
+                // 2. 실시간 가격 가져오기
+                const latestCommon = realtimeData.commonPrice;
+                const latestPreferred = realtimeData.preferredPrice;
+                const newDiscountRate = calculateDiscountRate(latestCommon, latestPreferred);
+
+                // 3. trendData에 오늘 데이터가 없으면 추가
+                if (trendData.dates[trendData.dates.length - 1] !== today) {
+                    trendData.dates.push(today);
+                    trendData.common_prices.push(latestCommon);
+                    trendData.preferred_prices.push(latestPreferred);
+                    trendData.discount_rates.push(newDiscountRate);
+                }
                 stockData.current = {
                     commonPrice: realtimeData.commonPrice ||
                         (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
