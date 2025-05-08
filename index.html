@@ -619,69 +619,101 @@
                 })
                 .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
 
-            // OPEN과 IN 신호를 하나의 배열로 합치기 (OPEN이 먼저 오도록)
-            const combinedSignals = [...openTrades, ...inSignals];
-
-            // 데이터가 없는 경우
-            if (combinedSignals.length === 0) {
-                alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
-                return;
-            }
-
             alertsContainer.innerHTML = '';
+            alertsContainer.className = ''; // grid 제거하여 세로로 쌓이도록 설정
 
-            // 4개씩 묶어서 가로로 렌더링
-            for (let i = 0; i < combinedSignals.length; i += 4) {
-                const row = document.createElement('div');
-                row.className = 'grid grid-cols-4 gap-4 mb-4'; // 행 스타일: 4열 그리드, 아래 여백 추가
-                const rowSignals = combinedSignals.slice(i, i + 4); // 4개씩 자르기
+            // OPEN ITEMS 블록
+            const openBlock = document.createElement('div');
+            openBlock.className = 'bg-white rounded-lg shadow-md p-6 mb-6';
+            const openTitle = document.createElement('h2');
+            openTitle.className = 'text-xl font-semibold text-gray-800 mb-4';
+            openTitle.textContent = 'OPEN ITEMS';
+            openBlock.appendChild(openTitle);
 
-                rowSignals.forEach(signal => {
-                    const alertEl = document.createElement('div');
-                    alertEl.className = `p-4 rounded-lg ${signal.type === 'OPEN' ? 'signal-open-bg' : 'bg-blue-50'}`;
-                    const stockCode = getStockCodeByName(signal.stock_name);
-
-                    // 신호 태그 생성
-                    let signalTag = '';
-                    if (signal.signal.includes('IN')) {
-                        signalTag = '<span class="signal-tag signal-IN">IN</span>';
-                    } else if (signal.signal.includes('OPEN')) {
-                        signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
+            if (openTrades.length === 0) {
+                openBlock.innerHTML += '<div class="text-gray-500 text-center py-4">최근 OPEN 알림이 없습니다</div>';
+            } else {
+                for (let i = 0; i < openTrades.length; i += 4) {
+                    const row = document.createElement('div');
+                    row.className = 'grid grid-cols-4 gap-4 mb-4';
+                    const rowSignals = openTrades.slice(i, i + 4);
+                    rowSignals.forEach(signal => {
+                        const alertEl = document.createElement('div');
+                        alertEl.className = 'p-4 rounded-lg signal-open-bg';
+                        const stockCode = getStockCodeByName(signal.stock_name);
+                        let signalTag = '<span class="signal-tag signal-OPEN">OPEN</span>';
+                        const szDisplay = signal.sz_value !== null
+                            ? `<span class="${signal.sz_class} font-bold">${signal.sz_value.toFixed(2)}</span>`
+                            : '-';
+                        const extraInfo = `SZ: ${szDisplay} | Entry D.: ${signal.entry_date || '-'}`;
+                        alertEl.innerHTML = `
+                        <div class="text-blue-700 text-sm font-medium mb-1">
+                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" class="hover:text-blue-600 hover:underline">
+                                ${signal.stock_name}
+                            </a>
+                            <span class="text-xs text-gray-500">${stockCode}</span>
+                        </div>
+                        <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
+                    `;
+                        row.appendChild(alertEl);
+                    });
+                    while (rowSignals.length < 4) {
+                        const emptyEl = document.createElement('div');
+                        emptyEl.className = 'p-4';
+                        row.appendChild(emptyEl);
+                        rowSignals.push(null);
                     }
-
-                    // SZ 값 표시
-                    const szClass = signal.type === 'OPEN' ? signal.sz_class : (signal.sz_value >= 2.5 ? 'sz-high' : signal.sz_value >= 1.5 ? 'sz-medium' : 'sz-low');
-                    const szDisplay = signal.sz_value !== null
-                        ? `<span class="${szClass} ${signal.type === 'OPEN' ? 'font-bold' : ''}">${signal.sz_value.toFixed(2)}</span>`
-                        : '-';
-
-                    // 추가 정보 (OPEN의 경우 Entry Date 포함)
-                    const extraInfo = signal.type === 'OPEN'
-                        ? `SZ: ${szDisplay} | Entry D.: ${signal.entry_date || '-'}`
-                        : `SZ: ${szDisplay}`;
-
-                    alertEl.innerHTML = `
-                    <div class="text-blue-700 text-sm font-medium mb-1">
-                        <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" class="hover:text-blue-600 hover:underline">
-                            ${signal.stock_name}
-                        </a>
-                        <span class="text-xs text-gray-500">${stockCode}</span>
-                    </div>
-                    <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
-                `;
-                    row.appendChild(alertEl);
-                });
-
-                // 빈 칸 채우기 (4개 미만일 경우)
-                while (rowSignals.length < 4) {
-                    const emptyEl = document.createElement('div');
-                    emptyEl.className = 'p-4'; // 빈 공간 유지
-                    row.appendChild(emptyEl);
-                    rowSignals.push(null);
+                    openBlock.appendChild(row);
                 }
-
-                alertsContainer.appendChild(row);
             }
+            alertsContainer.appendChild(openBlock);
+
+            // IN ITEMS 블록
+            const inBlock = document.createElement('div');
+            inBlock.className = 'bg-white rounded-lg shadow-md p-6 mb-6';
+            const inTitle = document.createElement('h2');
+            inTitle.className = 'text-xl font-semibold text-gray-800 mb-4';
+            inTitle.textContent = 'IN ITEMS';
+            inBlock.appendChild(inTitle);
+
+            if (inSignals.length === 0) {
+                inBlock.innerHTML += '<div class="text-gray-500 text-center py-4">최근 IN 알림이 없습니다</div>';
+            } else {
+                for (let i = 0; i < inSignals.length; i += 4) {
+                    const row = document.createElement('div');
+                    row.className = 'grid grid-cols-4 gap-4 mb-4';
+                    const rowSignals = inSignals.slice(i, i + 4);
+                    rowSignals.forEach(signal => {
+                        const alertEl = document.createElement('div');
+                        alertEl.className = 'p-4 rounded-lg bg-blue-50';
+                        const stockCode = getStockCodeByName(signal.stock_name);
+                        let signalTag = '<span class="signal-tag signal-IN">IN</span>';
+                        const szClass = signal.sz_value >= 2.5 ? 'sz-high' : signal.sz_value >= 1.5 ? 'sz-medium' : 'sz-low';
+                        const szDisplay = signal.sz_value !== null
+                            ? `<span class="${szClass}">${signal.sz_value.toFixed(2)}</span>`
+                            : '-';
+                        const extraInfo = `SZ: ${szDisplay}`;
+                        alertEl.innerHTML = `
+                        <div class="text-blue-700 text-sm font-medium mb-1">
+                            <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" class="hover:text-blue-600 hover:underline">
+                                ${signal.stock_name}
+                            </a>
+                            <span class="text-xs text-gray-500">${stockCode}</span>
+                        </div>
+                        <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
+                    `;
+                        row.appendChild(alertEl);
+                    });
+                    while (rowSignals.length < 4) {
+                        const emptyEl = document.createElement('div');
+                        emptyEl.className = 'p-4';
+                        row.appendChild(emptyEl);
+                        rowSignals.push(null);
+                    }
+                    inBlock.appendChild(row);
+                }
+            }
+            alertsContainer.appendChild(inBlock);
         }
 
         // 신호 필터링
