@@ -585,6 +585,11 @@
                     type: 'IN',
                     sortTime: signal.timestamp || new Date().toISOString()
                 }))
+                // ★ 추가: OPEN 종목과 중복되는 IN 신호 제거
+                .filter(signal => {
+                    const signalName = normalizeStockName(signal.stock_name);
+                    return !openTrades.some(trade => normalizeStockName(trade.stock_name) === signalName);
+                })
                 .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
 
             // Open 상태 매매 처리
