@@ -297,6 +297,7 @@
                 const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
 
                 // Short(보통주) 행
+                const stockCode = getStockCodeByName(baseStockName);
                 const trShort = document.createElement('tr');
                 if (isExited) {
                     trShort.classList.add('exited-row');
