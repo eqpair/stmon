@@ -302,7 +302,12 @@
                     trShort.classList.add('exited-row');
                 }
                 trShort.innerHTML = `
-                <td rowspan="2" class="clickable-item" onclick="window.location.href='trade-detail.html?pair=${encodeURIComponent(trade.pair_name)}'">${trade.pair_name}</td>
+                <td rowspan="2" class="clickable-item">
+                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
+                        class="hover:text-blue-600 hover:underline">
+                        ${displayStockName}
+                    </a>
+                </td>
                 <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                 <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
