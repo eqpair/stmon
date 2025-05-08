@@ -63,10 +63,10 @@
         background-color: #f3f4f6; /* 연회색 배경 */
         }
         /* 추가된 금액 열 스타일링 */
-        .report-table th:nth-child(4), .report-table td:nth-child(4), /* T. Invested */
-        .report-table th:nth-child(5), .report-table td:nth-child(5), /* T. Realized */
-        .report-table th:nth-child(9), .report-table td:nth-child(3), /* Invested */
-        .report-table th:nth-child(10), .report-table td:nth-child(4) /* Realized */ {
+        .report-table th:nth-child(5), .report-table td:nth-child(4), /* T. Invested */
+        .report-table th:nth-child(6), .report-table td:nth-child(5), /* T. Realized */
+        .report-table th:nth-child(14), .report-table td:nth-child(3), /* Invested */
+        .report-table th:nth-child(15), .report-table td:nth-child(4) /* Realized */ {
             text-align: right;
             padding-right: 1rem;
         }
@@ -119,20 +119,20 @@
                             <th>ITEM</th>
                             <th>T. Profit</th>
                             <th>Rate</th>
-                            <th>T. Invested</th> <!-- 페어 전체 투입금액 -->
-                            <th>T. Realized</th> <!-- 페어 전체 실현금액 -->
                             <th>Status</th>
+                            <th>T. Invested</th>
+                            <th>T. Realized</th>
                             <th>Pos.</th>
                             <th>Code</th>
-                            <th>Invested</th> <!-- 개별 투입금액 -->
-                            <th>Realized</th> <!-- 개별 실현금액 -->
-                            <th>Entry D.</th>
-                            <th>Exit D.</th>
                             <th>Entry P.</th>
                             <th>Exit(Curr.)</th>
                             <th>Q'ty</th>
                             <th>Profit</th>
                             <th>Rate</th>
+                            <th>Invested</th>
+                            <th>Realized</th>
+                            <th>Entry D.</th>
+                            <th>Exit D.</th>
                             <th>Days</th>
                         </tr>
                     </thead>
@@ -268,7 +268,6 @@
                 const stamp_bps = trade.stamp_bps || 0;
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
-                // 손익 계산
                 const shortPnl = calcShortPnL(
                     trade.common_entry, commonPrice, trade.common_qty,
                     borrowFeePct, days, comm_bps, stamp_bps
@@ -279,7 +278,6 @@
                 );
                 const totalPnl = shortPnl + longPnl;
 
-                // 투입금액과 실현금액 계산
                 const commonInvested = trade.common_entry * trade.common_qty;
                 const commonRealized = (commonPrice || 0) * trade.common_qty;
                 const preferredInvested = trade.preferred_entry * trade.preferred_qty;
@@ -300,20 +298,20 @@
                 <td rowspan="2">${trade.pair_name}</td>
                 <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+                <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
                 <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
                 <td rowspan="2">${Math.round(totalRealized).toLocaleString()}</td>
-                <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
                 <td>Short</td>
                 <td>${trade.common_code}</td>
-                <td>${Math.round(commonInvested).toLocaleString()}</td>
-                <td>${Math.round(commonRealized).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
                 <td>${trade.common_entry?.toLocaleString() || '-'}</td>
                 <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
                 <td>${trade.common_qty}</td>
                 <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
                 <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+                <td>${Math.round(commonInvested).toLocaleString()}</td>
+                <td>${Math.round(commonRealized).toLocaleString()}</td>
+                <td>${trade.entry_date}</td>
+                <td>${isExited ? trade.exit_date : '-'}</td>
                 <td>${days}</td>
             `;
                 tbody.appendChild(trShort);
@@ -326,15 +324,15 @@
                 trLong.innerHTML = `
                 <td>Long</td>
                 <td>${trade.preferred_code}</td>
-                <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                <td>${Math.round(preferredRealized).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
                 <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
                 <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
                 <td>${trade.preferred_qty}</td>
                 <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
                 <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+                <td>${Math.round(preferredInvested).toLocaleString()}</td>
+                <td>${Math.round(preferredRealized).toLocaleString()}</td>
+                <td>${trade.entry_date}</td>
+                <td>${isExited ? trade.exit_date : '-'}</td>
                 <td>${days}</td>
             `;
                 tbody.appendChild(trLong);
