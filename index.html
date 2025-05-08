@@ -576,22 +576,7 @@
                 alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">데이터를 로드하지 못했습니다</div>';
                 return;
             }
-
-            // IN 신호 처리
-            const inSignals = allSignals
-                .filter(s => s?.signal?.includes('IN'))
-                .map(signal => ({
-                    ...signal,
-                    type: 'IN',
-                    sortTime: signal.timestamp || new Date().toISOString()
-                }))
-                // ★ 추가: OPEN 종목과 중복되는 IN 신호 제거
-                .filter(signal => {
-                    const signalName = normalizeStockName(signal.stock_name);
-                    return !openTrades.some(trade => normalizeStockName(trade.stock_name) === signalName);
-                })
-                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
-
+            
             // Open 상태 매매 처리
             const openTrades = tradesData
                 .filter(t => t?.status === 'Open')
@@ -612,6 +597,21 @@
                         common_code: trade.common_code,
                         preferred_code: trade.preferred_code
                     };
+                })
+                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
+
+            // IN 신호 처리
+            const inSignals = allSignals
+                .filter(s => s?.signal?.includes('IN'))
+                .map(signal => ({
+                    ...signal,
+                    type: 'IN',
+                    sortTime: signal.timestamp || new Date().toISOString()
+                }))
+                // ★ 추가: OPEN 종목과 중복되는 IN 신호 제거
+                .filter(signal => {
+                    const signalName = normalizeStockName(signal.stock_name);
+                    return !openTrades.some(trade => normalizeStockName(trade.stock_name) === signalName);
                 })
                 .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
 
