@@ -679,7 +679,7 @@
                 const chartHeight = isMobile ? 250 : 300;
                 const pointRadius = isMobile ? 0 : 1;
 
-                const recentDates = trendData.dates ? trendData.dates.slice(-150) : [];
+                const recentDates = trendData.dates.slice(-stockData.history.szValues.length);
                 const recentCommonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 const recentPreferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
                 const recentSzValues = stockData.history.szValues || [];
@@ -688,7 +688,7 @@
                     throw new Error(`차트 렌더링을 위한 데이터가 부족합니다: dates=${recentDates.length}, common_prices=${recentCommonPrices.length}, preferred_prices=${recentPreferredPrices.length}, sz_values=${recentSzValues.length}`);
                 }
 
-                renderSZChart(recentDates, recentSzValues, chartHeight, pointRadius);
+                renderSZChart(recentDates, stockData.history.szValues, chartHeight, pointRadius);
                 renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices, chartHeight, pointRadius);
             } catch (error) {
                 console.error('차트 렌더링 오류:', error);
