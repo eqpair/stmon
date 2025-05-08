@@ -577,17 +577,7 @@
                 return;
             }
 
-            // IN 신호 처리
-            const inSignals = allSignals
-                .filter(s => s?.signal?.includes('IN'))
-                .map(signal => ({
-                    ...signal,
-                    type: 'IN',
-                    sortTime: signal.timestamp || new Date().toISOString()
-                }))
-                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
-
-            // Open 상태 매매 처리
+            // OPEN 상태 매매 처리
             const openTrades = tradesData
                 .filter(t => t?.status === 'Open')
                 .map(trade => {
@@ -610,13 +600,26 @@
                 })
                 .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
 
+            // OPEN 종목의 정규화된 이름 집합 생성
+            const openStockNames = new Set(openTrades.map(trade => normalizeStockName(trade.stock_name)));
+
+            // IN 신호 처리 (OPEN에 이미 있는 종목 제외)
+            const inSignals = allSignals
+                .filter(s => s?.signal?.includes('IN') && !openStockNames.has(normalizeStockName(s.stock_name)))
+                .map(signal => ({
+                    ...signal,
+                    type: 'IN',
+                    sortTime: signal.timestamp || new Date().toISOString()
+                }))
+                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
+
             // 컨테이너 초기화
             alertsContainer.innerHTML = '';
-            alertsContainer.className = ''; // 기존 클래스 유지
+            alertsContainer.className = 'grid grid-cols-4 gap-4';
 
             // 알림 없음 처리
             if (openTrades.length === 0 && inSignals.length === 0) {
-                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
+                alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
                 return;
             }
 
