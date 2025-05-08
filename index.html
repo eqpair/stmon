@@ -562,106 +562,118 @@
         }
 
         // 최근 알림 업데이트
-    function updateRecentAlerts() {
-        console.log('updateRecentAlerts 호출됨', { allSignals, tradesData });
+        function updateRecentAlerts() {
+            console.log('updateRecentAlerts 호출됨', { allSignals, tradesData });
 
-        const alertsContainer = document.getElementById('recent-alerts');
-        if (!alertsContainer) {
-            console.error('최근 알림 컨테이너를 찾을 수 없습니다');
-            return;
-        }
-
-        // 데이터 확인
-        if (!allSignals || !tradesData) {
-            alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">데이터를 로드하지 못했습니다</div>';
-            return;
-        }
-
-        // IN 신호 처리
-        const inSignals = allSignals
-            .filter(s => s?.signal?.includes('IN'))
-            .map(signal => ({
-                ...signal,
-                type: 'IN',
-                sortTime: signal.timestamp || new Date().toISOString()
-            }));
-
-        // Open 상태 매매 처리
-        const openTrades = tradesData
-            .filter(t => t?.status === 'Open')
-            .map(trade => {
-                const tradeName = normalizeStockName(trade.pair_name);
-                const matchedSignal = allSignals.find(s => normalizeStockName(s.stock_name) === tradeName);
-                const szValue = matchedSignal?.sz_value ?? null;
-                const szClass = szValue >= 2.5 ? 'sz-high' : szValue >= 1.5 ? 'sz-medium' : szValue !== null ? 'sz-low' : '';
-
-                return {
-                    stock_name: trade.pair_name,
-                    sz_value: szValue,
-                    sz_class: szClass,
-                    signal: 'OPEN',
-                    type: 'OPEN',
-                    sortTime: trade.entry_date || new Date().toISOString(),
-                    entry_date: trade.entry_date,
-                    common_code: trade.common_code,
-                    preferred_code: trade.preferred_code
-                };
-            });
-
-        // 모든 알림을 하나로 통합하고 정렬
-        const allAlerts = [...inSignals, ...openTrades]
-            .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
-
-        // 컨테이너 초기화
-        alertsContainer.innerHTML = '';
-        alertsContainer.className = ''; // 기존 클래스 유지 (grid 제거)
-
-        // 알림 렌더링
-        if (allAlerts.length === 0) {
-            alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
-            return;
-        }
-
-        for (let i = 0; i < allAlerts.length; i += 4) {
-            const row = document.createElement('div');
-            row.className = 'grid grid-cols-4 gap-4 mb-4';
-            const rowSignals = allAlerts.slice(i, i + 4);
-
-            rowSignals.forEach(signal => {
-                const alertEl = document.createElement('div');
-                alertEl.className = `p-4 rounded-lg ${signal.type === 'OPEN' ? 'signal-open-bg' : 'bg-blue-50'}`;
-
-                const stockCode = getStockCodeByName(signal.stock_name) || 'N/A';
-                const signalTag = `<span class="signal-tag signal-${signal.type}">${signal.type}</span>`;
-                const szDisplay = signal.sz_value !== null
-                    ? `<span class="${signal.sz_class} font-bold">${signal.sz_value.toFixed(2)}</span>`
-                    : '-';
-                const extraInfo = signal.type === 'OPEN'
-                    ? `SZ: ${szDisplay} | Entry D.: ${signal.entry_date || '-'}`
-                    : `SZ: ${szDisplay}`;
-
-                alertEl.innerHTML = `
-                <div class="text-blue-700 text-sm font-medium mb-1">
-                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                       class="hover:text-blue-600 hover:underline">
-                        ${signal.stock_name}
-                    </a>
-                    <span class="text-xs text-gray-500">${stockCode}</span>
-                </div>
-                <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
-            `;
-                row.appendChild(alertEl);
-            });
-
-            // 빈 공간 채우기
-            while (rowSignals.length < 4) {
-                row.appendChild(document.createElement('div'));
-                rowSignals.push(null);
+            const alertsContainer = document.getElementById('recent-alerts');
+            if (!alertsContainer) {
+                console.error('최근 알림 컨테이너를 찾을 수 없습니다');
+                return;
             }
 
-            alertsContainer.appendChild(row);
+            // 데이터 확인
+            if (!allSignals || !tradesData) {
+                alertsContainer.innerHTML = '<div class="col-span-full text-gray-500 text-center py-4">데이터를 로드하지 못했습니다</div>';
+                return;
+            }
+
+            // IN 신호 처리
+            const inSignals = allSignals
+                .filter(s => s?.signal?.includes('IN'))
+                .map(signal => ({
+                    ...signal,
+                    type: 'IN',
+                    sortTime: signal.timestamp || new Date().toISOString()
+                }))
+                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
+
+            // Open 상태 매매 처리
+            const openTrades = tradesData
+                .filter(t => t?.status === 'Open')
+                .map(trade => {
+                    const tradeName = normalizeStockName(trade.pair_name);
+                    const matchedSignal = allSignals.find(s => normalizeStockName(s.stock_name) === tradeName);
+                    const szValue = matchedSignal?.sz_value ?? null;
+                    const szClass = szValue >= 2.5 ? 'sz-high' : szValue >= 1.5 ? 'sz-medium' : szValue !== null ? 'sz-low' : '';
+
+                    return {
+                        stock_name: trade.pair_name,
+                        sz_value: szValue,
+                        sz_class: szClass,
+                        signal: 'OPEN',
+                        type: 'OPEN',
+                        sortTime: trade.entry_date || new Date().toISOString(),
+                        entry_date: trade.entry_date,
+                        common_code: trade.common_code,
+                        preferred_code: trade.preferred_code
+                    };
+                })
+                .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime));
+
+            // 컨테이너 초기화
+            alertsContainer.innerHTML = '';
+            alertsContainer.className = ''; // 기존 클래스 유지
+
+            // 알림 없음 처리
+            if (openTrades.length === 0 && inSignals.length === 0) {
+                alertsContainer.innerHTML = '<div class="text-gray-500 text-center py-4">최근 알림이 없습니다</div>';
+                return;
+            }
+
+            // 알림 렌더링 함수
+            const renderRow = (signals, container) => {
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-4 gap-4 mb-4';
+                const rowSignals = signals.slice(0, 4);
+
+                rowSignals.forEach(signal => {
+                    const alertEl = document.createElement('div');
+                    alertEl.className = `p-4 rounded-lg ${signal.type === 'OPEN' ? 'signal-open-bg' : 'bg-blue-50'}`;
+
+                    const stockCode = getStockCodeByName(signal.stock_name) || 'N/A';
+                    const signalTag = `<span class="signal-tag signal-${signal.type}">${signal.type}</span>`;
+                    const szDisplay = signal.sz_value !== null
+                        ? `<span class="${signal.sz_class} font-bold">${signal.sz_value.toFixed(2)}</span>`
+                        : '-';
+                    const extraInfo = signal.type === 'OPEN'
+                        ? `SZ: ${szDisplay} | Entry D.: ${signal.entry_date || '-'}`
+                        : `SZ: ${szDisplay}`;
+
+                    alertEl.innerHTML = `
+                    <div class="text-blue-700 text-sm font-medium mb-1">
+                        <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
+                        class="hover:text-blue-600 hover:underline">
+                            ${signal.stock_name}
+                        </a>
+                        <span class="text-xs text-gray-500">${stockCode}</span>
+                    </div>
+                    <div class="text-xs text-gray-500">${extraInfo} | Signal: ${signalTag}</div>
+                `;
+                    row.appendChild(alertEl);
+                });
+
+                // 빈 공간 채우기
+                while (rowSignals.length < 4) {
+                    row.appendChild(document.createElement('div'));
+                    rowSignals.push(null);
+                }
+
+                container.appendChild(row);
+                return signals.slice(4); // 남은 신호 반환
+            };
+
+            // OPEN 알림 먼저 렌더링 (첫 줄)
+            let remainingOpen = openTrades;
+            if (remainingOpen.length > 0) {
+                remainingOpen = renderRow(remainingOpen, alertsContainer);
+            }
+
+            // IN 알림 렌더링 (다음 줄부터)
+            let remainingIn = inSignals;
+            while (remainingIn.length > 0) {
+                remainingIn = renderRow(remainingIn, alertsContainer);
+            }
         }
-    }
 
         // 신호 필터링
         function filterSignals(signals) {
