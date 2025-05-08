@@ -13,29 +13,44 @@
         .signal-card {
             transition: all 0.3s ease;
         }
+
         .signal-card:hover {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+
         .blink {
             animation: blink 2s linear infinite;
         }
+
         @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
+
         .report-table {
             width: 100%;
             border-collapse: collapse;
             background: #fff;
         }
+
         .report-table th,
         .report-table td {
             padding: 0.75rem;
             text-align: center;
             border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap; /* 종목명 줄바꿈 방지 */
+            white-space: nowrap;
+            /* 종목명 줄바꿈 방지 */
         }
+
         .report-table th {
             background: #f9fafb;
             font-weight: 600;
@@ -43,56 +58,107 @@
             font-size: 0.75rem;
             color: #6b7280;
         }
-        .profit-plus, .rate-plus {
+
+        .profit-plus,
+        .rate-plus {
             color: #dc2626;
             font-weight: bold;
         }
-        .profit-minus, .rate-minus {
+
+        .profit-minus,
+        .rate-minus {
             color: #0284c7;
             font-weight: bold;
         }
+
         .open-green {
             color: #16a34a;
             font-weight: bold;
         }
+
         .bold-green {
             color: #16a34a;
             font-weight: bold;
         }
+
         .clickable-item {
             cursor: pointer;
             transition: background-color 0.2s;
         }
+
         .clickable-item:hover {
-            background-color: #e5e7eb; /* 호버 시 연한 회색 배경 */
+            background-color: #e5e7eb;
+            /* 호버 시 연한 회색 배경 */
         }
+
         .exited-row {
-        background-color: #f3f4f6; /* 연회색 배경 */
+            background-color: #f3f4f6;
+            /* 연회색 배경 */
         }
+
         /* 추가된 금액 열 스타일링 */
-        .report-table th:nth-child(5), .report-table td:nth-child(4), /* T. Invested */
-        .report-table th:nth-child(6), .report-table td:nth-child(5), /* T. Realized */
-        .report-table th:nth-child(14), .report-table td:nth-child(3), /* Invested */
-        .report-table th:nth-child(15), .report-table td:nth-child(4) /* Realized */ {
+        .report-table th:nth-child(5),
+        .report-table td:nth-child(4),
+        /* T. Invested */
+        .report-table th:nth-child(6),
+        .report-table td:nth-child(5),
+        /* T. Realized */
+        .report-table th:nth-child(14),
+        .report-table td:nth-child(3),
+        /* Invested */
+        .report-table th:nth-child(15),
+        .report-table td:nth-child(4)
+
+        /* Realized */
+            {
             text-align: right;
             padding-right: 1rem;
         }
+
         @media (max-width: 1024px) {
-            .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
-            .grid-cols-2 { grid-template-columns: repeat(1, 1fr); }
-            .report-table th, .report-table td {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-cols-2 {
+                grid-template-columns: repeat(1, 1fr);
+            }
+
+            .report-table th,
+            .report-table td {
                 padding: 0.6rem;
                 font-size: 0.7rem;
-            }}
+            }
+        }
+
         @media (max-width: 640px) {
-            .report-table th, .report-table td {
+
+            .report-table th,
+            .report-table td {
                 padding: 0.5rem;
                 font-size: 0.75rem;
             }
-            .text-3xl { font-size: 1.5rem; }
-            .text-xl { font-size: 1.2rem; }
-            button, a { min-height: 44px; padding: 0.75rem 1rem; font-size: 0.875rem; }
-            .flex.justify-between.items-center { flex-direction: column; gap: 10px; align-items: flex-start; }
+
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl {
+                font-size: 1.2rem;
+            }
+
+            button,
+            a {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .flex.justify-between.items-center {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -102,14 +168,14 @@
         <header class="mb-8">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Trading REPORT</h1>
-                <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <a href="index.html"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="fas fa-home mr-2"></i> Home
                 </a>
             </div>
             <div class="flex items-center text-sm text-gray-600">
                 <span class="mr-2">Last Update:</span>
                 <span id="lastUpdated" class="font-medium"></span>
-
             </div>
         </header>
 
@@ -145,7 +211,7 @@
                     </thead>
                     <tbody id="report-body">
                         <tr>
-                            <td colspan="14" style="text-align:center;">Loading Data...</td>
+                            <td colspan="18" style="text-align:center;">Loading Data...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -162,91 +228,6 @@
     <script>
         let tradesData = [];
 
-        function calcFee(entry, exit, qty, bps) {
-            if (!entry || !exit || !qty || !bps) return 0;
-            return (entry * qty + exit * qty) * (bps / 10000);
-        }
-        function calcBorrowFee(entry, qty, borrowFeePct, days) {
-            if (!entry || !qty || !borrowFeePct || !days) return 0;
-            return entry * qty * (borrowFeePct / 100) * (days / 365);
-        }
-        function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
-            const base = (entry - exit) * qty;
-            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
-            const commission = calcFee(entry, exit, qty, comm_bps);
-            const stamp = calcFee(entry, exit, qty, stamp_bps);
-            return base - borrowFee - commission - stamp;
-        }
-        function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
-            const base = (exit - entry) * qty;
-            const commission = calcFee(entry, exit, qty, comm_bps);
-            const stamp = calcFee(entry, exit, qty, stamp_bps);
-            return base - commission - stamp;
-        }
-        function calcReturn(entry, qty, profit) {
-            if (!entry || !qty) return 0;
-            return profit / (entry * qty) * 100;
-        }
-        function profitClass(val) {
-            return val > 0 ? 'profit-plus' : (val < 0 ? 'profit-minus' : '');
-        }
-        function rateClass(val) {
-            return val > 0 ? 'rate-plus' : (val < 0 ? 'rate-minus' : '');
-        }
-        async function fetchTrendClose(pair) {
-            try {
-                const res = await fetch(`data/trends/${pair.common_code}.json?t=${new Date().getTime()}`);
-                if (!res.ok) throw new Error(`트렌드 데이터 로드 실패: ${res.status}`);
-                const data = await res.json();
-                let commonClose = null, preferredClose = null;
-                if (data.common_prices && data.common_prices.length > 0)
-                    commonClose = data.common_prices[data.common_prices.length - 1];
-                if (data.preferred_prices && data.preferred_prices.length > 0)
-                    preferredClose = data.preferred_prices[data.preferred_prices.length - 1];
-                return { commonClose, preferredClose };
-            } catch (error) {
-                console.error('fetchTrendClose 오류:', error);
-                return { commonClose: null, preferredClose: null };
-            }
-        }
-        
-        async function updateLastUpdate() {
-            try {
-                const res = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
-                if (!res.ok) throw new Error(`마지막 업데이트 데이터 로드 실패: ${res.status}`);
-                const data = await res.json();
-                let last = data.last_updated || data.timestamp || '';
-                if (last) {
-                    const formattedDate = new Date(last).toLocaleString('ko-KR', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-                    document.getElementById('lastUpdated').textContent = formattedDate;
-                }
-            } catch (error) {
-                console.error('updateLastUpdate 오류:', error);
-                document.getElementById('last-update').textContent = '알 수 없음';
-            }
-        }
-
-        async function fetchTradesData() {
-            try {
-                const res = await fetch(`data/pair-trades.json?t=${new Date().getTime()}`);
-                if (!res.ok) throw new Error(`매매 데이터 로드 실패: ${res.status}`);
-                tradesData = await res.json();
-                console.log('tradesData 로드됨:', tradesData);
-                return tradesData;
-            } catch (error) {
-                console.error('fetchTradesData 오류:', error);
-                tradesData = [];
-                return [];
-            }
-        }
-
         // 종목명으로 종목 코드를 가져오는 함수
         function getStockCodeByName(stockName) {
             if (!stockName) return 'unknown';
@@ -255,8 +236,6 @@
             let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
             cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
             cleanName = cleanName.replace(/-\d+(\.\d+)?$/, '').trim();
-
-            console.log(`종목명 변환: "${stockName}" → "${cleanName}"`);
 
             // 종목 코드 맵핑
             const stockCodeMap = {
@@ -361,6 +340,107 @@
             return 'unknown';
         }
 
+        // 종목명 정규화 함수
+        function normalizeStockName(name) {
+            if (!name) return '';
+            let cleanName = name.replace(/<[^>]+>/g, '').trim();
+            cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
+            cleanName = cleanName.replace(/-\d+(\.\d+)?$/, '').trim();
+            return cleanName;
+        }
+
+        function calcFee(entry, exit, qty, bps) {
+            if (!entry || !exit || !qty || !bps) return 0;
+            return (entry * qty + exit * qty) * (bps / 10000);
+        }
+
+        function calcBorrowFee(entry, qty, borrowFeePct, days) {
+            if (!entry || !qty || !borrowFeePct || !days) return 0;
+            return entry * qty * (borrowFeePct / 100) * (days / 365);
+        }
+
+        function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
+            const base = (entry - exit) * qty;
+            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
+            const commission = calcFee(entry, exit, qty, comm_bps);
+            const stamp = calcFee(entry, exit, qty, stamp_bps);
+            return base - borrowFee - commission - stamp;
+        }
+
+        function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
+            const base = (exit - entry) * qty;
+            const commission = calcFee(entry, exit, qty, comm_bps);
+            const stamp = calcFee(entry, exit, qty, stamp_bps);
+            return base - commission - stamp;
+        }
+
+        function calcReturn(entry, qty, profit) {
+            if (!entry || !qty) return 0;
+            return profit / (entry * qty) * 100;
+        }
+
+        function profitClass(val) {
+            return val > 0 ? 'profit-plus' : (val < 0 ? 'profit-minus' : '');
+        }
+
+        function rateClass(val) {
+            return val > 0 ? 'rate-plus' : (val < 0 ? 'rate-minus' : '');
+        }
+
+        async function fetchTrendClose(pair) {
+            try {
+                const res = await fetch(`data/trends/${pair.common_code}.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`트렌드 데이터 로드 실패: ${res.status}`);
+                const data = await res.json();
+                let commonClose = null, preferredClose = null;
+                if (data.common_prices && data.common_prices.length > 0)
+                    commonClose = data.common_prices[data.common_prices.length - 1];
+                if (data.preferred_prices && data.preferred_prices.length > 0)
+                    preferredClose = data.preferred_prices[data.preferred_prices.length - 1];
+                return { commonClose, preferredClose };
+            } catch (error) {
+                console.error('fetchTrendClose 오류:', error);
+                return { commonClose: null, preferredClose: null };
+            }
+        }
+
+        async function updateLastUpdate() {
+            try {
+                const res = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`마지막 업데이트 데이터 로드 실패: ${res.status}`);
+                const data = await res.json();
+                let last = data.last_updated || data.timestamp || '';
+                if (last) {
+                    const formattedDate = new Date(last).toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    document.getElementById('lastUpdated').textContent = formattedDate;
+                }
+            } catch (error) {
+                console.error('updateLastUpdate 오류:', error);
+                document.getElementById('lastUpdated').textContent = '알 수 없음';
+            }
+        }
+
+        async function fetchTradesData() {
+            try {
+                const res = await fetch(`data/pair-trades.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`매매 데이터 로드 실패: ${res.status}`);
+                tradesData = await res.json();
+                console.log('tradesData 로드됨:', tradesData);
+                return tradesData;
+            } catch (error) {
+                console.error('fetchTradesData 오류:', error);
+                tradesData = [];
+                return [];
+            }
+        }
+
         async function renderTable() {
             const tbody = document.getElementById('report-body');
             tbody.innerHTML = '';
@@ -410,37 +490,41 @@
                 const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
                 const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
 
-                // Short(보통주) 행
+                // 종목명 처리
+                let displayStockName = trade.pair_name || '-';
+                let baseStockName = normalizeStockName(displayStockName);
                 const stockCode = getStockCodeByName(baseStockName);
+
+                // Short(보통주) 행
                 const trShort = document.createElement('tr');
                 if (isExited) {
                     trShort.classList.add('exited-row');
                 }
                 trShort.innerHTML = `
-                <td rowspan="2" class="clickable-item">
-                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
-                        class="hover:text-blue-600 hover:underline">
-                        ${displayStockName}
-                    </a>
-                </td>
-                <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
-                <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
-                <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
-                <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                <td rowspan="2">${Math.round(totalRealized).toLocaleString()}</td>
-                <td>Short</td>
-                <td>${trade.common_code}</td>
-                <td>${trade.common_entry?.toLocaleString() || '-'}</td>
-                <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-                <td>${trade.common_qty}</td>
-                <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-                <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-                <td>${Math.round(commonInvested).toLocaleString()}</td>
-                <td>${Math.round(commonRealized).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
-                <td>${days}</td>
-            `;
+                    <td rowspan="2" class="clickable-item">
+                        <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
+                            class="hover:text-blue-600 hover:underline">
+                            ${displayStockName}
+                        </a>
+                    </td>
+                    <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+                    <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+                    <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
+                    <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
+                    <td rowspan="2">${Math.round(totalRealized).toLocaleString()}</td>
+                    <td>Short</td>
+                    <td>${trade.common_code}</td>
+                    <td>${trade.common_entry?.toLocaleString() || '-'}</td>
+                    <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+                    <td>${trade.common_qty}</td>
+                    <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+                    <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+                    <td>${Math.round(commonInvested).toLocaleString()}</td>
+                    <td>${Math.round(commonRealized).toLocaleString()}</td>
+                    <td>${trade.entry_date}</td>
+                    <td>${isExited ? trade.exit_date : '-'}</td>
+                    <td>${days}</td>
+                `;
                 tbody.appendChild(trShort);
 
                 // Long(우선주) 행
@@ -449,19 +533,19 @@
                     trLong.classList.add('exited-row');
                 }
                 trLong.innerHTML = `
-                <td>Long</td>
-                <td>${trade.preferred_code}</td>
-                <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
-                <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-                <td>${trade.preferred_qty}</td>
-                <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-                <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
-                <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                <td>${Math.round(preferredRealized).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
-                <td>${days}</td>
-            `;
+                    <td>Long</td>
+                    <td>${trade.preferred_code}</td>
+                    <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
+                    <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
+                    <td>${trade.preferred_qty}</td>
+                    <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+                    <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+                    <td>${Math.round(preferredInvested).toLocaleString()}</td>
+                    <td>${Math.round(preferredRealized).toLocaleString()}</td>
+                    <td>${trade.entry_date}</td>
+                    <td>${isExited ? trade.exit_date : '-'}</td>
+                    <td>${days}</td>
+                `;
                 tbody.appendChild(trLong);
             }
         }
@@ -483,7 +567,7 @@
                     <div class="text-red-500 text-center">
                         <p>데이터를 로드할 수 없습니다.</p>
                         <p>${error.message}</p>
-                        <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                        <button onclick="window.location.reload()" class="Item" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
                             다시 시도
                         </button>
                         <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
