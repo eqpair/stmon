@@ -536,7 +536,7 @@
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                 <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
                 <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                <td>Short</td>
+                <td>Short</td> 
                 <td>${trade.common_code}</td>
                 <td>${trade.common_entry?.toLocaleString() || '-'}</td>
                 <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
