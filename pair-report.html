@@ -62,6 +62,12 @@
             color: #6b7280;
         }
 
+        /* <style> 섹션에 추가 */
+        .item-group {
+            border-top: 2px solid #d1d5db; /* 그룹 간 회색 테두리 */
+            margin-top: 8px; /* 선택사항: 간격 추가 */
+        }
+
         .profit-plus,
         .rate-plus {
             color: #dc2626;
@@ -525,6 +531,7 @@
 
                 // Short(보통주) 행
                 const trShort = document.createElement('tr');
+                trShort.classList.add('item-group'); // item-group 클래스 추가
                 if (isExited) {
                     trShort.classList.add('exited-row');
                 }
