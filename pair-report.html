@@ -325,51 +325,63 @@
             return cleanName;
         }
 
-        // 거래 수수료 계산 함수
-        function calcFee(price, qty, bps, isEntry = false) {
-            if (!price || !qty || !bps) return 0;
-            return isEntry ? (price * qty) * (bps / 10000) : (price * qty * 2) * (bps / 10000);
-        }
+    // 거래 수수료 계산 함수
+    function calcFee(price, qty, bps, isEntry = false) {
+        if (!price || !qty || !bps) return 0;
+        return isEntry ? (price * qty) * (bps / 10000) : (price * qty * 2) * (bps / 10000);
+    }
 
-        // 차입 수수료 계산 함수
-        function calcBorrowFee(entry, qty, borrowFeePct, days) {
-            if (!entry || !qty || !borrowFeePct || !days) return 0;
-            // borrowFeePct는 퍼센트 단위 (예: 0.5 = 0.5%). bps로 입력된 경우 /10000 사용
-            return entry * qty * (borrowFeePct / 100) * (days / 365);
-        }
+    // 차입 수수료 계산 함수
+    function calcBorrowFee(entry, qty, borrowFeePct, days) {
+        if (!entry || !qty || !borrowFeePct || !days) return 0;
+        return entry * qty * (borrowFeePct / 100) * (days / 365);
+    }
 
-        // 공매도 손익 계산
-        function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
-            if (!entry || !exit || !qty) return 0;
-            const base = (entry - exit) * qty;
-            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
-            const commission = calcFee(entry, qty, comm_bps) + calcFee(exit, qty, comm_bps);
-            const stamp = calcFee(entry, qty, stamp_bps) + calcFee(exit, qty, stamp_bps);
-            return base - borrowFee - commission - stamp;
-        }
+    // 공매도 손익 계산
+    function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
+        if (!entry || !exit || !qty) return 0;
+        const base = (entry - exit) * qty;
+        const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
+        const commission = calcFee(entry, qty, comm_bps) + calcFee(exit, qty, comm_bps);
+        const stamp = calcFee(entry, qty, stamp_bps) + calcFee(exit, qty, stamp_bps);
+        return base - borrowFee - commission - stamp;
+    }
 
-        // 매수 손익 계산
-        function calcLongPnL(entry, exit, qty, borrowFeePct, comm_bps, stamp_bps, days) {
-            if (!entry || !exit || !qty) return 0;
-            const base = (exit - entry) * qty;
-            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
-            const commission = calcFee(entry, qty, comm_bps) + calcFee(exit, qty, comm_bps);
-            const stamp = calcFee(entry, qty, stamp_bps) + calcFee(exit, qty, stamp_bps);
-            return base - borrowFee - commission - stamp;
-        }
+    // 매수 손익 계산
+    function calcLongPnL(entry, exit, qty, borrowFeePct, comm_bps, stamp_bps, days) {
+        if (!entry || !exit || !qty) return 0;
+        const base = (exit - entry) * qty;
+        const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
+        const commission = calcFee(entry, qty, comm_bps) + calcFee(exit, qty, comm_bps);
+        const stamp = calcFee(entry, qty, stamp_bps) + calcFee(exit, qty, stamp_bps);
+        return base - borrowFee - commission - stamp;
+    }
 
-        function calcReturn(entry, qty, profit) {
-            if (!entry || !qty) return 0;
-            return profit / (entry * qty) * 100;
-        }
+    // 수익률 계산 함수 (기존 코드에서 사용 중인 것으로 가정)
+    function calcReturn(entry, qty, pnl) {
+        const invested = entry * qty;
+        return invested ? (pnl / invested * 100) : 0;
+    }
 
-        function profitClass(val) {
-            return val > 0 ? 'profit-plus' : (val < 0 ? 'profit-minus' : '');
-        }
+    // 손익 클래스 함수 (UI용, 기존 코드에서 사용 중인 것으로 가정)
+    function profitClass(pnl) {
+        return pnl > 0 ? 'profit-positive' : pnl < 0 ? 'profit-negative' : '';
+    }
 
-        function rateClass(val) {
-            return val > 0 ? 'rate-plus' : (val < 0 ? 'rate-minus' : '');
-        }
+    // 수익률 클래스 함수 (UI용)
+    function rateClass(ret) {
+        return ret > 0 ? 'rate-positive' : ret < 0 ? 'rate-negative' : '';
+    }
+
+    // 종목명 정규화 함수 (가정)
+    function normalizeStockName(name) {
+        return name.replace(/[^\w\s]/g, '').trim();
+    }
+
+    // 종목 코드 조회 함수 (가정)
+    function getStockCodeByName(name) {
+        return name; // 실제 구현에 따라 수정 필요
+    }
 
         async function fetchTrendClose(pair) {
             try {
@@ -425,152 +437,155 @@
             }
         }
 
-        async function renderTable() {
-            const tbody = document.getElementById('report-body');
-            tbody.innerHTML = '';
+    async function renderTable() {
+        const tbody = document.getElementById('report-body');
+        tbody.innerHTML = '';
 
-            if (tradesData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="18" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
-                return;
-            }
-
-            const todayStr = new Date().toISOString().slice(0, 10);
-            for (const trade of tradesData) {
-                const isExited = trade.status === "Exited";
-                let commonPrice = trade.common_exit;
-                let preferredPrice = trade.preferred_exit;
-                let exitDate = trade.exit_date;
-
-                // 미청산 포지션의 현재 가격 가져오기
-                if (!isExited) {
-                    const trend = await fetchTrendClose(trade);
-                    commonPrice = trend.commonClose ?? trade.common_entry;
-                    preferredPrice = trend.preferredClose ?? trade.preferred_entry;
-                    exitDate = todayStr;
-                    // 가격 단위 검증
-                    if (commonPrice > 1e7 || preferredPrice > 1e7) {
-                        console.warn(`비정상적인 가격 감지: ${trade.pair_name}, commonPrice=${commonPrice}, preferredPrice=${preferredPrice}`);
-                    }
-                }
-
-                // 날짜 및 보유 기간 계산
-                const entryDate = new Date(trade.entry_date);
-                const lastDate = exitDate ? new Date(exitDate) : new Date();
-                const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
-
-                // 수수료 및 차입 수수료
-                const comm_bps = trade.commission_bps || 0;
-                const stamp_bps = trade.stamp_bps || 0;
-                const commonBorrowFeePct = trade.common_borrow_fee_pct || 0;
-                const preferredBorrowFeePct = trade.preferred_borrow_fee_pct || 0;
-
-                // 손익 계산
-                const shortPnl = calcShortPnL(
-                    trade.common_entry, commonPrice, trade.common_qty,
-                    commonBorrowFeePct, days, comm_bps, stamp_bps
-                );
-                const longPnl = calcLongPnL(
-                    trade.preferred_entry, preferredPrice, trade.preferred_qty,
-                    preferredBorrowFeePct, comm_bps, stamp_bps, days
-                );
-                const totalPnl = shortPnl + longPnl;
-
-                // Invested 계산
-                const commonInvested = calcFee(trade.common_entry, trade.common_qty, comm_bps, true) +
-                    calcFee(trade.common_entry, trade.common_qty, stamp_bps, true);
-                const preferredInvested = (trade.preferred_entry * trade.preferred_qty) +
-                    calcFee(trade.preferred_entry, trade.preferred_qty, comm_bps, true) +
-                    calcFee(trade.preferred_entry, trade.preferred_qty, stamp_bps, true);
-                // T. Invested: 매수 비용 + 공매도 수수료
-                const totalInvested = preferredInvested + commonInvested;
-
-                // Realized 계산
-                const commonRealized = isExited
-                    ? (trade.common_entry * trade.common_qty) -
-                    (commonPrice * trade.common_qty) -
-                    calcBorrowFee(trade.common_entry, trade.common_qty, commonBorrowFeePct, days) -
-                    calcFee(trade.common_entry, trade.common_qty, comm_bps, true) -
-                    calcFee(commonPrice, trade.common_qty, comm_bps, true) -
-                    calcFee(trade.common_entry, trade.common_qty, stamp_bps, true) -
-                    calcFee(commonPrice, trade.common_qty, stamp_bps, true)
-                    : (trade.common_entry * trade.common_qty) -
-                    ((commonPrice || 0) * trade.common_qty) -
-                    calcBorrowFee(trade.common_entry, trade.common_qty, commonBorrowFeePct, days);
-                const preferredRealized = isExited
-                    ? (preferredPrice * trade.preferred_qty) -
-                    calcBorrowFee(trade.preferred_entry, trade.preferred_qty, preferredBorrowFeePct, days) -
-                    calcFee(trade.preferred_entry, trade.preferred_qty, comm_bps, true) -
-                    calcFee(preferredPrice, trade.preferred_qty, comm_bps, true) -
-                    calcFee(trade.preferred_entry, trade.preferred_qty, stamp_bps, true) -
-                    calcFee(preferredPrice, trade.preferred_qty, stamp_bps, true)
-                    : ((preferredPrice || 0) * trade.preferred_qty) -
-                    calcBorrowFee(trade.preferred_entry, trade.preferred_qty, preferredBorrowFeePct, days);
-                const totalRealized = commonRealized + preferredRealized;
-
-                // 수익률 계산
-                const totalRet = totalInvested ? (totalPnl / totalInvested * 100) : 0;
-                const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
-                const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
-
-                // 종목명 처리
-                let displayStockName = trade.pair_name || '-';
-                let baseStockName = normalizeStockName(displayStockName);
-                const stockCode = getStockCodeByName(baseStockName);
-
-                // Short(보통주) 행
-                const trShort = document.createElement('tr');
-                if (isExited) {
-                    trShort.classList.add('exited-row');
-                }
-                trShort.innerHTML = `
-                <td rowspan="2" class="clickable-item">
-                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
-                        class="hover:text-blue-600 hover:underline">
-                        ${displayStockName}
-                    </a>
-                </td>
-                <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
-                <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
-                <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
-                <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                <td rowspan="2">${Math.round(totalRealized).toLocaleString()}</td>
-                <td>Short</td>
-                <td>${trade.common_code}</td>
-                <td>${trade.common_entry?.toLocaleString() || '-'}</td>
-                <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-                <td>${trade.common_qty}</td>
-                <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-                <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-                <td>${Math.round(commonInvested).toLocaleString()}</td>
-                <td>${Math.round(commonRealized).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
-                <td>${days}</td>
-            `;
-                tbody.appendChild(trShort);
-
-                // Long(우선주) 행
-                const trLong = document.createElement('tr');
-                if (isExited) {
-                    trLong.classList.add('exited-row');
-                }
-                trLong.innerHTML = `
-                <td>Long</td>
-                <td>${trade.preferred_code}</td>
-                <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
-                <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-                <td>${trade.preferred_qty}</td>
-                <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-                <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
-                <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                <td>${Math.round(preferredRealized).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
-                <td>${days}</td>
-            `;
-                tbody.appendChild(trLong);
-            }
+        if (tradesData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="18" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
+            return;
         }
+
+        const todayStr = new Date().toISOString().slice(0, 10);
+        for (const trade of tradesData) {
+            const isExited = trade.status === "Exited";
+            let commonPrice = trade.common_exit;
+            let preferredPrice = trade.preferred_exit;
+            let exitDate = trade.exit_date;
+
+            // 미청산 포지션의 현재 가격 가져오기
+            if (!isExited) {
+                const trend = await fetchTrendClose(trade);
+                commonPrice = trend.commonClose ?? trade.common_entry;
+                preferredPrice = trend.preferredClose ?? trade.preferred_entry;
+                exitDate = todayStr;
+                // 가격 단위 검증
+                if (commonPrice > 1e7 || preferredPrice > 1e7) {
+                    console.warn(`비정상적인 가격 감지: ${trade.pair_name}, commonPrice=${commonPrice}, preferredPrice=${preferredPrice}`);
+                }
+            }
+
+            // 날짜 및 보유 기간 계산
+            const entryDate = new Date(trade.entry_date);
+            const lastDate = exitDate ? new Date(exitDate) : new Date();
+            const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
+
+            // 수수료 및 차입 수수료
+            const comm_bps = trade.commission_bps || 0;
+            const stamp_bps = trade.stamp_bps || 0;
+            const commonBorrowFeePct = trade.common_borrow_fee_pct || 0;
+            const preferredBorrowFeePct = trade.preferred_borrow_fee_pct || 0;
+
+            // 손익 계산
+            const shortPnl = calcShortPnL(
+                trade.common_entry, commonPrice, trade.common_qty,
+                commonBorrowFeePct, days, comm_bps, stamp_bps
+            );
+            const longPnl = calcLongPnL(
+                trade.preferred_entry, preferredPrice, trade.preferred_qty,
+                preferredBorrowFeePct, comm_bps, stamp_bps, days
+            );
+            const totalPnl = shortPnl + longPnl;
+
+            // Invested 계산
+            // 보통주(숏): 매도 대금 + 수수료
+            const commonInvested = (trade.common_entry * trade.common_qty) +
+                calcFee(trade.common_entry, trade.common_qty, comm_bps, true) +
+                calcFee(trade.common_entry, trade.common_qty, stamp_bps, true);
+            // 우선주(롱): 매수 비용 + 수수료
+            const preferredInvested = (trade.preferred_entry * trade.preferred_qty) +
+                calcFee(trade.preferred_entry, trade.preferred_qty, comm_bps, true) +
+                calcFee(trade.preferred_entry, trade.preferred_qty, stamp_bps, true);
+            // T. Invested: 보통주 + 우선주
+            const totalInvested = preferredInvested + commonInvested;
+
+            // Realized 계산
+            const commonRealized = isExited
+                ? (trade.common_entry * trade.common_qty) -
+                (commonPrice * trade.common_qty) -
+                calcBorrowFee(trade.common_entry, trade.common_qty, commonBorrowFeePct, days) -
+                calcFee(trade.common_entry, trade.common_qty, comm_bps, true) -
+                calcFee(commonPrice, trade.common_qty, comm_bps, true) -
+                calcFee(trade.common_entry, trade.common_qty, stamp_bps, true) -
+                calcFee(commonPrice, trade.common_qty, stamp_bps, true)
+                : (trade.common_entry * trade.common_qty) -
+                ((commonPrice || 0) * trade.common_qty) -
+                calcBorrowFee(trade.common_entry, trade.common_qty, commonBorrowFeePct, days);
+            const preferredRealized = isExited
+                ? (preferredPrice * trade.preferred_qty) -
+                calcBorrowFee(trade.preferred_entry, trade.preferred_qty, preferredBorrowFeePct, days) -
+                calcFee(trade.preferred_entry, trade.preferred_qty, comm_bps, true) -
+                calcFee(preferredPrice, trade.preferred_qty, comm_bps, true) -
+                calcFee(trade.preferred_entry, trade.preferred_qty, stamp_bps, true) -
+                calcFee(preferredPrice, trade.preferred_qty, stamp_bps, true)
+                : ((preferredPrice || 0) * trade.preferred_qty) -
+                calcBorrowFee(trade.preferred_entry, trade.preferred_qty, preferredBorrowFeePct, days);
+            const totalRealized = commonRealized + preferredRealized;
+
+            // 수익률 계산
+            const totalRet = totalInvested ? (totalPnl / totalInvested * 100) : 0;
+            const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
+            const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
+
+            // 종목명 처리
+            let displayStockName = trade.pair_name || '-';
+            let baseStockName = normalizeStockName(displayStockName);
+            const stockCode = getStockCodeByName(baseStockName);
+
+            // Short(보통주) 행
+            const trShort = document.createElement('tr');
+            if (isExited) {
+                trShort.classList.add('exited-row');
+            }
+            trShort.innerHTML = `
+            <td rowspan="2" class="clickable-item">
+                <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
+                    class="hover:text-blue-600 hover:underline">
+                    ${displayStockName}
+                </a>
+            </td>
+            <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+            <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+            <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
+            <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
+            <td rowspan="2">${Math.round(totalRealized).toLocaleString()}</td>
+            <td>Short</td>
+            <td>${trade.common_code}</td>
+            <td>${trade.common_entry?.toLocaleString() || '-'}</td>
+            <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+            <td>${trade.common_qty}</td>
+            <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+            <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+            <td>${Math.round(commonInvested).toLocaleString()}</td>
+            <td>${Math.round(commonRealized).toLocaleString()}</td>
+            <td>${trade.entry_date}</td>
+            <td>${isExited ? trade.exit_date : '-'}</td>
+            <td>${days}</td>
+        `;
+            tbody.appendChild(trShort);
+
+            // Long(우선주) 행
+            const trLong = document.createElement('tr');
+            if (isExited) {
+                trLong.classList.add('exited-row');
+            }
+            trLong.innerHTML = `
+            <td>Long</td>
+            <td>${trade.preferred_code}</td>
+            <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
+            <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+            <td>${trade.preferred_qty}</td>
+            <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+            <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+            <td>${Math.round(preferredInvested).toLocaleString()}</td>
+            <td>${Math.round(preferredRealized).toLocaleString()}</td>
+            <td>${trade.entry_date}</td>
+            <td>${isExited ? trade.exit_date : '-'}</td>
+            <td>${days}</td>
+        `;
+            tbody.appendChild(trLong);
+        }
+    }
 
         async function init() {
             try {
