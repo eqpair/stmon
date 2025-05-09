@@ -100,12 +100,6 @@
             /* 연회색 배경 */
         }
 
-/*        table td:nth-child(7),
-        table th:nth-child(7) {
-        display: none;
-        }
-*/
-
         @media (max-width: 1024px) {
             .grid-cols-3 {
                 grid-template-columns: repeat(2, 1fr);
@@ -186,7 +180,6 @@
                             <th>Status</th>
                             <th>T. Invested</th>
                             <th>Pos.</th>
-                            <th>Code</th>
                             <th>Entry P.</th>
                             <th>Exit(Curr.)</th>
                             <th>Q'ty</th>
@@ -552,8 +545,7 @@
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                 <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
                 <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                <td>Short</td> 
-                <td>${trade.common_code}</td>
+                <td><b>S</b></td> 
                 <td>${trade.common_entry?.toLocaleString() || '-'}</td>
                 <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
                 <td>${trade.common_qty}</td>
@@ -572,8 +564,7 @@
                     trLong.classList.add('exited-row');
                 }
                 trLong.innerHTML = `
-                <td>Long</td>
-                <td>${trade.preferred_code}</td>
+                <td><b>L</b></td>
                 <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
                 <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
                 <td>${trade.preferred_qty}</td>
