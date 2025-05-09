@@ -245,6 +245,7 @@
             <div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Scenario Analysis</h1>
                 <p class="text-sm text-gray-600">SZ 2.0 target: Price fluctuations</p>
+                <span id="stock-code-label"></span>
                 <p class="text-xs text-gray-500 mt-1">Last Updated: <span id="last-updated-time">Loading...</span></p>
             </div>
             <div class="flex space-x-2">
@@ -488,6 +489,8 @@
             }
             document.title = `${stockName} - Stock Details & Scenario Analysis`;
             document.getElementById('stock-name').textContent = stockName;
+            document.getElementById('stock-code-label').textContent = stockCode;
+
             loadAndProcessStockData(stockCode, stockName);
             setupSliderListeners();
             document.getElementById('reset-sliders-button').addEventListener('click', resetSliders);
