@@ -325,17 +325,21 @@
             return cleanName;
         }
 
-        function calcFee(entry, exit, qty, bps) {
-            if (!entry || !exit || !qty || !bps) return 0;
-            return (entry * qty + exit * qty) * (bps / 10000);
-        }
-
+        // 차입 수수료 계산 함수
         function calcBorrowFee(entry, qty, borrowFeePct, days) {
             if (!entry || !qty || !borrowFeePct || !days) return 0;
             return entry * qty * (borrowFeePct / 100) * (days / 365);
         }
 
+        // 거래 수수료 계산 함수
+        function calcFee(entry, exit, qty, bps) {
+            if (!entry || !exit || !qty || !bps) return 0;
+            return (entry * qty + exit * qty) * (bps / 10000);
+        }
+
+        // 공매도 손익 계산
         function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
+            if (!entry || !exit || !qty) return 0;
             const base = (entry - exit) * qty;
             const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
             const commission = calcFee(entry, exit, qty, comm_bps);
@@ -343,11 +347,14 @@
             return base - borrowFee - commission - stamp;
         }
 
-        function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
+        // 매수 손익 계산
+        function calcLongPnL(entry, exit, qty, borrowFeePct, comm_bps, stamp_bps, days) {
+            if (!entry || !exit || !qty) return 0;
             const base = (exit - entry) * qty;
+            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
             const commission = calcFee(entry, exit, qty, comm_bps);
             const stamp = calcFee(entry, exit, qty, stamp_bps);
-            return base - commission - stamp;
+            return base - borrowFee - commission - stamp;
         }
 
         function calcReturn(entry, qty, profit) {
@@ -432,36 +439,65 @@
                 let commonPrice = trade.common_exit;
                 let preferredPrice = trade.preferred_exit;
                 let exitDate = trade.exit_date;
+
+                // 미청산 포지션의 현재 가격 가져오기
                 if (!isExited) {
                     const trend = await fetchTrendClose(trade);
-                    commonPrice = trend.commonClose;
-                    preferredPrice = trend.preferredClose;
+                    commonPrice = trend.commonClose ?? trade.common_entry; // null이면 진입 가격 사용
+                    preferredPrice = trend.preferredClose ?? trade.preferred_entry;
                     exitDate = todayStr;
                 }
+
+                // 날짜 및 보유 기간 계산
                 const entryDate = new Date(trade.entry_date);
                 const lastDate = exitDate ? new Date(exitDate) : new Date();
                 const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
+
+                // 수수료 및 차입 수수료
                 const comm_bps = trade.commission_bps || 0;
                 const stamp_bps = trade.stamp_bps || 0;
-                const borrowFeePct = trade.common_borrow_fee_pct || 0;
+                const commonBorrowFeePct = trade.common_borrow_fee_pct || 0;
+                const preferredBorrowFeePct = trade.preferred_borrow_fee_pct || 0;
 
+                // 손익 계산
                 const shortPnl = calcShortPnL(
                     trade.common_entry, commonPrice, trade.common_qty,
-                    borrowFeePct, days, comm_bps, stamp_bps
+                    commonBorrowFeePct, days, comm_bps, stamp_bps
                 );
                 const longPnl = calcLongPnL(
                     trade.preferred_entry, preferredPrice, trade.preferred_qty,
-                    comm_bps, stamp_bps
+                    preferredBorrowFeePct, comm_bps, stamp_bps, days
                 );
                 const totalPnl = shortPnl + longPnl;
 
-                const commonInvested = trade.common_entry * trade.common_qty;
-                const commonRealized = (commonPrice || 0) * trade.common_qty;
-                const preferredInvested = trade.preferred_entry * trade.preferred_qty;
-                const preferredRealized = (preferredPrice || 0) * trade.preferred_qty;
-                const totalInvested = commonInvested + preferredInvested;
+                // Invested 계산
+                const commonInvested = calcFee(trade.common_entry, trade.common_entry, trade.common_qty, comm_bps) +
+                    calcFee(trade.common_entry, trade.common_entry, trade.common_qty, stamp_bps);
+                const preferredInvested = (trade.preferred_entry * trade.preferred_qty) +
+                    calcFee(trade.preferred_entry, trade.preferred_entry, trade.preferred_qty, comm_bps) +
+                    calcFee(trade.preferred_entry, trade.preferred_entry, trade.preferred_qty, stamp_bps);
+                const totalInvested = preferredInvested - (trade.common_entry * trade.common_qty) + commonInvested;
+
+                // Realized 계산
+                const commonRealized = isExited
+                    ? (trade.common_entry * trade.common_qty) -
+                    (commonPrice * trade.common_qty) -
+                    calcBorrowFee(trade.common_entry, trade.common_qty, commonBorrowFeePct, days) -
+                    calcFee(trade.common_entry, commonPrice, trade.common_qty, comm_bps) -
+                    calcFee(trade.common_entry, commonPrice, trade.common_qty, stamp_bps)
+                    : (trade.common_entry * trade.common_qty) -
+                    ((commonPrice || 0) * trade.common_qty) -
+                    calcBorrowFee(trade.common_entry, trade.common_qty, commonBorrowFeePct, days);
+                const preferredRealized = isExited
+                    ? (preferredPrice * trade.preferred_qty) -
+                    calcBorrowFee(trade.preferred_entry, trade.preferred_qty, preferredBorrowFeePct, days) -
+                    calcFee(trade.preferred_entry, preferredPrice, trade.preferred_qty, comm_bps) -
+                    calcFee(trade.preferred_entry, preferredPrice, trade.preferred_qty, stamp_bps)
+                    : ((preferredPrice || 0) * trade.preferred_qty) -
+                    calcBorrowFee(trade.preferred_entry, trade.preferred_qty, preferredBorrowFeePct, days);
                 const totalRealized = commonRealized + preferredRealized;
 
+                // 수익률 계산
                 const totalRet = totalInvested ? (totalPnl / totalInvested * 100) : 0;
                 const shortRet = calcReturn(trade.common_entry, trade.common_qty, shortPnl);
                 const longRet = calcReturn(trade.preferred_entry, trade.preferred_qty, longPnl);
@@ -477,30 +513,30 @@
                     trShort.classList.add('exited-row');
                 }
                 trShort.innerHTML = `
-                    <td rowspan="2" class="clickable-item">
-                        <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
-                            class="hover:text-blue-600 hover:underline">
-                            ${displayStockName}
-                        </a>
-                    </td>
-                    <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
-                    <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
-                    <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
-                    <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                    <td rowspan="2">${Math.round(totalRealized).toLocaleString()}</td>
-                    <td>Short</td>
-                    <td>${trade.common_code}</td>
-                    <td>${trade.common_entry?.toLocaleString() || '-'}</td>
-                    <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-                    <td>${trade.common_qty}</td>
-                    <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-                    <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-                    <td>${Math.round(commonInvested).toLocaleString()}</td>
-                    <td>${Math.round(commonRealized).toLocaleString()}</td>
-                    <td>${trade.entry_date}</td>
-                    <td>${isExited ? trade.exit_date : '-'}</td>
-                    <td>${days}</td>
-                `;
+                <td rowspan="2" class="clickable-item">
+                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
+                        class="hover:text-blue-600 hover:underline">
+                        ${displayStockName}
+                    </a>
+                </td>
+                <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+                <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+                <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
+                <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
+                <td rowspan="2">${Math.round(totalRealized).toLocaleString()}</td>
+                <td>Short</td>
+                <td>${trade.common_code}</td>
+                <td>${trade.common_entry?.toLocaleString() || '-'}</td>
+                <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
+                <td>${trade.common_qty}</td>
+                <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
+                <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+                <td>${Math.round(commonInvested).toLocaleString()}</td>
+                <td>${Math.round(commonRealized).toLocaleString()}</td>
+                <td>${trade.entry_date}</td>
+                <td>${isExited ? trade.exit_date : '-'}</td>
+                <td>${days}</td>
+            `;
                 tbody.appendChild(trShort);
 
                 // Long(우선주) 행
@@ -509,19 +545,19 @@
                     trLong.classList.add('exited-row');
                 }
                 trLong.innerHTML = `
-                    <td>Long</td>
-                    <td>${trade.preferred_code}</td>
-                    <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
-                    <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-                    <td>${trade.preferred_qty}</td>
-                    <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-                    <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
-                    <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                    <td>${Math.round(preferredRealized).toLocaleString()}</td>
-                    <td>${trade.entry_date}</td>
-                    <td>${isExited ? trade.exit_date : '-'}</td>
-                    <td>${days}</td>
-                `;
+                <td>Long</td>
+                <td>${trade.preferred_code}</td>
+                <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
+                <td${!isExited ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
+                <td>${trade.preferred_qty}</td>
+                <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
+                <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+                <td>${Math.round(preferredInvested).toLocaleString()}</td>
+                <td>${Math.round(preferredRealized).toLocaleString()}</td>
+                <td>${trade.entry_date}</td>
+                <td>${isExited ? trade.exit_date : '-'}</td>
+                <td>${days}</td>
+            `;
                 tbody.appendChild(trLong);
             }
         }
