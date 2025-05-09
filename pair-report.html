@@ -170,7 +170,6 @@
                             <th>Rate</th>
                             <th>Status</th>
                             <th>T. Invested</th>
-                            <th>T. Realized</th>
                             <th>Pos.</th>
                             <th>Code</th>
                             <th>Entry P.</th>
@@ -179,7 +178,6 @@
                             <th>Profit</th>
                             <th>Rate</th>
                             <th>Invested</th>
-                            <th>Realized</th>
                             <th>Entry D.</th>
                             <th>Exit D.</th>
                             <th>Days</th>
@@ -538,7 +536,6 @@
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                 <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
                 <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                <td rowspan="2">${isExited ? Math.round(totalRealized).toLocaleString() : '-'}</td>
                 <td>Short</td>
                 <td>${trade.common_code}</td>
                 <td>${trade.common_entry?.toLocaleString() || '-'}</td>
@@ -547,7 +544,6 @@
                 <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
                 <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
                 <td>${Math.round(commonInvested).toLocaleString()}</td>
-                <td>${isExited ? Math.round(commonRealized).toLocaleString() : '-'}</td>
                 <td>${trade.entry_date}</td>
                 <td>${isExited ? trade.exit_date : '-'}</td>
                 <td>${days}</td>
@@ -568,7 +564,6 @@
                 <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
                 <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
                 <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                <td>${isExited ? Math.round(preferredRealized).toLocaleString() : '-'}</td>
                 <td>${trade.entry_date}</td>
                 <td>${isExited ? trade.exit_date : '-'}</td>
                 <td>${days}</td>
