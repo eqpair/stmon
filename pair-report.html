@@ -538,14 +538,14 @@
                 <td rowspan="2" class="clickable-item">
                     <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
                         class="hover:text-blue-600 hover:underline">
-                        ${displayStockName}
+                        <b>${displayStockName}</b>
                     </a>
                 </td>
                 <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                 <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
                 <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                <td><b>S</b></td> 
+                <td class="center-align"><b>S</b></td>
                 <td>${trade.common_entry?.toLocaleString() || '-'}</td>
                 <td${!isExited ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
                 <td>${trade.common_qty}</td>
