@@ -491,7 +491,7 @@
         }
 
         // 테이블 렌더링 함수 (수정)
-        async function renderTable(stockSignals) {
+        async function renderTable() {
             const tbody = document.getElementById('report-body');
             tbody.innerHTML = '';
 
@@ -553,6 +553,15 @@
                 let displayStockName = trade.pair_name || '-';
                 let baseStockName = normalizeStockName(displayStockName);
                 const stockCode = getStockCodeByName(baseStockName);
+
+                // sz_value 매핑
+                const tradeName = normalizeStockName(trade.pair_name).toLowerCase();
+                const matchedSignal = stockSignals.find(s => normalizeStockName(s.stock_name).toLowerCase() === tradeName);
+                const szValue = matchedSignal?.sz_value ?? null;
+                let szClass = '';
+                if (szValue !== null) {
+                    szClass = szValue >= 2.5 ? 'sz-high' : szValue >= 1.5 ? 'sz-medium' : 'sz-low';
+                }
 
                 // Short(보통주) 행
                 const trShort = document.createElement('tr');
