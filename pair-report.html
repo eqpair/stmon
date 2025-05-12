@@ -490,21 +490,21 @@
             }
         }
 
-        // 테이블 렌더링 함수 (수정)
+        // 테이블 렌더링 함수 수정
         async function renderTable(stockSignals) {
             const tbody = document.getElementById('report-body');
             tbody.innerHTML = '';
 
             if (tradesData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="18" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
                 return;
             }
 
             const todayStr = new Date().toISOString().slice(0, 10);
             for (const trade of tradesData) {
                 const isExited = trade.status === "Exited";
-                let commonPrice = trade.common_exit; // 보통주 퇴장 가격
-                let preferredPrice = trade.preferred_exit; // 우선주 퇴장 가격
+                let commonPrice = trade.common_exit;
+                let preferredPrice = trade.preferred_exit;
                 let exitDate = trade.exit_date;
 
                 if (!isExited) {
@@ -521,7 +521,7 @@
                 const stamp_bps = trade.stamp_bps || 0;
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
-                // 손익 계산 (기존 코드 유지)
+                // 손익 계산
                 const shortPnl = calcShortPnL(
                     trade.common_entry, commonPrice, trade.common_qty,
                     borrowFeePct, days, comm_bps, stamp_bps
@@ -532,17 +532,10 @@
                 );
                 const totalPnl = shortPnl + longPnl;
 
-                // 투자금액 계산 (수정)
+                // 투자금액 계산
                 const commonInvested = calcShortInvested(trade.common_entry, trade.common_qty);
                 const preferredInvested = calcLongInvested(trade.preferred_entry, trade.preferred_qty, comm_bps, stamp_bps);
                 const totalInvested = commonInvested + preferredInvested;
-
-                // 실현금액 계산 (수정)
-                const commonRealized = isExited ?
-                    calcShortRealized(trade.common_entry, commonPrice, trade.common_qty, borrowFeePct, days, comm_bps, stamp_bps) : 0;
-                const preferredRealized = isExited ?
-                    calcLongRealized(trade.preferred_entry, preferredPrice, trade.preferred_qty, comm_bps, stamp_bps) : 0;
-                const totalRealized = isExited ? commonRealized + preferredRealized : 0;
 
                 // 수익률 계산
                 const totalRet = totalInvested ? (totalPnl / totalInvested * 100) : 0;
@@ -565,7 +558,7 @@
 
                 // Short(보통주) 행
                 const trShort = document.createElement('tr');
-                trShort.classList.add('item-group'); // item-group 클래스 추가
+                trShort.classList.add('item-group');
                 if (isExited) {
                     trShort.classList.add('exited-row');
                 }
@@ -616,6 +609,7 @@
             }
         }
 
+        // 초기화 함수 수정
         async function init() {
             try {
                 document.getElementById('loading-container').style.display = 'flex';
@@ -624,24 +618,24 @@
                 await updateLastUpdate();
                 await fetchTradesData();
                 const stockSignals = await fetchStockData(); // stock_data.json 로드
-                await renderTable();
+                await renderTable(stockSignals);
 
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
             } catch (error) {
                 console.error('초기화 오류:', error);
                 document.getElementById('loading-container').innerHTML = `
-                    <div class="text-red-500 text-center">
-                        <p>데이터를 로드할 수 없습니다.</p>
-                        <p>${error.message}</p>
-                        <button onclick="window.location.reload()" class="Item" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                            다시 시도
-                        </button>
-                        <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
-                            메인 페이지로 돌아가기
-                        </button>
-                    </div>
-                `;
+                <div class="text-red-500 text-center">
+                    <p>데이터를 로드할 수 없습니다.</p>
+                    <p>${error.message}</p>
+                    <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                        다시 시도
+                    </button>
+                    <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                        메인 페이지로 돌아가기
+                    </button>
+                </div>
+            `;
             }
         }
 
