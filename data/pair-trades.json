@@ -1,14 +1,14 @@
 [
     {
-        "pair_name": "🔵 미래에셋증권 [0.5 @ 2.4]",
+        "pair_name": "🔵 미래에셋증권 [0.5 @ 2.0-0.3]",
         "common_code": "006800",
         "preferred_code": "006805",
         "entry_date": "2025-05-08",
         "exit_date": "",
-        "common_entry": 12372,
-        "preferred_entry": 5491,
-        "common_qty": 4000,
-        "preferred_qty": 8900,
+        "common_entry": 12131,
+        "preferred_entry": 5409,
+        "common_qty": 2000,
+        "preferred_qty": 4500,
         "commission_bps": 10.0,
         "stamp_bps": 20.0,
         "common_floating_spread_bps": -202.0,
@@ -21,7 +21,7 @@
         "status": "Open"
     },
     {
-        "pair_name": "🔵 LG생활건강 [0.5 @ 2.4]",
+        "pair_name": "⚪ LG생활건강 [0.5 @ 2.0-0.2]",
         "common_code": "051900",
         "preferred_code": "051905",
         "entry_date": "2025-04-11",
@@ -42,7 +42,7 @@
         "status": "Open"
     },
     {
-        "pair_name": "🔵 대한항공 [0.04 @ 2.4]",
+        "pair_name": "🔵 대한항공 [0.04 @ 2.0-0.4]",
         "common_code": "003490",
         "preferred_code": "003495",
         "entry_date": "2023-07-12",
@@ -55,7 +55,7 @@
         "stamp_bps": 20.0,
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
-        "benchmark_rate_pct": 3.75,        
+        "benchmark_rate_pct": 3.75,
         "common_borrow_fee_pct": 0.5,
         "preferred_borrow_fee_pct": 0.0,
         "common_exit": null,
@@ -63,7 +63,7 @@
         "status": "Open"
     },
     {
-        "pair_name": "🔴 SK [0.5 @ 2.0]",
+        "pair_name": "🔴 SK [0.5 @ 2.0-0.2]",
         "common_code": "034730",
         "preferred_code": "034735",
         "entry_date": "2023-11-02",
@@ -84,7 +84,7 @@
         "status": "Exited"
     },
     {
-        "pair_name": "🟠 삼성화재 [0.5 @ 2.2]",
+        "pair_name": "🔴 삼성화재 [0.5 @ 2.0-0.4]",
         "common_code": "000810",
         "preferred_code": "000815",
         "entry_date": "2023-07-12",
@@ -105,7 +105,7 @@
         "status": "Exited"
     },
     {
-        "pair_name": "🔵 코오롱인더 [1 @ 2.0]",
+        "pair_name": "🟢 코오롱인더 [1 @ 2.0-0.4]",
         "common_code": "120110",
         "preferred_code": "120115",
         "entry_date": "2023-06-26",
@@ -126,7 +126,7 @@
         "status": "Exited"
     },
     {
-        "pair_name": "🔵 유한양행 [1 @ 2.2]",
+        "pair_name": "🔵 유한양행 [1 @ 2.0-0.3]",
         "common_code": "000100",
         "preferred_code": "000105",
         "entry_date": "2023-05-31",
