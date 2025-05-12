@@ -476,7 +476,23 @@
                 return [];
             }
         }
-        
+
+        // YYMMDD 형식으로 날짜 포맷팅
+        function formatDateToYYMMDD(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return '-';
+                const year = date.getFullYear().toString().slice(-2); // 마지막 두 자리
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // 0 패딩
+                const day = String(date.getDate()).padStart(2, '0'); // 0 패딩
+                return `${year}${month}${day}`;
+            } catch (error) {
+                console.warn(`날짜 포맷팅 오류: ${dateStr}`, error);
+                return '-';
+            }
+        }
+
         // stock_data.json 로드 함수
         async function fetchStockData() {
             try {
@@ -490,7 +506,7 @@
             }
         }
 
-        // 테이블 렌더링 함수 수정
+        // 테이블 렌더링 함수 (수정된 부분만 강조)
         async function renderTable(stockSignals) {
             const tbody = document.getElementById('report-body');
             tbody.innerHTML = '';
@@ -500,7 +516,7 @@
                 return;
             }
 
-            const todayStr = new Date().toISOString().slice(0, 10);
+            const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식
             for (const trade of tradesData) {
                 const isExited = trade.status === "Exited";
                 let commonPrice = trade.common_exit;
@@ -569,7 +585,7 @@
                         <b>${displayStockName}</b>
                     </a>
                 </td>
-                <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td> <!-- Sz 열 -->
+                <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
                 <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                 <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
@@ -581,8 +597,8 @@
                 <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
                 <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
                 <td>${Math.round(commonInvested).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
+                <td>${formatDateToYYMMDD(trade.entry_date)}</td> <!-- 날짜 포맷팅 -->
+                <td>${formatDateToYYMMDD(isExited ? trade.exit_date : '-')}</td> <!-- 날짜 포맷팅 -->
                 <td>${days}</td>
             `;
                 tbody.appendChild(trShort);
@@ -600,8 +616,8 @@
                 <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
                 <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
                 <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                <td>${trade.entry_date}</td>
-                <td>${isExited ? trade.exit_date : '-'}</td>
+                <td>${formatDateToYYMMDD(trade.entry_date)}</td> <!-- 날짜 포맷팅 -->
+                <td>${formatDateToYYMMDD(isExited ? trade.exit_date : '-')}</td> <!-- 날짜 포맷팅 -->
                 <td>${days}</td>
             `;
                 tbody.appendChild(trLong);
