@@ -366,13 +366,33 @@ class StockMonitor:
                     continue
                 logger.info("Fetching signals for periodic update...")
                 all_signals, divergent_signals = await self.get_signals_with_divergent()
+
+                # 신호 페어 리스트 생성
+                all_signal_pairs = []
+                for pair, result in await self.get_signals_with_divergent_pairs():
+                    if isinstance(result, Exception) or not result:
+                        continue
+                    all_signal_pairs.append((pair, result))
+
                 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 message = (
                     f"🕒 {current_time}\n"
-                    f"📊 Current Status\n{all_signals}\n\n"
-                    f"🚨 Divergent Pairs\n{divergent_signals}"
+                    f"📊 Current Status"
                 )
-                await self.telegram_bot.send_message(message)
+                # 종목 신호를 50개씩 나누어 전송
+                await self.telegram_bot.send_message(message, all_signal_pairs)
+
+                # Divergent 신호 전송
+                divergent_signal_pairs = [
+                    (pair, result) for pair, result in all_signal_pairs
+                    if result and float(result.split('/')[0].strip()) >= pair.SL_in_val
+                ]
+                if divergent_signal_pairs:
+                    divergent_message = f"🕒 {current_time}\n🚨 Divergent Pairs"
+                    await self.telegram_bot.send_message(divergent_message, divergent_signal_pairs)
+                else:
+                    await self.telegram_bot.send_message(f"🕒 {current_time}\n🚨 No divergent pairs found.")
+
                 logger.info("Periodic update sent successfully")
                 # 웹 데이터 파일 저장
                 save_web_data(all_signals, divergent_signals)
@@ -384,7 +404,28 @@ class StockMonitor:
             except Exception as e:
                 logger.error(f"Error in periodic update: {str(e)}")
                 await asyncio.sleep(30)
+    async def get_signals_with_divergent_pairs(self):
+        try:
+            batch_size = 5
+            all_results = []
 
+            for i in range(0, len(self.pairs), batch_size):
+                logger.info(f"처리 중인 배치: {i+1}~{min(i+batch_size, len(self.pairs))} / {len(self.pairs)}")
+                batch_pairs = self.pairs[i:i+batch_size]
+                batch_tasks = [asyncio.create_task(pair.get_signal_now()) for pair in batch_pairs]
+                batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+
+                for pair, result in zip(batch_pairs, batch_results):
+                    all_results.append((pair, result))
+
+                if i + batch_size < len(self.pairs):
+                    await asyncio.sleep(3)
+
+            return all_results
+        except Exception as e:
+            logger.error(f"Error in get_signals_with_divergent_pairs: {str(e)}")
+            raise
+            
     async def start(self):
         logger.info("Starting Stock Monitor...")
         await self.telegram_bot.start(self.pairs)

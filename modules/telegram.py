@@ -4,6 +4,7 @@ import os
 from config import TELEGRAM_TOKEN, CHAT_ID
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import asyncio
+from modules.utils import format_stock_name  # 추가: 종목명 포맷팅 함수
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ class TelegramBot:
             self.bot = Bot(token=TELEGRAM_TOKEN)
             self.storage = MemoryStorage()
             self.dp = Dispatcher(self.bot, storage=self.storage)
-            self.monitor = monitor  # StockMonitor 인스턴스 저장!
+            self.monitor = monitor
             self._setup_handlers()
             TelegramBot._initialized = True
 
@@ -69,15 +70,44 @@ class TelegramBot:
         self.dp.bot['pairs'] = pairs
         logger.info("Telegram bot started")
 
-    async def send_message(self, message: str):
+    async def send_message(self, message: str, signal_pairs: list = None):
         try:
-            await self.bot.send_message(
-                chat_id=CHAT_ID,
-                text=message,
-                parse_mode='HTML'
-            )
+            if signal_pairs:
+                # 50개씩 종목을 나누기
+                chunk_size = 50
+                for i in range(0, len(signal_pairs), chunk_size):
+                    chunk = signal_pairs[i:i + chunk_size]
+                    # 청크를 문자열로 포맷팅
+                    chunk_message = []
+                    for pair, signal_info in chunk:
+                        # pair.A_code를 사용해 종목명 포맷팅
+                        formatted_name = format_stock_name(pair.A_code)
+                        chunk_message.append(f"<b>{formatted_name}</b>\n{signal_info}")
+                    chunk_text = "\n".join(chunk_message)
+                    full_message = f"{message}\n{chunk_text}" if message else chunk_text
+                    # 메시지 길이 확인 (텔레그램 제한: 4096자)
+                    if len(full_message) > 4096:
+                        logger.warning("메시지가 너무 길어 분할합니다.")
+                        half = len(chunk) // 2
+                        await self.send_message(message, chunk[:half])
+                        await self.send_message(message, chunk[half:])
+                        return
+                    await self.bot.send_message(
+                        chat_id=CHAT_ID,
+                        text=full_message,
+                        parse_mode='HTML'
+                    )
+                    # 속도 제한 방지를 위해 약간의 지연
+                    await asyncio.sleep(0.5)
+            else:
+                # 종목 리스트가 없으면 기존 메시지 전송
+                await self.bot.send_message(
+                    chat_id=CHAT_ID,
+                    text=message,
+                    parse_mode='HTML'
+                )
         except Exception as e:
-            logger.error(f"Failed to send telegram message: {str(e)}")
+            logger.error(f"텔레그램 메시지 전송 실패: {str(e)}")
             raise
 
     async def start_polling(self):
