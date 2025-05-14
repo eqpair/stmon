@@ -521,8 +521,7 @@
                 const lastDate = exitDate ? new Date(exitDate) : new Date();
                 const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
                 const comm_bps = trade.commission_bps || 0;
-                // 대한항공 쌍에 대해 stamp_bps를 15bps로 조정 (엑셀과 일치)
-                const stamp_bps = trade.pair_name.includes('대한항공') ? 15 : trade.stamp_bps || 0;
+                const stamp_bps = trade.stamp_bps || 0;
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
                 // 손익 계산 (새로운 계산법 적용)
@@ -534,11 +533,7 @@
                     trade.preferred_entry, preferredPrice || trade.preferred_entry, trade.preferred_qty,
                     comm_bps, stamp_bps
                 );
-                let totalPnl = shortPnl + longPnl;
-                // 대한항공 쌍의 경우, 엑셀 Total 값(1,819,407)과 일치하도록 조정
-                if (trade.pair_name.includes('대한항공') && isExited) {
-                    totalPnl = 1819407; // Sub Total(2,056,599)과 Total 차이 조정
-                }
+                const totalPnl = shortPnl + longPnl;
 
                 // 투자금액 계산 (새로운 계산법 적용)
                 const commonInvested = calcShortInvested(trade.common_entry, trade.common_qty, stamp_bps);
