@@ -46,7 +46,7 @@
         "common_code": "003490",
         "preferred_code": "003495",
         "entry_date": "2023-07-12",
-        "exit_date": "",
+        "exit_date": "2025-05-14",
         "common_entry": 25858,
         "preferred_entry": 28527,
         "common_qty": 688,
@@ -58,9 +58,9 @@
         "benchmark_rate_pct": 3.75,
         "common_borrow_fee_pct": 0.5,
         "preferred_borrow_fee_pct": 0.0,
-        "common_exit": null,
-        "preferred_exit": null,
-        "status": "Open"
+        "common_exit": 21523,
+        "preferred_exit": 26126,
+        "status": "Exited"
     },
     {
         "pair_name": "🔴 SK [0.5 @ 2.0-0.2]",
