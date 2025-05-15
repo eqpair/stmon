@@ -535,9 +535,9 @@
                 );
 
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
-                const spreadShort = -0.0202;
-                const spreadLong = 0.0200;
-
+                const spreadShort = (trade.common_floating_spread_bps || -202) / 10000;
+                const spreadLong = (trade.preferred_floating_spread_bps || 200) / 10000;
+                
                 const notionalShort = trade.common_qty * trade.common_entry;
                 const notionalLong = trade.preferred_qty * trade.preferred_entry;
 
