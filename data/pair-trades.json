@@ -1,22 +1,5 @@
 [
     {
-        "pair_name": "🔵 대한항공 [0.04 @ 2.0-0.4]",
-        "common_code": "003490",
-        "preferred_code": "003495",
-        "entry_date": "2023-07-12",
-        "exit_date": "2025-05-14",
-        "common_entry": 25857.6935,
-        "preferred_entry": 28527.2389,
-        "common_qty": 688,
-        "preferred_qty": 624,
-        "common_floating_spread_bps": -202.0,
-        "preferred_floating_spread_bps": 200.0,
-        "benchmark_rate_pct": 2.71,
-        "common_exit": 22850,
-        "preferred_exit": 28250.8814,
-        "status": "Exited"
-    },
-    {
         "pair_name": "🔵 미래에셋증권 [0.5 @ 2.0-0.3]",
         "common_code": "006800",
         "preferred_code": "006805",
@@ -62,7 +45,7 @@
         "preferred_qty": 1270,
         "common_floating_spread_bps": -202.0,
         "preferred_floating_spread_bps": 200.0,
-        "benchmark_rate_pct": 3.75,
+        "benchmark_rate_pct": 2.71,
         "common_exit": 21523,
         "preferred_exit": 26126,
         "status": "Exited"
