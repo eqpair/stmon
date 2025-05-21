@@ -351,14 +351,17 @@
             return data
                 .filter(row => row.Status === "Open") // "Open" 상태인 행만 선택
                 .reduce((sum, row) => sum + parseFloat(row.T_Invested || 0), 0) // T. Invested 값을 숫자로 변환해 합산
-                .toFixed(0);
+                .toFixed(2);
         }
 
         // 총합을 화면에 표시
         function updateTotalInvested() {
-            const total = calculateTotalInvested(tableData);
-            document.getElementById("totalInvested").textContent = `Total Exposure: $${total}`; // 결과 표시
-        }
+                // tableData는 기존 코드에서 테이블을 채우는 데이터로 가정
+                if (typeof tableData !== "undefined") {
+                    const total = calculateTotalInvested(tableData);
+                    document.getElementById("totalInvested").textContent = `Total Exposure: $${total}`;
+                }
+            }
 
         // 종목명 정규화 함수 (기존 유지)
         function normalizeStockName(name) {
@@ -664,9 +667,11 @@
 
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
+                
             } catch (error) {
                 console.error('초기화 오류:', error);
                 document.getElementById('loading-container').innerHTML = `
+                
             <div class="text-red-500 text-center">
                 <p>데이터를 로드할 수 없습니다.</p>
                 <p>${error.message}</p>
