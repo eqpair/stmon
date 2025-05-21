@@ -137,46 +137,56 @@
       }
     }
 
-    function calculate(calcId) {
-      const display = document.getElementById(`display${calcId}`);
-      const history = document.getElementById(`history${calcId}`);
-      try {
-        // 디스플레이에 숫자만 있는 경우 (이전 계산 결과)
-        if (lastOperations[calcId] && !isNaN(parseFloat(display.value))) {
-          const lastOp = lastOperations[calcId];
-          const newExpression = `${display.value}${lastOp}`;
-          const result = eval(newExpression.replace('×', '*'));
-          const entryIndex = history.getElementsByTagName('div').length;
-          history.innerHTML += `
-            <div class="history-entry">
-              <p>${newExpression} = ${result}</p>
-              <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">삭제</button>
-            </div>`;
-          display.value = result;
-          history.scrollTop = history.scrollHeight;
-          return;
+    function formatNumberWithCommas(num) {
+        if (typeof num === 'number') {
+            return num.toLocaleString('ko-KR');
         }
+        return num;
+    }
 
-        // 새로운 연산 처리
-        const expression = display.value.replace('×', '*');
-        const result = eval(expression); // 실제 프로덕션에서는 안전한 파서 사용 권장
-        const entryIndex = history.getElementsByTagName('div').length;
+    function calculate(calcId) {
+        const display = document.getElementById(`display${calcId}`);
+        const history = document.getElementById(`history${calcId}`);
+        try {
+            // 디스플레이에 숫자만 있는 경우 (이전 계산 결과)
+            if (lastOperations[calcId] && !isNaN(parseFloat(display.value))) {
+                const lastOp = lastOperations[calcId];
+                const newExpression = `${display.value}${lastOp}`;
+                // eval 하기 전에 수식 내 × 기호 교체
+                const safeExpression = newExpression.replace(/×/g, '*');
+                const result = eval(safeExpression);
+                const entryIndex = history.getElementsByTagName('div').length;
 
-        // 마지막 연산자 및 숫자 추출 (예: "5*5" -> "*5")
-        const match = expression.match(/([+\-*/])([^+\-*/()]+)$/);
-        lastOperations[calcId] = match ? match[1] + match[2] : null;
-
-        history.innerHTML += `
-          <div class="history-entry">
-            <p>${expression.replace('*', '×')} = ${result}</p>
+                history.innerHTML += `
+            <div class="history-entry">
+            <p>${newExpression} = ${formatNumberWithCommas(result)}</p>
             <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">삭제</button>
-          </div>`;
-        display.value = result;
-        history.scrollTop = history.scrollHeight;
-      } catch (error) {
-        display.value = '오류';
-        lastOperations[calcId] = null;
-      }
+            </div>`;
+                display.value = formatNumberWithCommas(result);
+                history.scrollTop = history.scrollHeight;
+                return;
+            }
+
+            // 새로운 연산 처리
+            const expression = display.value.replace(/×/g, '*');
+            const result = eval(expression); // 실제 프로덕션에서는 안전한 파서 사용 권장
+            const entryIndex = history.getElementsByTagName('div').length;
+
+            // 마지막 연산자 및 숫자 추출 (예: "5*5" -> "*5")
+            const match = expression.match(/([+\-*/])([^+\-*/()]+)$/);
+            lastOperations[calcId] = match ? match[1] + match[2] : null;
+
+            history.innerHTML += `
+        <div class="history-entry">
+            <p>${display.value} = ${formatNumberWithCommas(result)}</p>
+            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">삭제</button>
+        </div>`;
+            display.value = formatNumberWithCommas(result);
+            history.scrollTop = history.scrollHeight;
+        } catch (error) {
+            display.value = '오류';
+            lastOperations[calcId] = null;
+        }
     }
     </script>
 </body>
