@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>듀얼 계산기</title>
+    <title>Dual Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .btn {
@@ -43,11 +43,11 @@
 
 <body class="bg-gradient-to-br from-indigo-100 to-gray-200 flex items-center justify-center min-h-screen">
     <div class="container mx-auto p-6">
-        <h1 class="text-4xl font-bold text-center mb-10 text-indigo-800">듀얼 계산기</h1>
+        <h1 class="text-4xl font-bold text-center mb-10 text-indigo-800">Dual Calculator</h1>
         <div class="flex flex-col md:flex-row gap-6 justify-center">
             <!-- 계산기 1 -->
             <div class="bg-white p-6 rounded-xl shadow-2xl w-full md:w-1/2 max-w-md">
-                <h2 class="text-2xl font-semibold mb-4 text-center text-indigo-700">계산기 1</h2>
+                <h2 class="text-2xl font-semibold mb-4 text-center text-indigo-700">보통주 스케일[S]</h2>
                 <input type="text" id="display1" class="display" readonly>
                 <div class="grid grid-cols-4 gap-2">
                     <button onclick="clearDisplay(1)" class="btn btn-clear">C</button>
@@ -71,14 +71,14 @@
                     <button onclick="calculate(1)" class="btn btn-equals">=</button>
                 </div>
                 <div class="mt-6">
-                    <h3 class="text-lg font-medium text-indigo-700">입력 기록</h3>
+                    <h3 class="text-lg font-medium text-indigo-700">Input History</h3>
                     <div id="history1" class="bg-gray-50 p-3 rounded-lg h-32 overflow-y-auto text-sm"></div>
-                    <button onclick="clearHistory(1)" class="mt-3 btn btn-clear w-full">전체 기록 삭제</button>
+                    <button onclick="clearHistory(1)" class="mt-3 btn btn-clear w-full">Delete All</button>
                 </div>
             </div>
             <!-- 계산기 2 -->
             <div class="bg-white p-6 rounded-xl shadow-2xl w-full md:w-1/2 max-w-md">
-                <h2 class="text-2xl font-semibold mb-4 text-center text-indigo-700">계산기 2</h2>
+                <h2 class="text-2xl font-semibold mb-4 text-center text-indigo-700">우선주 스케일[L]</h2>
                 <input type="text" id="display2" class="display" readonly>
                 <div class="grid grid-cols-4 gap-2">
                     <button onclick="clearDisplay(2)" class="btn btn-clear">C</button>
@@ -102,9 +102,9 @@
                     <button onclick="calculate(2)" class="btn btn-equals">=</button>
                 </div>
                 <div class="mt-6">
-                    <h3 class="text-lg font-medium text-indigo-700">입력 기록</h3>
+                    <h3 class="text-lg font-medium text-indigo-700">Input History</h3>
                     <div id="history2" class="bg-gray-50 p-3 rounded-lg h-32 overflow-y-auto text-sm"></div>
-                    <button onclick="clearHistory(2)" class="mt-3 btn btn-clear w-full">전체 기록 삭제</button>
+                    <button onclick="clearHistory(2)" class="mt-3 btn btn-clear w-full">Delete All</button>
                 </div>
             </div>
         </div>
@@ -160,7 +160,7 @@
                 history.innerHTML += `
             <div class="history-entry">
             <p>${newExpression} = ${formatNumberWithCommas(result)}</p>
-            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">삭제</button>
+            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">Delete</button>
             </div>`;
                 display.value = formatNumberWithCommas(result);
                 history.scrollTop = history.scrollHeight;
@@ -179,7 +179,7 @@
             history.innerHTML += `
         <div class="history-entry">
             <p>${display.value} = ${formatNumberWithCommas(result)}</p>
-            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">삭제</button>
+            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">Delete</button>
         </div>`;
             display.value = formatNumberWithCommas(result);
             history.scrollTop = history.scrollHeight;
