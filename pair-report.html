@@ -36,6 +36,11 @@
             }
         }
 
+        .total-invested {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
         .report-table {
             width: 100%;
             border-collapse: collapse;
@@ -170,6 +175,7 @@
         <header class="mb-8">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Trading REPORT</h1>
+                <span id="totalInvested" class="total-invested">Total Invested: Calculating...</span>
                 <a href="index.html"
                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="fas fa-home mr-2"></i> Home
@@ -338,6 +344,20 @@
 
             console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
             return 'unknown';
+        }
+
+        // 오픈된 종목의 T. Invested 총합 계산
+        function calculateTotalInvested(data) {
+            return data
+                .filter(row => row.Status === "Open") // "Open" 상태인 행만 선택
+                .reduce((sum, row) => sum + parseFloat(row.T_Invested || 0), 0) // T. Invested 값을 숫자로 변환해 합산
+                .toFixed(0);
+        }
+
+        // 총합을 화면에 표시
+        function updateTotalInvested() {
+            const total = calculateTotalInvested(tableData);
+            document.getElementById("totalInvested").textContent = `Total Exposure: $${total}`; // 결과 표시
         }
 
         // 종목명 정규화 함수 (기존 유지)
