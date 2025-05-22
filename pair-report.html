@@ -155,14 +155,6 @@
                 padding: 0.75rem 1rem;
                 font-size: 0.875rem;
             }
-
-            .flex.justify-between.items-center {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-        }
-        @media (max-width: 640px) {
             .flex.justify-between.items-center {
                 flex-direction: column;
                 gap: 10px;
@@ -509,15 +501,10 @@
 
         // 테이블 렌더링 함수 (계산 부분 수정)
         async function renderTable(stockSignals) {
-            // Total Exposure 계산을 위한 변수
-            let totalExposure = 0;
             const tbody = document.getElementById('report-body');
             tbody.innerHTML = '';
-
-            // Open 상태인 거래의 투자금액만 총합에 추가
-            if (trade.status === "Open") {
-                totalExposure += totalInvested;
-            }
+            // Total Exposure 계산을 위한 변수
+            let totalExposure = 0;
 
             if (tradesData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
@@ -580,6 +567,10 @@
                 const commonInvested = calcShortInvested(trade.common_entry, trade.common_qty, stamp_bps);
                 const preferredInvested = calcLongInvested(trade.preferred_entry, trade.preferred_qty);
                 const totalInvested = commonInvested + preferredInvested;
+                // Open 상태인 거래의 투자금액만 총합에 추가
+                if (trade.status === "Open") {
+                    totalExposure += totalInvested;
+                }
 
                 // 수익률 계산 (투자금액 기준)
                 const totalRet = calcReturn(totalInvested, totalPnl);
@@ -649,10 +640,10 @@
             <td>${days}</td>
         `;
                 tbody.appendChild(trLong);
-                // Total Exposure 업데이트
-                document.getElementById('totalExposure').textContent =
-                    `₩${Math.round(totalExposure).toLocaleString()}`;
             }
+            // Total Exposure 업데이트
+            document.getElementById('totalExposure').textContent =
+                `₩${Math.round(totalExposure).toLocaleString()}`;
         }
 
         // 초기화 함수 (기존 유지)
