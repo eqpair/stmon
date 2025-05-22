@@ -138,10 +138,10 @@
                     const formattedResult = formatNumber(result);
                     const entryIndex = history.getElementsByTagName('div').length;
                     history.innerHTML += `
-            <div class="history-entry">
-              <p>${newExpression.replace('*', '×')} = ${formattedResult}</p>
-              <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">Delete</button>
-            </div>`;
+                    <div class="history-entry flex justify-between items-center">
+                        <p>${newExpression.replace('*', '×')} = ${formattedResult}</p>
+                        <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-red-500 text-white p-1 rounded">Delete</button>
+                    </div>`;
                     display.value = formattedResult;
                     history.scrollTop = history.scrollHeight;
                     return;
@@ -158,17 +158,17 @@
                 lastOperations[calcId] = match ? match[1] + match[2] : null;
 
                 history.innerHTML += `
-          <div class="history-entry">
-            <p>${expression.replace('*', '×')} = ${formattedResult}</p>
-            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete">Delete</button>
-          </div>`;
+                <div class="history-entry flex justify-between items-center">
+                    <p>${expression.replace('*', '×')} = ${formattedResult}</p>
+                    <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-red-500 text-white p-1 rounded">Delete</button>
+                </div>`;
                 display.value = formattedResult;
                 history.scrollTop = history.scrollHeight;
             } catch (error) {
                 display.value = '오류';
                 lastOperations[calcId] = null;
             }
-        }
+            }
     </script>
 </body>
 
