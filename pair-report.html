@@ -36,11 +36,6 @@
             }
         }
 
-        .total-invested {
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
         .report-table {
             width: 100%;
             border-collapse: collapse;
@@ -167,6 +162,20 @@
                 align-items: flex-start;
             }
         }
+        @media (max-width: 640px) {
+            .flex.justify-between.items-center {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .flex.items-center.gap-4 {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+                align-items: flex-end;
+            }
+        }
     </style>
 </head>
 
@@ -175,16 +184,15 @@
         <header class="mb-8">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Trading REPORT</h1>
-                <span id="totalInvested" class="total-invested">Total Exposure: Calculating...</span>
-                <a href="index.html"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                    <i class="fas fa-home mr-2"></i> Home
-                </a>
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-                <span class="mr-2">Last Update:</span>
-                <span id="lastUpdated" class="font-medium"></span>
-            </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div class="text-sm text-gray-600">Total Exposure</div>
+                        <div id="totalExposure" class="text-xl font-bold text-blue-600">-</div>
+                    </div>
+                    <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <i class="fas fa-home mr-2"></i> Home
+                    </a>
+                </div>      </div>
         </header>
 
         <div id="loading-container" class="flex flex-col items-center justify-center py-20">
@@ -346,23 +354,6 @@
             return 'unknown';
         }
 
-        // 오픈된 종목의 T. Invested 총합 계산
-        function calculateTotalInvested(data) {
-            return data
-                .filter(row => row.Status === "Open") // "Open" 상태인 행만 선택
-                .reduce((sum, row) => sum + parseFloat(row.T_Invested || 0), 0) // T. Invested 값을 숫자로 변환해 합산
-                .toFixed(2);
-        }
-
-        // 총합을 화면에 표시
-        function updateTotalInvested() {
-                // tableData는 기존 코드에서 테이블을 채우는 데이터로 가정
-                if (typeof tableData !== "undefined") {
-                    const total = calculateTotalInvested(tableData);
-                    document.getElementById("totalInvested").textContent = `Total Exposure: $${total}`;
-                }
-            }
-
         // 종목명 정규화 함수 (기존 유지)
         function normalizeStockName(name) {
             if (!name) return '';
@@ -518,8 +509,15 @@
 
         // 테이블 렌더링 함수 (계산 부분 수정)
         async function renderTable(stockSignals) {
+            // Total Exposure 계산을 위한 변수
+            let totalExposure = 0;
             const tbody = document.getElementById('report-body');
             tbody.innerHTML = '';
+
+            // Open 상태인 거래의 투자금액만 총합에 추가
+            if (trade.status === "Open") {
+                totalExposure += totalInvested;
+            }
 
             if (tradesData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
@@ -560,7 +558,7 @@
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
                 const spreadShort = (trade.common_floating_spread_bps || -202) / 10000;
                 const spreadLong = (trade.preferred_floating_spread_bps || 200) / 10000;
-                
+
                 const notionalShort = trade.common_qty * trade.common_entry;
                 const notionalLong = trade.preferred_qty * trade.preferred_entry;
 
@@ -576,8 +574,8 @@
                 const subTotalShort = floatingShort - equityShort;
                 const subTotalLong = floatingLong + equityLong;
 
-                const totalPnl = subTotalShort - subTotalLong; 
-                
+                const totalPnl = subTotalShort - subTotalLong;
+
                 // 투자금액 계산 (새로운 계산법 적용)
                 const commonInvested = calcShortInvested(trade.common_entry, trade.common_qty, stamp_bps);
                 const preferredInvested = calcLongInvested(trade.preferred_entry, trade.preferred_qty);
@@ -651,6 +649,9 @@
             <td>${days}</td>
         `;
                 tbody.appendChild(trLong);
+                // Total Exposure 업데이트
+                document.getElementById('totalExposure').textContent =
+                    `₩${Math.round(totalExposure).toLocaleString()}`;
             }
         }
 
@@ -667,11 +668,9 @@
 
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
-                
             } catch (error) {
                 console.error('초기화 오류:', error);
                 document.getElementById('loading-container').innerHTML = `
-                
             <div class="text-red-500 text-center">
                 <p>데이터를 로드할 수 없습니다.</p>
                 <p>${error.message}</p>
