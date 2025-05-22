@@ -9,71 +9,79 @@
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="container mx-auto p-4">
-        <h1 class="text-3xl font-bold text-center mb-8">Dual Calculator</h1>
-        <div class="flex flex-col md:flex-row gap-4 justify-center">
+    <div class="container mx-auto p-2 md:p-4">
+        <h1 class="text-xl md:text-3xl font-bold text-center mb-4 md:mb-8">Dual Calculator</h1>
+        <div class="flex flex-col md:flex-row gap-2 md:gap-4 justify-center">
             <!-- 계산기 1 -->
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2 max-w-md">
-                <h2 class="text-xl font-semibold mb-4 text-center">보통주 스케일[S]</h2>
-                <input type="text" id="display1" class="w-full p-2 mb-4 border rounded text-right text-xl" readonly>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="clearDisplay(1)" class="bg-green-500 text-white p-2 rounded">C</button>
-                    <button onclick="appendToDisplay(1, '(')" class="bg-gray-200 p-2 rounded">(</button>
-                    <button onclick="appendToDisplay(1, ')')" class="bg-gray-200 p-2 rounded">)</button>
-                    <button onclick="appendToDisplay(1, '/')" class="bg-gray-200 p-2 rounded">/</button>
-                    <button onclick="appendToDisplay(1, '7')" class="bg-gray-100 p-2 rounded">7</button>
-                    <button onclick="appendToDisplay(1, '8')" class="bg-gray-100 p-2 rounded">8</button>
-                    <button onclick="appendToDisplay(1, '9')" class="bg-gray-100 p-2 rounded">9</button>
-                    <button onclick="appendToDisplay(1, '*')" class="bg-gray-200 p-2 rounded">×</button>
-                    <button onclick="appendToDisplay(1, '4')" class="bg-gray-100 p-2 rounded">4</button>
-                    <button onclick="appendToDisplay(1, '5')" class="bg-gray-100 p-2 rounded">5</button>
-                    <button onclick="appendToDisplay(1, '6')" class="bg-gray-100 p-2 rounded">6</button>
-                    <button onclick="appendToDisplay(1, '-')" class="bg-gray-200 p-2 rounded">-</button>
-                    <button onclick="appendToDisplay(1, '1')" class="bg-gray-100 p-2 rounded">1</button>
-                    <button onclick="appendToDisplay(1, '2')" class="bg-gray-100 p-2 rounded">2</button>
-                    <button onclick="appendToDisplay(1, '3')" class="bg-gray-100 p-2 rounded">3</button>
-                    <button onclick="appendToDisplay(1, '+')" class="bg-gray-200 p-2 rounded">+</button>
-                    <button onclick="appendToDisplay(1, '0')" class="bg-gray-100 p-2 rounded col-span-2">0</button>
-                    <button onclick="appendToDisplay(1, '.')" class="bg-gray-100 p-2 rounded">.</button>
-                    <button onclick="calculate(1)" class="bg-blue-500 text-white p-2 rounded">=</button>
+            <div class="bg-white p-2 md:p-6 rounded-lg shadow-lg w-full md:w-1/2 max-w-md">
+                <h2 class="text-lg md:text-xl font-semibold mb-2 md:mb-4 text-center">보통주 스케일[S]</h2>
+                <input type="text" id="display1"
+                    class="w-full p-2 mb-2 md:mb-4 border rounded text-right text-lg md:text-xl"
+                    oninput="formatDisplay(1)">
+                <div class="grid grid-cols-4 gap-1 md:gap-2">
+                    <button onclick="clearDisplay(1)" class="bg-green-500 text-white p-2 md:p-3 rounded">C</button>
+                    <button onclick="appendToDisplay(1, '(')" class="bg-gray-200 p-2 md:p-3 rounded">(</button>
+                    <button onclick="appendToDisplay(1, ')')" class="bg-gray-200 p-2 md:p-3 rounded">)</button>
+                    <button onclick="appendToDisplay(1, '/')" class="bg-gray-200 p-2 md:p-3 rounded">/</button>
+                    <button onclick="appendToDisplay(1, '7')" class="bg-gray-100 p-2 md:p-3 rounded">7</button>
+                    <button onclick="appendToDisplay(1, '8')" class="bg-gray-100 p-2 md:p-3 rounded">8</button>
+                    <button onclick="appendToDisplay(1, '9')" class="bg-gray-100 p-2 md:p-3 rounded">9</button>
+                    <button onclick="appendToDisplay(1, '*')" class="bg-gray-200 p-2 md:p-3 rounded">×</button>
+                    <button onclick="appendToDisplay(1, '4')" class="bg-gray-100 p-2 md:p-3 rounded">4</button>
+                    <button onclick="appendToDisplay(1, '5')" class="bg-gray-100 p-2 md:p-3 rounded">5</button>
+                    <button onclick="appendToDisplay(1, '6')" class="bg-gray-100 p-2 md:p-3 rounded">6</button>
+                    <button onclick="appendToDisplay(1, '-')" class="bg-gray-200 p-2 md:p-3 rounded">-</button>
+                    <button onclick="appendToDisplay(1, '1')" class="bg-gray-100 p-2 md:p-3 rounded">1</button>
+                    <button onclick="appendToDisplay(1, '2')" class="bg-gray-100 p-2 md:p-3 rounded">2</button>
+                    <button onclick="appendToDisplay(1, '3')" class="bg-gray-100 p-2 md:p-3 rounded">3</button>
+                    <button onclick="appendToDisplay(1, '+')" class="bg-gray-200 p-2 md:p-3 rounded">+</button>
+                    <button onclick="appendToDisplay(1, '0')"
+                        class="bg-gray-100 p-2 md:p-3 rounded col-span-2">0</button>
+                    <button onclick="appendToDisplay(1, '.')" class="bg-gray-100 p-2 md:p-3 rounded">.</button>
+                    <button onclick="calculate(1)" class="bg-blue-500 text-white p-2 md:p-3 rounded">=</button>
                 </div>
-                <div class="mt-4">
-                    <h3 class="text-lg font-medium">Input History</h3>
-                    <div id="history1" class="bg-gray-50 p-2 rounded h-24 overflow-y-auto text-sm"></div>
-                    <button onclick="clearHistory(1)" class="mt-2 bg-red-500 text-white p-2 rounded w-full">Delete
-                        All</button>
+                <div class="mt-2 md:mt-4">
+                    <h3 class="text-base md:text-lg font-medium">Input History</h3>
+                    <div id="history1"
+                        class="bg-gray-50 p-1 md:p-2 rounded h-20 md:h-24 overflow-y-auto text-sm md:text-base"></div>
+                    <button onclick="clearHistory(1)"
+                        class="mt-1 md:mt-2 bg-red-500 text-white p-2 md:p-3 rounded w-full">Delete All</button>
                 </div>
             </div>
             <!-- 계산기 2 -->
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2 max-w-md">
-                <h2 class="text-xl font-semibold mb-4 text-center">우선주 스케일[L]</h2>
-                <input type="text" id="display2" class="w-full p-2 mb-4 border rounded text-right text-xl" readonly>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="clearDisplay(2)" class="bg-green-500 text-white p-2 rounded">C</button>
-                    <button onclick="appendToDisplay(2, '(')" class="bg-gray-200 p-2 rounded">(</button>
-                    <button onclick="appendToDisplay(2, ')')" class="bg-gray-200 p-2 rounded">)</button>
-                    <button onclick="appendToDisplay(2, '/')" class="bg-gray-200 p-2 rounded">/</button>
-                    <button onclick="appendToDisplay(2, '7')" class="bg-gray-100 p-2 rounded">7</button>
-                    <button onclick="appendToDisplay(2, '8')" class="bg-gray-100 p-2 rounded">8</button>
-                    <button onclick="appendToDisplay(2, '9')" class="bg-gray-100 p-2 rounded">9</button>
-                    <button onclick="appendToDisplay(2, '*')" class="bg-gray-200 p-2 rounded">×</button>
-                    <button onclick="appendToDisplay(2, '4')" class="bg-gray-100 p-2 rounded">4</button>
-                    <button onclick="appendToDisplay(2, '5')" class="bg-gray-100 p-2 rounded">5</button>
-                    <button onclick="appendToDisplay(2, '6')" class="bg-gray-100 p-2 rounded">6</button>
-                    <button onclick="appendToDisplay(2, '-')" class="bg-gray-200 p-2 rounded">-</button>
-                    <button onclick="appendToDisplay(2, '1')" class="bg-gray-100 p-2 rounded">1</button>
-                    <button onclick="appendToDisplay(2, '2')" class="bg-gray-100 p-2 rounded">2</button>
-                    <button onclick="appendToDisplay(2, '3')" class="bg-gray-100 p-2 rounded">3</button>
-                    <button onclick="appendToDisplay(2, '+')" class="bg-gray-200 p-2 rounded">+</button>
-                    <button onclick="appendToDisplay(2, '0')" class="bg-gray-100 p-2 rounded col-span-2">0</button>
-                    <button onclick="appendToDisplay(2, '.')" class="bg-gray-100 p-2 rounded">.</button>
-                    <button onclick="calculate(2)" class="bg-blue-500 text-white p-2 rounded">=</button>
+            <div class="bg-white p-2 md:p-6 rounded-lg shadow-lg w-full md:w-1/2 max-w-md">
+                <h2 class="text-lg md:text-xl font-semibold mb-2 md:mb-4 text-center">우선주 스케일[L]</h2>
+                <input type="text" id="display2"
+                    class="w-full p-2 mb-2 md:mb-4 border rounded text-right text-lg md:text-xl"
+                    oninput="formatDisplay(2)">
+                <div class="grid grid-cols-4 gap-1 md:gap-2">
+                    <button onclick="clearDisplay(2)" class="bg-green-500 text-white p-2 md:p-3 rounded">C</button>
+                    <button onclick="appendToDisplay(2, '(')" class="bg-gray-200 p-2 md:p-3 rounded">)</button>
+                    <button onclick="appendToDisplay(2, ')')" class="bg-gray-200 p-2 md:p-3 rounded">)</button>
+                    <button onclick="appendToDisplay(2, '/')" class="bg-gray-200 p-2 md:p-3 rounded">/</button>
+                    <button onclick="appendToDisplay(2, '7')" class="bg-gray-100 p-2 md:p-3 rounded">7</button>
+                    <button onclick="appendToDisplay(2, '8')" class="bg-gray-100 p-2 md:p-3 rounded">8</button>
+                    <button onclick="appendToDisplay(2, '9')" class="bg-gray-100 p-2 md:p-3 rounded">9</button>
+                    <button onclick="appendToDisplay(2, '*')" class="bg-gray-200 p-2 md:p-3 rounded">×</button>
+                    <button onclick="appendToDisplay(2, '4')" class="bg-gray-100 p-2 md:p-3 rounded">4</button>
+                    <button onclick="appendToDisplay(2, '5')" class="bg-gray-100 p-2 md:p-3 rounded">5</button>
+                    <button onclick="appendToDisplay(2, '6')" class="bg-gray-100 p-2 md:p-3 rounded">6</button>
+                    <button onclick="appendToDisplay(2, '-')" class="bg-gray-200 p-2 md:p-3 rounded">-</button>
+                    <button onclick="appendToDisplay(2, '1')" class="bg-gray-100 p-2 md:p-3 rounded">1</button>
+                    <button onclick="appendToDisplay(2, '2')" class="bg-gray-100 p-2 md:p-3 rounded">2</button>
+                    <button onclick="appendToDisplay(2, '3')" class="bg-gray-100 p-2 md:p-3 rounded">3</button>
+                    <button onclick="appendToDisplay(2, '+')" class="bg-gray-200 p-2 md:p-3 rounded">+</button>
+                    <button onclick="appendToDisplay(2, '0')"
+                        class="bg-gray-100 p-2 md:p-3 rounded col-span-2">0</button>
+                    <button onclick="appendToDisplay(2, '.')" class="bg-gray-100 p-2 md:p-3 rounded">.</button>
+                    <button onclick="calculate(2)" class="bg-blue-500 text-white p-2 md:p-3 rounded">=</button>
                 </div>
-                <div class="mt-4">
-                    <h3 class="text-lg font-medium">Input History</h3>
-                    <div id="history2" class="bg-gray-50 p-2 rounded h-24 overflow-y-auto text-sm"></div>
-                    <button onclick="clearHistory(2)" class="mt-2 bg-red-500 text-white p-2 rounded w-full">Delete
-                        All</button>
+                <div class="mt-2 md:mt-4">
+                    <h3 class="text-base md:text-lg font-medium">Input History</h3>
+                    <div id="history2"
+                        class="bg-gray-50 p-1 md:p-2 rounded h-20 md:h-24 overflow-y-auto text-sm md:text-base"></div>
+                    <button onclick="clearHistory(2)"
+                        class="mt-1 md:mt-2 bg-red-500 text-white p-2 md:p-3 rounded w-full">Delete All</button>
                 </div>
             </div>
         </div>
@@ -95,6 +103,8 @@
             // 숫자만 있는 경우에만 포맷팅
             if (!isNaN(parseFloat(value)) && !/[+\-*/()]/.test(value)) {
                 display.value = formatNumber(value);
+            } else {
+                display.value = value; // 연산자나 괄호가 포함된 경우 그대로 유지
             }
         }
 
@@ -138,10 +148,10 @@
                     const formattedResult = formatNumber(result);
                     const entryIndex = history.getElementsByTagName('div').length;
                     history.innerHTML += `
-                    <div class="history-entry flex justify-between items-center">
-                        <p>${newExpression.replace('*', '×')} = ${formattedResult}</p>
-                        <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-red-500 text-white p-1 rounded">Delete</button>
-                    </div>`;
+                        <div class="history-entry flex justify-between items-center">
+                            <p>${newExpression.replace('*', '×')} = ${formattedResult}</p>
+                            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-red-500 text-white p-1 md:p-2 rounded">Delete</button>
+                        </div>`;
                     display.value = formattedResult;
                     history.scrollTop = history.scrollHeight;
                     return;
@@ -158,17 +168,17 @@
                 lastOperations[calcId] = match ? match[1] + match[2] : null;
 
                 history.innerHTML += `
-                <div class="history-entry flex justify-between items-center">
-                    <p>${expression.replace('*', '×')} = ${formattedResult}</p>
-                    <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-red-500 text-white p-1 rounded">Delete</button>
-                </div>`;
+                    <div class="history-entry flex justify-between items-center">
+                        <p>${expression.replace('*', '×')} = ${formattedResult}</p>
+                        <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-red-500 text-white p-1 md:p-2 rounded">Delete</button>
+                    </div>`;
                 display.value = formattedResult;
                 history.scrollTop = history.scrollHeight;
             } catch (error) {
                 display.value = '오류';
                 lastOperations[calcId] = null;
             }
-            }
+        }
     </script>
 </body>
 
