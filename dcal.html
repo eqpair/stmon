@@ -150,7 +150,7 @@
                     history.innerHTML += `
                         <div class="history-entry flex justify-between items-center">
                             <p>${newExpression.replace('*', '×')} = ${formattedResult}</p>
-                            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-red-500 text-white p-1 md:p-2 rounded">Delete</button>
+                            <button onclick="deleteHistoryEntry(${calcId}, ${entryIndex})" class="history-delete bg-orange-400 text-white p-1 md:p-2 rounded">Delete</button>
                         </div>`;
                     display.value = formattedResult;
                     history.scrollTop = history.scrollHeight;
