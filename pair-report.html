@@ -174,20 +174,22 @@
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <header class="mb-8">
-            <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Trading REPORT</h1>
-                <div class="flex items-center gap-4">
+            <div class="flex justify-between items-center header-flex">
+                <div class="flex flex-col">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">EQ Pairs Trading REPORT</h1>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <span class="mr-2">Last Update:</span>
+                        <span id="lastUpdated" class="font-medium"></span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 header-right">
                     <div class="text-right">
-                        <div class="text-sm text-gray-600">Total Exposure</div>
+                        <div class="text-sm text-gray-600 font-bold">Total Exposure</div>
                         <div id="totalExposure" class="text-xl font-bold text-blue-600">-</div>
                     </div>
                     <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                         <i class="fas fa-home mr-2"></i> Home
                     </a>
-                </div>
-                <div class="flex items-center text-sm text-gray-600">
-                    <span class="mr-2">Last Update:</span>
-                    <span id="lastUpdated" class="font-medium"></span>
                 </div>
             </div>
         </header>
