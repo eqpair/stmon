@@ -642,8 +642,10 @@
                 tbody.appendChild(trLong);
             }
             // Total Exposure 업데이트
-            document.getElementById('totalExposure').textContent =
-                `₩${Math.round(totalExposure).toLocaleString()}`;
+            const totalExposureElement = document.getElementById('totalExposure');
+            if (totalExposureElement) {
+                totalExposureElement.textContent = `₩${Math.round(totalExposure).toLocaleString()}`;
+            }
         }
 
         // 초기화 함수 (기존 유지)
@@ -659,6 +661,13 @@
 
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
+
+                // Total Exposure 초기화 확인
+                const totalExposureElement = document.getElementById('totalExposure');
+                if (totalExposureElement && totalExposureElement.textContent === '-') {
+                    totalExposureElement.textContent = '₩0';
+                }
+
             } catch (error) {
                 console.error('초기화 오류:', error);
                 document.getElementById('loading-container').innerHTML = `
