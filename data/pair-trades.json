@@ -1,5 +1,22 @@
 [
     {
+        "pair_name": "⚪ 대신증권 [5 @ 2.0-0.3]",
+        "common_code": "003540",
+        "preferred_code": "003545",
+        "entry_date": "2025-05-23",
+        "exit_date": null,
+        "common_entry": 20850,
+        "preferred_entry": 17898,
+        "common_qty": 2400,
+        "preferred_qty": 2800,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 2.67,
+        "common_exit": null,
+        "preferred_exit": null,
+        "status": "Open"
+    },
+    {
         "pair_name": "🔵 미래에셋증권 [0.5 @ 2.0-0.3]",
         "common_code": "006800",
         "preferred_code": "006805",
