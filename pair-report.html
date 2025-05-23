@@ -572,8 +572,8 @@
                 const equityLong = -((valuationPriceLong - trade.preferred_entry) * trade.preferred_qty);
 
                 // 실제 거래일수 기준으로 금리비용 계산 (N Profit은 9일 고정이었음)
-                const floatingShortIndividual = notionalShort * (benchmarkRate + spreadShort) * days / 365;
-                const floatingLongIndividual = notionalLong * (benchmarkRate + spreadLong) * days / 365;
+                const floatingShortIndividual = notionalShort * (benchmarkRate + spreadShort) * 9 / 365;
+                const floatingLongIndividual = notionalLong * (benchmarkRate + spreadLong) * 9 / 365;
 
                 const subTotalShort = floatingShortIndividual - equityShort;
                 const subTotalLong = floatingLongIndividual + equityLong;
