@@ -549,14 +549,14 @@
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
                 // 손익 계산 (새로운 계산법 적용)
-                const shortPnl = calcShortPnL(
+                /* const shortPnl = calcShortPnL(
                     trade.common_entry, commonPrice || trade.common_entry, trade.common_qty,
                     borrowFeePct, days, comm_bps, stamp_bps
                 );
                 const longPnl = calcLongPnL(
                     trade.preferred_entry, preferredPrice || trade.preferred_entry, trade.preferred_qty,
                     comm_bps, stamp_bps
-                );
+                ); */
 
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
                 const spreadShort = (trade.common_floating_spread_bps || -202) / 10000;
@@ -571,11 +571,16 @@
                 const equityShort = (valuationPriceShort - trade.common_entry) * trade.common_qty;
                 const equityLong = -((valuationPriceLong - trade.preferred_entry) * trade.preferred_qty);
 
-                const floatingShort = notionalShort * (benchmarkRate + spreadShort) * 9 / 365;
-                const floatingLong = notionalLong * (benchmarkRate + spreadLong) * 9 / 365;
+                // 실제 거래일수 기준으로 금리비용 계산 (N Profit은 9일 고정이었음)
+                const floatingShortIndividual = notionalShort * (benchmarkRate + spreadShort) * days / 365;
+                const floatingLongIndividual = notionalLong * (benchmarkRate + spreadLong) * days / 365;
 
-                const subTotalShort = floatingShort - equityShort;
-                const subTotalLong = floatingLong + equityLong;
+                const subTotalShort = floatingShortIndividual - equityShort;
+                const subTotalLong = floatingLongIndividual + equityLong;
+
+                // I Profit을 개별 포지션 기준으로 계산
+                const shortPnl = subTotalShort;
+                const longPnl = -subTotalLong; // Long 포지션은 음수 처리
 
                 const totalPnl = subTotalShort - subTotalLong;
 
