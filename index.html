@@ -203,10 +203,6 @@
                         class="tab-button py-4 px-6 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none">
                         Divergent Pairs
                     </button>
-                    <button id="tab-history"
-                        class="tab-button py-4 px-6 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none">
-                        History
-                    </button>
                 </nav>
             </div>
         </div>
@@ -250,41 +246,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="tab-content-history" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Date/Time</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Item</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    SZ Value</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Signal</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Price Info.</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-table-body" class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                    Loading History Data...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
 
     <footer class="bg-white py-6 mt-8">
@@ -302,13 +263,11 @@
         }
         // 데이터 URL
         const DATA_URL = 'data/stock_data.json';
-        const HISTORY_URL = 'data/history.json';
         const TRADES_URL = 'data/pair-trades.json';
 
         // 상태 변수
         let allSignals = [];
         let divergentSignals = [];
-        let historyData = [];
         let tradesData = [];
         let activeTab = 'all';
         let lastUpdated = '';
@@ -318,7 +277,6 @@
             // 초기 상태 설정
             allSignals = [];
             divergentSignals = [];
-            historyData = [];
             tradesData = [];
 
             setupEventListeners();
@@ -369,11 +327,6 @@
             });
             document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
 
-            // 필요시 데이터 로드
-            if (tabId === 'history' && historyData.length === 0) {
-                fetchHistoryData();
-            }
-
             filterAndRenderData();
         }
 
@@ -383,8 +336,6 @@
                 renderSignals(filterSignals(allSignals), 'all-signals-container');
             } else if (activeTab === 'divergent') {
                 renderSignals(filterSignals(divergentSignals), 'divergent-signals-container');
-            } else if (activeTab === 'history') {
-                renderHistoryData(filterSignals(historyData));
             }
         }
 
@@ -472,38 +423,6 @@
             });
         }
 
-        // 히스토리 데이터 가져오기
-        async function fetchHistoryData() {
-            try {
-                const historyTable = document.getElementById('history-table-body');
-                historyTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading History Data...</td></tr>';
-
-                const response = await fetch(HISTORY_URL + `?t=${new Date().getTime()}`);
-                if (!response.ok) {
-                    console.warn('History data not available:', response.status);
-                    historyData = [];
-                    const historyTable = document.getElementById('history-table-body');
-                    historyTable.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">히스토리 데이터를 불러올 수 없습니다</td></tr>';
-                    return;
-                }
-
-                const data = await response.json();
-                historyData = data.signals || [];
-
-                // 데이터 정렬 - 최신 데이터가 먼저 오도록
-                historyData.sort((a, b) => {
-                    const dateA = new Date(a.timestamp);
-                    const dateB = new Date(b.timestamp);
-                    return dateB - dateA;
-                });
-
-                renderHistoryData();
-            } catch (error) {
-                console.error('History Data Load Error:', error);
-                const historyTable = document.getElementById('history-table-body');
-                historyTable.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error: ${error.message}</td></tr>`;
-            }
-        }
         // 마지막 업데이트 시간 표시
         function updateLastUpdated(timestamp) {
             const el = document.getElementById('lastUpdated');
@@ -949,121 +868,6 @@
 
             console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
             return 'unknown';
-        }
-
-        // 히스토리 데이터 렌더링 함수
-        function renderHistoryData(filteredHistory = null) {
-            const tableBody = document.getElementById('history-table-body');
-            const historyToRender = filteredHistory || historyData;
-
-            if (!historyToRender || historyToRender.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">히스토리 데이터가 없습니다</td></tr>';
-                return;
-            }
-
-            tableBody.innerHTML = '';
-
-            const sortedHistory = [...historyToRender].sort((a, b) => {
-                return new Date(b.timestamp) - new Date(a.timestamp);
-            });
-
-            const oneYearAgo = new Date();
-            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-            const stockHistoryMap = {};
-
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-
-            sortedHistory.forEach(item => {
-                const itemDate = new Date(item.timestamp);
-                if (itemDate >= oneYearAgo) {
-                    if (searchTerm && (!item.stock_name || !item.stock_name.toLowerCase().includes(searchTerm))) {
-                        return;
-                    }
-
-                    if (!stockHistoryMap[item.stock_name]) {
-                        stockHistoryMap[item.stock_name] = [];
-                    }
-
-                    if (stockHistoryMap[item.stock_name].length < 30) {
-                        stockHistoryMap[item.stock_name].push(item);
-                    }
-                }
-            });
-
-            let allHistory = [];
-            for (const stockName in stockHistoryMap) {
-                allHistory = allHistory.concat(stockHistoryMap[stockName]);
-            }
-
-            allHistory.sort((a, b) => {
-                return new Date(b.timestamp) - new Date(a.timestamp);
-            });
-
-            const displayHistory = allHistory.slice(0, 200);
-
-            displayHistory.forEach(item => {
-                const row = document.createElement('tr');
-
-                let timestamp = item.timestamp;
-                try {
-                    const date = new Date(timestamp);
-                    timestamp = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-                } catch (e) {
-                    // 포맷팅 실패 시 원본 사용
-                }
-
-                let signalTags = '';
-                if (item.signal) {
-                    if (item.signal.includes('IN')) {
-                        signalTags += '<span class="signal-tag signal-IN">IN</span>';
-                    }
-                    if (item.signal.includes('OUT')) {
-                        signalTags += '<span class="signal-tag signal-OUT">OUT</span>';
-                    }
-                    if (item.signal.includes('CHK')) {
-                        signalTags += '<span class="signal-tag signal-CHK">CHK</span>';
-                    }
-                }
-
-                let szClass = 'sz-low';
-                if (item.sz_value >= 2.5) {
-                    szClass = 'sz-high';
-                } else if (item.sz_value >= 1.5) {
-                    szClass = 'sz-medium';
-                }
-
-                const stockCode = getStockCodeByName(item.stock_name);
-
-                row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timestamp}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(item.stock_name || '-')}" 
-                    class="hover:text-blue-600 hover:underline">
-                        ${item.stock_name || '-'} <span class="text-sm text-gray-500">${stockCode}</span>
-                    </a>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${item.sz_value ? item.sz_value.toFixed(2) : '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${signalTags || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${item.price_a ? item.price_a.toLocaleString() : '-'} / 
-                    ${item.price_b ? item.price_b.toLocaleString() : '-'}
-                </td>
-            `;
-
-                tableBody.appendChild(row);
-            });
-
-            if (allHistory.length > 200) {
-                const infoRow = document.createElement('tr');
-                infoRow.innerHTML = `
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500 bg-gray-50">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    최근 1년간 수집된 총 ${allHistory.length}개 중 200개만 표시됩니다. 특정 종목만 보려면 검색창을 사용하세요.
-                </td>
-            `;
-                tableBody.appendChild(infoRow);
-            }
         }
     </script>
     <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'93bf0e99fabfbd2f',t:'MTc0NjYwMzQ5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
