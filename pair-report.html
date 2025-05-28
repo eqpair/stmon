@@ -155,15 +155,16 @@
                 padding: 0.75rem 1rem;
                 font-size: 0.875rem;
             }
+
             .flex.justify-between.items-center {
                 flex-direction: column;
                 gap: 10px;
                 align-items: flex-start;
             }
-            
+
             .flex.items-center.gap-4 {
                 flex-direction: column;
-                gap: 8px; 
+                gap: 8px;
                 width: 100%;
                 align-items: flex-end;
             }
@@ -187,7 +188,8 @@
                         <div class="text-sm text-gray-600 font-bold">Total Exposure</div>
                         <div id="totalExposure" class="text-xl font-bold text-green-600">-</div>
                     </div>
-                    <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <a href="index.html"
+                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                         <i class="fas fa-home mr-2"></i> Home
                     </a>
                 </div>
@@ -376,18 +378,23 @@
 
         // 수정된 함수: 숏 포지션 손익 계산
         function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
-            // 공매도: 매도가에서 제세금 차감, 환매가에서 수수료 가산
-            const sellPrice = entry * (1 - (stamp_bps / 10000));
-            const buybackPrice = exit * (1 + (comm_bps / 10000));
-            const base = (sellPrice - buybackPrice) * qty;
+            if (!entry || !exit || !qty) return 0;
+            // Net Price = Gross Price * (1 - 0.0015) (제세금 15bps)
+            const netPrice = entry * (1 - (stamp_bps / 10000));
+            // Valuation Price = Buyback Price * (1 + 0.001) (수수료 10bps)
+            const valuationPrice = exit * (1 + (comm_bps / 10000));
+            // Floating Profit = (Net Price - Valuation Price) * Quantity
+            const base = (netPrice - valuationPrice) * qty;
             const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
             return base - borrowFee;
         }
 
         // 수정된 함수: 롱 포지션 손익 계산
         function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
-            // 매수: 매도 시 수수료와 제세금 모두 차감
+            if (!entry || !exit || !qty) return 0;
+            // Sell Price = Exit Price * (1 - 0.0025) (제세금 15bps + 수수료 10bps)
             const sellPrice = exit * (1 - ((comm_bps + stamp_bps) / 10000));
+            // Profit = (Sell Price - Entry Price) * Quantity
             return (sellPrice - entry) * qty;
         }
 
@@ -465,7 +472,7 @@
                     lastUpdatedElement.textContent = '알 수 없음';
                 }
             }
-            }
+        }
 
         async function fetchTradesData() {
             try {
@@ -544,14 +551,14 @@
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
                 // 손익 계산 (새로운 계산법 적용)
-                /* const shortPnl = calcShortPnL(
+                const shortPnl = calcLongPnL(  // calcShortPnL → calcLongPnL
                     trade.common_entry, commonPrice || trade.common_entry, trade.common_qty,
+                    comm_bps, stamp_bps
+                );
+                const longPnl = calcShortPnL(  // calcLongPnL → calcShortPnL
+                    trade.preferred_entry, preferredPrice || trade.preferred_entry, trade.preferred_qty,
                     borrowFeePct, days, comm_bps, stamp_bps
                 );
-                const longPnl = calcLongPnL(
-                    trade.preferred_entry, preferredPrice || trade.preferred_entry, trade.preferred_qty,
-                    comm_bps, stamp_bps
-                ); */
 
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
                 const spreadShort = (trade.common_floating_spread_bps || -202) / 10000;
@@ -566,16 +573,11 @@
                 const equityShort = (valuationPriceShort - trade.common_entry) * trade.common_qty;
                 const equityLong = -((valuationPriceLong - trade.preferred_entry) * trade.preferred_qty);
 
-                // 실제 거래일수 기준으로 금리비용 계산 (N Profit은 9일 고정이었음)
-                const floatingShortIndividual = notionalShort * (benchmarkRate + spreadShort) * 9 / 365;
-                const floatingLongIndividual = notionalLong * (benchmarkRate + spreadLong) * 9 / 365;
+                const floatingShort = notionalShort * (benchmarkRate + spreadShort) * 9 / 365;
+                const floatingLong = notionalLong * (benchmarkRate + spreadLong) * 9 / 365;
 
-                const subTotalShort = floatingShortIndividual - equityShort;
-                const subTotalLong = floatingLongIndividual + equityLong;
-
-                // I Profit을 개별 포지션 기준으로 계산
-                const shortPnl = subTotalShort;
-                const longPnl = -subTotalLong; // Long 포지션은 음수 처리
+                const subTotalShort = floatingShort - equityShort;
+                const subTotalLong = floatingLong + equityLong;
 
                 const totalPnl = subTotalShort - subTotalLong;
 
