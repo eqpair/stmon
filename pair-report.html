@@ -376,23 +376,18 @@
 
         // 수정된 함수: 숏 포지션 손익 계산
         function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
-            if (!entry || !exit || !qty) return 0;
-            // Net Price = Gross Price * (1 - 0.0015) (제세금 15bps)
-            const netPrice = entry * (1 - (stamp_bps / 10000));
-            // Valuation Price = Buyback Price * (1 + 0.001) (수수료 10bps)
-            const valuationPrice = exit * (1 + (comm_bps / 10000));
-            // Floating Profit = (Net Price - Valuation Price) * Quantity
-            const base = (netPrice - valuationPrice) * qty;
+            // 공매도: 매도가에서 제세금 차감, 환매가에서 수수료 가산
+            const sellPrice = entry * (1 - (stamp_bps / 10000));
+            const buybackPrice = exit * (1 + (comm_bps / 10000));
+            const base = (sellPrice - buybackPrice) * qty;
             const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
             return base - borrowFee;
         }
 
         // 수정된 함수: 롱 포지션 손익 계산
         function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
-            if (!entry || !exit || !qty) return 0;
-            // Sell Price = Exit Price * (1 - 0.0025) (제세금 15bps + 수수료 10bps)
+            // 매수: 매도 시 수수료와 제세금 모두 차감
             const sellPrice = exit * (1 - ((comm_bps + stamp_bps) / 10000));
-            // Profit = (Sell Price - Entry Price) * Quantity
             return (sellPrice - entry) * qty;
         }
 
