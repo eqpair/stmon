@@ -187,6 +187,9 @@
                     <div class="text-right">
                         <div class="text-sm text-gray-600 font-bold">Total Exposure</div>
                         <div id="totalExposure" class="text-xl font-bold text-green-600">-</div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            <span id="openPnL" class="font-medium">-</span>
+                        </div>
                     </div>
                     <a href="index.html"
                         class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
@@ -526,10 +529,17 @@
             tbody.innerHTML = '';
             // Total Exposure 계산을 위한 변수
             let totalExposure = 0;
+            let totalOpenPnL = 0;
 
             if (tradesData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
                 return;
+            }
+
+            // Open 상태인 거래의 투자금액과 손익만 총합에 추가
+            if (trade.status === "Open") {
+                totalExposure += totalInvested;
+                totalOpenPnL += totalPnl;
             }
 
             const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식
@@ -591,6 +601,13 @@
                 // Open 상태인 거래의 투자금액만 총합에 추가
                 if (trade.status === "Open") {
                     totalExposure += totalInvested;
+                }
+
+                const openPnLElement = document.getElementById('openPnL');
+                if (openPnLElement) {
+                    const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
+                    openPnLElement.textContent = `₩${Math.round(totalOpenPnL).toLocaleString()}`;
+                    openPnLElement.className = `font-medium ${pnlClass}`;
                 }
 
                 // 수익률 계산 (투자금액 기준)
@@ -693,6 +710,11 @@
                 const totalExposureElement = document.getElementById('totalExposure');
                 if (totalExposureElement && totalExposureElement.textContent === '-') {
                     totalExposureElement.textContent = '₩0';
+                }
+                
+                const openPnLElement = document.getElementById('openPnL');
+                if (openPnLElement && openPnLElement.textContent === '-') {
+                    openPnLElement.textContent = '₩0';
                 }
 
             } catch (error) {
