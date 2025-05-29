@@ -188,8 +188,8 @@
                         <div class="text-sm text-gray-600 font-bold">Total Exposure</div>
                         <div id="totalExposure" class="text-xl font-bold text-green-600">-</div>
                         <div class="text-xs text-gray-500 mt-1">
-                            <span id="openPnL" class="font-medium">-</span>
-                        </div>
+                            <span>Open P&L: </span>
+                            <span id="openPnL" class="font-medium">-</span>              </div>
                     </div>
                     <a href="index.html"
                         class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
@@ -380,29 +380,29 @@
         }
 
         // 수정된 함수: 숏 포지션 손익 계산
-            function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
-                if (!entry || !exit || !qty) return 0;
-                // 매도 가격에 세금 적용 (매도 시 제세금)
-                const sellPrice = entry * (1 - (stamp_bps / 10000));
-                // 매수(환매) 가격에 수수료 적용 (매수 시 수수료)
-                const buyPrice = exit * (1 + (comm_bps / 10000));
-                // 기본 손익 = (매도 가격 - 매수 가격) × 수량
-                const base = (sellPrice - buyPrice) * qty;
-                // 차입 비용 계산
-                const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
-                return base - borrowFee;
-               }
+        function calcShortPnL(entry, exit, qty, borrowFeePct, days, comm_bps, stamp_bps) {
+            if (!entry || !exit || !qty) return 0;
+            // 매도 가격에 세금 적용 (매도 시 제세금)
+            const sellPrice = entry * (1 - (stamp_bps / 10000));
+            // 매수(환매) 가격에 수수료 적용 (매수 시 수수료)
+            const buyPrice = exit * (1 + (comm_bps / 10000));
+            // 기본 손익 = (매도 가격 - 매수 가격) × 수량
+            const base = (sellPrice - buyPrice) * qty;
+            // 차입 비용 계산
+            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
+            return base - borrowFee;
+        }
 
         // 수정된 함수: 롱 포지션 손익 계산
-            function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
-                if (!entry || !exit || !qty) return 0;
-                // 매수 가격에 수수료 적용 (매수 시 수수료)
-                const buyPrice = entry * (1 + (comm_bps / 10000));
-                // 매도 가격에 수수료와 세금 적용 (매도 시 수수료 + 세금)
-                const sellPrice = exit * (1 - ((comm_bps + stamp_bps) / 10000));
-                // 손익 = (매도 가격 - 매수 가격) × 수량
-                return (sellPrice - buyPrice) * qty;
-               }
+        function calcLongPnL(entry, exit, qty, comm_bps, stamp_bps) {
+            if (!entry || !exit || !qty) return 0;
+            // 매수 가격에 수수료 적용 (매수 시 수수료)
+            const buyPrice = entry * (1 + (comm_bps / 10000));
+            // 매도 가격에 수수료와 세금 적용 (매도 시 수수료 + 세금)
+            const sellPrice = exit * (1 - ((comm_bps + stamp_bps) / 10000));
+            // 손익 = (매도 가격 - 매수 가격) × 수량
+            return (sellPrice - buyPrice) * qty;
+        }
 
         // 수정된 함수: 숏 포지션 투자금액 계산
         function calcShortInvested(entry, qty, stamp_bps) {
@@ -536,12 +536,6 @@
                 return;
             }
 
-            // Open 상태인 거래의 투자금액과 손익만 총합에 추가
-            if (trade.status === "Open") {
-                totalExposure += totalInvested;
-                totalOpenPnL += totalPnl;
-            }
-
             const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식
             for (const trade of tradesData) {
                 const isExited = trade.status === "Exited";
@@ -601,13 +595,7 @@
                 // Open 상태인 거래의 투자금액만 총합에 추가
                 if (trade.status === "Open") {
                     totalExposure += totalInvested;
-                }
-
-                const openPnLElement = document.getElementById('openPnL');
-                if (openPnLElement) {
-                    const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
-                    openPnLElement.textContent = `₩${Math.round(totalOpenPnL).toLocaleString()}`;
-                    openPnLElement.className = `font-medium ${pnlClass}`;
+                    totalOpenPnL += totalPnl;
                 }
 
                 // 수익률 계산 (투자금액 기준)
@@ -679,12 +667,21 @@
         `;
                 tbody.appendChild(trLong);
             }
-            // Total Exposure 업데이트 - 안전장치 추가
+            // Total Exposure와 Open P&L 업데이트 - 안전장치 추가
             const totalExposureElement = document.getElementById('totalExposure');
             if (totalExposureElement) {
                 totalExposureElement.textContent = `₩${Math.round(totalExposure).toLocaleString()}`;
             } else {
                 console.warn('totalExposure 요소를 찾을 수 없습니다.');
+            }
+
+            const openPnLElement = document.getElementById('openPnL');
+            if (openPnLElement) {
+                const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
+                openPnLElement.textContent = `₩${Math.round(totalOpenPnL).toLocaleString()}`;
+                openPnLElement.className = `font-medium ${pnlClass}`;
+            } else {
+                console.warn('openPnL 요소를 찾을 수 없습니다.');
             }
         }
 
@@ -706,12 +703,12 @@
                 document.getElementById('loading-container').style.display = 'none';
                 document.getElementById('content-container').classList.remove('hidden');
 
-                // Total Exposure 초기화 확인
+                // Total Exposure와 Open P&L 초기화 확인
                 const totalExposureElement = document.getElementById('totalExposure');
                 if (totalExposureElement && totalExposureElement.textContent === '-') {
                     totalExposureElement.textContent = '₩0';
                 }
-                
+
                 const openPnLElement = document.getElementById('openPnL');
                 if (openPnLElement && openPnLElement.textContent === '-') {
                     openPnLElement.textContent = '₩0';
