@@ -604,6 +604,7 @@
 
                 // 종목명 처리 (기존 유지)
                 let displayStockName = trade.pair_name || '-';
+                displayStockName = displayStockName.replace(/\s*\[.*?\]/g, '').trim(); // 대괄호와 내용 제거
                 let baseStockName = normalizeStockName(displayStockName);
                 const stockCode = getStockCodeByName(baseStockName);
 
