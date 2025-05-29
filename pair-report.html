@@ -188,7 +188,6 @@
                         <div class="text-sm text-gray-600 font-bold">Total Exposure</div>
                         <div id="totalExposure" class="text-xl font-bold text-green-600">-</div>
                         <div class="text-xs text-gray-500 mt-1">
-                            <span>Open P&L: </span>
                             <span id="openPnL" class="font-medium">-</span>              </div>
                     </div>
                     <a href="index.html"
@@ -210,10 +209,10 @@
                     <thead>
                         <tr>
                             <th></th>
+                            <th>Status</th>
                             <th>SZ</th>
                             <th>N Profit</th>
                             <th>N %</th>
-                            <th>Status</th>
                             <th>T Exp</th>
                             <th>Dir</th>
                             <th>Ref P</th>
@@ -630,10 +629,10 @@
                     <b>${displayStockName}</b>
                 </a>
             </td>
+            <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
             <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
             <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
             <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
-            <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
             <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
             <td class="center-align"><b>S</b></td>
             <td>${trade.common_entry?.toLocaleString() || '-'}</td>
