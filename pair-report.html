@@ -537,7 +537,7 @@
 
             const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식
             for (const trade of tradesData) {
-                const isExited = trade.status === "Exited";
+                const isExited = trade.status === "Closed";
                 let commonPrice = trade.common_exit;
                 let preferredPrice = trade.preferred_exit;
                 let exitDate = trade.exit_date;
