@@ -21,8 +21,8 @@ def is_market_time() -> bool:
     # 평일 (월요일~금요일)
     is_weekday = 0 <= weekday <= 4
     
-    # 주식 시장 운영 시간 (오전 8시 30분 ~ 오후 4시 30분)
-    is_work_hours = time(8, 30) <= current_time <= time(16, 30)
+    # 주식 시장 운영 시간 (오전 8시 30분 ~ 오후 8시 30분)
+    is_work_hours = time(8, 30) <= current_time <= time(20, 30)
     
     return is_weekday and is_work_hours
 
