@@ -670,7 +670,7 @@
             // Total Exposure와 Open P&L 업데이트 - 안전장치 추가
             const totalExposureElement = document.getElementById('totalExposure');
             if (totalExposureElement) {
-                totalExposureElement.textContent = `₩${Math.round(totalExposure).toLocaleString()}`;
+                totalExposureElement.textContent = `₩ ${Math.round(totalExposure).toLocaleString()}`;
             } else {
                 console.warn('totalExposure 요소를 찾을 수 없습니다.');
             }
@@ -678,7 +678,7 @@
             const openPnLElement = document.getElementById('openPnL');
             if (openPnLElement) {
                 const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
-                openPnLElement.textContent = `₩${Math.round(totalOpenPnL).toLocaleString()}`;
+                openPnLElement.textContent = `₩ ${Math.round(totalOpenPnL).toLocaleString()}`;
                 openPnLElement.className = `font-medium ${pnlClass}`;
             } else {
                 console.warn('openPnL 요소를 찾을 수 없습니다.');
