@@ -1093,7 +1093,7 @@
             const commonSlider = document.getElementById('common-price-slider');
             const commonPercent = document.getElementById('common-price-percent');
             const commonAdjusted = document.getElementById('common-price-adjusted');
-            commonSlider.step = "0.05";
+            commonSlider.step = "0.01";
             commonSlider.addEventListener('input', function () {
                 const percent = parseFloat(this.value);
                 commonPercent.textContent = `${percent.toFixed(2)}%`;
@@ -1105,7 +1105,7 @@
             const preferredSlider = document.getElementById('preferred-price-slider');
             const preferredPercent = document.getElementById('preferred-price-percent');
             const preferredAdjusted = document.getElementById('preferred-price-adjusted');
-            preferredSlider.step = "0.05";
+            preferredSlider.step = "0.01";
             preferredSlider.addEventListener('input', function () {
                 const percent = parseFloat(this.value);
                 preferredPercent.textContent = `${percent.toFixed(2)}%`;
