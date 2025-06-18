@@ -572,8 +572,8 @@
                 const longFloatingAmt = calcFloatingAmt(netLongPrice, trade.preferred_qty, benchmarkRate, spreadLong, days);
 
                 // 손익 계산
-                const shortPnl = shortEquityAmt - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
-                const longPnl = longEquityAmt;
+                const shortPnl = shortEquityAmt + shortFloatingAmt - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
+                const longPnl = longEquityAmt - longFloatingAmt;
                 const totalPnl = shortPnl + longPnl;
 
                 // 투자금액 계산
