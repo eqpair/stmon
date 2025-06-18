@@ -68,6 +68,23 @@
         "status": "Closed"
     },
     {
+        "pair_name": "⚪ LG생활건강 [0.5 @ 2.0-0.2]",
+        "common_code": "051900",
+        "preferred_code": "051905",
+        "entry_date": "2025-04-11",
+        "exit_date": "2025-06-17",
+        "common_entry": 311021,
+        "preferred_entry": 114215,
+        "common_qty": 160,
+        "preferred_qty": 435,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 2.72,
+        "common_exit": 337085,
+        "preferred_exit": 139321,
+        "status": "Closed"
+    },
+    {
         "pair_name": "🔵 대한항공 [0.04 @ 2.0-0.4]",
         "common_code": "003490",
         "preferred_code": "003495",
