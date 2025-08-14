@@ -1,5 +1,22 @@
 [
     {
+        "pair_name": "🟢 성신양회 [5 @ 2.0-0.4]",
+        "common_code": "004980",
+        "preferred_code": "004985",
+        "entry_date": "2025-08-14",
+        "exit_date": null,
+        "common_entry": 10140,
+        "preferred_entry": 11780,
+        "common_qty": 5000,
+        "preferred_qty": 4350,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 2.51,
+        "common_exit": null,
+        "preferred_exit": null,
+        "status": "Open"
+    },
+    {
         "pair_name": "⚪ 대신증권 [5 @ 2.0-0.3]",
         "common_code": "003540",
         "preferred_code": "003545",
