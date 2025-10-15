@@ -1,5 +1,22 @@
 [
     {
+        "pair_name": "🟠 S-Oil [5 @ 2.2-0.3]",
+        "common_code": "010950",
+        "preferred_code": "010955",
+        "entry_date": "2025-10-15",
+        "exit_date": null,
+        "common_entry": 65707,
+        "preferred_entry": 40004,
+        "common_qty": 800,
+        "preferred_qty": 1170,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 2.54,
+        "common_exit": null,
+        "preferred_exit": null,
+        "status": "Open"
+    },
+    {
         "pair_name": "🟢 성신양회(비) [5 @ 2.0-0.4]",
         "common_code": "004980",
         "preferred_code": "004985",
