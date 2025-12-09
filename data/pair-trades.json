@@ -1,5 +1,22 @@
 [
     {
+        "pair_name": "🔴 현대차 [0.5 @ 2.1-0.3]",
+        "common_code": "005380",
+        "preferred_code": "005385",
+        "entry_date": "2025-12-09",
+        "exit_date": null,
+        "common_entry": 303000,
+        "preferred_entry": 205500,
+        "common_qty": 320,
+        "preferred_qty": 475,
+        "common_floating_spread_bps": -202.0,
+        "preferred_floating_spread_bps": 200.0,
+        "benchmark_rate_pct": 2.83,
+        "common_exit": null,
+        "preferred_exit": null,
+        "status": "Open"
+    },
+    {
         "pair_name": "🔵 GS [1 @ 2.1-0.4]",
         "common_code": "078930",
         "preferred_code": "078935",
