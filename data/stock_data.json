@@ -1,30 +1,30 @@
 {
-  "timestamp": "2025-12-10 11:31:33",
-  "last_updated": "2025-12-10 11:31:33",
+  "timestamp": "2025-12-10 11:38:00",
+  "last_updated": "2025-12-10 11:38:00",
   "all_signals": [
     {
       "stock_name": "🔴 삼성전자 [0.5 @ 2.0-0.4]",
-      "sz_value": 2.64,
+      "sz_value": 2.67,
       "signal": "IN",
-      "price_a": 108000.0,
+      "price_a": 108100.0,
       "price_b": 80900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 코오롱모빌리티그룹(비) [4.5 @ 2.2-0.1]",
-      "sz_value": -0.09,
+      "sz_value": -0.08,
       "signal": "OUT",
-      "price_a": 9860.0,
+      "price_a": 9890.0,
       "price_b": 20600.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 태양금속(비) [5 @ 2.1-0.4]",
-      "sz_value": 0.34,
-      "signal": "OUT",
-      "price_a": 2545.0,
-      "price_b": 3735.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "sz_value": 0.42,
+      "signal": "CHK",
+      "price_a": 2550.0,
+      "price_b": 3720.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 NPC(비) [5 @ 2.0-0.4]",
@@ -32,215 +32,215 @@
       "signal": "OUT",
       "price_a": 3930.0,
       "price_b": 2480.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 대한제당(비) [5 @ 2.0-0.4]",
-      "sz_value": -0.23,
+      "sz_value": -0.2,
       "signal": "OUT",
-      "price_a": 2875.0,
+      "price_a": 2880.0,
       "price_b": 2505.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 덕성(비) [5 @ 2.0-0.4]",
-      "sz_value": -0.9,
+      "sz_value": -0.87,
       "signal": "OUT",
-      "price_a": 4990.0,
+      "price_a": 5000.0,
       "price_b": 7440.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 코리아써키트(비) [5 @ 2.0-0.4]",
-      "sz_value": 2.46,
+      "sz_value": 2.44,
       "signal": "IN",
       "price_a": 40000.0,
-      "price_b": 12030.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 12120.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 코오롱(비) [5 @ 2.0-0.4]",
-      "sz_value": 0.52,
+      "sz_value": 0.53,
       "signal": "CHK",
-      "price_a": 49750.0,
+      "price_a": 49900.0,
       "price_b": 27150.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 현대차 [0.5 @ 2.1-0.3]",
-      "sz_value": 3.07,
+      "sz_value": 3.21,
       "signal": "IN",
       "price_a": 304000.0,
-      "price_b": 207500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 206500.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ 대신증권(비) [5 @ 2.0-0.3]",
-      "sz_value": 0.81,
+      "sz_value": 0.79,
       "signal": "CHK",
       "price_a": 26950.0,
-      "price_b": 20950.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 21000.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 성신양회(비) [5 @ 2.0-0.4]",
-      "sz_value": 0.94,
+      "sz_value": 0.96,
       "signal": "CHK",
-      "price_a": 9700.0,
+      "price_a": 9720.0,
       "price_b": 11340.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 코오롱글로벌(비) [5 @ 2.0-0.4]",
-      "sz_value": 1.18,
+      "sz_value": 1.13,
       "signal": "CHK",
       "price_a": 9590.0,
-      "price_b": 15350.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 15390.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 NH투자증권 [1 @ 2.0-0.3]",
-      "sz_value": -1.59,
+      "sz_value": -1.56,
       "signal": "OUT",
       "price_a": 20850.0,
-      "price_b": 19460.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 19440.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 신풍제약(비) [1.5 @ 2.0-0.4]",
       "sz_value": 0.26,
       "signal": "OUT",
-      "price_a": 14640.0,
+      "price_a": 14630.0,
       "price_b": 25000.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ LG전자 [0.5 @ 2.0-0.2]",
-      "sz_value": -1.57,
+      "sz_value": -1.59,
       "signal": "OUT",
-      "price_a": 94900.0,
+      "price_a": 94800.0,
       "price_b": 50800.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 한화솔루션 [1 @ 2.1-0.3]",
-      "sz_value": 0.97,
+      "sz_value": 1.0,
       "signal": "CHK",
       "price_a": 27450.0,
-      "price_b": 21200.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 21150.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 세방(비) [2.5 @ 2.0-0.4]",
-      "sz_value": 1.24,
+      "sz_value": 1.3,
       "signal": "CHK",
-      "price_a": 14380.0,
+      "price_a": 14410.0,
       "price_b": 9150.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 한화투자증권(비) [5 @ 2.0-0.4]",
-      "sz_value": -0.06,
+      "sz_value": -0.16,
       "signal": "OUT",
-      "price_a": 4685.0,
-      "price_b": 7810.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 4690.0,
+      "price_b": 7930.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ LG생활건강 [0.5 @ 2.0-0.2]",
-      "sz_value": -2.0,
+      "sz_value": -2.08,
       "signal": "OUT",
-      "price_a": 263500.0,
-      "price_b": 115700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 263000.0,
+      "price_b": 115800.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 아모레퍼시픽 [4.5 @ 2.1-0.3]",
       "sz_value": -2.51,
       "signal": "OUT",
-      "price_a": 121300.0,
-      "price_b": 45650.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 121400.0,
+      "price_b": 45700.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 LG화학 [0.5 @ 2.0-0.4]",
-      "sz_value": 0.04,
+      "sz_value": 0.05,
       "signal": "OUT",
-      "price_a": 379500.0,
-      "price_b": 197500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 380000.0,
+      "price_b": 197600.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 아모레G [0.5 @ 2.0-0.4]",
-      "sz_value": -2.34,
+      "sz_value": -2.4,
       "signal": "OUT",
-      "price_a": 27050.0,
+      "price_a": 27000.0,
       "price_b": 12150.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 대한항공 [0.04 @ 2.0-0.4]",
-      "sz_value": -1.73,
+      "sz_value": -1.78,
       "signal": "OUT",
-      "price_a": 22250.0,
+      "price_a": 22200.0,
       "price_b": 24400.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 S-Oil [0.5 @ 2.2-0.3]",
-      "sz_value": 2.27,
+      "sz_value": 2.29,
       "signal": "IN",
-      "price_a": 82500.0,
+      "price_a": 82600.0,
       "price_b": 47750.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 한진칼 [1 @ 2.0-0.2]",
-      "sz_value": -0.21,
+      "sz_value": -0.27,
       "signal": "OUT",
-      "price_a": 110900.0,
-      "price_b": 34950.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 110700.0,
+      "price_b": 35050.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 SK증권(비) [5 @ 2.0-0.4]",
-      "sz_value": 0.45,
+      "sz_value": 0.47,
       "signal": "CHK",
       "price_a": 651.0,
-      "price_b": 2155.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 2150.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 한국금융지주 [1 @ 2.0-0.4]",
-      "sz_value": -1.99,
+      "sz_value": -2.0,
       "signal": "OUT",
-      "price_a": 160800.0,
-      "price_b": 127500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 160600.0,
+      "price_b": 127400.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ 티와이홀딩스(비) [5.25 @ 2.3-0.4]",
-      "sz_value": -0.26,
+      "sz_value": -0.31,
       "signal": "OUT",
-      "price_a": 2810.0,
-      "price_b": 4800.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 2800.0,
+      "price_b": 4805.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 미래에셋증권 [0.5 @ 2.0-0.3]",
-      "sz_value": -0.59,
+      "sz_value": -0.54,
       "signal": "OUT",
-      "price_a": 21400.0,
+      "price_a": 21475.0,
       "price_b": 10700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 동부건설(비) [5 @ 2.0-0.4]",
-      "sz_value": 0.92,
+      "sz_value": 0.63,
       "signal": "CHK",
-      "price_a": 5640.0,
-      "price_b": 18700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 5660.0,
+      "price_b": 20500.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 크라운제과(비) [5 @ 2.2-0.2]",
@@ -248,15 +248,15 @@
       "signal": "CHK",
       "price_a": 9000.0,
       "price_b": 9720.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 두산 [0.25 @ 2.0-0.2]",
-      "sz_value": -0.5,
+      "sz_value": -0.51,
       "signal": "OUT",
-      "price_a": 879000.0,
-      "price_b": 532000.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 876000.0,
+      "price_b": 531000.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 남선알미늄(비) [5 @ 2.1-0.4]",
@@ -264,23 +264,23 @@
       "signal": "OUT",
       "price_a": 1050.0,
       "price_b": 12250.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 금호석유 [0.5 @ 2.0-0.3]",
-      "sz_value": -0.64,
+      "sz_value": -0.59,
       "signal": "OUT",
       "price_a": 122100.0,
-      "price_b": 63700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 63500.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 넥센(비) [5 @ 2.0-0.3]",
-      "sz_value": -0.26,
+      "sz_value": -0.33,
       "signal": "OUT",
-      "price_a": 6310.0,
+      "price_a": 6280.0,
       "price_b": 4640.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 LX하우시스(비) [5 @ 2.0-0.3]",
@@ -288,31 +288,31 @@
       "signal": "CHK",
       "price_a": 29650.0,
       "price_b": 17200.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 삼성화재 [0.5 @ 2.0-0.4]",
-      "sz_value": -0.36,
+      "sz_value": -0.41,
       "signal": "OUT",
-      "price_a": 493500.0,
+      "price_a": 493000.0,
       "price_b": 373500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 대상홀딩스(비) [5 @ 2.0-0.3]",
       "sz_value": 0.41,
       "signal": "CHK",
       "price_a": 9630.0,
-      "price_b": 14400.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 14390.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 SK케미칼 [1 @ 2.6-0.1]",
-      "sz_value": 0.65,
+      "sz_value": 0.63,
       "signal": "CHK",
       "price_a": 69700.0,
-      "price_b": 29400.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 29450.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 소프트센(비) [7 @ 2.0-0.3]",
@@ -320,15 +320,15 @@
       "signal": "CHK",
       "price_a": 291.0,
       "price_b": 6100.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ 삼성전기 [0.5 @ 2.0-0.4]",
-      "sz_value": -0.23,
+      "sz_value": -0.24,
       "signal": "OUT",
-      "price_a": 272500.0,
-      "price_b": 123900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 272000.0,
+      "price_b": 123700.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 노루홀딩스(비) [2 @ 2.0-0.4]",
@@ -336,47 +336,47 @@
       "signal": "CHK",
       "price_a": 21850.0,
       "price_b": 30700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 LG [0.5 @ 2.0-0.4]",
-      "sz_value": -0.1,
+      "sz_value": -0.15,
       "signal": "OUT",
       "price_a": 82500.0,
-      "price_b": 67700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 67800.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 삼성SDI [0.5 @ 2.1-0.4]",
-      "sz_value": 0.71,
+      "sz_value": 0.67,
       "signal": "CHK",
-      "price_a": 321000.0,
+      "price_a": 320500.0,
       "price_b": 189100.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 코오롱인더 [1 @ 2.0-0.4]",
-      "sz_value": 1.86,
+      "sz_value": 1.8,
       "signal": "CHK",
-      "price_a": 46450.0,
-      "price_b": 25450.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 46150.0,
+      "price_b": 25400.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 대원전선(비) [5 @ 2.1-0.4]",
-      "sz_value": 2.23,
+      "sz_value": 2.22,
       "signal": "IN",
       "price_a": 3555.0,
-      "price_b": 3610.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 3615.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 태영건설(비) [5 @ 2.0-0.3]",
-      "sz_value": -4.76,
+      "sz_value": -4.74,
       "signal": "OUT",
-      "price_a": 1703.0,
+      "price_a": 1708.0,
       "price_b": 8510.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 흥국화재(비) [5 @ 2.0-0.4]",
@@ -384,87 +384,87 @@
       "signal": "OUT",
       "price_a": 3575.0,
       "price_b": 7280.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 대호특수강(비) [7 @ 2.1-0.3]",
       "sz_value": 0.61,
       "signal": "CHK",
-      "price_a": 1275.0,
-      "price_b": 2795.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 1277.0,
+      "price_b": 2800.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 계양전기(비) [5 @ 2.1-0.4]",
-      "sz_value": 2.17,
+      "sz_value": 2.15,
       "signal": "IN",
-      "price_a": 1580.0,
+      "price_a": 1578.0,
       "price_b": 3215.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 한양증권(비) [0.5 @ 2.0-0.3]",
-      "sz_value": 0.85,
+      "sz_value": 0.83,
       "signal": "CHK",
       "price_a": 19340.0,
-      "price_b": 18660.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 18690.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 호텔신라 [3 @ 2.0-0.4]",
-      "sz_value": -0.04,
+      "sz_value": -0.06,
       "signal": "OUT",
-      "price_a": 45750.0,
+      "price_a": 45700.0,
       "price_b": 38150.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 SK이노베이션 [1 @ 2.0-0.3]",
-      "sz_value": -0.11,
+      "sz_value": -0.19,
       "signal": "OUT",
-      "price_a": 118100.0,
-      "price_b": 78000.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 118000.0,
+      "price_b": 78200.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 서울식품(비) [5 @ 2.1-0.4]",
-      "sz_value": 0.36,
-      "signal": "OUT",
-      "price_a": 152.0,
+      "sz_value": 0.5,
+      "signal": "CHK",
+      "price_a": 153.0,
       "price_b": 1203.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 현대건설 [0.5 @ 2.2-0.4]",
-      "sz_value": 1.1,
+      "sz_value": 1.09,
       "signal": "CHK",
-      "price_a": 72200.0,
+      "price_a": 72100.0,
       "price_b": 56700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 DL이앤씨 [1 @ 2.1-0.4]",
-      "sz_value": -1.69,
+      "sz_value": -1.72,
       "signal": "OUT",
       "price_a": 42700.0,
-      "price_b": 23150.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 23200.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 GS [1 @ 2.1-0.4]",
-      "sz_value": 1.92,
+      "sz_value": 1.89,
       "signal": "CHK",
-      "price_a": 56500.0,
+      "price_a": 56400.0,
       "price_b": 47900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 금강공업(비) [5 @ 2.0-0.3]",
-      "sz_value": -1.43,
+      "sz_value": -2.49,
       "signal": "OUT",
-      "price_a": 6740.0,
-      "price_b": 11330.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 6670.0,
+      "price_b": 11990.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ 대상 [1 @ 2.0-0.4]",
@@ -472,23 +472,23 @@
       "signal": "OUT",
       "price_a": 20900.0,
       "price_b": 16740.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 금호건설(비) [5 @ 2.1-0.3]",
-      "sz_value": 0.82,
+      "sz_value": 0.42,
       "signal": "CHK",
-      "price_a": 4010.0,
-      "price_b": 13000.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 4035.0,
+      "price_b": 14500.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 CJ제일제당 [1 @ 2.0-0.3]",
-      "sz_value": -2.32,
+      "sz_value": -2.28,
       "signal": "OUT",
-      "price_a": 206500.0,
+      "price_a": 207000.0,
       "price_b": 137900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 SK디스커버리(비) [5 @ 2.0-0.3]",
@@ -496,15 +496,15 @@
       "signal": "CHK",
       "price_a": 60200.0,
       "price_b": 39500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 DL [1 @ 2.0-0.4]",
-      "sz_value": -1.56,
+      "sz_value": -1.58,
       "signal": "OUT",
-      "price_a": 39000.0,
+      "price_a": 38950.0,
       "price_b": 25900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 노루페인트(비) [5 @ 2.2-0.4]",
@@ -512,15 +512,15 @@
       "signal": "OUT",
       "price_a": 8300.0,
       "price_b": 13310.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 동양(비) [2.5 @ 2.0-0.4]",
-      "sz_value": 0.73,
+      "sz_value": 0.79,
       "signal": "CHK",
       "price_a": 822.0,
-      "price_b": 4890.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 4855.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 한화 [5 @ 2.0-0.4]",
@@ -528,47 +528,47 @@
       "signal": "IN",
       "price_a": 93000.0,
       "price_b": 42250.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 CJ [1 @ 2.0-0.4]",
-      "sz_value": 1.73,
+      "sz_value": 1.72,
       "signal": "CHK",
-      "price_a": 182700.0,
+      "price_a": 182600.0,
       "price_b": 92100.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 크라운해태홀딩스(비) [5 @ 2.1-0.3]",
-      "sz_value": 0.47,
+      "sz_value": 0.55,
       "signal": "CHK",
-      "price_a": 6770.0,
-      "price_b": 8180.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 6800.0,
+      "price_b": 8120.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 롯데칠성 [1 @ 2.1-0.3]",
-      "sz_value": 1.52,
+      "sz_value": 1.56,
       "signal": "CHK",
-      "price_a": 129800.0,
+      "price_a": 130000.0,
       "price_b": 72500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 SK [0.5 @ 2.0-0.2]",
-      "sz_value": 1.48,
+      "sz_value": 1.5,
       "signal": "CHK",
-      "price_a": 268500.0,
-      "price_b": 199900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 268000.0,
+      "price_b": 199300.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 성문전자(비) [5 @ 2.0-0.4]",
-      "sz_value": 0.81,
+      "sz_value": 0.66,
       "signal": "CHK",
       "price_a": 1158.0,
-      "price_b": 4305.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 4345.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 일양약품(비) [5 @ 2.0-0.4]",
@@ -576,23 +576,23 @@
       "signal": "OUT",
       "price_a": 13050.0,
       "price_b": 12980.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 롯데지주 [1 @ 2.6-0.3]",
-      "sz_value": 1.19,
+      "sz_value": 1.17,
       "signal": "CHK",
-      "price_a": 27850.0,
+      "price_a": 27800.0,
       "price_b": 28800.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 깨끗한나라(비) [1.5 @ 2.0-0.4]",
-      "sz_value": -0.79,
+      "sz_value": -0.77,
       "signal": "OUT",
       "price_a": 1946.0,
-      "price_b": 11200.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 11190.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 유한양행 [1 @ 2.0-0.3]",
@@ -600,23 +600,23 @@
       "signal": "OUT",
       "price_a": 116000.0,
       "price_b": 104700.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 부국증권(비) [5 @ 2.0-0.4]",
-      "sz_value": 0.62,
+      "sz_value": 0.63,
       "signal": "CHK",
       "price_a": 59600.0,
-      "price_b": 30900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 30850.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 남양유업(비) [5 @ 2.0-0.4]",
-      "sz_value": -1.24,
+      "sz_value": -1.27,
       "signal": "OUT",
-      "price_a": 50200.0,
+      "price_a": 50100.0,
       "price_b": 33600.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 유화증권(비) [5 @ 2.0-0.4]",
@@ -624,39 +624,39 @@
       "signal": "OUT",
       "price_a": 2800.0,
       "price_b": 2725.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ 삼양사(비) [5 @ 2.3-0.4]",
-      "sz_value": -2.55,
+      "sz_value": -2.61,
       "signal": "OUT",
       "price_a": 50700.0,
-      "price_b": 38050.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 38150.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 JW중외제약(비) [5 @ 2.0-0.4]",
-      "sz_value": 2.35,
+      "sz_value": 2.43,
       "signal": "IN",
-      "price_a": 26900.0,
-      "price_b": 29300.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 26950.0,
+      "price_b": 29200.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 하이트진로홀딩스(비) [5 @ 2.0-0.3]",
-      "sz_value": 1.1,
+      "sz_value": 1.16,
       "signal": "CHK",
-      "price_a": 10010.0,
+      "price_a": 10030.0,
       "price_b": 11650.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 BYC(비) [0.5 @ 2.0-0.4]",
-      "sz_value": -0.31,
+      "sz_value": -0.32,
       "signal": "OUT",
-      "price_a": 45000.0,
-      "price_b": 25400.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 44800.0,
+      "price_b": 25300.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 삼양홀딩스(비) [5 @ 2.0-0.3]",
@@ -664,73 +664,73 @@
       "signal": "OUT",
       "price_a": 54118.0,
       "price_b": 83500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 동원시스템즈 [5 @ 2.0-0.3]",
-      "sz_value": -1.79,
+      "sz_value": -1.77,
       "signal": "OUT",
-      "price_a": 27050.0,
+      "price_a": 27100.0,
       "price_b": 18050.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "⚪ HD현대인프라_건설 [5 @ 2.0-0.3]",
-      "sz_value": 0.81,
+      "sz_value": 0.82,
       "signal": "CHK",
-      "price_a": 15110.0,
-      "price_b": 97600.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 15120.0,
+      "price_b": 97400.0,
+      "timestamp": "2025-12-10 11:38:00"
     }
   ],
   "divergent_signals": [
     {
       "stock_name": "🔴 삼성전자 [0.5 @ 2.0-0.4]",
-      "sz_value": 2.64,
+      "sz_value": 2.67,
       "signal": "IN",
-      "price_a": 108000.0,
+      "price_a": 108100.0,
       "price_b": 80900.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 코리아써키트(비) [5 @ 2.0-0.4]",
-      "sz_value": 2.46,
+      "sz_value": 2.44,
       "signal": "IN",
       "price_a": 40000.0,
-      "price_b": 12030.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 12120.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 현대차 [0.5 @ 2.1-0.3]",
-      "sz_value": 3.07,
+      "sz_value": 3.21,
       "signal": "IN",
       "price_a": 304000.0,
-      "price_b": 207500.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 206500.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟠 S-Oil [0.5 @ 2.2-0.3]",
-      "sz_value": 2.27,
+      "sz_value": 2.29,
       "signal": "IN",
-      "price_a": 82500.0,
+      "price_a": 82600.0,
       "price_b": 47750.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 대원전선(비) [5 @ 2.1-0.4]",
-      "sz_value": 2.23,
+      "sz_value": 2.22,
       "signal": "IN",
       "price_a": 3555.0,
-      "price_b": 3610.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_b": 3615.0,
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔵 계양전기(비) [5 @ 2.1-0.4]",
-      "sz_value": 2.17,
+      "sz_value": 2.15,
       "signal": "IN",
-      "price_a": 1580.0,
+      "price_a": 1578.0,
       "price_b": 3215.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🔴 한화 [5 @ 2.0-0.4]",
@@ -738,15 +738,15 @@
       "signal": "IN",
       "price_a": 93000.0,
       "price_b": 42250.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "timestamp": "2025-12-10 11:38:00"
     },
     {
       "stock_name": "🟢 JW중외제약(비) [5 @ 2.0-0.4]",
-      "sz_value": 2.35,
+      "sz_value": 2.43,
       "signal": "IN",
-      "price_a": 26900.0,
-      "price_b": 29300.0,
-      "timestamp": "2025-12-10 11:31:33"
+      "price_a": 26950.0,
+      "price_b": 29200.0,
+      "timestamp": "2025-12-10 11:38:00"
     }
   ]
 }
