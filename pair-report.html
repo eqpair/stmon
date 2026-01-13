@@ -567,8 +567,8 @@
 
                 // Floating Amount 계산
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
-                const spreadShort = (trade.common_floating_spread_bps || -202) / 100; // bps를 %로 변환
-                const spreadLong = (trade.preferred_floating_spread_bps || 200) / 100; // bps를 %로 변환
+                const spreadShort = (trade.common_floating_spread_bps || 0) / 100; // bps를 %로 변환
+                const spreadLong = (trade.preferred_floating_spread_bps || 0) / 100; // bps를 %로 변환
                 const shortFloatingAmt = calcFloatingAmt(netShortPrice, trade.common_qty, benchmarkRate, spreadShort, days);
                 const longFloatingAmt = calcFloatingAmt(netLongPrice, trade.preferred_qty, benchmarkRate, spreadLong, days);
 
