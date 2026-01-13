@@ -532,14 +532,14 @@
                         const commonExitPrice = (trade.common_exit || trade.common_entry) * 1.001;
                         const preferredExitPrice = (trade.preferred_exit || trade.preferred_entry) * 0.9975;
 
-                        const shortEquityAmt = (netShortPrice - commonExitPrice) * trade.common_qty;
-                        const longEquityAmt = (preferredExitPrice - netLongPrice) * trade.preferred_qty;
+                        const shortEquityAmt = (commonExitPrice - netShortPrice) * trade.common_qty;
+                        const longEquityAmt = (netLongPrice - preferredExitPrice) * trade.preferred_qty;
 
                         const benchmarkRate = trade.benchmark_rate_pct || 0;
                         const spreadShort = (trade.common_floating_spread_bps || -202) / 100;
                         const spreadLong = (trade.preferred_floating_spread_bps || 200) / 100;
 
-                        const shortFloatingAmt = calcFloatingAmt(netShortPrice, trade.common_qty, benchmarkRate, spreadShort, days);
+                        const shortFloatingAmt = -calcFloatingAmt(netShortPrice, trade.common_qty, benchmarkRate, spreadShort, days);
                         const longFloatingAmt = calcFloatingAmt(netLongPrice, trade.preferred_qty, benchmarkRate, spreadLong, days);
 
                         const borrowFeePct = trade.common_borrow_fee_pct || 0;
