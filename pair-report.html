@@ -588,7 +588,21 @@
                 const shortPnl = shortEquityAmt + shortFloatingAmt - shortFee - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
                 const longPnl = longEquityAmt - longFloatingAmt - longFee;
                 const totalPnl = shortPnl + longPnl;
-                
+
+                // SSYH_002 디버깅
+                if (trade.trade_id === "SSYH_002") {
+                    console.log("=== SSYH_002 계산 ===");
+                    console.log("shortEquityAmt:", shortEquityAmt);
+                    console.log("shortFloatingAmt:", shortFloatingAmt);
+                    console.log("shortFee:", shortFee);
+                    console.log("shortPnl:", shortPnl);
+                    console.log("longEquityAmt:", longEquityAmt);
+                    console.log("longFloatingAmt:", longFloatingAmt);
+                    console.log("longFee:", longFee);
+                    console.log("longPnl:", longPnl);
+                    console.log("totalPnl:", totalPnl);
+                }
+
                 // 투자금액 계산
                 const commonInvested = calcShortInvested(trade.common_entry, trade.common_qty);
                 const preferredInvested = calcLongInvested(trade.preferred_entry, trade.preferred_qty);
