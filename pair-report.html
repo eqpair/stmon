@@ -582,8 +582,8 @@
 
                 // Floating Amount 계산
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
-                const spreadShort = (trade.common_floating_spread_bps || -202) / 10000;
-                const spreadLong = (trade.preferred_floating_spread_bps || 200) / 10000;
+                const spreadShort = (trade.common_floating_spread_bps ?? -202) / 10000;
+                const spreadLong = (trade.preferred_floating_spread_bps ?? 200) / 10000;
                 const shortFloatingAmt = netShortPrice * trade.common_qty * ((benchmarkRate / 100) + spreadShort) * (days / 365);
                 const longFloatingAmt = netLongPrice * trade.preferred_qty * ((benchmarkRate / 100) + spreadLong) * (days / 365);
 
