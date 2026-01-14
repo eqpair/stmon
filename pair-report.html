@@ -572,8 +572,8 @@
                 const longEquityAmt = ((preferredPrice || trade.preferred_entry) - trade.preferred_entry) * trade.preferred_qty;
 
                 // 수수료 계산
-                const shortFee = trade.common_entry * 0.0025 * trade.common_qty + (commonPrice || trade.common_entry) * 0.001 * trade.common_qty;
-                const longFee = trade.preferred_entry * 0.001 * trade.preferred_qty + (preferredPrice || trade.preferred_entry) * 0.0025 * trade.preferred_qty;
+                const shortFee = trade.common_entry * 0.001 * trade.common_qty + (commonPrice || trade.common_entry) * 0.001 * trade.common_qty;
+                const longFee = trade.preferred_entry * 0.001 * trade.preferred_qty + (preferredPrice || trade.preferred_entry) * 0.001 * trade.preferred_qty;
 
                 // Floating Amount 계산
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
