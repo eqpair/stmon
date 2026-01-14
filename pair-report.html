@@ -530,83 +530,55 @@
             return;
         }
 
-        // trade_id로 그룹화
-        const tradesGrouped = {};
-        for (const trade of tradesData) {
-            const tradeId = trade.trade_id || `${trade.pair_name}_${trade.entry_date}`;
-            if (!tradesGrouped[tradeId]) {
-                tradesGrouped[tradeId] = [];
-            }
-            tradesGrouped[tradeId].push(trade);
-        }
-
         const todayStr = new Date().toISOString().slice(0, 10);
 
-        for (const tradeId in tradesGrouped) {
-            const trades = tradesGrouped[tradeId];
+        for (const trade of tradesData) {
+            const isClosed = trade.status === "Closed";
+            let commonPrice = trade.common_exit;
+            let preferredPrice = trade.preferred_exit;
+            let exitDate = trade.exit_date;
 
-            // Short와 Long 데이터 찾기
-            const shortTrade = trades.find(t => t.direction === 'S' || t.direction === 'Short');
-            const longTrade = trades.find(t => t.direction === 'L' || t.direction === 'Long');
-
-            if (!shortTrade || !longTrade) {
-                console.warn(`trade_id ${tradeId}에 Short 또는 Long 데이터가 없습니다.`);
-                continue;
-            }
-
-            const isClosed = shortTrade.status === "Closed" || longTrade.status === "Closed";
-            const status = shortTrade.status || longTrade.status || "Open";
-
-            let commonPrice = shortTrade.valuation_price || shortTrade.exit_price;
-            let preferredPrice = longTrade.valuation_price || longTrade.exit_price;
-            let exitDate = shortTrade.exit_date || longTrade.exit_date;
-
-            if (!isClosed && shortTrade.common_code) {
-                const trend = await fetchTrendClose(shortTrade);
-                commonPrice = trend.commonClose || commonPrice;
-                preferredPrice = trend.preferredClose || preferredPrice;
+            if (!isClosed) {
+                const trend = await fetchTrendClose(trade);
+                commonPrice = trend.commonClose;
+                preferredPrice = trend.preferredClose;
                 exitDate = todayStr;
             }
 
-            const entryDate = new Date(shortTrade.entry_date || shortTrade.trade_date);
+            const entryDate = new Date(trade.entry_date);
             const lastDate = exitDate ? new Date(exitDate) : new Date();
             const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
-
-            const commonEntry = shortTrade.reference_price || shortTrade.entry_price;
-            const preferredEntry = longTrade.reference_price || longTrade.entry_price;
-            const commonQty = shortTrade.quantity;
-            const preferredQty = longTrade.quantity;
-
-            const borrowFeePct = shortTrade.borrow_fee_pct || 0;
-            const benchmarkRate = shortTrade.benchmark_rate_pct || longTrade.benchmark_rate_pct || 0;
-            const spreadShort = (shortTrade.floating_spread_bps || 0) / 100;
-            const spreadLong = (longTrade.floating_spread_bps || 0) / 100;
+            const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
             // Net Price 계산
-            const netShortPrice = commonEntry * 0.9975;
-            const netLongPrice = preferredEntry * 1.001;
+            const netShortPrice = trade.common_entry * 0.9975;
+            const netLongPrice = trade.preferred_entry * 1.001;
 
-            // Equity Amount 계산
-            const shortEquityAmt = ((commonPrice || commonEntry) - commonEntry) * commonQty;
-            const longEquityAmt = ((preferredPrice || preferredEntry) - preferredEntry) * preferredQty;
+            // Equity Amount 계산 (Equity Perf.)
+            const shortEquityAmt = ((commonPrice || trade.common_entry) - trade.common_entry) * trade.common_qty;
+            const longEquityAmt = ((preferredPrice || trade.preferred_entry) - trade.preferred_entry) * trade.preferred_qty;
 
             // Floating Amount 계산
-            const shortFloatingAmt = netShortPrice * commonQty * ((benchmarkRate + spreadShort) / 100) * (days / 365);
-            const longFloatingAmt = netLongPrice * preferredQty * ((benchmarkRate + spreadLong) / 100) * (days / 365);
+            const benchmarkRate = trade.benchmark_rate_pct || 0;
+            const spreadShort = (trade.common_floating_spread_bps || 0) / 100;
+            const spreadLong = (trade.preferred_floating_spread_bps || 0) / 100;
 
-            // 손익 계산
-            const borrowFee = calcBorrowFee(commonEntry, commonQty, borrowFeePct, days);
+            const shortFloatingAmt = netShortPrice * trade.common_qty * ((benchmarkRate + spreadShort) / 100) * (days / 365);
+            const longFloatingAmt = netLongPrice * trade.preferred_qty * ((benchmarkRate + spreadLong) / 100) * (days / 365);
+
+            // 손익 계산 (Equity + Floating - Borrow Fee)
+            const borrowFee = calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
             const shortPnl = shortEquityAmt + shortFloatingAmt - borrowFee;
             const longPnl = longEquityAmt - longFloatingAmt;
             const totalPnl = shortPnl + longPnl;
 
             // 투자금액 계산
-            const commonInvested = calcShortInvested(commonEntry, commonQty);
-            const preferredInvested = calcLongInvested(preferredEntry, preferredQty);
+            const commonInvested = calcShortInvested(trade.common_entry, trade.common_qty);
+            const preferredInvested = calcLongInvested(trade.preferred_entry, trade.preferred_qty);
             const totalInvested = commonInvested + preferredInvested;
 
             // Open 상태인 거래의 투자금액과 P&L 합산
-            if (status === "Open") {
+            if (trade.status === "Open") {
                 totalExposure += totalInvested;
                 totalOpenPnL += totalPnl;
             }
@@ -617,13 +589,13 @@
             const longRet = calcReturn(preferredInvested, longPnl);
 
             // 종목명 처리
-            let displayStockName = shortTrade.pair_name || shortTrade.underlying || '-';
+            let displayStockName = trade.pair_name || '-';
             displayStockName = displayStockName.replace(/\s*\[.*?\]/g, '').trim();
             let baseStockName = normalizeStockName(displayStockName);
             const stockCode = getStockCodeByName(baseStockName);
 
             // sz_value 매핑
-            const tradeName = normalizeStockName(displayStockName).toLowerCase();
+            const tradeName = normalizeStockName(trade.pair_name).toLowerCase();
             const matchedSignal = stockSignals.find(s => normalizeStockName(s.stock_name).toLowerCase() === tradeName);
             const szValue = matchedSignal?.sz_value ?? null;
             let szClass = '';
@@ -644,20 +616,20 @@
                         <b>${displayStockName}</b>
                     </a>
                 </td>
-                <td rowspan="2" class="${status === 'Open' ? 'open-green' : ''}">${status}</td>
+                <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
                 <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
                 <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                 <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                 <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
                 <td class="center-align"><b>S</b></td>
-                <td>${commonEntry?.toLocaleString() || '-'}</td>
+                <td>${trade.common_entry?.toLocaleString() || '-'}</td>
                 <td${!isClosed ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-                <td>${commonQty}</td>
+                <td>${trade.common_qty}</td>
                 <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
                 <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
                 <td>${Math.round(commonInvested).toLocaleString()}</td>
-                <td>${formatDateToYYMMDD(shortTrade.entry_date || shortTrade.trade_date)}</td>
-                <td>${formatDateToYYMMDD(isClosed ? (shortTrade.exit_date || shortTrade.valuation_date) : '-')}</td>
+                <td>${formatDateToYYMMDD(trade.entry_date)}</td>
+                <td>${formatDateToYYMMDD(isClosed ? trade.exit_date : '-')}</td>
                 <td>${days}</td>
             `;
             tbody.appendChild(trShort);
@@ -669,14 +641,14 @@
             }
             trLong.innerHTML = `
                 <td style="text-align: center;"><b>L</b></td>
-                <td>${preferredEntry?.toLocaleString() || '-'}</td>
+                <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
                 <td${!isClosed ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-                <td>${preferredQty}</td>
+                <td>${trade.preferred_qty}</td>
                 <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
                 <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
                 <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                <td>${formatDateToYYMMDD(longTrade.entry_date || longTrade.trade_date)}</td>
-                <td>${formatDateToYYMMDD(isClosed ? (longTrade.exit_date || longTrade.valuation_date) : '-')}</td>
+                <td>${formatDateToYYMMDD(trade.entry_date)}</td>
+                <td>${formatDateToYYMMDD(isClosed ? trade.exit_date : '-')}</td>
                 <td>${days}</td>
             `;
             tbody.appendChild(trLong);
