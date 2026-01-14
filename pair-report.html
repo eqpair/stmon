@@ -410,16 +410,6 @@
             return buyPrice * qty;
         }
 
-        // Floating Amount 계산
-        // Floating Amount 계산
-        const benchmarkRate = trade.benchmark_rate_pct || 0; // 이미 % 단위 (2.5 = 2.5%)
-        const spreadShortBps = trade.common_floating_spread_bps || -202; // bps 단위
-        const spreadLongBps = trade.preferred_floating_spread_bps || 200; // bps 단위
-
-        // bps를 % 단위로 변환: 202 bps = 2.02% → 0.0202 (소수)
-        const shortFloatingAmt = netShortPrice * trade.common_qty * ((benchmarkRate / 100) + (spreadShortBps / 10000)) * (days / 365);
-        const longFloatingAmt = netLongPrice * trade.preferred_qty * ((benchmarkRate / 100) + (spreadLongBps / 10000)) * (days / 365);
-
         // 수익률 계산 함수
         function calcReturn(invested, profit) {
             if (!invested) return 0;
