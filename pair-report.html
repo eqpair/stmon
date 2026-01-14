@@ -539,7 +539,22 @@
             }
 
             const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+            // 종목별로 그룹화
+            const groupedTrades = {};
             for (const trade of tradesData) {
+                const baseName = normalizeStockName(trade.pair_name);
+                if (!groupedTrades[baseName]) {
+                    groupedTrades[baseName] = [];
+                }
+                groupedTrades[baseName].push(trade);
+            }
+
+            // 그룹별로 처리
+            for (const [groupName, trades] of Object.entries(groupedTrades)) {
+                for (let i = 0; i < trades.length; i++) {
+                    const trade = trades[i];
+                    const isFirstInGroup = i === 0;
                 const isClosed = trade.status === "Closed";
                 let commonPrice = trade.common_exit;
                 let preferredPrice = trade.preferred_exit;
@@ -610,7 +625,9 @@
 
                 // Short(보통주) 행
                 const trShort = document.createElement('tr');
-                trShort.classList.add('item-group');
+                    if (isFirstInGroup) {
+                        trShort.classList.add('item-group');
+                    }
                 if (isClosed) {
                     trShort.classList.add('exited-row');
                 }
@@ -720,7 +737,7 @@
             `;
             }
         }
-
+    }
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', init);
     </script>
