@@ -724,22 +724,23 @@
             } catch (error) {
                 console.error('초기화 오류:', error);
                 document.getElementById('loading-container').innerHTML = `
-                <div class="text-red-500 text-center">
-                    <p>데이터를 로드할 수 없습니다.</p>
-                    <p>${error.message}</p>
-                    <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                        다시 시도
-                    </button>
-                    <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
-                        메인 페이지로 돌아가기
-                    </button>
-                </div>
-            `;
+                    <div class="text-red-500 text-center">
+                        <p>데이터를 로드할 수 없습니다.</p>
+                        <p>${error.message}</p>
+                        <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                            다시 시도
+                        </button>
+                        <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                            메인 페이지로 돌아가기
+                        </button>
+                    </div>
+                `;
             }
         }
+
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-
+        
 </html>
