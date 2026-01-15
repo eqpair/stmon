@@ -533,23 +533,59 @@
                 return;
             }
 
-            const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+            const todayStr = new Date().toISOString().slice(0, 10);
 
-            // 종목별로 그룹화
-            const groupedTrades = {};
+            // 종목별로 거래 합산
+            const aggregatedTrades = {};
+
             for (const trade of tradesData) {
                 const baseName = normalizeStockName(trade.pair_name);
-                if (!groupedTrades[baseName]) {
-                    groupedTrades[baseName] = [];
-                }
-                groupedTrades[baseName].push(trade);
-            }
 
-            // 그룹별로 처리
-            for (const [groupName, trades] of Object.entries(groupedTrades)) {
-                for (let i = 0; i < trades.length; i++) {
-                    const trade = trades[i];
-                    const isFirstInGroup = i === 0;
+                if (!aggregatedTrades[baseName]) {
+                    aggregatedTrades[baseName] = {
+                        pair_name: trade.pair_name,
+                        common_code: trade.common_code,
+                        status: trade.status,
+
+                        // Short Position 합계
+                        common_entry_total: 0,
+                        common_exit_total: 0,
+                        common_qty: 0,
+                        common_invested: 0,
+
+                        // Long Position 합계
+                        preferred_entry_total: 0,
+                        preferred_exit_total: 0,
+                        preferred_qty: 0,
+                        preferred_invested: 0,
+
+                        // P&L 합계
+                        shortPnl: 0,
+                        longPnl: 0,
+
+                        // 날짜 정보
+                        earliest_entry: trade.entry_date,
+                        latest_exit: trade.exit_date,
+                        total_days: 0
+                    };
+                }
+
+                const agg = aggregatedTrades[baseName];
+
+                // Status 업데이트 (하나라도 Open이면 Open)
+                if (trade.status === "Open") {
+                    agg.status = "Open";
+                }
+
+                // 날짜 업데이트
+                if (trade.entry_date < agg.earliest_entry) {
+                    agg.earliest_entry = trade.entry_date;
+                }
+                if (trade.exit_date && (!agg.latest_exit || trade.exit_date > agg.latest_exit)) {
+                    agg.latest_exit = trade.exit_date;
+                }
+
+                // 개별 거래의 손익 계산
                 const isClosed = trade.status === "Closed";
                 let commonPrice = trade.common_exit;
                 let preferredPrice = trade.preferred_exit;
@@ -562,7 +598,6 @@
                     exitDate = todayStr;
                 }
 
-                // 영업일 계산
                 const entryDate = trade.entry_date;
                 const lastDate = exitDate || todayStr;
                 const days = Math.max(1, Math.floor((new Date(lastDate) - new Date(entryDate)) / (1000 * 60 * 60 * 24)));
@@ -584,33 +619,56 @@
                 const shortPnl = shortEquityAmt + shortFloatingAmt - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
                 const longPnl = longEquityAmt + longFloatingAmt;
 
-                // 전체 손익 (부호 반전)
-                const totalPnl = -(shortPnl + longPnl);
-
                 // 투자금액 계산
                 const commonInvested = trade.common_entry * trade.common_qty;
                 const preferredInvested = trade.preferred_entry * trade.preferred_qty;
-                const totalInvested = commonInvested + preferredInvested;
+
+                // 합산
+                agg.common_entry_total += trade.common_entry * trade.common_qty;
+                agg.common_exit_total += (commonPrice || trade.common_entry) * trade.common_qty;
+                agg.common_qty += trade.common_qty;
+                agg.common_invested += commonInvested;
+
+                agg.preferred_entry_total += trade.preferred_entry * trade.preferred_qty;
+                agg.preferred_exit_total += (preferredPrice || trade.preferred_entry) * trade.preferred_qty;
+                agg.preferred_qty += trade.preferred_qty;
+                agg.preferred_invested += preferredInvested;
+
+                agg.shortPnl += shortPnl;
+                agg.longPnl += longPnl;
+            }
+
+            // 합산된 데이터로 테이블 렌더링
+            for (const [baseName, agg] of Object.entries(aggregatedTrades)) {
+                // 평균 가격 계산
+                const avgCommonEntry = agg.common_qty > 0 ? agg.common_entry_total / agg.common_qty : 0;
+                const avgCommonExit = agg.common_qty > 0 ? agg.common_exit_total / agg.common_qty : 0;
+                const avgPreferredEntry = agg.preferred_qty > 0 ? agg.preferred_entry_total / agg.preferred_qty : 0;
+                const avgPreferredExit = agg.preferred_qty > 0 ? agg.preferred_exit_total / agg.preferred_qty : 0;
+
+                // 전체 손익 (부호 반전)
+                const totalPnl = -(agg.shortPnl + agg.longPnl);
+                const totalInvested = agg.common_invested + agg.preferred_invested;
 
                 // Open 상태인 거래의 투자금액과 P&L 합산
-                if (trade.status === "Open") {
+                if (agg.status === "Open") {
                     totalExposure += totalInvested;
                     totalOpenPnL += totalPnl;
                 }
 
                 // 수익률 계산
                 const totalRet = calcReturn(totalInvested, totalPnl);
-                const shortRet = calcReturn(commonInvested, -shortPnl);
-                const longRet = calcReturn(preferredInvested, -longPnl);
+                const shortRet = calcReturn(agg.common_invested, -agg.shortPnl);
+                const longRet = calcReturn(agg.preferred_invested, -agg.longPnl);
 
                 // 종목명 처리
-                let displayStockName = trade.pair_name || '-';
-                displayStockName = displayStockName.replace(/\s*\[.*?\]/g, '').trim(); // 대괄호와 내용 제거
+                let displayStockName = agg.pair_name || '-';
+                displayStockName = displayStockName.replace(/\s*\[.*?\]/g, '').trim();
                 let baseStockName = normalizeStockName(displayStockName);
                 const stockCode = getStockCodeByName(baseStockName);
 
                 // sz_value 매핑
-                const tradeName = normalizeStockName(trade.pair_name).toLowerCase();
+                const tradeName = normalizeStockName(agg.pair_name).toLowerCase();
                 const matchedSignal = stockSignals.find(s => normalizeStockName(s.stock_name).toLowerCase() === tradeName);
                 const szValue = matchedSignal?.sz_value ?? null;
                 let szClass = '';
@@ -618,38 +676,41 @@
                     szClass = szValue >= 2.5 ? 'sz-high' : szValue >= 1.5 ? 'sz-medium' : 'sz-low';
                 }
 
+                const isClosed = agg.status === "Closed";
+
+                // Days 계산 (전체 기간)
+                const totalDays = Math.floor((new Date(agg.latest_exit || todayStr) - new Date(agg.earliest_entry)) / (1000 * 60 * 60 * 24));
+
                 // Short(보통주) 행
                 const trShort = document.createElement('tr');
-                    if (isFirstInGroup) {
-                        trShort.classList.add('item-group');
-                    }
+                trShort.classList.add('item-group');
                 if (isClosed) {
                     trShort.classList.add('exited-row');
                 }
                 trShort.innerHTML = `
-                <td rowspan="2" class="clickable-item">
-                    <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
-                        class="hover:text-blue-600 hover:underline">
-                        <b>${displayStockName}</b>
-                    </a>
-                </td>
-                <td rowspan="2" class="${trade.status === 'Open' ? 'open-green' : ''}">${trade.status}</td>
-                <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
-                <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
-                <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
-                <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
-                <td class="center-align"><b>S</b></td>
-                <td>${trade.common_entry?.toLocaleString() || '-'}</td>
-                <td${!isClosed ? ' class="bold-green"' : ''}>${commonPrice != null ? commonPrice.toLocaleString() : '-'}</td>
-                <td>${trade.common_qty}</td>
-                <td class="${profitClass(shortPnl)}">${Math.round(shortPnl).toLocaleString()}</td>
-                <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
-                <td>${Math.round(commonInvested).toLocaleString()}</td>
-                <td>${formatDateToYYMMDD(trade.entry_date)}</td>
-                <td>${formatDateToYYMMDD(isClosed ? trade.exit_date : '-')}</td>
-                <td>${days}</td>
-            `;
-                tbody.appendChild(trShort);
+                    <td rowspan="2" class="clickable-item">
+                        <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
+                            class="hover:text-blue-600 hover:underline">
+                            <b>${displayStockName}</b>
+                        </a>
+                    </td>
+                    <td rowspan="2" class="${agg.status === 'Open' ? 'open-green' : ''}">${agg.status}</td>
+                    <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
+                    <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+                    <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+                    <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
+                    <td class="center-align"><b>S</b></td>
+                    <td>${agg.common_qty > 0 ? Math.round(avgCommonEntry).toLocaleString() : '-'}</td>
+                    <td${!isClosed ? ' class="bold-green"' : ''}>${agg.common_qty > 0 ? Math.round(avgCommonExit).toLocaleString() : '-'}</td>
+                    <td>${agg.common_qty}</td>
+                    <td class="${profitClass(-agg.shortPnl)}">${Math.round(-agg.shortPnl).toLocaleString()}</td>
+                    <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+                    <td>${Math.round(agg.common_invested).toLocaleString()}</td>
+                    <td>${formatDateToYYMMDD(agg.earliest_entry)}</td>
+                    <td>${formatDateToYYMMDD(isClosed ? agg.latest_exit : '-')}</td>
+                    <td>${totalDays}</td>
+                `;
+                            tbody.appendChild(trShort);
 
                 // Long(우선주) 행
                 const trLong = document.createElement('tr');
@@ -657,26 +718,24 @@
                     trLong.classList.add('exited-row');
                 }
                 trLong.innerHTML = `
-                <td style="text-align: center;"><b>L</b></td>
-                <td>${trade.preferred_entry?.toLocaleString() || '-'}</td>
-                <td${!isClosed ? ' class="bold-green"' : ''}>${preferredPrice != null ? preferredPrice.toLocaleString() : '-'}</td>
-                <td>${trade.preferred_qty}</td>
-                <td class="${profitClass(longPnl)}">${Math.round(longPnl).toLocaleString()}</td>
-                <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
-                <td>${Math.round(preferredInvested).toLocaleString()}</td>
-                <td>${formatDateToYYMMDD(trade.entry_date)}</td>
-                <td>${formatDateToYYMMDD(isClosed ? trade.exit_date : '-')}</td>
-                <td>${days}</td>
-            `;
+                    <td style="text-align: center;"><b>L</b></td>
+                    <td>${agg.preferred_qty > 0 ? Math.round(avgPreferredEntry).toLocaleString() : '-'}</td>
+                    <td${!isClosed ? ' class="bold-green"' : ''}>${agg.preferred_qty > 0 ? Math.round(avgPreferredExit).toLocaleString() : '-'}</td>
+                    <td>${agg.preferred_qty}</td>
+                    <td class="${profitClass(-agg.longPnl)}">${Math.round(-agg.longPnl).toLocaleString()}</td>
+                    <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+                    <td>${Math.round(agg.preferred_invested).toLocaleString()}</td>
+                    <td>${formatDateToYYMMDD(agg.earliest_entry)}</td>
+                    <td>${formatDateToYYMMDD(isClosed ? agg.latest_exit : '-')}</td>
+                    <td>${totalDays}</td>
+                `;
                 tbody.appendChild(trLong);
             }
-        }
+
             // Total Exposure와 Open P&L 업데이트
             const totalExposureElement = document.getElementById('totalExposure');
             if (totalExposureElement) {
                 totalExposureElement.textContent = `₩${Math.round(totalExposure).toLocaleString()}`;
-            } else {
-                console.warn('totalExposure 요소를 찾을 수 없습니다.');
             }
 
             const openPnLElement = document.getElementById('openPnL');
@@ -684,8 +743,6 @@
                 const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
                 openPnLElement.textContent = `₩${Math.round(totalOpenPnL).toLocaleString()}`;
                 openPnLElement.className = `font-medium ${pnlClass}`;
-            } else {
-                console.warn('openPnL 요소를 찾을 수 없습니다.');
             }
         }
 
