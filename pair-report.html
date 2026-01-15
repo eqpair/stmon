@@ -567,31 +567,31 @@
                 const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
-                // Equity Amount 계산 (수수료/세금 제외한 순수 가격 차이)
-                const shortEquityAmt = (trade.common_entry - (commonPrice || trade.common_entry)) * trade.common_qty;
-                const longEquityAmt = ((preferredPrice || trade.preferred_entry) - trade.preferred_entry) * trade.preferred_qty;
+                // Long Position 계산
+                const longP0 = trade.preferred_entry * 1.001; // 진입가 (수수료 0.1%)
+                const longP1 = (preferredPrice || trade.preferred_entry) * 0.9975; // 청산가 (수수료 0.1% + 세금 0.15%)
+                const longEquityAmt = trade.preferred_qty * (longP1 - longP0);
 
-                // 수수료 계산
-                const shortFee = trade.common_entry * 0.001 * trade.common_qty + (commonPrice || trade.common_entry) * 0.001 * trade.common_qty;
-                const longFee = trade.preferred_entry * 0.001 * trade.preferred_qty + (preferredPrice || trade.preferred_entry) * 0.001 * trade.preferred_qty;
+                // Short Position 계산
+                const shortP0 = trade.common_entry * 0.9975; // 진입가 (수수료 0.1% + 세금 0.15%)
+                const shortP1 = (commonPrice || trade.common_entry) * 1.001; // 청산가 (수수료 0.1%)
+                const shortEquityAmt = trade.common_qty * (shortP1 - shortP0) * (-1);
 
                 // Floating Amount 계산
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
                 const spreadShort = (trade.common_floating_spread_bps ?? -202) / 10000;
                 const spreadLong = (trade.preferred_floating_spread_bps ?? 200) / 10000;
-                const netShortPrice = trade.common_entry * 0.9975;
-                const netLongPrice = trade.preferred_entry * 1.001;
-                const shortFloatingAmt = netShortPrice * trade.common_qty * ((benchmarkRate / 100) + spreadShort) * (days / 365);
-                const longFloatingAmt = netLongPrice * trade.preferred_qty * ((benchmarkRate / 100) + spreadLong) * (days / 365);
+                const shortFloatingAmt = Math.round(shortP0 * trade.common_qty * ((benchmarkRate / 100) + spreadShort) * (days / 365));
+                const longFloatingAmt = Math.round(longP0 * trade.preferred_qty * ((benchmarkRate / 100) + spreadLong) * (days / 365));
 
-                // 손익 계산
-                const shortPnl = shortEquityAmt + shortFloatingAmt - shortFee - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
-                const longPnl = longEquityAmt - longFloatingAmt - longFee;
+                // 손익 계산 (수수료는 이미 P0, P1에 포함됨)
+                const shortPnl = shortEquityAmt + shortFloatingAmt - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
+                const longPnl = longEquityAmt - longFloatingAmt;
                 const totalPnl = shortPnl + longPnl;
 
-                // 투자금액 계산
-                const commonInvested = calcShortInvested(trade.common_entry, trade.common_qty);
-                const preferredInvested = calcLongInvested(trade.preferred_entry, trade.preferred_qty);
+                // 투자금액 계산 (P0 사용)
+                const commonInvested = shortP0 * trade.common_qty;
+                const preferredInvested = longP0 * trade.preferred_qty;
                 const totalInvested = commonInvested + preferredInvested;
 
                 // Open 상태인 거래의 투자금액과 P&L 합산
