@@ -521,6 +521,27 @@
             }
         }
 
+        // 영업일 계산 함수 추가
+        function calcBusinessDays(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            let count = 0;
+            const current = new Date(start);
+
+            // 시작일은 제외하고 카운트
+            current.setDate(current.getDate() + 1);
+
+            while (current <= end) {
+                const dayOfWeek = current.getDay();
+                if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                    count++;
+                }
+                current.setDate(current.getDate() + 1);
+            }
+
+            return Math.max(1, count);
+        }
+
         // 테이블 렌더링 함수
         async function renderTable(stockSignals) {
             const tbody = document.getElementById('report-body');
@@ -562,36 +583,34 @@
                     exitDate = todayStr;
                 }
 
-                const entryDate = new Date(trade.entry_date);
-                const lastDate = exitDate ? new Date(exitDate) : new Date();
-                const days = Math.max(1, Math.round((lastDate - entryDate) / (1000 * 60 * 60 * 24)));
+                // 영업일 계산
+                const entryDate = trade.entry_date;
+                const lastDate = exitDate || todayStr;
+                const days = calcBusinessDays(entryDate, lastDate);
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
-                // Long Position 계산
-                const longP0 = trade.preferred_entry * 1.001; // 진입가 (수수료 0.1%)
-                const longP1 = (preferredPrice || trade.preferred_entry) * 0.9975; // 청산가 (수수료 0.1% + 세금 0.15%)
-                const longEquityAmt = trade.preferred_qty * (longP1 - longP0);
-
-                // Short Position 계산
-                const shortP0 = trade.common_entry * 0.9975; // 진입가 (수수료 0.1% + 세금 0.15%)
-                const shortP1 = (commonPrice || trade.common_entry) * 1.001; // 청산가 (수수료 0.1%)
-                const shortEquityAmt = trade.common_qty * (shortP1 - shortP0) * (-1);
+                // Equity 계산 (수수료/세금 제외, 단순 가격 차이)
+                const shortEquityAmt = ((commonPrice || trade.common_entry) - trade.common_entry) * trade.common_qty;
+                const longEquityAmt = (trade.preferred_entry - (preferredPrice || trade.preferred_entry)) * trade.preferred_qty;
 
                 // Floating Amount 계산
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
-                const spreadShort = (trade.common_floating_spread_bps ?? -202) / 10000;
-                const spreadLong = (trade.preferred_floating_spread_bps ?? 200) / 10000;
-                const shortFloatingAmt = Math.round(shortP0 * trade.common_qty * ((benchmarkRate / 100) + spreadShort) * (days / 365));
-                const longFloatingAmt = Math.round(longP0 * trade.preferred_qty * ((benchmarkRate / 100) + spreadLong) * (days / 365));
+                const spreadShort = ((trade.common_floating_spread_bps ?? -202) / 10000);
+                const spreadLong = ((trade.preferred_floating_spread_bps ?? 200) / 10000);
 
-                // 손익 계산 (수수료는 이미 P0, P1에 포함됨)
+                const shortFloatingAmt = -Math.round(trade.common_entry * trade.common_qty * ((benchmarkRate / 100) + spreadShort) * (days / 365));
+                const longFloatingAmt = Math.round(trade.preferred_entry * trade.preferred_qty * ((benchmarkRate / 100) + spreadLong) * (days / 365));
+
+                // 손익 계산
                 const shortPnl = shortEquityAmt + shortFloatingAmt - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
-                const longPnl = longEquityAmt - longFloatingAmt;
-                const totalPnl = shortPnl + longPnl;
+                const longPnl = longEquityAmt + longFloatingAmt;
 
-                // 투자금액 계산 (P0 사용)
-                const commonInvested = shortP0 * trade.common_qty;
-                const preferredInvested = longP0 * trade.preferred_qty;
+                // 전체 손익 (부호 반전)
+                const totalPnl = -(shortPnl + longPnl);
+
+                // 투자금액 계산
+                const commonInvested = trade.common_entry * trade.common_qty;
+                const preferredInvested = trade.preferred_entry * trade.preferred_qty;
                 const totalInvested = commonInvested + preferredInvested;
 
                 // Open 상태인 거래의 투자금액과 P&L 합산
@@ -602,8 +621,8 @@
 
                 // 수익률 계산
                 const totalRet = calcReturn(totalInvested, totalPnl);
-                const shortRet = calcReturn(commonInvested, shortPnl);
-                const longRet = calcReturn(preferredInvested, longPnl);
+                const shortRet = calcReturn(commonInvested, -shortPnl);
+                const longRet = calcReturn(preferredInvested, -longPnl);
 
                 // 종목명 처리
                 let displayStockName = trade.pair_name || '-';
