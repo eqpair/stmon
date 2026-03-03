@@ -283,6 +283,10 @@
                         <div class="text-yellow-700 text-sm font-medium mb-1">현재 괴리율</div>
                         <div class="text-xl font-bold" id="current-discount-rate">-</div>
                     </div>
+                    <div class="p-4 bg-orange-50 rounded-lg">
+                        <div class="text-orange-700 text-sm font-medium mb-1">SKW (장/단)</div>
+                        <div class="text-xl font-bold" id="current-skew-value">-</div>
+                    </div>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -536,8 +540,9 @@
                     signal: realtimeData.signal || '',
                     discountRate: calculateDiscountRate(
                         realtimeData.commonPrice || (trendData.common_prices && trendData.common_prices.length > 0 ? trendData.common_prices[trendData.common_prices.length - 1] : 0),
-                        realtimeData.preferredPrice || (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)
-                    )
+                        realtimeData.preferredPrice || (trendData.preferred_prices && trendData.preferred_prices.length > 0 ? trendData.preferred_prices[trendData.preferred_prices.length - 1] : 0)),
+                    skewLong: realtimeData.skewLong ?? null,   // 추가
+                    skewShort: realtimeData.skewShort ?? null  // 추가
                 };
 
                 stockData.history.dates = trendData.dates ? trendData.dates.slice(-150) : [];
@@ -848,7 +853,9 @@
                     commonPrice: matchedSignal.price_a || null,
                     preferredPrice: matchedSignal.price_b || null,
                     szValue: matchedSignal.sz_value || 0,
-                    signal: matchedSignal.signal || ''
+                    signal: matchedSignal.signal || '',
+                    skewLong: matchedSignal.skew_long ?? null,   // 추가
+                    skewShort: matchedSignal.skew_short ?? null  // 추가
                 };
             } catch (error) {
                 console.error('실시간 데이터 가져오기 오류:', error);
@@ -1000,6 +1007,12 @@
             document.getElementById('preferred-price-slider').value = 0;
             document.getElementById('common-price-percent').textContent = '0%';
             document.getElementById('preferred-price-percent').textContent = '0%';
+            // updateCurrentInfo() 함수 맨 끝에 추가
+            const skewEl = document.getElementById('current-skew-value');
+            const sl = stockData.current.skewLong;
+            const ss = stockData.current.skewShort;
+            skewEl.textContent = `${sl !== null ? (sl >= 0 ? '+' : '') + sl : '-'} / ${ss !== null ? (ss >= 0 ? '+' : '') + ss : '-'}`;
+            skewEl.className = 'text-xl font-bold ' + (ss !== null && ss < 0 ? 'text-orange-500' : 'text-green-600');
         }
 
         function renderSZChart(dates, szValues, chartHeight, pointRadius) {
