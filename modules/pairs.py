@@ -121,6 +121,9 @@ class NPPair:
         self.data['dr_avg'] = self.data['dr'].rolling(window=self.avg_period).mean().shift(1)
         self.data['std'] = self.data['dr'].rolling(window=self.avg_period).std().shift(1)
         self.data['sz'] = (self.data['dr'] - self.data['dr_avg']) / self.data['std']
+        
+        self.skew_long = round(self.data['dr'].skew(), 2)
+        self.skew_short = round(self.data['dr'].tail(60).skew(), 2)
 
     async def get_signal_now(self) -> Optional[str]:
         await self.fetch_data()
@@ -145,7 +148,8 @@ class NPPair:
             price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
             ratio_info = f"{sz:.2f}"
 
-            return f"{ratio_info} / {signal} / {price_info}"
+            skew_info = f"SKW {'+' if self.skew_long >= 0 else ''}{self.skew_long}/{'+' if self.skew_short >= 0 else ''}{self.skew_short}"
+            return f"{ratio_info} / {signal} / {price_info} / {skew_info}"
 
         except Exception as e:
             logger.error(f"Error generating signal: {str(e)}")

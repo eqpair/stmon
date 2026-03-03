@@ -97,6 +97,7 @@ def mark_special_stocks(stock_name):
 
 
 # 신호 텍스트를 웹용 JSON으로 파싱
+# 기존 함수 전체를 아래로 교체
 def parse_signals(signals_text):
     import re
     result = []
@@ -113,6 +114,8 @@ def parse_signals(signals_text):
         sz_value = 0.0
         signal = ""
         price_a, price_b = None, None
+        skew_long, skew_short = None, None  # 추가
+
         signal_parts = signal_line.split('/')
         try:
             sz_value = float(signal_parts[0].strip())
@@ -128,12 +131,23 @@ def parse_signals(signals_text):
             if len(price_items) > 1:
                 try: price_b = float(price_items[1].strip())
                 except: pass
+        # 추가: 왜도 파싱 (signal_parts[3])
+        if len(signal_parts) > 3:
+            try:
+                skew_raw = signal_parts[3].replace('SKW', '').strip().split('/')
+                skew_long = float(skew_raw[0])
+                skew_short = float(skew_raw[1])
+            except:
+                pass
+
         signal_data = {
             "stock_name": stock_name_line,
             "sz_value": sz_value,
             "signal": signal,
             "price_a": price_a,
             "price_b": price_b,
+            "skew_long": skew_long,    # 추가
+            "skew_short": skew_short,  # 추가
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         result.append(signal_data)
