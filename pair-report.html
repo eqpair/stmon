@@ -675,10 +675,10 @@
                 let szClass = '';
                 if (szValue !== null) {
                     szClass = szValue >= 2.5 ? 'sz-high' : szValue >= 1.5 ? 'sz-medium' : 'sz-low';
+                }
                 const skewLong = matchedSignal?.skew_long ?? null;
                 const skewShort = matchedSignal?.skew_short ?? null;
                 const skewClass = (skewShort !== null && skewShort < 0) ? 'text-orange-500 font-bold' : 'text-green-600';
-                }
 
                 const isClosed = agg.status === "Closed";
 
