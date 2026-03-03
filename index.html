@@ -738,13 +738,17 @@
                         <div>${signalTags}</div>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+
                         <div>
                             <span class="text-gray-500">SZ Value:</span>
                             <span class="${szClass}">${signal.sz_value ? signal.sz_value.toFixed(2) : '-'}</span>
                         </div>
                         <div>
-                            <span class="text-gray-500">Price:</span>
-                            <span>${signal.price_a ? signal.price_a.toLocaleString() : '-'}</span>
+                            <span class="text-gray-500">SKW:</span>
+                            <span class="${(signal.skew_short !== null && signal.skew_short < 0) ? 'text-orange-500 font-bold' : 'text-green-600'}">
+                                ${signal.skew_long !== null ? (signal.skew_long >= 0 ? '+' : '') + signal.skew_long : '-'}
+                                / ${signal.skew_short !== null ? (signal.skew_short >= 0 ? '+' : '') + signal.skew_short : '-'}
+                            </span>
                         </div>
                     </div>
                     <div class="text-xs text-gray-500 mt-2">
