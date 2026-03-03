@@ -134,9 +134,8 @@ def parse_signals(signals_text):
         # 추가: 왜도 파싱 (signal_parts[3])
         if len(signal_parts) > 3:
             try:
-                skew_raw = signal_parts[3].replace('SKW', '').strip().split('/')
-                skew_long = float(skew_raw[0])
-                skew_short = float(skew_raw[1])
+                skew_long = float(signal_parts[3].replace('SKW', '').strip())
+                skew_short = float(signal_parts[4].strip()) if len(signal_parts) > 4 else None
             except:
                 pass
 
