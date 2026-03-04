@@ -212,7 +212,6 @@
                             <th></th>
                             <th>Status</th>
                             <th>SZ</th>
-                            <th>SKW</th>
                             <th>N Profit</th>
                             <th>N %</th>
                             <th>T Exp</th>
@@ -676,9 +675,6 @@
                 if (szValue !== null) {
                     szClass = szValue >= 2.5 ? 'sz-high' : szValue >= 1.5 ? 'sz-medium' : 'sz-low';
                 }
-                const skewLong = matchedSignal?.skew_long ?? null;
-                const skewShort = matchedSignal?.skew_short ?? null;
-                const skewClass = (skewShort !== null && skewShort < 0) ? 'text-orange-500' : 'text-green-600';
  
                 const isClosed = agg.status === "Closed";
 
@@ -700,10 +696,6 @@
                     </td>
                     <td rowspan="2" class="${agg.status === 'Open' ? 'open-green' : ''}">${agg.status}</td>
                     <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
-                    <td rowspan="2" class="${skewClass}">
-                        ${skewLong !== null ? (skewLong >= 0 ? '+' : '') + skewLong : '-'}<br>
-                        ${skewShort !== null ? (skewShort >= 0 ? '+' : '') + skewShort : '-'}
-                    </td>
                     <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                     <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                     <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
