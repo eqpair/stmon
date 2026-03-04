@@ -405,7 +405,48 @@
                     </div>
                 </div>
             </div>
-
+            <!-- 통합 분석 차트 -->
+            <div class="bg-white rounded-lg shadow-md p-6 signal-card mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Statistical Analysis</h2>
+                <p class="text-sm text-gray-500 mb-4">Rolling Std · dr 분포 · σ 밴드 통합</p>
+                <div class="grid grid-cols-3 gap-4 mb-4" id="stat-summary">
+                    <div class="p-3 bg-gray-50 rounded-lg text-center">
+                        <div class="text-xs text-gray-500 mb-1">현재 SZ</div>
+                        <div class="text-xl font-bold" id="stat-sz">-</div>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg text-center">
+                        <div class="text-xs text-gray-500 mb-1">Rolling σ (현재)</div>
+                        <div class="text-xl font-bold" id="stat-std">-</div>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg text-center">
+                        <div class="text-xs text-gray-500 mb-1">왜도 (SKW)</div>
+                        <div class="text-xl font-bold" id="stat-skew">-</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- sz + σ 밴드 -->
+                    <div>
+                        <div class="text-sm font-medium text-gray-600 mb-2">SZ + ±1σ/±2σ 밴드</div>
+                        <div style="position:relative; height:220px;">
+                            <canvas id="band-chart"></canvas>
+                        </div>
+                    </div>
+                    <!-- dr 히스토그램 -->
+                    <div>
+                        <div class="text-sm font-medium text-gray-600 mb-2">괴리율(dr) 분포 · 현재 위치</div>
+                        <div style="position:relative; height:220px;">
+                            <canvas id="hist-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Rolling std 추이 (전체 너비) -->
+                <div class="mt-4">
+                    <div class="text-sm font-medium text-gray-600 mb-2">Rolling σ 추이 (변동성 흐름)</div>
+                    <div style="position:relative; height:140px;">
+                        <canvas id="std-chart"></canvas>
+                    </div>
+                </div>
+            </div>
             <!-- SZ History -->
             <div class="bg-white rounded-lg shadow-md p-6 signal-card">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ History</h2>
@@ -697,6 +738,7 @@
 
                 renderSZChart(recentDates, stockData.history.szValues, chartHeight, pointRadius);
                 renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices, chartHeight, pointRadius);
+                renderStatCharts(trendData);  // ← 이 줄 추가
             } catch (error) {
                 console.error('차트 렌더링 오류:', error);
                 document.getElementById('sz-chart').parentElement.innerHTML = `<p class="text-red-500 text-center">차트 데이터를 로드할 수 없습니다: ${error.message}</p>`;
@@ -1013,6 +1055,177 @@
             const ss = stockData.current.skewShort;
             skewEl.textContent = `${sl !== null ? (sl >= 0 ? '+' : '') + sl : '-'} / ${ss !== null ? (ss >= 0 ? '+' : '') + ss : '-'}`;
             skewEl.className = 'text-xl font-bold ' + (ss !== null && ss < 0 ? 'text-orange-500' : 'text-green-600');
+        }
+        function renderStatCharts(trendData) {
+            const discountRates = (trendData.discount_rates || []).filter(v => v !== null);
+            const dates = trendData.dates || [];
+            const avgPeriod = 249;
+
+            // Rolling std 계산
+            const rollingStd = [];
+            const rollingMean = [];
+            for (let i = avgPeriod; i < discountRates.length; i++) {
+                const window = discountRates.slice(i - avgPeriod, i);
+                const mean = window.reduce((a, b) => a + b, 0) / window.length;
+                const std = Math.sqrt(window.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / window.length);
+                rollingStd.push(std);
+                rollingMean.push(mean);
+            }
+            const recentDates = dates.slice(-rollingStd.length).slice(-150);
+            const recentStd = rollingStd.slice(-150);
+            const recentMean = rollingMean.slice(-150);
+            const recentDr = discountRates.slice(-150);
+
+            // SZ 재계산 (밴드용)
+            const szVals = recentDr.map((dr, i) => {
+                if (!recentStd[i] || recentStd[i] === 0) return 0;
+                return (dr - recentMean[i]) / recentStd[i];
+            });
+
+            // 현재값 요약
+            const curSz = szVals[szVals.length - 1] || 0;
+            const curStd = recentStd[recentStd.length - 1] || 0;
+            // 왜도 계산
+            const drMean = recentDr.reduce((a, b) => a + b, 0) / recentDr.length;
+            const drStd = Math.sqrt(recentDr.reduce((a, b) => a + Math.pow(b - drMean, 2), 0) / recentDr.length);
+            const skew = recentDr.reduce((a, b) => a + Math.pow((b - drMean) / drStd, 3), 0) / recentDr.length;
+
+            const szEl = document.getElementById('stat-sz');
+            szEl.textContent = curSz.toFixed(2);
+            szEl.className = 'text-xl font-bold ' + (curSz >= 2.5 ? 'text-red-600' : curSz >= 1.5 ? 'text-orange-500' : 'text-green-600');
+            document.getElementById('stat-std').textContent = (curStd * 100).toFixed(3) + '%';
+            const skewEl = document.getElementById('stat-skew');
+            skewEl.textContent = (skew >= 0 ? '+' : '') + skew.toFixed(2);
+            skewEl.className = 'text-xl font-bold ' + (skew < 0 ? 'text-orange-500' : 'text-green-600');
+
+            // ── 차트 1: SZ + ±1σ/±2σ 밴드 ──
+            new Chart(document.getElementById('band-chart'), {
+                type: 'line',
+                data: {
+                    labels: recentDates,
+                    datasets: [
+                        {
+                            label: 'SZ',
+                            data: szVals,
+                            borderColor: 'rgba(75,192,192,1)',
+                            backgroundColor: 'rgba(75,192,192,0.1)',
+                            borderWidth: 1.5,
+                            pointRadius: 0,
+                            tension: 0.1,
+                            fill: false
+                        },
+                        {
+                            label: '+2σ',
+                            data: Array(recentDates.length).fill(2),
+                            borderColor: 'rgba(239,68,68,0.8)',
+                            borderWidth: 1,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: '+1σ',
+                            data: Array(recentDates.length).fill(1),
+                            borderColor: 'rgba(249,115,22,0.6)',
+                            borderWidth: 1,
+                            borderDash: [2, 4],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: '-1σ',
+                            data: Array(recentDates.length).fill(-1),
+                            borderColor: 'rgba(96,165,250,0.6)',
+                            borderWidth: 1,
+                            borderDash: [2, 4],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { font: { size: 10 }, boxWidth: 20 } },
+                        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw?.toFixed(2)}` } }
+                    },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 6, font: { size: 9 } }, grid: { display: false } },
+                        y: { ticks: { font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.05)' } }
+                    }
+                }
+            });
+
+            // ── 차트 2: dr 히스토그램 ──
+            const bins = 20;
+            const minDr = Math.min(...recentDr);
+            const maxDr = Math.max(...recentDr);
+            const binSize = (maxDr - minDr) / bins;
+            const counts = Array(bins).fill(0);
+            recentDr.forEach(v => {
+                const idx = Math.min(Math.floor((v - minDr) / binSize), bins - 1);
+                counts[idx]++;
+            });
+            const binLabels = counts.map((_, i) => ((minDr + (i + 0.5) * binSize) * 100).toFixed(2) + '%');
+            const curDr = recentDr[recentDr.length - 1];
+            const curBin = Math.min(Math.floor((curDr - minDr) / binSize), bins - 1);
+            const bgColors = counts.map((_, i) => i === curBin ? 'rgba(239,68,68,0.8)' : 'rgba(99,102,241,0.5)');
+
+            new Chart(document.getElementById('hist-chart'), {
+                type: 'bar',
+                data: {
+                    labels: binLabels,
+                    datasets: [{
+                        label: '빈도',
+                        data: counts,
+                        backgroundColor: bgColors,
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => `빈도: ${ctx.raw}일` } }
+                    },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 6, font: { size: 9 } }, grid: { display: false } },
+                        y: { ticks: { font: { size: 9 } }, title: { display: true, text: '일수', font: { size: 9 } } }
+                    }
+                }
+            });
+
+            // ── 차트 3: Rolling σ 추이 ──
+            new Chart(document.getElementById('std-chart'), {
+                type: 'line',
+                data: {
+                    labels: recentDates,
+                    datasets: [{
+                        label: 'Rolling σ',
+                        data: recentStd.map(v => v * 100),
+                        borderColor: 'rgba(168,85,247,1)',
+                        backgroundColor: 'rgba(168,85,247,0.1)',
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        tension: 0.2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => `σ: ${ctx.raw?.toFixed(3)}%` } }
+                    },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 8, font: { size: 9 } }, grid: { display: false } },
+                        y: {
+                            ticks: { font: { size: 9 }, callback: v => v.toFixed(2) + '%' },
+                            title: { display: true, text: 'σ (%)', font: { size: 9 } }
+                        }
+                    }
+                }
+            });
         }
 
         function renderSZChart(dates, szValues, chartHeight, pointRadius) {
