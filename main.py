@@ -372,15 +372,22 @@ class StockMonitor:
 
     async def send_periodic_updates(self):
         GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/stmon')
+        
+        # 하루에 한 번만 트렌드 데이터 업데이트 (과거 데이터 중요하므로 유지)
+        last_trend_update = datetime.now() - timedelta(hours=23)   # 시작 후 곧 한 번 실행되도록
+
         while self.running:
             try:
                 if not is_market_time():
                     await asyncio.sleep(60)
                     continue
+
                 logger.info("Fetching signals for periodic update...")
+
+                # ==================== 실시간 신호 계산 (한 번만 호출) ====================
                 all_signals, divergent_signals = await self.get_signals_with_divergent()
 
-                # 신호 페어 리스트 생성
+                # 신호 페어 리스트 (중복 호출 제거)
                 all_signal_pairs = []
                 for pair, result in await self.get_signals_with_divergent_pairs():
                     if isinstance(result, Exception) or not result:
@@ -392,7 +399,8 @@ class StockMonitor:
                     f"🕒 {current_time}\n"
                     f"📊 Current Status"
                 )
-                # 종목 신호를 50개씩 나누어 전송
+
+                # 종목 신호 전송
                 await self.telegram_bot.send_message(message, all_signal_pairs)
 
                 # Divergent 신호 전송
@@ -400,6 +408,7 @@ class StockMonitor:
                     (pair, result) for pair, result in all_signal_pairs
                     if result and float(result.split('/')[0].strip()) >= pair.SL_in_val
                 ]
+
                 if divergent_signal_pairs:
                     divergent_message = f"🕒 {current_time}\n🚨 Divergent Pairs"
                     await self.telegram_bot.send_message(divergent_message, divergent_signal_pairs)
@@ -407,16 +416,33 @@ class StockMonitor:
                     await self.telegram_bot.send_message(f"🕒 {current_time}\n🚨 No divergent pairs found.")
 
                 logger.info("Periodic update sent successfully")
+
                 # 웹 데이터 파일 저장
                 save_web_data(all_signals, divergent_signals)
-                # 트렌드 데이터 수집 및 저장
-                await collect_all_trends(self.pairs)
+
+                # ==================== 과거 트렌드 데이터는 하루에 한 번만 ====================
+                if (datetime.now() - last_trend_update).total_seconds() > 86400:  # 24시간
+                    logger.info("=== Starting DAILY trend data collection (heavy task) ===")
+                    try:
+                        await collect_all_trends(self.pairs)
+                        last_trend_update = datetime.now()
+                        logger.info("Daily trend data update completed successfully.")
+                    except Exception as e:
+                        logger.error(f"Trend collection failed: {e}")
+                else:
+                    remaining_hours = (last_trend_update + timedelta(days=1) - datetime.now()).total_seconds() / 3600
+                    logger.info(f"Skipping trend update. Next daily update in {remaining_hours:.1f} hours.")
+
                 # GitHub 커밋/푸시
                 commit_and_push_github(GITHUB_REPO_PATH)
+
+                # 실시간 업데이트 주기 (CPU 절약 핵심!)
                 await asyncio.sleep(WAIT_TIME)
+
             except Exception as e:
                 logger.error(f"Error in periodic update: {str(e)}")
                 await asyncio.sleep(30)
+                
     async def get_signals_with_divergent_pairs(self):
         try:
             batch_size = 5
