@@ -591,10 +591,21 @@
                 let preferredPrice = trade.preferred_exit;
                 let exitDate = trade.exit_date;
 
+                // 수정: stockSignals에서 실시간 가격 사용
                 if (!isClosed) {
-                    const trend = await fetchTrendClose(trade);
-                    commonPrice = trend.commonClose;
-                    preferredPrice = trend.preferredClose;
+                    const matchedSignal = stockSignals.find(s =>
+                        normalizeStockName(s.stock_name).toLowerCase() ===
+                        normalizeStockName(trade.pair_name).toLowerCase()
+                    );
+                    if (matchedSignal && matchedSignal.price_a && matchedSignal.price_b) {
+                        commonPrice = matchedSignal.price_a;
+                        preferredPrice = matchedSignal.price_b;
+                    } else {
+                        // fallback: trend 파일 (장 마감 후)
+                        const trend = await fetchTrendClose(trade);
+                        commonPrice = trend.commonClose;
+                        preferredPrice = trend.preferredClose;
+                    }
                     exitDate = todayStr;
                 }
 
