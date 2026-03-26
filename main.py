@@ -355,7 +355,7 @@ class StockMonitor:
             all_signals = "\n".join(all_messages)
             divergent_signals = "\n".join(divergent_messages) if divergent_messages else "No divergent pairs found at the moment."
 
-            return all_signals, divergent_signals
+            return all_signals, divergent_signals, all_results
 
         except Exception as e:
             logger.error(f"Error in get_signals_with_divergent: {str(e)}")
@@ -364,7 +364,7 @@ class StockMonitor:
 
     async def get_all_signals(self, divergence_only: bool = False) -> str:
         try:
-            all_signals, divergent_signals = await self.get_signals_with_divergent()
+            all_signals, divergent_signals, _ = await self.get_signals_with_divergent()
             return divergent_signals if divergence_only else all_signals
         except Exception as e:
             logger.error(f"Error in get_all_signals: {str(e)}")
@@ -385,11 +385,11 @@ class StockMonitor:
                 logger.info("Fetching signals for periodic update...")
 
                 # ==================== 실시간 신호 계산 (한 번만 호출) ====================
-                all_signals, divergent_signals = await self.get_signals_with_divergent()
+                all_signals, divergent_signals, all_signal_pairs_raw = await self.get_signals_with_divergent()
 
                 # 신호 페어 리스트 (중복 호출 제거)
                 all_signal_pairs = []
-                for pair, result in await self.get_signals_with_divergent_pairs():
+                for pair, result in all_signal_pairs_raw:  # ← API 재호출 없이 재활용
                     if isinstance(result, Exception) or not result:
                         continue
                     all_signal_pairs.append((pair, result))
