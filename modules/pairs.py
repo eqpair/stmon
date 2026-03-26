@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 import logging
 from bs4 import BeautifulSoup
 import json
-import asyncio  # asyncio.sleep에 필요
+import asyncio
 from modules.exceptions import MarketDataError
-from .utils import add_weight_info  # add_weight_info 함수 임포트 추가
+from .utils import add_weight_info
 from bs4 import XMLParsedAsHTMLWarning
 import warnings
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -29,16 +29,55 @@ class NPPair:
         self.A_name = ""
         self.B_name = ""
         self.T = 50
+        self.skew_long = 0.0
+        self.skew_short = 0.0
+        self._last_fetch_date = None  # 마지막 전체 fetch 날짜 캐시
 
     async def fetch_data(self):
+        """과거 데이터 전체 fetch - 하루 1회만 실행"""
         try:
             async with aiohttp.ClientSession() as session:
                 a_data = await self._fetch_stock_data(session, self.A_code)
                 b_data = await self._fetch_stock_data(session, self.B_code)
                 self._process_data(a_data, b_data)
+            self._last_fetch_date = datetime.now().date()
         except Exception as e:
             logger.error(f"Error fetching data: {str(e)}")
             raise MarketDataError(f"Failed to fetch market data: {str(e)}")
+
+    async def fetch_current_price_and_update(self):
+        """현재가만 fetch해서 마지막 행 업데이트 - 매 주기 실행"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                a_price = await self._fetch_current_price(session, self.A_code)
+                b_price = await self._fetch_current_price(session, self.B_code)
+
+            if a_price is None or b_price is None:
+                logger.warning(f"현재가 fetch 실패, 캐시 데이터 사용: {self.A_name}")
+                return
+
+            if self.data.empty:
+                logger.warning(f"캐시 데이터 없음, 전체 fetch 필요: {self.A_name}")
+                await self.fetch_data()
+                return
+
+            today = pd.Timestamp(datetime.now().date())
+
+            # 오늘 날짜 행이 이미 있으면 현재가로 업데이트, 없으면 새 행 추가
+            if today in self.data.index:
+                self.data.at[today, 'close_A'] = a_price
+                self.data.at[today, 'close_B'] = b_price
+            else:
+                new_row = pd.DataFrame(
+                    {'close_A': [a_price], 'close_B': [b_price]},
+                    index=[today]
+                )
+                self.data = pd.concat([self.data, new_row])
+
+            self._calculate_metrics()
+
+        except Exception as e:
+            logger.error(f"현재가 업데이트 오류 ({self.A_name}): {str(e)}")
 
     async def _fetch_stock_data(self, session: aiohttp.ClientSession, code: str) -> str:
         yesterday = datetime.now() - timedelta(1)
@@ -58,10 +97,9 @@ class NPPair:
             a_df = self._parse_stock_data(a_data, self.A_code)
             b_df = self._parse_stock_data(b_data, self.B_code)
             
-            # None 또는 빈 DataFrame 확인 및 처리
             if a_df is None or b_df is None or a_df.empty or b_df.empty:
                 logger.error(f"데이터 프레임 생성 실패: a_df={a_df is not None}, b_df={b_df is not None}")
-                self.data = pd.DataFrame()  # 빈 데이터 프레임 설정
+                self.data = pd.DataFrame()
                 return
                 
             self.data = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
@@ -70,7 +108,7 @@ class NPPair:
             self.B_name = b_df.name
         except Exception as e:
             logger.error(f"데이터 처리 중 오류: {str(e)}")
-            self.data = pd.DataFrame()  # 오류 발생 시 빈 데이터 프레임으로 설정
+            self.data = pd.DataFrame()
 
     def _parse_stock_data(self, data: str, code: str) -> pd.DataFrame:
         try:
@@ -80,11 +118,9 @@ class NPPair:
             if chartdata is None:
                 raise MarketDataError(f"Failed to parse data for {code}: No chartdata found")
                 
-            # 이 부분을 수정: 종목명 생성에 format_stock_name 함수 사용
             from .utils import format_stock_name
             name = format_stock_name(code)
             
-            # item들을 찾습니다
             items = soup.find_all('item')
             if not items:
                 raise MarketDataError(f"Failed to parse data for {code}: No items found")
@@ -97,7 +133,7 @@ class NPPair:
                     continue
                     
                 data = item['data'].split('|')
-                if len(data) >= 5:  # 데이터가 충분한지 확인
+                if len(data) >= 5:
                     try:
                         dates.append(pd.to_datetime(data[0]))
                         closes.append(float(data[4]))
@@ -126,7 +162,15 @@ class NPPair:
         self.skew_short = round(self.data['dr'].tail(60).skew(), 2)
 
     async def get_signal_now(self) -> Optional[str]:
-        await self.fetch_data()
+        today = datetime.now().date()
+
+        # 오늘 전체 fetch를 아직 안 했거나 데이터가 비어있으면 전체 fetch
+        if self._last_fetch_date != today or self.data.empty:
+            await self.fetch_data()
+        else:
+            # 현재가만 가볍게 업데이트
+            await self.fetch_current_price_and_update()
+
         return self._generate_signal()
 
     def _generate_signal(self) -> Optional[str]:
@@ -137,7 +181,6 @@ class NPPair:
             last_row = self.data.iloc[-1]
             sz = last_row['sz']
 
-            # 새로운 신호 로직
             if sz >= self.SL_in_val:
                 signal = "IN"
             elif sz <= self.SL_out_val:
@@ -147,7 +190,6 @@ class NPPair:
 
             price_info = f"{last_row['close_A']:.0f}, {last_row['close_B']:.0f}"
             ratio_info = f"{sz:.2f}"
-
             skew_info = f"SKW {'+' if self.skew_long >= 0 else ''}{self.skew_long}/{'+' if self.skew_short >= 0 else ''}{self.skew_short}"
             return f"{ratio_info} / {signal} / {price_info} / {skew_info}"
 
@@ -158,7 +200,7 @@ class NPPair:
     async def get_current_prices(self) -> Tuple[float, float]:
         """현재 주가를 가져오는 함수 - 개선된 버전으로 여러 번 재시도"""
         max_retries = 3
-        backoff_time = 1  # 초 단위로 대기 시간
+        backoff_time = 1
         
         for attempt in range(max_retries):
             try:
@@ -166,7 +208,6 @@ class NPPair:
                     a_price = await self._fetch_current_price(session, self.A_code)
                     b_price = await self._fetch_current_price(session, self.B_code)
                     
-                    # 가격 데이터가 유효한지 확인
                     if a_price is not None and b_price is not None:
                         logger.info(f"현재 가격 성공적으로 가져옴: {self.A_name}({self.A_code}): {a_price}, {self.B_code}: {b_price}")
                         return a_price, b_price
@@ -176,47 +217,38 @@ class NPPair:
             except Exception as e:
                 logger.error(f"현재 가격 가져오기 오류, 재시도 {attempt+1}/{max_retries}: {self.A_name} - {str(e)}")
                 
-            # 마지막 시도가 아니면 대기 후 재시도
             if attempt < max_retries - 1:
                 await asyncio.sleep(backoff_time)
-                backoff_time *= 2  # 지수 백오프
+                backoff_time *= 2
         
-        # 모든 재시도 실패 시, 저장된 데이터 반환 시도
         try:
             return await self._get_fallback_prices()
         except Exception as fallback_error:
             logger.error(f"가격 폴백 조회 실패: {self.A_name} - {str(fallback_error)}")
-            # 데이터가 없는 경우 기본값 반환 - 0 대신 None을 반환하면 호출자가 알아서 처리 가능
             return None, None
         
     async def _get_fallback_prices(self) -> Tuple[float, float]:
         """API 호출 실패 시 데이터 폴백 - 저장된 데이터에서 최신 가격 가져오기"""
         try:
             from pathlib import Path
-            import json
             import os
             
-            # 트렌드 파일 경로
             data_dir = Path(f"{os.environ.get('GITHUB_REPO_PATH', '/home/pi/work/m5000')}/data")
             trends_dir = data_dir / "trends"
             trend_file = trends_dir / f"{self.A_code}.json"
             
-            # 파일이 존재하는지 확인
             if not os.path.exists(trend_file):
                 logger.warning(f"트렌드 파일 없음: {trend_file}")
                 raise FileNotFoundError(f"트렌드 파일 없음: {trend_file}")
                 
-            # 파일 데이터 읽기
             with open(trend_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 
-            # 최신 가격 가져오기
             if data and 'common_prices' in data and 'preferred_prices' in data:
                 common_prices = data['common_prices']
                 preferred_prices = data['preferred_prices']
                 
                 if common_prices and preferred_prices:
-                    # 마지막 값 가져오기
                     last_common = common_prices[-1]
                     last_preferred = preferred_prices[-1]
                     
@@ -224,7 +256,6 @@ class NPPair:
                         logger.info(f"폴백 가격 사용: {self.A_name} - 보통주:{last_common}, 우선주:{last_preferred}")
                         return float(last_common), float(last_preferred)
             
-            # 데이터가 없으면 예외 발생
             logger.warning(f"폴백 데이터 없음: {self.A_name}")
             raise ValueError(f"폴백 데이터 없음: {self.A_name}")
             
@@ -233,7 +264,7 @@ class NPPair:
             raise
 
     async def _fetch_current_price(self, session: aiohttp.ClientSession, code: str) -> float:
-        """현재 주가를 API에서 가져오는 함수 - 오류 처리 강화"""
+        """현재 주가를 API에서 가져오는 함수"""
         url = f'https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:{code}'
         try:
             async with session.get(url, timeout=5) as response:
@@ -243,11 +274,9 @@ class NPPair:
                     
                 data = await response.text()
                 
-                # JSON 파싱
                 try:
                     json_data = json.loads(data)
                     
-                    # 데이터 구조 확인
                     if not json_data or 'result' not in json_data or 'areas' not in json_data['result']:
                         logger.warning(f"API 응답 형식 오류 ({code}): {data[:100]}...")
                         return None
@@ -257,10 +286,8 @@ class NPPair:
                         logger.warning(f"API 응답에 데이터 없음 ({code})")
                         return None
                         
-                    # 가격 추출
                     price = areas[0]['datas'][0].get('nv')
                     
-                    # 가격이 숫자인지 확인
                     if price is None or (isinstance(price, str) and not price.isdigit()):
                         logger.warning(f"유효하지 않은 가격 ({code}): {price}")
                         return None
