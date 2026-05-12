@@ -371,7 +371,7 @@ class StockMonitor:
             raise
 
     async def send_periodic_updates(self):
-        GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/eq/stmon')
+        GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/ubuntu/stmon')
         
         # 하루에 한 번만 트렌드 데이터 업데이트 (과거 데이터 중요하므로 유지)
         last_trend_update = datetime.now() - timedelta(hours=23)   # 시작 후 곧 한 번 실행되도록
@@ -468,9 +468,8 @@ class StockMonitor:
     async def start(self):
         logger.info("Starting Stock Monitor...")
         await self.telegram_bot.start(self.pairs)
-        update_task = asyncio.create_task(self.send_periodic_updates())
-        polling_task = asyncio.create_task(self.telegram_bot.start_polling())
-        await asyncio.gather(update_task, polling_task)
+        asyncio.create_task(self.telegram_bot.start_polling())
+        await self.send_periodic_updates()
 
     async def shutdown(self):
         logger.info("Shutting down Stock Monitor...")
