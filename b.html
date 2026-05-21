@@ -106,16 +106,16 @@
                         <div class="text-sm font-medium" id="header-change">-</div>
                     </div>
                     <nav class="flex gap-1 bg-white border border-gray-200 rounded-lg p-1 shadow-sm">
-                        <button onclick="switchTab('fundamental')" id="tab-fundamental" class="nav-link active">기본적
+                        <button onclick="switchTab('technical')" id="tab-technical" class="nav-link active">기술적 분석</button>
                             분석</button>
-                        <button onclick="switchTab('technical')" id="tab-technical" class="nav-link">기술적 분석</button>
+                        <button onclick="switchTab('fundamental')" id="tab-fundamental" class="nav-link">기본적 분석</button>
                     </nav>
                 </div>
             </div>
         </header>
 
         <!-- 기본적 분석 탭 -->
-        <div id="tab-fundamental-content">
+        <div id="tab-fundamental-content" style="display:none;">
             <div class="section-card">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">시장 심리 지표</h2>
@@ -156,7 +156,7 @@
         </div>
 
         <!-- 기술적 분석 탭 -->
-        <div id="tab-technical-content" style="display:none;">
+        <div id="tab-technical-content">
             <div class="section-card">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">기술적 지표</h2>
