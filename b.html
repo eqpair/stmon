@@ -275,7 +275,7 @@
     }
 
     function renderMacro() {
-        const keys = ['달러인덱스', '국채10Y', '국채30Y', 'VIX', '금', 'S&P500', 'NASDAQ', '원달러', '구리']
+        const keys = ['달러인덱스', '국채10Y', '국채30Y', 'VIX', '금', 'S&P500', 'NASDAQ', '원달러']
         document.getElementById('macro-cards').innerHTML = keys.map(k => {
             const d = macroData[k]
             if (!d) return ''
@@ -309,7 +309,7 @@
         const fng7 = sentimentData.fng ? Math.round(sentimentData.fng.reduce((s,x)=>s+parseInt(x.value),0)/sentimentData.fng.length) : '-'
         const headerPrice = document.getElementById('header-price').textContent
 
-        const macro = ['달러인덱스','국채10Y','국채30Y','VIX','금','S&P500','NASDAQ','원달러','구리'].map(k => {
+        const macro = ['달러인덱스','국채10Y','국채30Y','VIX','금','S&P500','NASDAQ','원달러'].map(k => {
             const d = macroData[k]; if (!d) return ''
             return `${k}: ${d.price} (${d.change>=0?'+':''}${d.change?.toFixed(2)}%)`
         }).filter(Boolean).join(', ')
