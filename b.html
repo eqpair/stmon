@@ -213,12 +213,19 @@
         renderSentiment()
         renderMacro()
         switchTab('technical')
+        // 기본적 분석 데이터도 백그라운드로 미리 준비
+        fundReady = true
     }
 
+    var fundReady = false
+
     async function initFundamental() {
-        if (!sentimentData.fng) await Promise.all([loadSentiment(), loadMacro(), loadPrice()])
-        renderSentiment()
-        renderMacro()
+        if (!fundReady) {
+            await Promise.all([loadSentiment(), loadMacro(), loadPrice()])
+            renderSentiment()
+            renderMacro()
+            fundReady = true
+        }
         runFundamentalAI()
     }
 
