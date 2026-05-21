@@ -204,6 +204,7 @@
         document.getElementById('tab-fundamental').classList.toggle('active', tab === 'fundamental')
         document.getElementById('tab-technical').classList.toggle('active', tab === 'technical')
         if (tab === 'technical' && !indicators) loadTechnical()
+        if (tab === 'fundamental') initFundamental()
     }
 
     // ── 초기 로드 ─────────────────────────────────────────────
@@ -212,6 +213,13 @@
         renderSentiment()
         renderMacro()
         switchTab('technical')
+    }
+
+    async function initFundamental() {
+        if (!sentimentData.fng) await Promise.all([loadSentiment(), loadMacro(), loadPrice()])
+        renderSentiment()
+        renderMacro()
+        runFundamentalAI()
     }
 
     async function loadPrice() {
