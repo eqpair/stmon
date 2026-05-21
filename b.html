@@ -212,7 +212,7 @@
         await Promise.all([loadSentiment(), loadMacro(), loadPrice()])
         renderSentiment()
         renderMacro()
-        runFundamentalAI()
+        switchTab('technical')
     }
 
     async function loadPrice() {
