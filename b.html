@@ -271,7 +271,7 @@
             mkCard('공포탐욕지수', fngVal.toString(), fngLabel, fngColor) +
             mkCard('7일 평균 F&G', fng7avg ? fng7avg.toString() : '-', fng7avg <= 25 ? 'Extreme Fear' : fng7avg <= 45 ? 'Fear' : 'Neutral', fngColor) +
             mkCard('BTC 도미넌스', dom ? dom.toFixed(1) + '%' : '-', dom > 60 ? 'BTC 강세장' : dom < 45 ? '알트 시즌' : '중립', dom > 55 ? '#f97316' : '#9ca3af') +
-            mkCard('시장 심리', gsLabel, sentimentData.sentimentReason ? sentimentData.sentimentReason.slice(0,20)+'...' : '-', gsColor)
+            mkCard('시장 심리', gsLabel, sentimentData.sentimentReason ? sentimentData.sentimentReason.slice(0,50)+'...' : '-', gsColor)
     }
 
     function renderMacro() {
