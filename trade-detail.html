@@ -246,24 +246,24 @@
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen"
+<body class="bg-gray-50 min-h-screen"
     style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans KR', sans-serif;">
-    <div class="container mx-auto px-4 py-8">
-        <header class="mb-8 flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2" id="stock-name">Scenario Analysis</h1>
-                <span id="stock-code-label"></span>
-                <p class="text-xs text-gray-500 mt-1">Last Updated: <span id="last-updated-time">Loading...</span></p>
-            </div>
-            <div class="flex space-x-2">
-                <a href="index.html"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                    <i class="fas fa-home mr-2"></i> Home
-                </a>
-                <a href="pair-report.html"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-chart-line mr-2"></i> Report
-                </a>
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header class="mb-6">
+            <div class="flex justify-between items-start flex-wrap gap-3">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800" id="stock-name">Scenario Analysis</h1>
+                    <div class="text-sm text-gray-500 mt-1">
+                        <span id="stock-code-label" class="font-medium text-gray-700"></span>
+                        &nbsp;|&nbsp;
+                        Last Updated: <span id="last-updated-time" class="font-medium text-gray-700">Loading...</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="index.html" class="px-3 py-1 text-xs rounded bg-green-100 text-green-700 hover:bg-green-200 transition-colors font-medium">Home</a>
+                    <a href="pair-report.html" class="px-3 py-1 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors font-medium">Report</a>
+                    <a href="https://eqmon.duckdns.org" style="font-size:12px;color:#fff;text-decoration:none;padding:4px 10px;border:1px solid #334155;border-radius:6px;background:#1e293b;">HOME</a>
+                </div>
             </div>
         </header>
 
@@ -273,8 +273,8 @@
         </div>
 
         <div id="content-container" class="hidden">
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Current stock information</h2>
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Current stock information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="p-4 bg-blue-50 rounded-lg">
                         <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
@@ -294,8 +294,8 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Scenario Analysis Tool</h2>
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Scenario Analysis Tool</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     <div class="bg-gray-50 rounded-lg p-6">
                         <h3 class="text-lg font-medium text-gray-800 mb-4"><strong class="text-xl">Price
@@ -394,24 +394,24 @@
             <!-- 기존 코드에서 두 차트 영역을 아래처럼 묶어줍니다 -->
             <div class="grid grid-cols-2 gap-6 mb-6">
                 <!-- SZ Value Trend -->
-                <div class="bg-white rounded-lg shadow-md p-6 signal-card">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ Value Trend</h2>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card">
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">SZ Value Trend</h2>
                     <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
                         <canvas id="sz-chart"></canvas>
                     </div>
                 </div>
 
                 <!-- Price Trend -->
-                <div class="bg-white rounded-lg shadow-md p-6 signal-card">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Trend</h2>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card">
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Price Trend</h2>
                     <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
                         <canvas id="price-chart"></canvas>
                     </div>
                 </div>
             </div>
             <!-- Statistical Distribution Chart -->
-            <div class="bg-white rounded-lg shadow-md p-6 signal-card mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-1">Statistical Distribution Analysis</h2>
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card mb-6">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-1">Statistical Distribution Analysis</h2>
                 <p class="text-sm text-gray-400 mb-4">괴리율(dr) 분포 · 현재 위치 · σ 구간 · 왜도</p>
                 <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div
@@ -461,8 +461,8 @@
                 </div>
             </div>
             <!-- SZ History -->
-            <div class="bg-white rounded-lg shadow-md p-6 signal-card">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">SZ History</h2>
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">SZ History</h2>
                 <div class="overflow-x-auto">
                     <table>
                         <thead>
@@ -485,9 +485,9 @@
         </div>
     </div>
 
-    <footer class="bg-white py-6 mt-8">
+    <footer class="bg-white py-6 mt-8 border-t border-gray-100">
         <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
-            <p>© 2025 EQ Pair Monitoring System.</p>
+            <p>© 2026 L/S Monitoring System.</p>
         </div>
     </footer>
 
