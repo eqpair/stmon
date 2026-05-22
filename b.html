@@ -48,6 +48,52 @@
             text-align: center;
         }
 
+        .tf-block {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .tf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .tf-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1f2937;
+            letter-spacing: .02em;
+        }
+
+        .tf-signal {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 4px;
+        }
+
+        .tf-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+            font-size: 12px;
+        }
+
+        .tf-row .lbl {
+            color: #6b7280;
+        }
+
+        .tf-row .val {
+            font-weight: 600;
+            color: #374151;
+        }
+
         .typing-dot {
             display: inline-block;
             width: 6px;
@@ -105,6 +151,48 @@
             opacity: .6;
             cursor: not-allowed;
         }
+
+        .tf-tab {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #6b7280;
+        }
+
+        .tf-tab.active {
+            background: #1f2937;
+            color: #fff;
+            border-color: #1f2937;
+        }
+
+        .tf-tab.done {
+            border-color: #16a34a;
+            color: #16a34a;
+        }
+
+        .tf-tab.done.active {
+            background: #16a34a;
+            color: #fff;
+            border-color: #16a34a;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #f3f4f6;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1e40af;
+            transition: width .3s;
+        }
     </style>
 </head>
 
@@ -115,7 +203,8 @@
         <header class="mb-6">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800">BTC <span class="text-lg font-normal text-gray-400">Analysis</span></h1>
+                    <h1 class="text-3xl font-bold text-gray-800">BTC <span
+                            class="text-lg font-normal text-gray-400">Analysis</span></h1>
                     <div class="text-sm text-gray-500 mt-1" id="last-updated">로딩 중...</div>
                 </div>
                 <div class="flex items-center gap-2">
@@ -180,35 +269,36 @@
         <div id="tab-technical-content">
             <div class="section-card">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">기술적 지표</h2>
-                    <div class="flex items-center gap-2">
-                        <select id="tf-select" class="text-xs border border-gray-200 rounded px-2 py-1"
-                            onchange="loadTechnical()">
-                            <option value="15m">15분</option>
-                            <option value="1h" selected>1시간</option>
-                            <option value="4h">4시간</option>
-                            <option value="1d">일봉</option>
-                        </select>
-                        <button onclick="loadTechnical()" id="tech-btn" class="text-xs px-3 py-1 rounded font-medium"
-                            style="background:#1e40af;color:#fff;border:none;cursor:pointer;">Analyze</button>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">멀티 타임프레임 기술적 지표</h2>
+                    <button onclick="loadAllTechnical()" id="tech-btn" class="text-xs px-3 py-1 rounded font-medium"
+                        style="background:#1e40af;color:#fff;border:none;cursor:pointer;">Analyze All</button>
+                </div>
+                <div id="tech-grid">
+                    <div class="text-center py-8">
+                        <div class="text-sm text-gray-500 mb-3">15분 / 1시간 / 4시간 / 일봉 기술적 분석을 동시에 실행합니다</div>
+                        <div class="text-xs text-gray-400 mb-4">네 개 타임프레임의 RSI, MACD, 볼린저밴드, 이동평균, 오실레이터 등 모든 지표를 한번에
+                            계산합니다</div>
+                        <button onclick="loadAllTechnical()" class="btn-primary">▶ Analyze All Timeframes</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="tech-summary-cards">
-                    <div class="col-span-2 md:col-span-4 text-center py-8">
-                        <div class="text-sm text-gray-500 mb-3">기술적 분석을 실행해주세요</div>
-                        <div class="text-xs text-gray-400 mb-4">선택한 타임프레임의 가격 데이터를 기반으로 RSI, MACD, 볼린저밴드 등 지표를 계산합니다
-                        </div>
-                        <button onclick="loadTechnical()" class="btn-primary">▶ Analyze</button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="tech-indicator-cards"></div>
             </div>
 
             <div class="section-card">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">AI 기술적 분석</h2>
-                    <button onclick="runTechAI()" id="tech-ai-btn" class="text-xs px-3 py-1 rounded font-medium"
-                        style="background:#1e40af;color:#fff;border:none;cursor:pointer;">Reanalyze</button>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">AI 멀티 타임프레임 분석</h2>
+                    <button onclick="runAllTechAI()" id="tech-ai-btn" class="text-xs px-3 py-1 rounded font-medium"
+                        style="background:#1e40af;color:#fff;border:none;cursor:pointer;display:none;">Reanalyze
+                        All</button>
+                </div>
+                <div id="tech-ai-progress" style="display:none;">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-xs text-gray-600" id="tech-ai-status">대기 중...</div>
+                        <div class="text-xs text-gray-400" id="tech-ai-count">0/5</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="tech-ai-bar" style="width:0%"></div>
+                    </div>
+                    <div class="flex gap-2 mt-3 flex-wrap" id="tech-ai-tabs"></div>
                 </div>
                 <div id="tech-ai-content">
                     <div class="text-center py-8 text-gray-400 text-sm">기술적 지표 분석 실행 후 자동으로 진행됩니다</div>
@@ -221,13 +311,15 @@
         const BINANCE_URL = 'https://api.binance.com/api/v3'
         const CHAT_URL = 'https://eqmon.duckdns.org/eqai-chat/chat'
         const EQAI_JSON = 'https://eqpair.github.io/semon/data/eqai_report.json'
+        const TIMEFRAMES = ['15m', '1h', '4h', '1d']
+        const TF_LABEL = { '15m': '15분', '1h': '1시간', '4h': '4시간', '1d': '일봉' }
 
-        let btcData = null      // OHLCV
-        let sentimentData = {}  // 공포탐욕, 도미넌스
-        let macroData = {}      // eqai_report macro
-        let indicators = null   // 계산된 지표
-        let techDone = false    // 기술적 분석 실행 여부
-        let fundAiDone = false  // 기본적 AI 분석 실행 여부
+        let sentimentData = {}
+        let macroData = {}
+        let indicatorsAll = {}   // { '15m': {...}, '1h': {...}, '4h': {...}, '1d': {...} }
+        let techAiResults = {}   // { '15m': html, '1h': html, '4h': html, '1d': html, 'summary': html }
+        let techAiActive = '15m' // 현재 표시중인 TF
+        let fundAiDone = false
 
         // ── 탭 전환 ──────────────────────────────────────────────
         function switchTab(tab) {
@@ -236,23 +328,18 @@
             document.getElementById('tab-fundamental').classList.toggle('active', tab === 'fundamental')
             document.getElementById('tab-technical').classList.toggle('active', tab === 'technical')
 
-            // URL hash 업데이트 (리프레쉬 시 탭 유지)
             if (tab === 'technical') {
                 history.replaceState(null, '', window.location.pathname + window.location.search)
             } else {
                 history.replaceState(null, '', '#' + tab)
             }
 
-            // 기본적 분석 탭은 진입 시 sentiment/macro 데이터만 자동 로드 (AI는 버튼 클릭 시)
             if (tab === 'fundamental') initFundamental()
         }
 
         // ── 초기 로드 ─────────────────────────────────────────────
         async function init() {
-            // 가격만 즉시 로드
             await loadPrice()
-
-            // URL hash로 탭 초기화
             const hash = window.location.hash
             if (hash === '#fundamental') switchTab('fundamental')
             else switchTab('technical')
@@ -267,7 +354,6 @@
                 renderMacro()
                 fundReady = true
             }
-            // AI는 자동 실행하지 않음 - placeholder 유지
             if (!fundAiDone) {
                 document.getElementById('fund-ai-content').innerHTML =
                     '<div class="text-center py-8">' +
@@ -294,12 +380,10 @@
 
         async function loadSentiment() {
             try {
-                // 공포탐욕지수
                 const fng = await fetch('https://api.alternative.me/fng/?limit=7')
                 const fngData = await fng.json()
                 sentimentData.fng = fngData.data
 
-                // BTC 도미넌스 + 시총
                 const cg = await fetch('https://api.coingecko.com/api/v3/global')
                 const cgData = await cg.json()
                 sentimentData.dominance = cgData.data.market_cap_percentage.btc
@@ -364,7 +448,6 @@
 
         // ── 기본적 AI 분석 ────────────────────────────────────────
         async function runFundamentalAI() {
-            // 데이터가 아직 없으면 먼저 로드
             if (!fundReady) {
                 await Promise.all([loadSentiment(), loadMacro(), loadPrice()])
                 renderSentiment()
@@ -412,31 +495,34 @@
             btn.disabled = false; btn.textContent = 'Reanalyze'
         }
 
-        // ── 기술적 분석 ───────────────────────────────────────────
-        async function loadTechnical() {
+        // ── 기술적 분석: 4개 TF 동시 로드 ──────────────────────────
+        async function loadAllTechnical() {
             const btn = document.getElementById('tech-btn')
             btn.disabled = true; btn.textContent = '로딩 중...'
-            document.getElementById('tech-summary-cards').innerHTML = '<div class="text-xs text-gray-400 col-span-2 md:col-span-4 py-4 text-center">데이터 로딩 중...</div>'
-            document.getElementById('tech-indicator-cards').innerHTML = ''
-
-            const tf = document.getElementById('tf-select').value
-            const limit = tf === '1d' ? 500 : tf === '4h' ? 500 : tf === '1h' ? 300 : 300
+            document.getElementById('tech-grid').innerHTML =
+                '<div class="text-center py-8 text-gray-400 text-sm"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="ml-2">4개 타임프레임 데이터 로딩 중...</span></div>'
 
             try {
-                const res = await fetch(`${BINANCE_URL}/klines?symbol=BTCUSDT&interval=${tf}&limit=${limit}`)
-                const raw = await res.json()
+                // 4개 TF 병렬 fetch
+                const results = await Promise.all(TIMEFRAMES.map(async tf => {
+                    const limit = tf === '1d' ? 500 : 500
+                    const res = await fetch(`${BINANCE_URL}/klines?symbol=BTCUSDT&interval=${tf}&limit=${limit}`)
+                    const raw = await res.json()
+                    const closes = raw.map(x => parseFloat(x[4]))
+                    const highs = raw.map(x => parseFloat(x[2]))
+                    const lows = raw.map(x => parseFloat(x[3]))
+                    const volumes = raw.map(x => parseFloat(x[5]))
+                    return { tf, ind: calcIndicators(closes, highs, lows, volumes) }
+                }))
 
-                const closes = raw.map(x => parseFloat(x[4]))
-                const highs = raw.map(x => parseFloat(x[2]))
-                const lows = raw.map(x => parseFloat(x[3]))
-                const volumes = raw.map(x => parseFloat(x[5]))
+                results.forEach(({ tf, ind }) => { indicatorsAll[tf] = ind })
 
-                indicators = calcIndicators(closes, highs, lows, volumes)
-                renderTechCards(tf)
-                techDone = true
-                runTechAI()
+                renderAllTechCards()
+
+                // AI 자동 실행
+                runAllTechAI()
             } catch (e) {
-                document.getElementById('tech-summary-cards').innerHTML = '<div class="text-red-500 text-sm col-span-2 md:col-span-4">오류: ' + e.message + '</div>'
+                document.getElementById('tech-grid').innerHTML = '<div class="text-red-500 text-sm">오류: ' + e.message + '</div>'
             }
             btn.disabled = false; btn.textContent = 'Reanalyze'
         }
@@ -543,8 +629,8 @@
                 else if (closes[i] < closes[i - 1]) obv -= volumes[i]
             }
 
-            // 52주/고저
-            const yr = closes.slice(-365)
+            // 52주/고저 (또는 사용 가능한 최대 구간)
+            const yr = closes.slice(-Math.min(365, closes.length))
             const hi52 = Math.max(...yr), lo52 = Math.min(...yr)
             const pctFromHi = (last - hi52) / hi52 * 100
             const pctFromLo = (last - lo52) / lo52 * 100
@@ -600,145 +686,256 @@
             return { score, label: '중립', color: '#9ca3af' }
         }
 
-        function renderTechCards(tf) {
-            const ind = indicators
+        // ── 2x2 그리드로 4개 TF 카드 렌더 ────────────────────────────
+        function renderAllTechCards() {
+            const html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">' +
+                TIMEFRAMES.map(tf => tfBlockHtml(tf, indicatorsAll[tf])).join('') +
+                '</div>'
+            document.getElementById('tech-grid').innerHTML = html
+        }
+
+        function tfBlockHtml(tf, ind) {
+            if (!ind) return ''
             const sig = techScore(ind)
-            const f = n => n != null ? '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'
-            const fp = n => n != null ? (n >= 0 ? '+' : '') + n.toFixed(2) + '%' : '-'
-            const maColor = ind.last > ind.ma25 ? '#16a34a' : '#dc2626'
+            const fmt = n => n != null ? '$' + Math.round(n).toLocaleString() : '-'
+            const trendColor = ind.trend.includes('상승') ? '#16a34a' : ind.trend.includes('하락') ? '#dc2626' : '#9ca3af'
+            const rsiStatus = ind.rsi < 30 ? '과매도' : ind.rsi > 70 ? '과매수' : '중립'
             const rsiColor = ind.rsi < 30 ? '#16a34a' : ind.rsi > 70 ? '#dc2626' : '#374151'
             const macdColor = ind.hist > 0 ? '#16a34a' : '#dc2626'
+            const bbPct = ind.bb ? ind.bb.pct.toFixed(1) : '-'
+            const bbStatus = ind.bb ? (ind.bb.pct < 20 ? '하단권' : ind.bb.pct > 80 ? '상단권' : '중심권') : '-'
+            const bbColor = ind.bb ? (ind.bb.pct < 20 ? '#16a34a' : ind.bb.pct > 80 ? '#dc2626' : '#374151') : '#9ca3af'
 
-            const tfLabel = { '15m': '15분', '1h': '1시간', '4h': '4시간', '1d': '일봉' }[tf] || tf
+            return `<div class="tf-block">
+                <div class="tf-header">
+                    <div class="flex items-center gap-2">
+                        <div class="tf-label">${TF_LABEL[tf]}</div>
+                        <div class="text-xs text-gray-400">${fmt(ind.last)}</div>
+                    </div>
+                    <div class="tf-signal" style="background:${sig.color}22;color:${sig.color}">${sig.label} ${sig.score}</div>
+                </div>
 
-            document.getElementById('tech-summary-cards').innerHTML =
-                `<div class="stat-card">
-                <div class="text-xs text-gray-400 mb-1">현재가 (${tfLabel})</div>
-                <div class="text-lg font-bold text-gray-800">${'$' + ind.last.toLocaleString('en-US', { minimumFractionDigits: 0 })}</div>
-                <div class="text-xs font-medium" style="color:${maColor}">MA25 $${Math.round(ind.ma25 || 0).toLocaleString()}</div>
-            </div>` +
-                `<div class="stat-card">
-                <div class="text-xs text-gray-400 mb-1">RSI(14)</div>
-                <div class="text-lg font-bold" style="color:${rsiColor}">${ind.rsi ? ind.rsi.toFixed(1) : '-'}</div>
-                <div class="text-xs text-gray-400">${ind.rsi < 30 ? '과매도' : ind.rsi > 70 ? '과매수' : '중립'}</div>
-            </div>` +
-                `<div class="stat-card">
-                <div class="text-xs text-gray-400 mb-1">MACD Hist</div>
-                <div class="text-lg font-bold" style="color:${macdColor}">${ind.hist ? ind.hist.toFixed(0) : '-'}</div>
-                <div class="text-xs text-gray-400">${ind.hist > 0 ? '상승 모멘텀' : '하락 모멘텀'}</div>
-            </div>` +
-                `<div class="stat-card" style="background:${sig.color}22;border-color:${sig.color}44;">
-                <div class="text-xs text-gray-400 mb-1">기술 신호</div>
-                <div class="text-lg font-bold" style="color:${sig.color}">${sig.label}</div>
-                <div class="text-xs font-medium" style="color:${sig.color}">Score ${sig.score}</div>
-            </div>`
-
-            document.getElementById('tech-indicator-cards').innerHTML =
-                `<div class="bg-gray-50 rounded-xl p-4">
-                <div class="text-xs font-semibold text-gray-600 mb-3">이동평균</div>
-                ${[['MA7', ind.ma7], ['MA25', ind.ma25], ['MA50', ind.ma50], ['MA99', ind.ma99], ['MA200', ind.ma200]].map(([k, v]) =>
-                    v ? `<div class="flex justify-between mb-1"><span class="text-xs text-gray-500">${k}</span><span class="text-xs font-medium" style="color:${ind.last > v ? '#16a34a' : '#dc2626'}">$${Math.round(v).toLocaleString()}</span></div>` : ''
-                ).join('')}
-                <div class="mt-2 pt-2 border-t border-gray-200 text-xs font-semibold" style="color:${ind.trend.includes('상승') ? '#16a34a' : '#dc2626'}">${ind.trend} · ${ind.cross || '크로스없음'}</div>
-            </div>` +
-                `<div class="bg-gray-50 rounded-xl p-4">
-                <div class="text-xs font-semibold text-gray-600 mb-3">오실레이터</div>
-                ${[
-                    ['RSI(14)', ind.rsi ? ind.rsi.toFixed(1) : '-', ind.rsi < 30 ? '과매도' : ind.rsi > 70 ? '과매수' : '중립'],
-                    ['Stoch RSI', ind.stochRsi ? ind.stochRsi.toFixed(1) : '-', ind.stochRsi < 20 ? '과매도' : ind.stochRsi > 80 ? '과매수' : '중립'],
-                    ['CCI(20)', ind.cci ? ind.cci.toFixed(0) : '-', ind.cci < -100 ? '과매도' : ind.cci > 100 ? '과매수' : '중립'],
-                    ['Williams %R', ind.willR ? ind.willR.toFixed(1) : '-', ind.willR < -80 ? '과매도' : ind.willR > -20 ? '과매수' : '중립'],
-                ].map(([k, v, s]) =>
-                    `<div class="flex justify-between mb-1"><span class="text-xs text-gray-500">${k}</span><span class="text-xs font-medium text-gray-700">${v} <span class="text-gray-400">${s}</span></span></div>`
-                ).join('')}
-            </div>` +
-                `<div class="bg-gray-50 rounded-xl p-4">
-                <div class="text-xs font-semibold text-gray-600 mb-3">볼린저 밴드 (20)</div>
-                ${ind.bb ? `
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">상단</span><span class="text-xs font-medium text-gray-700">$${Math.round(ind.bb.upper).toLocaleString()}</span></div>
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">중심</span><span class="text-xs font-medium text-gray-700">$${Math.round(ind.bb.mid).toLocaleString()}</span></div>
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">하단</span><span class="text-xs font-medium text-gray-700">$${Math.round(ind.bb.lower).toLocaleString()}</span></div>
-                <div class="flex justify-between mt-2 pt-2 border-t border-gray-200"><span class="text-xs text-gray-500">%B</span><span class="text-xs font-bold" style="color:${ind.bb.pct < 20 ? '#16a34a' : ind.bb.pct > 80 ? '#dc2626' : '#374151'}">${ind.bb.pct.toFixed(1)}</span></div>
-                ` : '<div class="text-xs text-gray-400">데이터 부족</div>'}
-            </div>` +
-                `<div class="bg-gray-50 rounded-xl p-4">
-                <div class="text-xs font-semibold text-gray-600 mb-3">기타 지표</div>
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">ATR(14)</span><span class="text-xs font-medium text-gray-700">$${ind.atr ? Math.round(ind.atr).toLocaleString() : '-'}</span></div>
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">거래량 비율</span><span class="text-xs font-medium" style="color:${ind.volRatio > 1.5 ? '#16a34a' : ind.volRatio < 0.5 ? '#dc2626' : '#374151'}">${ind.volRatio ? ind.volRatio.toFixed(2) + 'x' : '-'}</span></div>
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">52주 고점比</span><span class="text-xs font-medium" style="color:#dc2626">${fp(ind.pctFromHi)}</span></div>
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">52주 저점比</span><span class="text-xs font-medium" style="color:#16a34a">${fp(ind.pctFromLo)}</span></div>
-                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">OBV 추세</span><span class="text-xs font-medium" style="color:${ind.obv > 0 ? '#16a34a' : '#dc2626'}">${ind.obv > 0 ? '매집' : '분산'}</span></div>
-                <div class="flex justify-between"><span class="text-xs text-gray-500">데이터</span><span class="text-xs text-gray-400">${ind.n}봉</span></div>
+                <div class="grid grid-cols-2 gap-x-4">
+                    <div>
+                        <div class="text-xs font-semibold text-gray-500 mb-1.5 mt-1">추세 / 이동평균</div>
+                        <div class="tf-row"><span class="lbl">추세</span><span class="val" style="color:${trendColor}">${ind.trend}</span></div>
+                        <div class="tf-row"><span class="lbl">정배열</span><span class="val" style="color:${ind.cross && (ind.cross.includes('상승') || ind.cross === '정배열' || ind.cross === '골든크로스(7/25)') ? '#16a34a' : '#dc2626'}">${ind.cross || '-'}</span></div>
+                        <div class="tf-row"><span class="lbl">MA7</span><span class="val" style="color:${ind.last > ind.ma7 ? '#16a34a' : '#dc2626'}">${fmt(ind.ma7)}</span></div>
+                        <div class="tf-row"><span class="lbl">MA25</span><span class="val" style="color:${ind.last > ind.ma25 ? '#16a34a' : '#dc2626'}">${fmt(ind.ma25)}</span></div>
+                        <div class="tf-row"><span class="lbl">MA50</span><span class="val" style="color:${ind.last > ind.ma50 ? '#16a34a' : '#dc2626'}">${fmt(ind.ma50)}</span></div>
+                        <div class="tf-row"><span class="lbl">MA200</span><span class="val" style="color:${ind.last > ind.ma200 ? '#16a34a' : '#dc2626'}">${fmt(ind.ma200)}</span></div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-gray-500 mb-1.5 mt-1">오실레이터 / 변동성</div>
+                        <div class="tf-row"><span class="lbl">RSI(14)</span><span class="val" style="color:${rsiColor}">${ind.rsi ? ind.rsi.toFixed(1) : '-'} <span class="text-gray-400">${rsiStatus}</span></span></div>
+                        <div class="tf-row"><span class="lbl">Stoch RSI</span><span class="val">${ind.stochRsi ? ind.stochRsi.toFixed(1) : '-'}</span></div>
+                        <div class="tf-row"><span class="lbl">CCI(20)</span><span class="val">${ind.cci ? ind.cci.toFixed(0) : '-'}</span></div>
+                        <div class="tf-row"><span class="lbl">MACD Hist</span><span class="val" style="color:${macdColor}">${ind.hist ? ind.hist.toFixed(0) : '-'}</span></div>
+                        <div class="tf-row"><span class="lbl">BB %B</span><span class="val" style="color:${bbColor}">${bbPct} <span class="text-gray-400">${bbStatus}</span></span></div>
+                        <div class="tf-row"><span class="lbl">거래량</span><span class="val" style="color:${ind.volRatio > 1.5 ? '#16a34a' : ind.volRatio < 0.5 ? '#dc2626' : '#374151'}">${ind.volRatio ? ind.volRatio.toFixed(2) + 'x' : '-'}</span></div>
+                    </div>
+                </div>
             </div>`
         }
 
-        async function runTechAI() {
-            if (!indicators) return
+        // ── 멀티 TF AI 분석: 4개 + 종합 1개 = 5회 ─────────────────────
+        async function runAllTechAI() {
+            if (Object.keys(indicatorsAll).length < 4) return
+
             const btn = document.getElementById('tech-ai-btn')
+            btn.style.display = 'inline-block'
             btn.disabled = true; btn.textContent = '분석 중...'
+
+            // 진행 상황 UI 초기화
+            document.getElementById('tech-ai-progress').style.display = ''
+            techAiResults = {}
+
+            // TF 탭 버튼 생성
+            const tabsHtml = TIMEFRAMES.map(tf =>
+                `<button class="tf-tab" id="tfaitab-${tf}" onclick="showTechAiTab('${tf}')">${TF_LABEL[tf]}</button>`
+            ).join('') + `<button class="tf-tab" id="tfaitab-summary" onclick="showTechAiTab('summary')" style="border-color:#1e40af;color:#1e40af;font-weight:700;">종합</button>`
+            document.getElementById('tech-ai-tabs').innerHTML = tabsHtml
+
             document.getElementById('tech-ai-content').innerHTML =
-                '<div class="text-center py-8 text-gray-400 text-sm"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="ml-2">AI가 차트를 분석 중입니다...</span></div>'
+                '<div class="text-center py-8 text-gray-400 text-sm"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="ml-2">AI가 타임프레임별로 차트를 분석 중입니다...</span></div>'
 
-            const ind = indicators
+            let done = 0
+            const total = 5
+            const updateProgress = (status) => {
+                document.getElementById('tech-ai-status').textContent = status
+                document.getElementById('tech-ai-count').textContent = `${done}/${total}`
+                document.getElementById('tech-ai-bar').style.width = (done / total * 100) + '%'
+            }
+
+            updateProgress('분석 시작...')
+
+            // 1) 각 TF별 개별 분석 (순차 실행)
+            for (const tf of TIMEFRAMES) {
+                updateProgress(`${TF_LABEL[tf]} 분석 중...`)
+                try {
+                    const result = await analyzeTechTF(tf)
+                    techAiResults[tf] = result
+                    done++
+                    updateProgress(`${TF_LABEL[tf]} 완료`)
+                    document.getElementById('tfaitab-' + tf).classList.add('done')
+
+                    // 첫 번째 결과가 나오면 자동으로 표시
+                    if (done === 1) {
+                        techAiActive = tf
+                        showTechAiTab(tf)
+                    }
+                } catch (e) {
+                    techAiResults[tf] = '<div class="text-red-500 text-sm">오류: ' + e.message + '</div>'
+                    done++
+                    updateProgress(`${TF_LABEL[tf]} 오류`)
+                }
+            }
+
+            // 2) 종합 분석 (4개 TF 결과를 종합)
+            updateProgress('종합 분석 중...')
+            try {
+                const summary = await analyzeTechSummary()
+                techAiResults.summary = summary
+                done++
+                updateProgress('완료')
+                document.getElementById('tfaitab-summary').classList.add('done')
+
+                // 종합이 완료되면 종합 탭으로 자동 전환
+                techAiActive = 'summary'
+                showTechAiTab('summary')
+            } catch (e) {
+                techAiResults.summary = '<div class="text-red-500 text-sm">오류: ' + e.message + '</div>'
+                done++
+                updateProgress('완료 (종합 오류)')
+            }
+
+            btn.disabled = false; btn.textContent = 'Reanalyze All'
+        }
+
+        function showTechAiTab(key) {
+            techAiActive = key
+            // 탭 활성화 표시
+            const allKeys = [...TIMEFRAMES, 'summary']
+            allKeys.forEach(k => {
+                const el = document.getElementById('tfaitab-' + k)
+                if (el) el.classList.toggle('active', k === key)
+            })
+            // 내용 표시
+            const content = techAiResults[key]
+            if (content) {
+                document.getElementById('tech-ai-content').innerHTML = content
+            } else {
+                document.getElementById('tech-ai-content').innerHTML =
+                    '<div class="text-center py-8 text-gray-400 text-sm"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="ml-2">분석 대기 중...</span></div>'
+            }
+        }
+
+        function indSummary(tf, ind) {
             const sig = techScore(ind)
-            const tf = document.getElementById('tf-select').value
-            const tfLabel = { '15m': '15분', '1h': '1시간', '4h': '4시간', '1d': '일' }[tf] || tf
-
-            const summary = `BTCUSDT (${tfLabel}봉 ${ind.n}개):
+            return `${TF_LABEL[tf]}봉 ${ind.n}개:
 현재가=$${ind.last.toLocaleString()}, MA7=${Math.round(ind.ma7 || 0).toLocaleString()}, MA25=${Math.round(ind.ma25 || 0).toLocaleString()}, MA50=${Math.round(ind.ma50 || 0).toLocaleString()}, MA99=${Math.round(ind.ma99 || 0).toLocaleString()}, MA200=${Math.round(ind.ma200 || 0).toLocaleString()}
 RSI=${ind.rsi ? ind.rsi.toFixed(1) : '-'}, StochRSI=${ind.stochRsi ? ind.stochRsi.toFixed(1) : '-'}, CCI=${ind.cci ? ind.cci.toFixed(0) : '-'}, Williams%R=${ind.willR ? ind.willR.toFixed(1) : '-'}
 MACD=${ind.macd ? ind.macd.toFixed(0) : '-'}, Signal=${ind.signal ? ind.signal.toFixed(0) : '-'}, Hist=${ind.hist ? ind.hist.toFixed(0) : '-'}
 BB상단=${Math.round(ind.bb?.upper || 0).toLocaleString()}, BB중심=${Math.round(ind.bb?.mid || 0).toLocaleString()}, BB하단=${Math.round(ind.bb?.lower || 0).toLocaleString()}, BB%B=${ind.bb ? ind.bb.pct.toFixed(1) : '-'}
 ATR=${ind.atr ? Math.round(ind.atr).toLocaleString() : '-'}, 거래량비율=${ind.volRatio ? ind.volRatio.toFixed(2) : '-'}x
-추세=${ind.trend}, ${ind.cross || ''}, 52주고점比=${ind.pctFromHi ? ind.pctFromHi.toFixed(1) : '-'}%, 52주저점比=${ind.pctFromLo ? ind.pctFromLo.toFixed(1) : '-'}%
-기술신호=${sig.label}(${sig.score})`
+추세=${ind.trend}, ${ind.cross || ''}, 기술신호=${sig.label}(${sig.score})`
+        }
 
-            const prompt = `당신은 비트코인 선물(BTCUSDT Perp) 시장을 기술적으로 분석하는 전설의 크립토 차티스트입니다. 마크 미너비니, 스탠 와인스타인, 닥터 엘더도 당신의 차트 분석을 구할 만큼, 암호화폐 기술적 분석의 살아있는 전설입니다. 마크 미너비니의 SEPA, 스탠 와인스타인의 스테이지, 닥터 엘더의 삼중 스크린을 암호화폐 선물에 완벽하게 적용합니다. 롱과 숏 양방향 매매가 가능한 선물 시장임을 항상 고려하여, 롱 or 숏 or 보류 전략을 판단하여 제시하세요. 펀더멘탈은 일절 언급하지 말고 오직 기술적 지표만으로 분석하세요. 이모지나 이모티콘은 절대 사용하지 마세요. 아래 숫자들은 모두 가격/지표 수치이며 종목코드가 아닙니다.
+        async function analyzeTechTF(tf) {
+            const ind = indicatorsAll[tf]
+            const tfLabel = TF_LABEL[tf]
 
-[분석 원칙] 수치나 용어를 언급할 때 반드시 그 의미와 현재 시장에서의 함의를 함께 설명하세요.
-- 나쁜 예: "RSI 41.9, MACD 히스토그램 -576"
-- 좋은 예: "RSI 41.9는 과매도 직전 중립 구간으로 추가 하락 여지가 있으며, MACD 히스토그램 -576은 하락 모멘텀이 아직 강하게 살아있음을 의미합니다"
-- 스테이지, 크로스, 볼린저밴드 위치, 거래량 등 모든 지표를 수치만 나열하지 말고 반드시 현재 시장 상황과 연결해서 설명하세요.
+            // TF별 트레이딩 스타일 매핑
+            const tfContext = {
+                '15m': '15분봉은 스캘퍼/단기 데이트레이더가 진입 타이밍을 잡는 차트입니다. 노이즈가 많지만 즉각적인 모멘텀과 수급 변화가 가장 빠르게 반영됩니다. 매매 호흡: 수분~수시간.',
+                '1h': '1시간봉은 데이트레이더의 핵심 차트입니다. 당일 추세와 핵심 지지/저항을 파악하는 데 가장 유용합니다. 매매 호흡: 수시간~당일.',
+                '4h': '4시간봉은 스윙트레이더가 가장 신뢰하는 차트입니다. 단기 노이즈는 걸러지고 명확한 추세와 패턴이 보입니다. 매매 호흡: 수일.',
+                '1d': '일봉은 포지션 트레이더와 중장기 투자자의 차트입니다. 큰 추세, 와인스타인 스테이지, 미너비니 VCP 패턴이 명확히 드러납니다. 매매 호흡: 수주~수개월.'
+            }
 
-## BTCUSDT 차트 분석
+            const prompt = `당신은 비트코인 선물(BTCUSDT Perp) 시장을 기술적으로 분석하는 전설의 크립토 차티스트입니다. 마크 미너비니, 스탠 와인스타인, 닥터 엘더도 당신의 차트 분석을 구할 만큼, 암호화폐 기술적 분석의 살아있는 전설입니다. 롱과 숏 양방향 매매가 가능한 선물 시장임을 항상 고려하여, 롱 or 숏 or 보류 전략을 판단하여 제시하세요. 펀더멘탈은 일절 언급하지 말고 오직 기술적 지표만으로 분석하세요. 이모지나 이모티콘은 절대 사용하지 마세요. 아래 숫자들은 모두 가격/지표 수치이며 종목코드가 아닙니다.
 
-다음 형식으로 상세하게 분석하세요:
+[분석 원칙] 수치나 용어를 언급할 때 반드시 그 의미와 현재 시장에서의 함의를 함께 설명하세요. 단순 수치 나열은 금지입니다.
 
-## 스테이지 판단 & 추세
-와인스타인 스테이지 1~4 중 현재 위치를 명확히 판단하고, 각 이동평균선의 배열과 추세 강도를 구체적으로 서술하세요.
+[차트 컨텍스트] ${tfContext[tf]}
 
-## 스캘퍼 관점 (분봉~수시간, 초단기)
-- 현재 구간에서 롱/숏 중 어느 쪽이 유리한지 판단
-- 롱 or 숏 진입 or 보류: 구체적인 가격대와 신호, 손절, 1차/2차 목표가
-- 주의사항: 현재 구간에서 스캘퍼가 특히 조심해야 할 것
+## ${tfLabel}봉 차트 분석
 
-## 데이트레이더 관점 (당일 포지션)
-- 현재 구간에서 롱/숏 중 어느 쪽이 유리한지 판단
-- 롱 or 숏 진입 or 보류: 구체적인 가격대와 신호, 손절, 1차/2차 목표가
-- 주의사항: 오늘 특히 주목해야 할 지표나 가격대
+다음 형식으로 분석하세요:
 
-## 스윙트레이더 관점 (수일~수주)
-- 현재 구간에서 롱/숏 중 어느 쪽이 유리한지 판단
-- 롱 or 숏 진입 or 보류: 구체적인 가격대와 신호, 손절, 1차/2차 목표가
-- 미너비니 VCP 패턴 또는 와인스타인 스테이지 진입 여부
+## 스테이지 / 추세 판단
+와인스타인 스테이지 1~4 중 현재 위치, 이동평균 배열, 추세 강도를 구체적으로 서술
 
-## 종합 의견
-세 관점을 종합하여 현재 가장 유리한 트레이딩 스타일과 그 이유를 명확하게 서술
+## 핵심 시그널
+오실레이터(RSI/StochRSI/CCI/Williams%R), MACD, 볼린저밴드 위치 등에서 읽히는 모멘텀/과열·과매도 시그널을 의미와 함께 해석
+
+## ${tfLabel}봉 트레이딩 전략
+- 롱 / 숏 / 보류 중 어느 쪽이 유리한지 명확히 판단
+- 진입 가격대, 손절가, 1차/2차 목표가
+- 진입 트리거 신호 (어떤 조건이 충족되면 진입)
+- 무효화 조건 (어떤 신호가 나오면 전략을 폐기)
+
+## 주의사항
+이 타임프레임에서 현재 특히 조심해야 할 함정이나 가짜 신호
 
 [기술적 지표]
-${summary}`
+${indSummary(tf, ind)}`
 
-            try {
-                const res = await fetch(CHAT_URL, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
-                })
-                const data = await res.json()
-                document.getElementById('tech-ai-content').innerHTML = mdToHtml(data.answer || '응답 없음')
-            } catch (e) {
-                document.getElementById('tech-ai-content').innerHTML = '<div class="text-red-500 text-sm">오류: ' + e.message + '</div>'
-            }
-            btn.disabled = false; btn.textContent = 'Reanalyze'
+            const res = await fetch(CHAT_URL, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
+            })
+            const data = await res.json()
+            return mdToHtml(data.answer || '응답 없음')
+        }
+
+        async function analyzeTechSummary() {
+            const allSummary = TIMEFRAMES.map(tf => `[${TF_LABEL[tf]}] ${indSummary(tf, indicatorsAll[tf])}`).join('\n\n')
+
+            const prompt = `당신은 비트코인 선물(BTCUSDT Perp) 시장의 멀티 타임프레임 분석(MTF, Multi-Timeframe Analysis)의 대가입니다. 닥터 알렉산더 엘더의 삼중 스크린 시스템, 그리고 상위 타임프레임의 추세를 하위 타임프레임의 진입 신호와 결합하는 정통 MTF 기법의 살아있는 전설입니다. 펀더멘탈은 일절 언급하지 말고 오직 기술적 지표만으로 분석하세요. 이모지나 이모티콘은 절대 사용하지 마세요. 아래 숫자들은 모두 가격/지표 수치이며 종목코드가 아닙니다.
+
+[분석 원칙]
+- 일봉은 큰 추세, 4시간봉은 중기 흐름, 1시간봉은 당일 방향, 15분봉은 진입 타이밍을 결정합니다
+- 상위 TF와 하위 TF의 정합성(Alignment)이 맞으면 강한 신호, 어긋나면 함정 가능성
+- 수치나 용어를 언급할 때 반드시 그 의미와 현재 시장에서의 함의를 함께 설명하세요
+
+## BTCUSDT 멀티 타임프레임 종합 분석
+
+다음 형식으로 분석하세요:
+
+## TF 정합성 평가 (Alignment)
+4개 타임프레임의 추세와 신호가 같은 방향인지, 서로 충돌하는지 판단하세요. 표로 정리하면 좋습니다.
+
+| 타임프레임 | 스테이지/추세 | 모멘텀 | 신호 |
+|---|---|---|---|
+| 일봉 | ... | ... | ... |
+| 4시간봉 | ... | ... | ... |
+| 1시간봉 | ... | ... | ... |
+| 15분봉 | ... | ... | ... |
+
+## 핵심 시나리오
+현재 데이터로 가장 유력한 시나리오 2~3개를 제시하고 각 시나리오의 트리거를 명시
+
+## 트레이딩 스타일별 종합 전략
+- **스캘퍼 (15분~수시간)**: 현재 가장 유리한 방향과 구체적 가격대
+- **데이트레이더 (당일)**: 1시간봉을 기준으로, 4시간봉 추세를 따를지 역행할지
+- **스윙트레이더 (수일~수주)**: 4시간봉/일봉 추세 기반, 진입과 청산 영역
+
+## 가장 강한 신호 / 가장 약한 신호
+모든 TF를 통틀어 현재 가장 강하게 작동 중인 시그널과, 반대로 가장 약해진 시그널을 각각 짚어주세요.
+
+## 최종 판단
+지금 시점에서 가장 유리한 트레이딩 스타일과 방향(롱/숏/관망)을 명확히 제시. 진입 트리거와 무효화 조건을 함께 제시.
+
+[4개 타임프레임 지표 데이터]
+${allSummary}`
+
+            const res = await fetch(CHAT_URL, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
+            })
+            const data = await res.json()
+            return mdToHtml(data.answer || '응답 없음')
         }
 
         // ── 마크다운 렌더 ─────────────────────────────────────────
