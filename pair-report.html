@@ -10,6 +10,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <style>
+        /* 컬럼 세로 구분선 (아주 연하게) */
+        .report-table th:not(:last-child),
+        .report-table td:not(:last-child) {
+            border-right: 1px solid #f3f4f6;
+        }
         .signal-card {
             transition: all 0.3s ease;
         }
