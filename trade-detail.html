@@ -256,6 +256,8 @@
                         <span id="stock-code-label" class="font-medium text-gray-700"></span>
                         &nbsp;|&nbsp;
                         Last Updated: <span id="last-updated-time" class="font-medium text-gray-700">Loading...</span>
+                        &nbsp;|&nbsp;
+                        Market: <span id="market-badge" class="font-bold text-gray-400">-</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -512,6 +514,22 @@
                     formattedDate = updateTime;
                 }
                 document.getElementById('last-updated-time').textContent = formattedDate;
+                // Market 상태 — shmon 형식 (KRX/NXT/Closed)
+                (function () {
+                    const badge = document.getElementById('market-badge');
+                    if (!badge) return;
+                    const now = new Date();
+                    const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+                    const d = kst.getDay(), t = kst.getHours() * 60 + kst.getMinutes();
+                    const weekday = d >= 1 && d <= 5;
+                    if (weekday && t >= 540 && t <= 930) {
+                        badge.textContent = "\ud83d\udfe2 KRX"; badge.className = "font-bold text-green-600";
+                    } else if (weekday && ((t >= 480 && t < 540) || (t > 930 && t <= 1200))) {
+                        badge.textContent = "\ud83d\udd35 NXT"; badge.className = "font-bold text-blue-600";
+                    } else {
+                        badge.textContent = "\u26ab Market Closed"; badge.className = "font-bold text-gray-400";
+                    }
+                })();
             } catch (error) {
                 console.error('업데이트 시간 가져오기 실패:', error);
                 document.getElementById('last-updated-time').textContent = 'Unknown';
