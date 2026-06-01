@@ -48,34 +48,17 @@
             margin-right: 4px;
         }
 
-        .signal-IN {
-            background-color: #FEE2E2;
-            color: #DC2626;
-        }
+        .signal-IN { background-color: #e5e7eb; color: #374151; }
 
-        .signal-OUT {
-            background-color: #DCFCE7;
-            color: #16A34A;
-        }
+        .signal-OUT { background-color: #e5e7eb; color: #374151; }
 
-        .signal-CHK {
-            background-color: #FEF3C7;
-            color: #D97706;
-        }
+        .signal-CHK { background-color: #e5e7eb; color: #374151; }
 
-        .sz-high {
-            color: #DC2626;
-            font-weight: bold;
-        }
+        .sz-high { color: #111827; font-weight: bold; }
 
-        .sz-medium {
-            color: #EA580C;
-            font-weight: bold;
-        }
+        .sz-medium { color: #374151; font-weight: bold; }
 
-        .sz-low {
-            color: #16A34A;
-        }
+        .sz-low { color: #6b7280; }
 
         .slider-wrapper {
             width: 100%;
@@ -97,7 +80,7 @@
             appearance: none;
             width: 24px;
             height: 24px;
-            background: #3b82f6;
+            background: #6b7280;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid #ffffff;
@@ -108,7 +91,7 @@
         input[type="range"]::-moz-range-thumb {
             width: 24px;
             height: 24px;
-            background: #3b82f6;
+            background: #6b7280;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid #ffffff;
@@ -261,15 +244,15 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <a href="index.html" class="px-3 py-1 text-xs rounded bg-green-100 text-green-700 hover:bg-green-200 transition-colors font-medium">Home</a>
-                    <a href="pair-report.html" class="px-3 py-1 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors font-medium">Report</a>
+                    <a href="index.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium">Home</a>
+                    <a href="pair-report.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium">Report</a>
                     <a href="https://eqmon.duckdns.org" style="font-size:12px;color:#fff;text-decoration:none;padding:4px 10px;border:1px solid #334155;border-radius:6px;background:#1e293b;">HOME</a>
                 </div>
             </div>
         </header>
 
         <div id="loading-container" class="flex flex-col items-center justify-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mb-4"></div>
             <p class="text-gray-600">Loading data...</p>
         </div>
 
@@ -277,20 +260,20 @@
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Current stock information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-blue-50 rounded-lg">
-                        <div class="text-blue-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-gray-700 text-sm font-medium mb-1">보통주 가격 [Short]</div>
                         <div class="text-xl font-bold" id="current-common-price">-</div>
                     </div>
-                    <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">우선주 가격 [Long]</div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-gray-700 text-sm font-medium mb-1">우선주 가격 [Long]</div>
                         <div class="text-xl font-bold" id="current-preferred-price">-</div>
                     </div>
-                    <div class="p-4 bg-green-50 rounded-lg">
-                        <div class="text-green-700 text-sm font-medium mb-1">현재 SZ 값</div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-gray-700 text-sm font-medium mb-1">현재 SZ 값</div>
                         <div class="text-xl font-bold" id="current-sz-value">-</div>
                     </div>
-                    <div class="p-4 bg-yellow-50 rounded-lg">
-                        <div class="text-yellow-700 text-sm font-medium mb-1">현재 괴리율</div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-gray-700 text-sm font-medium mb-1">현재 괴리율</div>
                         <div class="text-xl font-bold" id="current-discount-rate">-</div>
                     </div>
                 </div>
@@ -317,7 +300,7 @@
                             </div>
                             <div class="mt-2 text-sm">
                                 <span class="font-medium">조정 가격:</span>
-                                <span id="common-price-adjusted" class="font-bold text-blue-600">-</span>
+                                <span id="common-price-adjusted" class="font-bold text-gray-800">-</span>
                             </div>
                         </div>
                         <div class="mb-4">
@@ -337,7 +320,7 @@
                             </div>
                             <div class="mt-2 text-sm">
                                 <span class="font-medium">조정 가격:</span>
-                                <span id="preferred-price-adjusted" class="font-bold text-blue-600">-</span>
+                                <span id="preferred-price-adjusted" class="font-bold text-gray-800">-</span>
                             </div>
                         </div>
                         <div class="mt-6 grid grid-cols-2 gap-2">
@@ -346,7 +329,7 @@
                                 초기화
                             </button>
                             <button id="calculate-button"
-                                class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
                                 계산하기
                             </button>
                         </div>
@@ -356,7 +339,7 @@
                                 <span class="text-xs text-gray-500">(Ex: 50 = 5천, 100 = 1억)</span>
                             </label>
                             <input type="number" id="investment-amount"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
                                 placeholder="백만원 단위로 입력" min="0" step="1">
                         </div>
                     </div>
@@ -423,7 +406,7 @@
                     <div
                         style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
                         <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">현재 dr</div>
-                        <div style="font-size:1rem; font-weight:700; color:#2563eb;" id="dist-dr">-</div>
+                        <div style="font-size:1rem; font-weight:700; color:#374151;" id="dist-dr">-</div>
                     </div>
                     <div
                         style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
@@ -433,7 +416,7 @@
                     <div
                         style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
                         <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">σ (std)</div>
-                        <div style="font-size:1rem; font-weight:700; color:#7c3aed;" id="dist-std">-</div>
+                        <div style="font-size:1rem; font-weight:700; color:#374151;" id="dist-std">-</div>
                     </div>
                     <div
                         style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
@@ -450,14 +433,14 @@
                     <canvas id="dist-chart"></canvas>
                 </div>
                 <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:0.75rem; font-size:0.72rem; color:#6b7280;">
-                    <span>🟦 dr 빈도 분포</span>
-                    <span>🔵 분포 곡선 (왜도 반영)</span>
-                    <span>🔴 현재 dr 위치</span>
+                    <span>dr 빈도 분포</span>
+                    <span>분포 곡선 (왜도 반영)</span>
+                    <span>현재 dr 위치</span>
                     <span style="background:rgba(252,165,165,0.5); padding:0 4px; border-radius:2px;">±2σ</span>
                     <span style="background:rgba(251,146,60,0.4); padding:0 4px; border-radius:2px;">±1σ</span>
                 </div>
                 <div id="dist-interp"
-                    style="margin-top:0.75rem; background:#f9fafb; border-left:3px solid #6366f1; border-radius:0 6px 6px 0; padding:0.75rem 1rem; font-size:0.8rem; color:#374151; line-height:1.7;">
+                    style="margin-top:0.75rem; background:#f9fafb; border-left:3px solid #9ca3af; border-radius:0 6px 6px 0; padding:0.75rem 1rem; font-size:0.8rem; color:#374151; line-height:1.7;">
                     분석 중...
                 </div>
             </div>
@@ -523,11 +506,11 @@
                     const d = kst.getDay(), t = kst.getHours() * 60 + kst.getMinutes();
                     const weekday = d >= 1 && d <= 5;
                     if (weekday && t >= 540 && t <= 930) {
-                        badge.textContent = "\ud83d\udfe2 KRX"; badge.className = "font-bold text-green-600";
+                        badge.textContent = "KRX"; badge.className = "font-bold text-gray-700";
                     } else if (weekday && ((t >= 480 && t < 540) || (t > 930 && t <= 1200))) {
-                        badge.textContent = "\ud83d\udd35 NXT"; badge.className = "font-bold text-blue-600";
+                        badge.textContent = "NXT"; badge.className = "font-bold text-gray-600";
                     } else {
-                        badge.textContent = "\u26ab Market Closed"; badge.className = "font-bold text-gray-400";
+                        badge.textContent = "Market Closed"; badge.className = "font-bold text-gray-400";
                     }
                 })();
             } catch (error) {
@@ -651,7 +634,7 @@
                     <p>오류: ${error.message}</p>
                     <p>종목 코드: ${stockCode}, 이름: ${stockName}</p>
                     <div class="mt-4 flex justify-center space-x-4">
-                        <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-500 text-white rounded">다시 시도</button>
+                        <button onclick="window.location.reload()" class="px-4 py-2 bg-gray-600 text-white rounded">다시 시도</button>
                         <button onclick="window.location.href='index.html'" class="px-4 py-2 bg-gray-500 text-white rounded">메인 페이지로 돌아가기</button>
                     </div>
                 </div>
@@ -804,11 +787,11 @@
 
                     if (szValue === undefined) continue;
 
-                    let szClass = 'text-green-600';
+                    let szClass = 'text-gray-600';
                     if (szValue >= 2.5) {
-                        szClass = 'text-red-600 font-bold';
+                        szClass = 'text-gray-900 font-bold';
                     } else if (szValue >= 1.5) {
-                        szClass = 'text-orange-600 font-bold';
+                        szClass = 'text-gray-700 font-bold';
                     }
 
                     let trendIcon = '-';
@@ -817,9 +800,9 @@
                         const prevSZ = szValueMap[prevIndex] ?? 0;
 
                         if (szValue > prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-up text-red-500"></i>';
+                            trendIcon = '<i class="fas fa-arrow-up text-gray-600"></i>';
                         } else if (szValue < prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-down text-green-500"></i>';
+                            trendIcon = '<i class="fas fa-arrow-down text-gray-600"></i>';
                         } else {
                             trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
                         }
@@ -1094,17 +1077,17 @@
                 // 뱃지
                 const szEl = document.getElementById('dist-sz');
                 szEl.textContent = sz.toFixed(2);
-                szEl.style.color = sz >= 2.5 ? '#dc2626' : sz >= 1.5 ? '#ea580c' : '#16a34a';
+                szEl.style.color = sz >= 2.5 ? '#111827' : sz >= 1.5 ? '#374151' : '#6b7280';
                 document.getElementById('dist-dr').textContent = (curDr * 100).toFixed(2) + '%';
                 document.getElementById('dist-mean').textContent = (mean * 100).toFixed(2) + '%';
                 document.getElementById('dist-std').textContent = (std * 100).toFixed(3) + '%';
                 const skewEl = document.getElementById('dist-skew');
                 skewEl.textContent = (skew >= 0 ? '+' : '') + skew.toFixed(2);
-                skewEl.style.color = skew < -0.5 ? '#ea580c' : skew > 0.5 ? '#16a34a' : '#2563eb';
+                skewEl.style.color = skew < -0.5 ? '#374151' : skew > 0.5 ? '#374151' : '#6b7280';
                 const judgeEl = document.getElementById('dist-judge');
-                if (skew > 0.5) { judgeEl.textContent = '✅ 진입유리'; judgeEl.style.color = '#16a34a'; }
-                else if (skew < -0.5) { judgeEl.textContent = '⚠️ 주의'; judgeEl.style.color = '#ea580c'; }
-                else { judgeEl.textContent = '△ 중립'; judgeEl.style.color = '#2563eb'; }
+                if (skew > 0.5) { judgeEl.textContent = '진입유리'; judgeEl.style.color = '#374151'; }
+                else if (skew < -0.5) { judgeEl.textContent = '주의'; judgeEl.style.color = '#374151'; }
+                else { judgeEl.textContent = '중립'; judgeEl.style.color = '#6b7280'; }
 
                 // 히스토그램
                 const bins = 24;
@@ -1120,10 +1103,10 @@
                 const labels = binCenters.map(v => (v * 100).toFixed(2) + '%');
                 const curBin = Math.min(Math.floor((curDr - minDr) / bSize), bins - 1);
                 const barColors = binCenters.map((v, i) => {
-                    if (i === curBin) return 'rgba(220,38,38,0.85)';
-                    if (v >= mean - std && v <= mean + std) return 'rgba(251,146,60,0.45)';
-                    if (v >= mean - 2 * std && v <= mean + 2 * std) return 'rgba(252,165,165,0.35)';
-                    return 'rgba(99,102,241,0.3)';
+                    if (i === curBin) return 'rgba(17,24,39,0.85)';
+                    if (v >= mean - std && v <= mean + std) return 'rgba(107,114,128,0.45)';
+                    if (v >= mean - 2 * std && v <= mean + 2 * std) return 'rgba(156,163,175,0.35)';
+                    return 'rgba(209,213,219,0.4)';
                 });
 
                 // 왜도 반영 분포 곡선
@@ -1161,7 +1144,7 @@
                                 type: 'line',
                                 label: '분포 곡선',
                                 data: normalCurve,
-                                borderColor: 'rgba(99,102,241,0.9)',
+                                borderColor: 'rgba(107,114,128,0.9)',
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 0,
@@ -1187,10 +1170,10 @@
                                 annotations: {
                                     curLine: {
                                         type: 'line', xMin: curBin, xMax: curBin,
-                                        borderColor: 'rgba(220,38,38,1)', borderWidth: 2,
+                                        borderColor: 'rgba(17,24,39,1)', borderWidth: 2,
                                         label: {
                                             display: true, content: `현재 SZ=${sz.toFixed(2)}`,
-                                            position: 'start', backgroundColor: 'rgba(220,38,38,0.85)',
+                                            position: 'start', backgroundColor: 'rgba(17,24,39,0.85)',
                                             color: '#fff', font: { size: 10, weight: 'bold' },
                                             padding: { x: 6, y: 3 }, yAdjust: -10
                                         }
@@ -1206,37 +1189,37 @@
                                     },
                                     p2s: {
                                         type: 'line', xMin: toIdx(mean + 2 * std), xMax: toIdx(mean + 2 * std),
-                                        borderColor: 'rgba(239,68,68,0.6)', borderWidth: 1, borderDash: [3, 3],
+                                        borderColor: 'rgba(107,114,128,0.6)', borderWidth: 1, borderDash: [3, 3],
                                         label: {
                                             display: true, content: '+2σ', position: 'end',
-                                            backgroundColor: 'rgba(239,68,68,0.7)', color: '#fff',
+                                            backgroundColor: 'rgba(107,114,128,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 25
                                         }
                                     },
                                     m2s: {
                                         type: 'line', xMin: toIdx(mean - 2 * std), xMax: toIdx(mean - 2 * std),
-                                        borderColor: 'rgba(239,68,68,0.6)', borderWidth: 1, borderDash: [3, 3],
+                                        borderColor: 'rgba(107,114,128,0.6)', borderWidth: 1, borderDash: [3, 3],
                                         label: {
                                             display: true, content: '-2σ', position: 'end',
-                                            backgroundColor: 'rgba(239,68,68,0.7)', color: '#fff',
+                                            backgroundColor: 'rgba(107,114,128,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 25
                                         }
                                     },
                                     p1s: {
                                         type: 'line', xMin: toIdx(mean + std), xMax: toIdx(mean + std),
-                                        borderColor: 'rgba(249,115,22,0.5)', borderWidth: 1, borderDash: [2, 4],
+                                        borderColor: 'rgba(156,163,175,0.5)', borderWidth: 1, borderDash: [2, 4],
                                         label: {
                                             display: true, content: '+1σ', position: 'end',
-                                            backgroundColor: 'rgba(249,115,22,0.7)', color: '#fff',
+                                            backgroundColor: 'rgba(156,163,175,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 45
                                         }
                                     },
                                     m1s: {
                                         type: 'line', xMin: toIdx(mean - std), xMax: toIdx(mean - std),
-                                        borderColor: 'rgba(249,115,22,0.5)', borderWidth: 1, borderDash: [2, 4],
+                                        borderColor: 'rgba(156,163,175,0.5)', borderWidth: 1, borderDash: [2, 4],
                                         label: {
                                             display: true, content: '-1σ', position: 'end',
-                                            backgroundColor: 'rgba(249,115,22,0.7)', color: '#fff',
+                                            backgroundColor: 'rgba(156,163,175,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 45
                                         }
                                     }
@@ -1264,9 +1247,9 @@
                         ? `현재 dr은 <strong>+1σ ~ +2σ 구간</strong>으로 경계 수준입니다.`
                         : `현재 dr은 <strong>±1σ 이내 정상 구간</strong>입니다.`;
                 const skewMsg = skew > 0.5
-                    ? `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 오른쪽으로 치우쳐 있어 평균회귀 전략에 <strong style="color:#16a34a">유리</strong>한 구조입니다.`
+                    ? `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 오른쪽으로 치우쳐 있어 평균회귀 전략에 <strong style="color:#374151">유리</strong>한 구조입니다.`
                     : skew < -0.5
-                        ? `왜도 <strong>${skew.toFixed(2)}</strong> — 분포가 왼쪽으로 치우쳐 있어 현재 구간은 역사적 전례가 드물며 <strong style="color:#ea580c">주의</strong>가 필요합니다.`
+                        ? `왜도 <strong>${skew.toFixed(2)}</strong> — 분포가 왼쪽으로 치우쳐 있어 현재 구간은 역사적 전례가 드물며 <strong style="color:#374151">주의</strong>가 필요합니다.`
                         : `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 대칭에 가까워 Z-score 기준을 신뢰할 수 있습니다.`;
                 document.getElementById('dist-interp').innerHTML = `${sigmaMsg} ${skewMsg}`;
 
@@ -1439,7 +1422,7 @@
                 <p class="mt-1">
                     SZ 값은 <span class="${adjustedSZValue >= 2.5 ? 'sz-high' : adjustedSZValue >= 1.5 ? 'sz-medium' : 'sz-low'}">${adjustedSZValue.toFixed(2)}</span>가 됩니다.
                 </p>
-                <p class="mt-1 ${adjustedSZValue >= 2.0 ? 'text-red-600 font-medium' : ''}">
+                <p class="mt-1 ${adjustedSZValue >= 2.0 ? 'text-gray-900 font-medium' : ''}">
                     ${adjustedSZValue >= 2.0 ? 'SZ 값이 2.0 이상입니다!' : 'SZ 값이 2.0 미만입니다.'}
                 </p>
                 ${investmentAmount ? `
