@@ -61,19 +61,11 @@
             text-align: left;
         }
 
-        .sz-high {
-            color: #DC2626;
-            font-weight: bold;
-        }
+        .sz-high { color: #111827; font-weight: bold; }
 
-        .sz-medium {
-            color: #EA580C;
-            font-weight: bold;
-        }
+        .sz-medium { color: #374151; font-weight: bold; }
 
-        .sz-low {
-            color: #16A34A;
-        }
+        .sz-low { color: #6b7280; }
 
         .report-table th {
             background: #f9fafb;
@@ -201,7 +193,7 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <a href="index.html" class="px-3 py-1 text-xs rounded bg-green-100 text-green-700 hover:bg-green-200 transition-colors font-medium">MAIN</a>
+                        <a href="index.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium">MAIN</a>
                         <a href="https://eqmon.duckdns.org" style="font-size:12px;color:#fff;text-decoration:none;padding:4px 10px;border:1px solid #334155;border-radius:6px;background:#1e293b;">HOME</a>
                     </div>
                 </div>
@@ -470,11 +462,11 @@
                     const d = kst.getDay(), t = kst.getHours() * 60 + kst.getMinutes();
                     const weekday = d >= 1 && d <= 5;
                     if (weekday && t >= 540 && t <= 930) {
-                        badge.textContent = "\ud83d\udfe2 KRX"; badge.className = "font-bold text-green-600";
+                        badge.textContent = "KRX"; badge.className = "font-bold text-gray-700";
                     } else if (weekday && ((t >= 480 && t < 540) || (t > 930 && t <= 1200))) {
-                        badge.textContent = "\ud83d\udd35 NXT"; badge.className = "font-bold text-blue-600";
+                        badge.textContent = "NXT"; badge.className = "font-bold text-gray-600";
                     } else {
-                        badge.textContent = "\u26ab Market Closed"; badge.className = "font-bold text-gray-400";
+                        badge.textContent = "Market Closed"; badge.className = "font-bold text-gray-400";
                     }
                 })();
                 const lastUpdatedElement = document.getElementById('lastUpdated');
