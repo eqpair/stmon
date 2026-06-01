@@ -46,43 +46,21 @@
             margin-right: 4px;
         }
 
-        .signal-IN {
-            background-color: #FEE2E2;
-            color: #DC2626;
-        }
+        .signal-IN { background-color: #e5e7eb; color: #374151; }
 
-        .signal-OUT {
-            background-color: #DCFCE7;
-            color: #16A34A;
-        }
+        .signal-OUT { background-color: #e5e7eb; color: #374151; }
 
-        .signal-CHK {
-            background-color: #FEF3C7;
-            color: #D97706;
-        }
+        .signal-CHK { background-color: #e5e7eb; color: #374151; }
 
-        .signal-open-bg {
-            background-color: #FFF9DB;
-        }
+        .signal-open-bg { background-color: #f3f4f6; }
 
-        .signal-OPEN {
-            background-color: #DBEAFE;
-            color: #2563EB;
-        }
+        .signal-OPEN { background-color: #e5e7eb; color: #374151; }
 
-        .sz-high {
-            color: #DC2626;
-            font-weight: bold;
-        }
+        .sz-high { color: #111827; font-weight: bold; }
 
-        .sz-medium {
-            color: #EA580C;
-            font-weight: bold;
-        }
+        .sz-medium { color: #374151; font-weight: bold; }
 
-        .sz-low {
-            color: #16A34A;
-        }
+        .sz-low { color: #6b7280; }
 
         /* 반응형 디자인 개선 */
         @media (max-width: 1024px) {
@@ -152,7 +130,7 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <a href="pair-report.html" class="px-3 py-1 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors font-medium">Report</a>
+                    <a href="pair-report.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium">Report</a>
                     <a href="https://eqmon.duckdns.org" style="font-size:12px;color:#fff;text-decoration:none;padding:4px 10px;border:1px solid #334155;border-radius:6px;background:#1e293b;">HOME</a>
                 </div>
             </div>
@@ -163,20 +141,17 @@
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Monitoring Summary</h2>
                 <div class="grid grid-cols-4 gap-4">
-                    <div class="p-4 bg-blue-50 rounded-lg">
-                        <div class="text-blue-700 text-sm font-medium mb-1">Monitoring Items</div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="text-gray-700 text-sm font-medium mb-1">Monitoring Items</div>
                         <div class="text-2xl font-bold" id="total-stocks">-</div>
                     </div>
-                    <div class="p-4 bg-green-50 rounded-lg">
-                        <div class="text-green-700 text-sm font-medium mb-1">IN Signal(s) Items</div>
+                    <div class="p-4 bg-gray-50 rounded-lg"> <div class="text-gray-700 text-sm font-medium mb-1">IN Signal(s) Items</div>
                         <div class="text-2xl font-bold" id="in-signal-count">-</div>
                     </div>
-                    <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
+                    <div class="p-4 bg-gray-50 rounded-lg"> <div class="text-gray-700 text-sm font-medium mb-1">CHK Signal(s) Items</div>
                         <div class="text-2xl font-bold" id="chk-signal-count">-</div>
                     </div>
-                    <div class="p-4 bg-purple-50 rounded-lg">
-                        <div class="text-purple-700 text-sm font-medium mb-1">OUT Signal(s) Items</div>
+                    <div class="p-4 bg-gray-50 rounded-lg"> <div class="text-gray-700 text-sm font-medium mb-1">OUT Signal(s) Items</div>
                         <div class="text-2xl font-bold" id="out-signal-count">-</div>
                     </div>
                 </div>
@@ -196,7 +171,7 @@
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex">
                     <button id="tab-all"
-                        class="tab-button active py-4 px-6 border-b-2 border-blue-500 font-medium text-blue-600 focus:outline-none">
+                        class="tab-button active py-4 px-6 border-b-2 border-gray-700 font-medium text-gray-800 focus:outline-none">
                         All Items
                     </button>
                     <button id="tab-divergent"
@@ -313,10 +288,10 @@
             // 탭 버튼 스타일 업데이트
             document.querySelectorAll('.tab-button').forEach(button => {
                 if (button.id === `tab-${tabId}`) {
-                    button.classList.add('border-blue-500', 'text-blue-600');
+                    button.classList.add('border-gray-700', 'text-gray-800');
                     button.classList.remove('border-transparent', 'text-gray-500');
                 } else {
-                    button.classList.remove('border-blue-500', 'text-blue-600');
+                    button.classList.remove('border-gray-700', 'text-gray-800');
                     button.classList.add('border-transparent', 'text-gray-500');
                 }
             });
@@ -434,11 +409,11 @@
                 const d = kst.getDay(), t = kst.getHours() * 60 + kst.getMinutes();
                 const weekday = d >= 1 && d <= 5;
                 if (weekday && t >= 540 && t <= 930) {
-                    badge.textContent = "\ud83d\udfe2 KRX"; badge.className = "font-bold text-green-600";
+                    badge.textContent = "KRX"; badge.className = "font-bold text-gray-700";
                 } else if (weekday && ((t >= 480 && t < 540) || (t > 930 && t <= 1200))) {
-                    badge.textContent = "\ud83d\udd35 NXT"; badge.className = "font-bold text-blue-600";
+                    badge.textContent = "NXT"; badge.className = "font-bold text-gray-600";
                 } else {
-                    badge.textContent = "\u26ab Market Closed"; badge.className = "font-bold text-gray-400";
+                    badge.textContent = "Market Closed"; badge.className = "font-bold text-gray-400";
                 }
             })();
             const el = document.getElementById('lastUpdated');
@@ -593,7 +568,7 @@
 
                 rowSignals.forEach(signal => {
                     const alertEl = document.createElement('div');
-                    alertEl.className = `p-4 rounded-lg ${signal.type === 'OPEN' ? 'signal-open-bg' : 'bg-blue-50'}`;
+                    alertEl.className = `p-4 rounded-lg ${signal.type === 'OPEN' ? 'signal-open-bg' : 'bg-gray-50'}`;
 
                     const stockCode = getStockCodeByName(signal.stock_name) || 'N/A';
                     const signalTag = `<span class="signal-tag signal-${signal.type}">${signal.type}</span>`;
@@ -605,9 +580,9 @@
                         : `SZ: ${szDisplay}`;
 
                     alertEl.innerHTML = `
-                    <div class="text-blue-700 text-sm font-medium mb-1">
+                    <div class="text-gray-700 text-sm font-medium mb-1">
                         <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                        class="hover:text-blue-600 hover:underline">
+                        class="hover:text-gray-700 hover:underline">
                             ${signal.stock_name}
                         </a>
                         <span class="text-xs text-gray-500">${stockCode}</span>
@@ -746,7 +721,7 @@
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-lg font-medium text-gray-900">
                             <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(signal.stock_name)}" 
-                            class="hover:text-blue-600 hover:underline">
+                            class="hover:text-gray-700 hover:underline">
                                 ${displayStockName}
                             </a>
                             <span class="text-sm text-gray-500 block">${stockCode}</span>
@@ -761,7 +736,7 @@
                         </div>
                         <div>
                             <span class="text-gray-500">SKW:</span>
-                            <span class="${(signal.skew_short !== null && signal.skew_short < 0) ? 'text-orange-500 font-bold' : 'text-green-600'}">
+                            <span class="${(signal.skew_short !== null && signal.skew_short < 0) ? 'text-gray-700 font-bold' : 'text-gray-600'}">
                                 ${signal.skew_long !== null ? (signal.skew_long >= 0 ? '+' : '') + signal.skew_long : '-'}
                                 / ${signal.skew_short !== null ? (signal.skew_short >= 0 ? '+' : '') + signal.skew_short : '-'}
                             </span>
