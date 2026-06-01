@@ -201,7 +201,7 @@
         </header>
 
         <div id="loading-container" class="flex flex-col items-center justify-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4 blink"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mb-4 blink"></div>
             <p class="text-gray-600">Loading Data...</p>
         </div>
 
@@ -718,7 +718,7 @@
                 trShort.innerHTML = `
                     <td rowspan="2" class="clickable-item">
                         <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
-                            class="hover:text-blue-600 hover:underline">
+                            class="hover:text-gray-700 hover:underline">
                             <b>${displayStockName}</b>
                         </a>
                     </td>
@@ -807,7 +807,7 @@
                     <div class="text-red-500 text-center">
                         <p>데이터를 로드할 수 없습니다.</p>
                         <p>${error.message}</p>
-                        <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                        <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-gray-600 text-white rounded">
                             다시 시도
                         </button>
                         <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
