@@ -387,35 +387,8 @@ class StockMonitor:
                 # ==================== 실시간 신호 계산 (한 번만 호출) ====================
                 all_signals, divergent_signals, all_signal_pairs_raw = await self.get_signals_with_divergent()
 
-                # 신호 페어 리스트 (중복 호출 제거)
-                all_signal_pairs = []
-                for pair, result in all_signal_pairs_raw:  # ← API 재호출 없이 재활용
-                    if isinstance(result, Exception) or not result:
-                        continue
-                    all_signal_pairs.append((pair, result))
-
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                message = (
-                    f"🕒 {current_time}\n"
-                    f"📊 Current Status"
-                )
-
-                # 종목 신호 전송
-                await self.telegram_bot.send_message(message, all_signal_pairs)
-
-                # Divergent 신호 전송
-                divergent_signal_pairs = [
-                    (pair, result) for pair, result in all_signal_pairs
-                    if result and float(result.split('/')[0].strip()) >= pair.SL_in_val
-                ]
-
-                if divergent_signal_pairs:
-                    divergent_message = f"🕒 {current_time}\n🚨 Divergent Pairs"
-                    await self.telegram_bot.send_message(divergent_message, divergent_signal_pairs)
-                else:
-                    await self.telegram_bot.send_message(f"🕒 {current_time}\n🚨 No divergent pairs found.")
-
-                logger.info("Periodic update sent successfully")
+                # 정기 메시지 발송 제거 — IN 신호 즉시 알림만 사용
+                logger.info("Periodic update completed (IN-signal alerts only)")
 
                 # 웹 데이터 파일 저장
                 save_web_data(all_signals, divergent_signals)
