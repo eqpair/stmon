@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <title>L/S Trading REPORT</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        /* 컬럼 세로 구분선 (아주 연하게) */
+        .report-table th:not(:last-child),
+        .report-table td:not(:last-child) {
+            border-right: 1px solid #f3f4f6;
+        }
+        .signal-card {
+            transition: all 0.3s ease;
+        }
+
+        .signal-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .blink {
+            animation: blink 2s linear infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 0.5rem;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+            font-size: 0.78rem;
+            /* 종목명 줄바꿈 방지 */
+        }
+
+        .report-table td:first-child {
+            text-align: left;
+        }
+
+        .sz-high { color: #111827; font-weight: bold; }
+
+        .sz-medium { color: #374151; font-weight: bold; }
+
+        .sz-low { color: #6b7280; }
+
+        .report-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            color: #6b7280;
+        }
+
+        /* <style> 섹션에 추가 */
+        .item-group {
+            border-top: 2px solid #d1d5db;
+            /* 그룹 간 회색 테두리 */
+            margin-top: 8px;
+            /* 선택사항: 간격 추가 */
+        }
+
+        .profit-plus,
+        .rate-plus {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .profit-minus,
+        .rate-minus {
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .open-green {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .bold-green {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .clickable-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .exited-row {
+            background-color: #f3f4f6;
+            /* 연회색 배경 */
+        }
+
+        @media (max-width: 1024px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-cols-2 {
+                grid-template-columns: repeat(1, 1fr);
+            }
+
+            .report-table th,
+            .report-table td {
+                padding: 0.6rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            .report-table th,
+            .report-table td {
+                padding: 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl {
+                font-size: 1.2rem;
+            }
+
+            button,
+            a {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .flex.justify-between.items-center {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .flex.items-center.gap-4 {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+                align-items: flex-end;
+            }
+        }
+        /* 행간격 압축 — 모니터에 꽉 차게 */
+        table td, table th { padding-top: 3px !important; padding-bottom: 3px !important; line-height: 1.3 !important; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-screen-2xl">
+        <header class="mb-6">
+            <div class="flex justify-between items-start flex-wrap gap-3 header-flex">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">L/S Trading <span class="text-lg font-normal text-gray-400">REPORT</span></h1>
+                    <div class="text-sm text-gray-500 mt-1">
+                        Last Update: <span id="lastUpdated" class="font-medium text-gray-700">-</span>
+                        &nbsp;|&nbsp;
+                        Market: <span id="market-badge" class="font-bold text-gray-400">-</span>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 flex-wrap header-right">
+                    <div class="text-right">
+                        <div class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Total Exposure</div>
+                        <div id="totalExposure" class="text-2xl font-bold text-green-600 leading-tight">-</div>
+                        <div class="text-sm text-gray-500 mt-0.5">
+                            <span id="openPnL" class="font-medium">-</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <a href="index.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium">MAIN</a>
+                        <a href="https://eqmon.duckdns.org" style="font-size:12px;color:#fff;text-decoration:none;padding:4px 10px;border:1px solid #334155;border-radius:6px;background:#1e293b;">HOME</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="loading-container" class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mb-4 blink"></div>
+            <p class="text-gray-600">Loading Data...</p>
+        </div>
+
+        <div id="content-container" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card hidden">
+            <div class="overflow-x-auto">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Status</th>
+                            <th>SZ</th>
+                            <th>N Profit</th>
+                            <th>N %</th>
+                            <th>T Exp</th>
+                            <th>Dir</th>
+                            <th>Ref P</th>
+                            <th>Val P</th>
+                            <th>Qty</th>
+                            <th>I Profit</th>
+                            <th>I %</th>
+                            <th>I Exp</th>
+                            <th>Entry</th>
+                            <th>Exit</th>
+                            <th>Days</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-body">
+                        <tr>
+                            <td colspan="19" style="text-align:center;">Loading Data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white py-6 mt-8 border-t border-gray-100">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2026 L/S Monitoring System.</p>
+        </div>
+    </footer>
+
+    <script>
+        let tradesData = [];
+
+        // 종목명으로 종목 코드를 가져오는 함수
+        function getStockCodeByName(stockName) {
+            if (!stockName) return 'unknown';
+
+            // HTML 태그 및 이모지 제거
+            let cleanName = stockName.replace(/<[^>]+>/g, "").trim();
+            cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
+            cleanName = cleanName.replace(/-\d+(\.\d+)?$/, '').trim();
+
+            // 종목 코드 맵핑
+            const stockCodeMap = {
+                '삼성전자': '005930',
+                '코오롱모빌리티그룹(비)': '450140',
+                '태양금속(비)': '004100',
+                'NPC(비)': '004250',
+                '대한제당(비)': '001790',
+                '덕성(비)': '004830',
+                '코리아써키트(비)': '007810',
+                '코오롱(비)': '002020',
+                '현대차': '005380',
+                '대신증권(비)': '003540',
+                '성신양회(비)': '004980',
+                '코오롱글로벌(비)': '003070',
+                'NH투자증권': '005940',
+                '신풍제약(비)': '019170',
+                'LG전자': '066570',
+                '한화솔루션': '009830',
+                '세방(비)': '004360',
+                '한화투자증권(비)': '003530',
+                'LG생활건강': '051900',
+                '아모레퍼시픽': '090430',
+                'LG화학': '051910',
+                '아모레G': '002790',
+                '대한항공': '003490',
+                'S-Oil': '010950',
+                '한진칼': '180640',
+                'SK증권(비)': '001510',
+                '한국금융지주': '071050',
+                '티와이홀딩스(비)': '363280',
+                '미래에셋증권': '006800',
+                '동부건설(비)': '005960',
+                '크라운제과(비)': '264900',
+                '두산': '000150',
+                '남선알미늄(비)': '008350',
+                '금호석유': '011780',
+                '넥센(비)': '005720',
+                'LX하우시스(비)': '108670',
+                '삼성화재': '000810',
+                '대상홀딩스(비)': '084690',
+                'SK케미칼': '285130',
+                '소프트센(비)': '032680',
+                '삼성전기': '009150',
+                '노루홀딩스(비)': '000320',
+                'LG': '003550',
+                '삼성SDI': '006400',
+                '코오롱인더': '120110',
+                '대원전선(비)': '006340',
+                '태영건설(비)': '009410',
+                '흥국화재(비)': '000540',
+                '대호특수강(비)': '021040',
+                '계양전기(비)': '012200',
+                '한양증권(비)': '001750',
+                '호텔신라': '008770',
+                'SK이노베이션': '096770',
+                '서울식품(비)': '004410',
+                '현대건설': '000720',
+                'DL이앤씨': '375500',
+                'GS': '078930',
+                '금강공업(비)': '014280',
+                '대상': '001680',
+                '금호건설(비)': '002990',
+                'CJ제일제당': '097950',
+                'SK디스커버리(비)': '006120',
+                'DL': '000210',
+                '노루페인트(비)': '090350',
+                '동양(비)': '001520',
+                '한화': '000880',
+                'CJ': '001040',
+                '크라운해태홀딩스(비)': '005740',
+                '롯데칠성': '005300',
+                'SK': '034730',
+                '성문전자(비)': '014910',
+                '일양약품(비)': '007570',
+                '롯데지주': '004990',
+                '깨끗한나라(비)': '004540',
+                '유한양행': '000100',
+                '부국증권(비)': '001270',
+                '남양유업(비)': '003920',
+                '유화증권(비)': '003460',
+                '삼양사(비)': '145990',
+                'JW중외제약(비)': '001060',
+                '하이트진로홀딩스(비)': '000140',
+                'BYC(비)': '001460',
+                '삼양홀딩스(비)': '000070',
+                '동원시스템즈': '014820',
+                'HD현대인프라_건설': '042670'
+            };
+
+            if (stockCodeMap[cleanName]) {
+                return stockCodeMap[cleanName];
+            }
+
+            for (const name in stockCodeMap) {
+                if (cleanName.includes(name) || name.includes(cleanName)) {
+                    console.log(`부분 일치 종목: ${name} (${stockCodeMap[name]})`);
+                    return stockCodeMap[name];
+                }
+            }
+
+            console.warn(`매칭되는 종목 코드를 찾을 수 없음: ${cleanName}`);
+            return 'unknown';
+        }
+
+        // 종목명 정규화 함수
+        function normalizeStockName(name) {
+            if (!name) return '';
+            let cleanName = name.replace(/<[^>]+>/g, '').trim();
+            cleanName = cleanName.replace(/^[^\w\s가-힣]+/, '').trim();
+            cleanName = cleanName.replace(/-\d+(\.\d+)?$/, '').trim();
+            return cleanName;
+        }
+
+        // 수수료 계산 함수
+        function calcFee(entry, exit, qty, bps) {
+            if (!entry || !exit || !qty || !bps) return 0;
+            return (entry * qty + exit * qty) * (bps / 10000);
+        }
+
+        // 차입 비용 계산 함수
+        function calcBorrowFee(entry, qty, borrowFeePct, days) {
+            if (!entry || !qty || !borrowFeePct || !days) return 0;
+            return entry * qty * (borrowFeePct / 100) * (days / 365);
+        }
+
+        // 숏 포지션 손익 계산
+        function calcShortPnL(entry, exit, qty, borrowFeePct, days) {
+            if (!entry || !exit || !qty) return 0;
+            const netShortPrice = entry * 0.9975; // 제세금 0.25% 적용
+            const buyBackPrice = exit * 1.001; // 수수료 0.1% 적용
+            const equityAmt = (netShortPrice - buyBackPrice) * qty;
+            const borrowFee = calcBorrowFee(entry, qty, borrowFeePct, days);
+            return equityAmt - borrowFee;
+        }
+
+        // 롱 포지션 손익 계산
+        function calcLongPnL(entry, exit, qty) {
+            if (!entry || !exit || !qty) return 0;
+            const buyPrice = entry * 1.001; // 수수료 0.1% 적용
+            const sellPrice = exit * 0.9975; // 수수료 및 제세금 0.25% 적용
+            return (sellPrice - buyPrice) * qty;
+        }
+
+        // 숏 포지션 투자금액 계산
+        function calcShortInvested(entry, qty) {
+            const netPrice = entry * 0.9975; // 제세금 0.25% 적용
+            return netPrice * qty;
+        }
+
+        // 롱 포지션 투자금액 계산
+        function calcLongInvested(entry, qty) {
+            const buyPrice = entry * 1.001; // 수수료 0.1% 적용
+            return buyPrice * qty;
+        }
+
+        // 수익률 계산 함수
+        function calcReturn(invested, profit) {
+            if (!invested) return 0;
+            return (profit / invested) * 100;
+        }
+
+        // 손익 클래스 적용
+        function profitClass(val) {
+            return val > 0 ? 'profit-plus' : (val < 0 ? 'profit-minus' : '');
+        }
+
+        // 수익률 클래스 적용
+        function rateClass(val) {
+            return val > 0 ? 'rate-plus' : (val < 0 ? 'rate-minus' : '');
+        }
+
+        // 트렌드 데이터 가져오기
+        async function fetchTrendClose(pair) {
+            try {
+                const res = await fetch(`data/trends/${pair.common_code}.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`트렌드 데이터 로드 실패: ${res.status}`);
+                const data = await res.json();
+                let commonClose = null, preferredClose = null;
+                if (data.common_prices && data.common_prices.length > 0)
+                    commonClose = data.common_prices[data.common_prices.length - 1];
+                if (data.preferred_prices && data.preferred_prices.length > 0)
+                    preferredClose = data.preferred_prices[data.preferred_prices.length - 1];
+                return { commonClose, preferredClose };
+            } catch (error) {
+                console.error('fetchTrendClose 오류:', error);
+                return { commonClose: null, preferredClose: null };
+            }
+        }
+
+        // 마지막 업데이트 시간 갱신
+        async function updateLastUpdate() {
+            try {
+                const res = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`마지막 업데이트 데이터 로드 실패: ${res.status}`);
+                const data = await res.json();
+                let last = data.last_updated || data.timestamp || '';
+
+                // Market 상태 — shmon 형식 (KRX/NXT/Closed)
+                (function () {
+                    const badge = document.getElementById('market-badge');
+                    if (!badge) return;
+                    const now = new Date();
+                    const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+                    const d = kst.getDay(), t = kst.getHours() * 60 + kst.getMinutes();
+                    const weekday = d >= 1 && d <= 5;
+                    if (weekday && t >= 540 && t <= 930) {
+                        badge.textContent = "KRX"; badge.className = "font-bold text-gray-700";
+                    } else if (weekday && ((t >= 480 && t < 540) || (t > 930 && t <= 1200))) {
+                        badge.textContent = "NXT"; badge.className = "font-bold text-gray-600";
+                    } else {
+                        badge.textContent = "Market Closed"; badge.className = "font-bold text-gray-400";
+                    }
+                })();
+                const lastUpdatedElement = document.getElementById('lastUpdated');
+                if (lastUpdatedElement) {
+                    if (last) {
+                        const formattedDate = new Date(last).toLocaleString('ko-KR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        });
+                        lastUpdatedElement.textContent = formattedDate;
+                    } else {
+                        lastUpdatedElement.textContent = '알 수 없음';
+                    }
+                }
+            } catch (error) {
+                console.error('updateLastUpdate 오류:', error);
+                const lastUpdatedElement = document.getElementById('lastUpdated');
+                if (lastUpdatedElement) {
+                    lastUpdatedElement.textContent = '알 수 없음';
+                }
+            }
+        }
+
+        // 매매 데이터 가져오기
+        async function fetchTradesData() {
+            try {
+                const res = await fetch(`data/pair-trades.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`매매 데이터 로드 실패: ${res.status}`);
+                tradesData = await res.json();
+                console.log('tradesData 로드됨:', tradesData);
+                return tradesData;
+            } catch (error) {
+                console.error('fetchTradesData 오류:', error);
+                tradesData = [];
+                return [];
+            }
+        }
+
+        // YYMMDD 형식으로 날짜 포맷팅
+        function formatDateToYYMMDD(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return '-';
+                const year = date.getFullYear().toString().slice(-2); // 마지막 두 자리
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // 0 패딩
+                const day = String(date.getDate()).padStart(2, '0'); // 0 패딩
+                return `${year}${month}${day}`;
+            } catch (error) {
+                console.warn(`날짜 포맷팅 오류: ${dateStr}`, error);
+                return '-';
+            }
+        }
+
+        // stock_data.json 로드 함수
+        async function fetchStockData() {
+            try {
+                const res = await fetch(`data/stock_data.json?t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`stock_data 로드 실패: ${res.status}`);
+                const data = await res.json();
+                return data.all_signals || [];
+            } catch (error) {
+                console.error('fetchStockData 오류:', error);
+                return [];
+            }
+        }
+
+        // 테이블 렌더링 함수
+        async function renderTable(stockSignals) {
+            const tbody = document.getElementById('report-body');
+            tbody.innerHTML = '';
+            let totalExposure = 0;
+            let totalOpenPnL = 0;
+
+            if (tradesData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="19" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
+                return;
+            }
+
+            const todayStr = new Date().toISOString().slice(0, 10);
+
+            // 종목별로 거래 합산
+            const aggregatedTrades = {};
+
+            for (const trade of tradesData) {
+                const baseName = normalizeStockName(trade.pair_name);
+
+                if (!aggregatedTrades[baseName]) {
+                    aggregatedTrades[baseName] = {
+                        pair_name: trade.pair_name,
+                        common_code: trade.common_code,
+                        status: trade.status,
+
+                        // Short Position 합계
+                        common_entry_total: 0,
+                        common_exit_total: 0,
+                        common_qty: 0,
+                        common_invested: 0,
+
+                        // Long Position 합계
+                        preferred_entry_total: 0,
+                        preferred_exit_total: 0,
+                        preferred_qty: 0,
+                        preferred_invested: 0,
+
+                        // P&L 합계
+                        shortPnl: 0,
+                        longPnl: 0,
+
+                        // 날짜 정보
+                        earliest_entry: trade.entry_date,
+                        latest_exit: trade.exit_date,
+                        total_days: 0
+                    };
+                }
+
+                const agg = aggregatedTrades[baseName];
+
+                // Status 업데이트 (하나라도 Open이면 Open)
+                if (trade.status === "Open") {
+                    agg.status = "Open";
+                }
+
+                // 날짜 업데이트
+                if (trade.entry_date < agg.earliest_entry) {
+                    agg.earliest_entry = trade.entry_date;
+                }
+                if (trade.exit_date && (!agg.latest_exit || trade.exit_date > agg.latest_exit)) {
+                    agg.latest_exit = trade.exit_date;
+                }
+
+                // 개별 거래의 손익 계산
+                const isClosed = trade.status === "Closed";
+                let commonPrice = trade.common_exit;
+                let preferredPrice = trade.preferred_exit;
+                let exitDate = trade.exit_date;
+
+                // 수정: stockSignals에서 실시간 가격 사용
+                if (!isClosed) {
+                    const matchedSignal = stockSignals.find(s =>
+                        normalizeStockName(s.stock_name).toLowerCase() ===
+                        normalizeStockName(trade.pair_name).toLowerCase()
+                    );
+                    if (matchedSignal && matchedSignal.price_a && matchedSignal.price_b) {
+                        commonPrice = matchedSignal.price_a;
+                        preferredPrice = matchedSignal.price_b;
+                    } else {
+                        // fallback: trend 파일 (장 마감 후)
+                        const trend = await fetchTrendClose(trade);
+                        commonPrice = trend.commonClose;
+                        preferredPrice = trend.preferredClose;
+                    }
+                    exitDate = todayStr;
+                }
+
+                const entryDate = trade.entry_date;
+                const lastDate = exitDate || todayStr;
+                const days = Math.max(1, Math.floor((new Date(lastDate) - new Date(entryDate)) / (1000 * 60 * 60 * 24)));
+                const borrowFeePct = trade.common_borrow_fee_pct || 0;
+
+                // Equity 계산 (수수료/세금 제외, 단순 가격 차이)
+                const shortEquityAmt = ((commonPrice || trade.common_entry) - trade.common_entry) * trade.common_qty;
+                const longEquityAmt = (trade.preferred_entry - (preferredPrice || trade.preferred_entry)) * trade.preferred_qty;
+
+                // Floating Amount 계산
+                const benchmarkRate = trade.benchmark_rate_pct || 0;
+                const spreadShort = ((trade.common_floating_spread_bps ?? -202) / 10000);
+                const spreadLong = ((trade.preferred_floating_spread_bps ?? 200) / 10000);
+
+                const shortFloatingAmt = -Math.round(trade.common_entry * trade.common_qty * ((benchmarkRate / 100) + spreadShort) * (days / 365));
+                const longFloatingAmt = Math.round(trade.preferred_entry * trade.preferred_qty * ((benchmarkRate / 100) + spreadLong) * (days / 365));
+
+                // 손익 계산
+                const shortPnl = shortEquityAmt + shortFloatingAmt - calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
+                const longPnl = longEquityAmt + longFloatingAmt;
+
+                // 투자금액 계산
+                const commonInvested = trade.common_entry * trade.common_qty;
+                const preferredInvested = trade.preferred_entry * trade.preferred_qty;
+
+                // 합산
+                agg.common_entry_total += trade.common_entry * trade.common_qty;
+                agg.common_exit_total += (commonPrice || trade.common_entry) * trade.common_qty;
+                agg.common_qty += trade.common_qty;
+                agg.common_invested += commonInvested;
+
+                agg.preferred_entry_total += trade.preferred_entry * trade.preferred_qty;
+                agg.preferred_exit_total += (preferredPrice || trade.preferred_entry) * trade.preferred_qty;
+                agg.preferred_qty += trade.preferred_qty;
+                agg.preferred_invested += preferredInvested;
+
+                agg.shortPnl += shortPnl;
+                agg.longPnl += longPnl;
+            }
+
+            // 합산된 데이터로 테이블 렌더링
+            for (const [baseName, agg] of Object.entries(aggregatedTrades)) {
+                // 평균 가격 계산
+                const avgCommonEntry = agg.common_qty > 0 ? agg.common_entry_total / agg.common_qty : 0;
+                const avgCommonExit = agg.common_qty > 0 ? agg.common_exit_total / agg.common_qty : 0;
+                const avgPreferredEntry = agg.preferred_qty > 0 ? agg.preferred_entry_total / agg.preferred_qty : 0;
+                const avgPreferredExit = agg.preferred_qty > 0 ? agg.preferred_exit_total / agg.preferred_qty : 0;
+
+                // 전체 손익 (부호 반전)
+                const totalPnl = -(agg.shortPnl + agg.longPnl);
+                const totalInvested = agg.common_invested + agg.preferred_invested;
+
+                // Open 상태인 거래의 투자금액과 P&L 합산
+                if (agg.status === "Open") {
+                    totalExposure += totalInvested;
+                    totalOpenPnL += totalPnl;
+                }
+
+                // 수익률 계산
+                const totalRet = calcReturn(totalInvested, totalPnl);
+                const shortRet = calcReturn(agg.common_invested, -agg.shortPnl);
+                const longRet = calcReturn(agg.preferred_invested, -agg.longPnl);
+
+                // 종목명 처리
+                let displayStockName = agg.pair_name || '-';
+                displayStockName = displayStockName.replace(/\s*\[.*?\]/g, '').trim();
+                let baseStockName = normalizeStockName(displayStockName);
+                const stockCode = getStockCodeByName(baseStockName);
+
+                // sz_value 매핑
+                const tradeName = normalizeStockName(agg.pair_name).toLowerCase();
+                const matchedSignal = stockSignals.find(s => normalizeStockName(s.stock_name).toLowerCase() === tradeName);
+                const szValue = matchedSignal?.sz_value ?? null;
+                let szClass = '';
+                if (szValue !== null) {
+                    szClass = szValue >= 2.5 ? 'sz-high' : szValue >= 1.5 ? 'sz-medium' : 'sz-low';
+                }
+ 
+                const isClosed = agg.status === "Closed";
+
+                // Days 계산 (전체 기간)
+                const totalDays = Math.floor((new Date(agg.latest_exit || todayStr) - new Date(agg.earliest_entry)) / (1000 * 60 * 60 * 24));
+
+                // Short(보통주) 행
+                const trShort = document.createElement('tr');
+                trShort.classList.add('item-group');
+                if (isClosed) {
+                    trShort.classList.add('exited-row');
+                }
+                trShort.innerHTML = `
+                    <td rowspan="2" class="clickable-item">
+                        <a href="trade-detail.html?code=${stockCode}&name=${encodeURIComponent(baseStockName)}"
+                            class="hover:text-gray-700 hover:underline">
+                            <b>${displayStockName}</b>
+                        </a>
+                    </td>
+                    <td rowspan="2" class="${agg.status === 'Open' ? 'open-green' : ''}">${agg.status}</td>
+                    <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
+                    <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
+                    <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+                    <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
+                    <td class="center-align"><b>S</b></td>
+                    <td>${agg.common_qty > 0 ? Math.round(avgCommonEntry).toLocaleString() : '-'}</td>
+                    <td${!isClosed ? ' class="bold-green"' : ''}>${agg.common_qty > 0 ? Math.round(avgCommonExit).toLocaleString() : '-'}</td>
+                    <td>${agg.common_qty}</td>
+                    <td class="${profitClass(-agg.shortPnl)}">${Math.round(-agg.shortPnl).toLocaleString()}</td>
+                    <td class="${rateClass(shortRet)}">${shortRet.toFixed(2)}%</td>
+                    <td>${Math.round(agg.common_invested).toLocaleString()}</td>
+                    <td>${formatDateToYYMMDD(agg.earliest_entry)}</td>
+                    <td>${formatDateToYYMMDD(isClosed ? agg.latest_exit : '-')}</td>
+                    <td>${totalDays}</td>
+                `;
+                            tbody.appendChild(trShort);
+
+                // Long(우선주) 행
+                const trLong = document.createElement('tr');
+                if (isClosed) {
+                    trLong.classList.add('exited-row');
+                }
+                trLong.innerHTML = `
+                    <td style="text-align: center;"><b>L</b></td>
+                    <td>${agg.preferred_qty > 0 ? Math.round(avgPreferredEntry).toLocaleString() : '-'}</td>
+                    <td${!isClosed ? ' class="bold-green"' : ''}>${agg.preferred_qty > 0 ? Math.round(avgPreferredExit).toLocaleString() : '-'}</td>
+                    <td>${agg.preferred_qty}</td>
+                    <td class="${profitClass(-agg.longPnl)}">${Math.round(-agg.longPnl).toLocaleString()}</td>
+                    <td class="${rateClass(longRet)}">${longRet.toFixed(2)}%</td>
+                    <td>${Math.round(agg.preferred_invested).toLocaleString()}</td>
+                    <td>${formatDateToYYMMDD(agg.earliest_entry)}</td>
+                    <td>${formatDateToYYMMDD(isClosed ? agg.latest_exit : '-')}</td>
+                    <td>${totalDays}</td>
+                `;
+                tbody.appendChild(trLong);
+            }
+
+            // Total Exposure와 Open P&L 업데이트
+            const totalExposureElement = document.getElementById('totalExposure');
+            if (totalExposureElement) {
+                totalExposureElement.textContent = `₩${Math.round(totalExposure).toLocaleString()}`;
+            }
+
+            const openPnLElement = document.getElementById('openPnL');
+            if (openPnLElement) {
+                const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
+                openPnLElement.textContent = `₩${Math.round(totalOpenPnL).toLocaleString()}`;
+                openPnLElement.className = `font-medium ${pnlClass}`;
+            }
+        }
+
+        // 초기화 함수
+        async function init() {
+            try {
+                console.log('lastUpdated 요소:', document.getElementById('lastUpdated'));
+                console.log('totalExposure 요소:', document.getElementById('totalExposure'));
+                console.log('openPnL 요소:', document.getElementById('openPnL'));
+
+                document.getElementById('loading-container').style.display = 'flex';
+                document.getElementById('content-container').classList.add('hidden');
+
+                await updateLastUpdate();
+                await fetchTradesData();
+                const stockSignals = await fetchStockData();
+                await renderTable(stockSignals);
+
+                document.getElementById('loading-container').style.display = 'none';
+                document.getElementById('content-container').classList.remove('hidden');
+
+                const totalExposureElement = document.getElementById('totalExposure');
+                if (totalExposureElement && totalExposureElement.textContent === '-') {
+                    totalExposureElement.textContent = '₩0';
+                }
+
+                const openPnLElement = document.getElementById('openPnL');
+                if (openPnLElement && openPnLElement.textContent === '-') {
+                    openPnLElement.textContent = '₩0';
+                }
+            } catch (error) {
+                console.error('초기화 오류:', error);
+                document.getElementById('loading-container').innerHTML = `
+                    <div class="text-red-500 text-center">
+                        <p>데이터를 로드할 수 없습니다.</p>
+                        <p>${error.message}</p>
+                        <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-gray-600 text-white rounded">
+                            다시 시도
+                        </button>
+                        <button onclick="window.location.href='index.html'" class="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded">
+                            메인 페이지로 돌아가기
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+        
+</html>
