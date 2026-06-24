@@ -186,7 +186,6 @@
                 </div>
                 <div class="flex items-start gap-3 flex-wrap header-right">
                     <div class="text-right">
-                        <div class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Total Exposure</div>
                         <div id="totalExposure" class="text-2xl font-bold text-green-600 leading-tight">-</div>
                         <div class="text-sm text-gray-500 mt-0.5">
                             <span id="openPnL" class="font-medium">-</span>
@@ -763,13 +762,13 @@
             // Total Exposure와 Open P&L 업데이트
             const totalExposureElement = document.getElementById('totalExposure');
             if (totalExposureElement) {
-                totalExposureElement.textContent = `₩${Math.round(totalExposure).toLocaleString()}`;
+                totalExposureElement.textContent = `${Math.round(totalExposure).toLocaleString()}`;
             }
 
             const openPnLElement = document.getElementById('openPnL');
             if (openPnLElement) {
                 const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
-                openPnLElement.textContent = `₩${Math.round(totalOpenPnL).toLocaleString()}`;
+                openPnLElement.textContent = `${Math.round(totalOpenPnL).toLocaleString()}`;
                 openPnLElement.className = `font-medium ${pnlClass}`;
             }
         }
@@ -794,12 +793,12 @@
 
                 const totalExposureElement = document.getElementById('totalExposure');
                 if (totalExposureElement && totalExposureElement.textContent === '-') {
-                    totalExposureElement.textContent = '₩0';
+                    totalExposureElement.textContent = '0';
                 }
 
                 const openPnLElement = document.getElementById('openPnL');
                 if (openPnLElement && openPnLElement.textContent === '-') {
-                    openPnLElement.textContent = '₩0';
+                    openPnLElement.textContent = '0';
                 }
             } catch (error) {
                 console.error('초기화 오류:', error);
