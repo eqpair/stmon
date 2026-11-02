@@ -207,7 +207,9 @@
             document.getElementById('kpis').innerHTML = k.map(x =>
                 `<div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">${x[0]}</div><div class="text-2xl font-bold ${x[2]}">${x[1]}</div></div>`).join('');
 
-            const lo = d.live_orders || [];
+            const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, HOLD: 7 };
+            const lo = (d.live_orders || []).slice().sort((a, b) =>
+                ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0)));
             document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '') + (has(d.live_breadth) ? `Z≥진입 비율 ${pct(d.live_breadth, 0)}` : '');
             table('now', ['Item', '판단', 'Z', 'Edge', '보통주 / 우선주 수량', 'P&L (만원)', '손절까지', 'Note'],
                 lo.map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
