@@ -159,12 +159,23 @@
             else { badge.textContent = 'Market Closed'; badge.className = 'font-bold text-gray-400'; }
         }
 
+        // 갱신 시간대 판단(KST). 서버는 평일 08:30~16:30에만 3분마다 갱신
+        function kst(x) { const n = x ? new Date(x) : new Date(); return new Date(n.getTime() + (n.getTimezoneOffset() + 540) * 60000); }
+        const ymd = k => k.getFullYear() + '-' + String(k.getMonth() + 1).padStart(2, '0') + '-' + String(k.getDate()).padStart(2, '0');
+        function kstMin() { const k = kst(); return { t: k.getHours() * 60 + k.getMinutes(), wd: k.getDay() >= 1 && k.getDay() <= 5, day: ymd(k) }; }
+        // 지금 오늘 데이터로 장중 갱신 중인가
+        function liveNow(d) { const k = kstMin(); if (!d || !d.market_open || !k.wd || k.t < 510 || k.t > 990) return false;
+            return ymd(kst(d.updated)) === k.day; }
+        // 평일 08:40~16:30인데 8분 넘게 갱신이 없으면 지연(서버 정지 포함)
+        function staleNow(d, age) { const k = kstMin(); return k.wd && k.t >= 520 && k.t <= 990 && age > 8; }
+
         function updateStatus(d) {
             const ind = document.getElementById('status-indicator'), txt = document.getElementById('status-text');
             if (!d) { ind.className = 'w-3 h-3 rounded-full bg-red-500 mr-2'; txt.textContent = 'Failed to load data'; return; }
             const age = (Date.now() - new Date(d.updated).getTime()) / 60000;
-            if (!d.market_open) { ind.className = 'w-3 h-3 rounded-full bg-gray-400 mr-2'; txt.textContent = '장 마감 · 마지막 종가 기준'; }
-            else if (age <= 8) { ind.className = 'w-3 h-3 rounded-full bg-green-500 mr-2'; txt.textContent = '실시간'; }
+            if (staleNow(d, age)) { ind.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink'; txt.textContent = `${Math.round(age)}분 전 데이터 (서버 확인 필요)`; }
+            else if (!liveNow(d)) { ind.className = 'w-3 h-3 rounded-full bg-gray-400 mr-2'; txt.textContent = '장 마감 · 마지막 종가 기준'; }
+            else if (true) { ind.className = 'w-3 h-3 rounded-full bg-green-500 mr-2'; txt.textContent = '실시간'; }
             else { ind.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink'; txt.textContent = `${Math.round(age)}분 전 데이터 (서버 확인 필요)`; }
             document.getElementById('lastUpdated').textContent = new Date(d.updated).toLocaleString('ko-KR',
                 { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -285,7 +296,7 @@
                 const vr = has(d.vol_ratio) ? d.vol_ratio : null, vth = d.vol_block || null, br = has(d.live_breadth) ? d.live_breadth : null;
                 const free = d.risk.slots - (pos.length - ex.length);
                 let dot, title, why = [];
-                if (d.market_open && age > 8) { dot = 'bg-gray-400'; title = '데이터 지연 — 판단 보류'; why.push(`${Math.round(age)}분째 갱신 없음 · 서버 확인 필요`); }
+                if (staleNow(d, age)) { dot = 'bg-gray-400'; title = '데이터 지연 — 판단 보류'; why.push(`${Math.round(age)}분째 갱신 없음 · 서버 확인 필요`); }
                 else if (d.banned) { dot = 'bg-red-500'; title = '신규 진입 쉼'; why.push('공매도 금지 기간'); }
                 else if (vth && vr != null && vr > vth) { dot = 'bg-red-500'; title = '신규 진입 쉼'; why.push(`시장 변동성 ${vr.toFixed(2)}배 > 기준 ${Number(vth).toFixed(1)}배`); }
                 else {
@@ -300,7 +311,7 @@
                     <div class="flex items-center gap-3 flex-wrap">
                         <div class="w-4 h-4 rounded-full ${dot}"></div>
                         <div class="text-2xl font-bold text-gray-800">${title}</div>
-                        <div class="text-sm text-gray-500">${why.join(' · ') || (d.market_open ? '평소 장 · 표의 판단대로' : '장 마감 · 마지막 종가 기준')}</div>
+                        <div class="text-sm text-gray-500">${why.join(' · ') || (liveNow(d) ? '평소 장 · 표의 판단대로' : '장 마감 · 마지막 종가 기준')}</div>
                     </div>
                     <div class="grid grid-cols-4 gap-3 mt-4">
                         ${chip(`진입 후보 ${ent.length}쌍`, ent.length ? ent.map(r => nm(r.name)).join(', ') : (vb.length ? `고변동 대기 ${vb.length}쌍` : '없음'))}
