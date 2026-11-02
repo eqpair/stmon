@@ -220,7 +220,7 @@
 
             document.getElementById('otime').textContent = d.orders_time ? d.orders_time.replace('T', ' ') : '오늘 주문표 전';
             table('orders', ['Item', 'Action', 'Z', 'Edge', '보통주 수량', '우선주 수량', 'Note'],
-                (d.orders || []).map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
+                (d.orders || []).slice().sort((a, b) => ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0))).map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
                   <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td><td>${has(r.qty_C) ? Number(r.qty_C).toLocaleString() : ''}</td>
                   <td>${has(r.qty_P) ? Number(r.qty_P).toLocaleString() : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`));
 
