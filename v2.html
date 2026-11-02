@@ -1,150 +1,247 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>stmon — Pair Trading Desk</title>
-<link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body { background:#f9fafb; color:#111827; font-feature-settings:"tnum"; }
-  .card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; }
-  th { font-weight:600; color:#6b7280; font-size:11px; text-transform:uppercase; letter-spacing:.03em; }
-  td, th { padding:6px 8px; white-space:nowrap; }
-  tr + tr td { border-top:1px solid #f3f4f6; }
-  .up { color:#dc2626; } .dn { color:#2563eb; }
-  .tag { font-size:11px; padding:1px 6px; border-radius:4px; background:#f3f4f6; color:#374151; }
-  .tag.strong { background:#111827; color:#fff; }
-  .num { text-align:right; }
-  /* CDN(Tailwind) 실패 대비 최소 레이아웃 */
-  body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;margin:0}
-  .max-w-6xl{max-width:72rem}.mx-auto{margin-left:auto;margin-right:auto}.space-y-4>*+*{margin-top:1rem}
-  .flex{display:flex}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-between{justify-content:space-between}
-  .gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.grid{display:grid}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-  @media(min-width:768px){.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:p-6{padding:1.5rem}}
-  .p-3{padding:.75rem}.p-4{padding:1rem}.px-3{padding-left:.75rem;padding-right:.75rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}
-  .mb-2{margin-bottom:.5rem}.mt-4{margin-top:1rem}.w-full{width:100%}.overflow-x-auto{overflow-x:auto}.rounded{border-radius:.25rem}
-  .text-xs{font-size:.75rem}.text-sm{font-size:.875rem}.text-lg{font-size:1.125rem}.text-xl{font-size:1.25rem}
-  .font-bold{font-weight:700}.font-semibold{font-weight:600}.text-gray-500{color:#6b7280}.text-gray-400{color:#9ca3af}
-  .bg-gray-100{background:#f3f4f6} a{color:inherit;text-decoration:none} table{border-collapse:collapse}
-</style>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <title>L/S Trading Desk</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .blink { animation: blink 2s linear infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .signal-tag { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; margin-right: 4px; background-color: #e5e7eb; color: #374151; }
+        .signal-tag.strong { background-color: #374151; color: #fff; }
+
+        .report-table { width: 100%; border-collapse: collapse; background: #fff; }
+        .report-table th, .report-table td { padding: 0.5rem; text-align: center; border-bottom: 1px solid #e5e7eb; white-space: nowrap; font-size: 0.78rem; }
+        .report-table th:not(:last-child), .report-table td:not(:last-child) { border-right: 1px solid #f3f4f6; }
+        .report-table th { background: #f9fafb; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; color: #6b7280; }
+        .report-table td:first-child { text-align: left; }
+        .report-table td.empty { text-align: center; color: #9ca3af; }
+
+        .profit-plus { color: #dc2626; font-weight: bold; }
+        .profit-minus { color: #2563eb; font-weight: bold; }
+        .sz-high { color: #111827; font-weight: bold; }
+        .sz-medium { color: #374151; font-weight: bold; }
+        .sz-low { color: #6b7280; }
+        .clickable-item a { color: #111827; border-bottom: 1px dotted #9ca3af; }
+        .clickable-item a:hover { color: #374151; }
+        .stop-near { color: #dc2626; }
+        .stop-over { color: #dc2626; font-weight: bold; }
+
+        @media (max-width: 1024px) { .grid-cols-4 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) {
+            .grid-cols-4 { grid-template-columns: 1fr 1fr; }
+            .text-3xl { font-size: 1.5rem; }
+            button, a { min-height: 44px; }
+        }
+    </style>
 </head>
-<body class="p-3 md:p-6">
-<div class="max-w-6xl mx-auto space-y-4">
-  <div class="flex items-center justify-between">
-    <div>
-      <div class="text-lg font-bold">Pair Trading Desk</div>
-      <div class="text-xs text-gray-500">Short Common / Long Preferred · <span id="params"></span></div>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-screen-2xl">
+        <header class="mb-6">
+            <div class="flex justify-between items-start flex-wrap gap-3">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">L/S <span class="text-lg font-normal text-gray-400">Trading Desk</span></h1>
+                    <div class="text-sm text-gray-500 mt-1 flex items-center flex-wrap gap-2">
+                        <span>Last Update: <span id="lastUpdated" class="font-medium text-gray-700">-</span></span>
+                        <span class="text-gray-300">|</span>
+                        <div class="flex items-center">
+                            <div id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-gray-400 mr-1.5"></div>
+                            <span id="status-text" class="text-gray-600">Loading Data...</span>
+                        </div>
+                        <span class="text-gray-300">|</span>
+                        <span>Market: <span id="market-badge" class="font-bold text-gray-400">-</span></span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1" id="params">-</div>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="index.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium">Monitor</a>
+                    <a href="pair-report.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium">Report</a>
+                    <a href="https://eqmon.duckdns.org" style="font-size:12px;color:#fff;text-decoration:none;padding:4px 10px;border:1px solid #334155;border-radius:6px;background:#1e293b;">HOME</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Desk Summary</h2>
+            <div class="grid grid-cols-4 gap-4" id="kpis">
+                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Open Positions</div><div class="text-2xl font-bold">-</div></div>
+                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Open P&amp;L (만원)</div><div class="text-2xl font-bold">-</div></div>
+                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Cumulative P&amp;L (만원)</div><div class="text-2xl font-bold">-</div></div>
+                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Closed · Win Rate</div><div class="text-2xl font-bold">-</div></div>
+            </div>
+        </div>
+
+        <!-- Now -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+            <div class="flex justify-between items-baseline flex-wrap gap-2 mb-4">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Now <span class="normal-case font-normal text-gray-400">· 지금 가격 기준 규칙 판단 (3분마다 갱신, 확정은 종가)</span></h2>
+                <span class="text-xs text-gray-500" id="nowinfo"></span>
+            </div>
+            <div class="overflow-x-auto"><table class="report-table" id="now"></table></div>
+        </div>
+
+        <!-- Orders -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+            <div class="flex justify-between items-baseline flex-wrap gap-2 mb-4">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Orders <span class="normal-case font-normal text-gray-400">· 15:15 확정 주문표</span></h2>
+                <span class="text-xs text-gray-500" id="otime"></span>
+            </div>
+            <div class="overflow-x-auto"><table class="report-table" id="orders"></table></div>
+        </div>
+
+        <!-- Positions -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Positions</h2>
+            <div class="overflow-x-auto"><table class="report-table" id="positions"></table></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Watchlist -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Watchlist <span class="normal-case font-normal text-gray-400">· Z 상위</span></h2>
+                <div class="overflow-x-auto"><table class="report-table" id="watch"></table></div>
+            </div>
+            <!-- Charts -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">P&amp;L <span class="normal-case font-normal text-gray-400">· 실제 누적손익 (만원)</span></h2>
+                <div style="height:180px"><canvas id="eq"></canvas></div>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mt-6 mb-4">Backtest <span class="normal-case font-normal text-gray-400">· 같은 규칙의 모델 수익곡선 (2024~)</span></h2>
+                <div style="height:150px"><canvas id="bt"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Closed -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Closed Trades</h2>
+            <div class="overflow-x-auto"><table class="report-table" id="closed"></table></div>
+        </div>
     </div>
-    <div class="flex items-center gap-2 text-xs">
-      <span id="fresh" class="tag"></span>
-      <span class="text-gray-500" id="updated"></span>
-      <a href="index.html" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Monitor</a>
-      <a href="pair-report.html" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Report</a>
-    </div>
-  </div>
 
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="kpis"></div>
+    <footer class="bg-white py-6 mt-8 border-t border-gray-100">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2026 L/S Monitoring System. · 신호는 규칙 계산 결과이며 주문은 직접 실행합니다. 체결은 /in, /out 으로 기록.</p>
+        </div>
+    </footer>
 
-  <div class="card p-4" style="border-color:#111827">
-    <div class="flex justify-between items-baseline mb-2"><div class="font-semibold">Now <span class="text-xs text-gray-500">(지금 가격 기준 규칙 판단 · 3분마다 갱신 · 확정은 종가)</span></div><div class="text-xs text-gray-500" id="nowinfo"></div></div>
-    <div class="overflow-x-auto"><table class="w-full text-sm" id="now"></table></div>
-  </div>
+    <script>
+        const man = v => (v == null || v !== v) ? '-' : Math.round(v / 1e4).toLocaleString('ko-KR');
+        const pct = (v, d = 1) => (v == null || v !== v) ? '-' : (v * 100).toFixed(d) + '%';
+        const pcls = v => (v == null || v !== v) ? '' : (v > 0 ? 'profit-plus' : (v < 0 ? 'profit-minus' : ''));
+        const z2 = v => (v == null || v !== v) ? '-' : (v > 0 ? '+' : '') + v.toFixed(2);
+        const zcls = v => v == null ? '' : (v >= 2.5 ? 'sz-high' : (v >= 1.5 ? 'sz-medium' : 'sz-low'));
+        const has = v => v != null && v === v;
+        const nm = s => (s || '').replace(/\s*\[.*\]\s*$/, '');
+        const link = r => `<span class="clickable-item"><a href="trade-detail.html?code=${r.code}&name=${encodeURIComponent(r.name || '')}">${nm(r.name)}</a></span>`;
+        const gapCls = g => !has(g) ? '' : (g < 0 ? 'stop-over' : (g < 0.05 ? 'stop-near' : ''));
+        const ACT = { ENTER: '진입', EXIT_TARGET: '청산(목표)', EXIT_STOP: '청산(손절)', EXIT_TIME: '청산(기간)', HOLD: '보유',
+                      WAIT_SLOT: '슬롯대기', BLOCKED_BAN: '금지기간', BLOCKED_LIQ: '유동성부족', WATCH: '관찰' };
+        const tag = a => `<span class="signal-tag ${/ENTER|EXIT/.test(a) ? 'strong' : ''}">${ACT[a] || a}</span>`;
 
-  <div class="card p-4">
-    <div class="flex justify-between items-baseline mb-2"><div class="font-semibold">Orders <span class="text-xs text-gray-500">(15:15 확정 주문표 · 기록됨)</span></div><div class="text-xs text-gray-500" id="otime"></div></div>
-    <div class="overflow-x-auto"><table class="w-full text-sm" id="orders"></table></div>
-  </div>
+        function table(el, head, rows) {
+            document.getElementById(el).innerHTML =
+                '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
+                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">없음</td></tr>`) + '</tbody>';
+        }
 
-  <div class="card p-4">
-    <div class="font-semibold mb-2">Positions</div>
-    <div class="overflow-x-auto"><table class="w-full text-sm" id="positions"></table></div>
-  </div>
+        function updateMarket(d) {
+            const badge = document.getElementById('market-badge');
+            const now = new Date();
+            const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+            const day = kst.getDay(), t = kst.getHours() * 60 + kst.getMinutes();
+            const weekday = day >= 1 && day <= 5;
+            if (weekday && t >= 540 && t <= 930) { badge.textContent = 'KRX'; badge.className = 'font-bold text-gray-700'; }
+            else if (weekday && ((t >= 480 && t < 540) || (t > 930 && t <= 1200))) { badge.textContent = 'NXT'; badge.className = 'font-bold text-gray-600'; }
+            else { badge.textContent = 'Market Closed'; badge.className = 'font-bold text-gray-400'; }
+        }
 
-  <div class="grid md:grid-cols-2 gap-4">
-    <div class="card p-4">
-      <div class="font-semibold mb-2">Watchlist <span class="text-xs text-gray-500">(Z 상위)</span></div>
-      <div class="overflow-x-auto"><table class="w-full text-sm" id="watch"></table></div>
-    </div>
-    <div class="card p-4">
-      <div class="font-semibold mb-2">P&amp;L <span class="text-xs text-gray-500">(실제 누적손익 · 만원)</span></div>
-      <canvas id="eq" height="180"></canvas>
-      <div class="font-semibold mt-4 mb-2">Backtest <span class="text-xs text-gray-500">(같은 규칙, 2024~ 모델 수익곡선)</span></div>
-      <canvas id="bt" height="140"></canvas>
-    </div>
-  </div>
+        function updateStatus(d) {
+            const ind = document.getElementById('status-indicator'), txt = document.getElementById('status-text');
+            if (!d) { ind.className = 'w-3 h-3 rounded-full bg-red-500 mr-2'; txt.textContent = 'Failed to load data'; return; }
+            const age = (Date.now() - new Date(d.updated).getTime()) / 60000;
+            if (!d.market_open) { ind.className = 'w-3 h-3 rounded-full bg-gray-400 mr-2'; txt.textContent = '장 마감 · 마지막 종가 기준'; }
+            else if (age <= 8) { ind.className = 'w-3 h-3 rounded-full bg-green-500 mr-2'; txt.textContent = '실시간'; }
+            else { ind.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink'; txt.textContent = `${Math.round(age)}분 전 데이터 (서버 확인 필요)`; }
+            document.getElementById('lastUpdated').textContent = new Date(d.updated).toLocaleString('ko-KR',
+                { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
 
-  <div class="card p-4">
-    <div class="font-semibold mb-2">Closed Trades</div>
-    <div class="overflow-x-auto"><table class="w-full text-sm" id="closed"></table></div>
-  </div>
-  <div class="text-xs text-gray-400">Signals are rule outputs, not investment advice. Execution is manual; record fills with /in and /out.</div>
-</div>
-<script>
-const man = v => v == null ? '-' : (v/1e4).toLocaleString('ko-KR',{maximumFractionDigits:0});
-const pct = (v,d=1) => v == null ? '-' : (v*100).toFixed(d)+'%';
-const sgn = v => v == null ? '' : (v>0?'up':(v<0?'dn':''));
-const z2 = v => v == null ? '-' : (v>0?'+':'')+v.toFixed(2);
-const nm = s => (s||'').replace(/\s*\[.*\]\s*$/,'');
-const link = r => `<a href="trade-detail.html?code=${r.code}&name=${encodeURIComponent(r.name||'')}" style="border-bottom:1px dotted #9ca3af">${nm(r.name)}</a>`;
-const gapCls = g => g == null ? '' : (g < 0 ? 'up font-bold' : (g < 0.05 ? 'up' : ''));
-const qty = r => (r.qty_C!=null && r.qty_C===r.qty_C) ? `${Number(r.qty_C).toLocaleString()} / ${Number(r.qty_P).toLocaleString()}` : '';
-const ACT = {ENTER:'진입',EXIT_TARGET:'청산(목표)',EXIT_STOP:'청산(손절)',EXIT_TIME:'청산(기간)',HOLD:'보유',
-             WAIT_SLOT:'슬롯대기',BLOCKED_BAN:'금지기간',BLOCKED_LIQ:'유동성부족',WATCH:'관찰'};
-function table(el, head, rows){ document.getElementById(el).innerHTML =
-  '<tr>'+head.map(h=>`<th class="${h[1]||''}">${h[0]}</th>`).join('')+'</tr>' +
-  (rows.length? rows.join('') : `<tr><td colspan="${head.length}" class="text-gray-400">없음</td></tr>`); }
-let charts = {};
-function line(id, labels, data){
-  if (charts[id]) charts[id].destroy();
-  charts[id] = new Chart(document.getElementById(id), {type:'line',
-    data:{labels, datasets:[{data, borderColor:'#111827', borderWidth:1.5, pointRadius: data.length < 40 ? 2 : 0, fill:false, tension:0}]},
-    options:{plugins:{legend:{display:false}}, scales:{x:{ticks:{maxTicksLimit:6,font:{size:10}}}, y:{ticks:{font:{size:10}}}}}});
-}
-async function load(){
-  const d = await (await fetch('data/v2_dashboard.json?t='+Date.now())).json();
-  const p = d.params;
-  document.getElementById('params').textContent = `${p.window}d log spread · Z in ${p.z_in} / out ${p.z_out} · stop ${pct(p.stop,0)} · ${d.risk.slots} slots`;
-  document.getElementById('updated').textContent = 'Updated ' + d.updated.replace('T',' ');
-  const age = (Date.now() - new Date(d.updated).getTime()) / 60000, fr = document.getElementById('fresh');
-  if (!d.market_open) { fr.textContent = '장 마감 · 마지막 종가 기준'; fr.className = 'tag'; }
-  else if (age <= 8) { fr.textContent = '실시간'; fr.className = 'tag strong'; }
-  else { fr.textContent = `⚠ ${Math.round(age)}분 전 데이터`; fr.className = 'tag'; fr.style.background = '#fef3c7'; fr.style.color = '#92400e'; }
-  const lo = d.live_orders || [];
-  document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '') + (d.live_breadth!=null ? `Z≥진입 비율 ${pct(d.live_breadth,0)}` : '');
-  table('now', [['Pair'],['판단'],['Z','num'],['Edge','num'],['수량 보통/우선','num'],['P&L (만원)','num'],['손절까지','num'],['Note']],
-    lo.map(r=>`<tr><td>${link(r)}</td><td><span class="tag ${/ENTER|EXIT/.test(r.action)?'strong':''}">${ACT[r.action]||r.action}</span></td>
-      <td class="num">${z2(r.z)}</td><td class="num">${r.action==='HOLD'||/EXIT/.test(r.action)?'':pct(r.edge)}</td><td class="num">${/EXIT|HOLD/.test(r.action)?'':qty(r)}</td>
-      <td class="num ${sgn(r.pnl_won)}">${r.pnl_won!=null&&r.pnl_won===r.pnl_won?man(r.pnl_won):''}</td>
-      <td class="num ${gapCls(r.stop_gap)}">${r.stop_gap!=null&&r.stop_gap===r.stop_gap?pct(r.stop_gap):''}</td><td class="text-xs text-gray-500">${r.note&&r.note===r.note?r.note:''}</td></tr>`));
-  const pos = d.positions||[], eq = d.equity||[], cl = d.realized||[];
-  const open = pos.reduce((a,r)=>a+(r.pnl_won||0),0);
-  const last = eq.length? eq[eq.length-1] : null;
-  const wins = cl.filter(r=>r.total>0).length;
-  const k = [['Open Positions', `${pos.length} / ${d.risk.slots}`],
-             ['Open P&L (만원)', man(open), sgn(open)],
-             ['Cumulative P&L (만원)', last? man(last.total): '-', last? sgn(last.total):''],
-             ['Closed · Win rate', cl.length? `${cl.length} · ${pct(wins/cl.length,0)}` : '-']];
-  document.getElementById('kpis').innerHTML = k.map(x=>`<div class="card p-3"><div class="text-xs text-gray-500">${x[0]}</div><div class="text-xl font-bold ${x[2]||''}">${x[1]}</div></div>`).join('');
-  document.getElementById('otime').textContent = d.orders_time? d.orders_time.replace('T',' ') : '오늘 주문표 전';
-  table('orders', [['Pair'],['Action'],['Z','num'],['Edge','num'],['Common qty','num'],['Pref qty','num'],['Note']],
-    (d.orders||[]).filter(r=>r.action!=='WATCH').map(r=>`<tr><td>${link(r)}</td><td><span class="tag ${/ENTER|EXIT/.test(r.action)?'strong':''}">${ACT[r.action]||r.action}</span></td>
-      <td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td><td class="num">${r.qty_C!=null&&r.qty_C===r.qty_C?r.qty_C:''}</td><td class="num">${r.qty_P!=null&&r.qty_P===r.qty_P?r.qty_P:''}</td><td class="text-xs text-gray-500">${r.note&&r.note===r.note?r.note:''}</td></tr>`));
-  table('positions', [['Pair'],['Entry'],['Days','num'],['Qty C/P','num'],['Z','num'],['P&L (만원)','num'],['P&L %','num'],['To stop','num'],['Rule']],
-    pos.map(r=>`<tr><td>${link(r)}</td><td>${r.entry_date}</td><td class="num">${r.days}</td><td class="num">${r.cq}/${r.pq}</td>
-      <td class="num">${z2(r.z)}</td><td class="num ${sgn(r.pnl_won)}">${man(r.pnl_won)}</td><td class="num ${sgn(r.pnl_ret)}">${pct(r.pnl_ret)}</td>
-      <td class="num ${gapCls(r.stop_gap)}">${pct(r.stop_gap)}</td><td>${r.exit? `<span class="tag strong">${r.exit}</span>`:''}</td></tr>`));
-  table('watch', [['Pair'],['Z','num'],['Edge','num'],['Status']],
-    (d.watch||[]).slice(0,15).map(r=>`<tr><td>${link(r)}</td><td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td>
-      <td>${!r.armed?'<span class="tag">재진입대기</span>':''}${!r.validated?'<span class="tag">이력부족</span>':''}</td></tr>`));
-  table('closed', [['Pair'],['Entry'],['Exit'],['Days','num'],['Reason'],['P&L (만원)','num'],['P&L %','num']],
-    cl.slice().sort((a,b)=>(b.exit||'').localeCompare(a.exit||'')).slice(0,30).map(r=>`<tr><td>${nm(r.name)}</td><td>${r.entry}</td><td>${r.exit}</td><td class="num">${r.days}</td>
-      <td>${r.reason||''}</td><td class="num ${sgn(r.total)}">${man(r.total)}</td><td class="num ${sgn(r.ret)}">${pct(r.ret)}</td></tr>`));
-  line('eq', eq.map(r=>r.date), eq.map(r=>Math.round(r.total/1e4)));
-  if (d.backtest && d.backtest.dates) line('bt', d.backtest.dates, d.backtest.equity);
-}
-load(); setInterval(load, 180000);
-</script>
+        let charts = {};
+        function line(id, labels, data) {
+            if (charts[id]) charts[id].destroy();
+            if (typeof Chart === 'undefined') return;
+            charts[id] = new Chart(document.getElementById(id), {
+                type: 'line',
+                data: { labels, datasets: [{ data, borderColor: '#374151', borderWidth: 1.5, pointRadius: data.length < 40 ? 2 : 0, fill: false, tension: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                           scales: { x: { ticks: { maxTicksLimit: 6, font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+            });
+        }
+
+        async function load() {
+            let d = null;
+            try { d = await (await fetch('data/v2_dashboard.json?t=' + Date.now())).json(); } catch (e) { console.error(e); }
+            updateMarket(); updateStatus(d);
+            if (!d) return;
+            const p = d.params;
+            document.getElementById('params').textContent =
+                `Rule: ${p.window}일 로그 스프레드 · 진입 Z≥${p.z_in} · 청산 Z≤${p.z_out} · 손절 ${pct(p.stop, 0)} · ${d.risk.slots}슬롯` +
+                (d.risk.capital ? ` · 자본 ${Math.round(d.risk.capital / 1e8 * 10) / 10}억` : ' · 자본 미설정(수량 미표시)');
+
+            const pos = d.positions || [], eq = d.equity || [], cl = d.realized || [];
+            const open = pos.reduce((a, r) => a + (r.pnl_won || 0), 0);
+            const last = eq.length ? eq[eq.length - 1] : null;
+            const wins = cl.filter(r => r.total > 0).length;
+            const k = [['Open Positions', `${pos.length} / ${d.risk.slots}`, ''],
+                       ['Open P&amp;L (만원)', man(open), pcls(open)],
+                       ['Cumulative P&amp;L (만원)', last ? man(last.total) : '-', last ? pcls(last.total) : ''],
+                       ['Closed · Win Rate', cl.length ? `${cl.length} · ${pct(wins / cl.length, 0)}` : '-', '']];
+            document.getElementById('kpis').innerHTML = k.map(x =>
+                `<div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">${x[0]}</div><div class="text-2xl font-bold ${x[2]}">${x[1]}</div></div>`).join('');
+
+            const lo = d.live_orders || [];
+            document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '') + (has(d.live_breadth) ? `Z≥진입 비율 ${pct(d.live_breadth, 0)}` : '');
+            table('now', ['Item', '판단', 'Z', 'Edge', '보통주 / 우선주 수량', 'P&L (만원)', '손절까지', 'Note'],
+                lo.map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
+                  <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td>
+                  <td>${!/EXIT|HOLD/.test(r.action) && has(r.qty_C) ? `${Number(r.qty_C).toLocaleString()} / ${Number(r.qty_P).toLocaleString()}` : ''}</td>
+                  <td class="${pcls(r.pnl_won)}">${has(r.pnl_won) ? man(r.pnl_won) : ''}</td>
+                  <td class="${gapCls(r.stop_gap)}">${has(r.stop_gap) ? pct(r.stop_gap) : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`));
+
+            document.getElementById('otime').textContent = d.orders_time ? d.orders_time.replace('T', ' ') : '오늘 주문표 전';
+            table('orders', ['Item', 'Action', 'Z', 'Edge', '보통주 수량', '우선주 수량', 'Note'],
+                (d.orders || []).map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
+                  <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td><td>${has(r.qty_C) ? Number(r.qty_C).toLocaleString() : ''}</td>
+                  <td>${has(r.qty_P) ? Number(r.qty_P).toLocaleString() : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`));
+
+            table('positions', ['Item', 'Entry', 'Days', '보통주 / 우선주', 'Z', 'P&L (만원)', 'P&L %', '손절까지', 'Rule'],
+                pos.map(r => `<tr><td>${link(r)}</td><td>${r.entry_date}</td><td>${r.days}</td><td>${r.cq} / ${r.pq}</td>
+                  <td class="${zcls(r.z)}">${z2(r.z)}</td><td class="${pcls(r.pnl_won)}">${man(r.pnl_won)}</td>
+                  <td class="${pcls(r.pnl_ret)}">${pct(r.pnl_ret)}</td><td class="${gapCls(r.stop_gap)}">${pct(r.stop_gap)}</td>
+                  <td>${r.exit ? `<span class="signal-tag strong">${r.exit}</span>` : ''}</td></tr>`));
+
+            table('watch', ['Item', 'Z', 'Edge', 'Status'],
+                (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td>
+                  <td>${!r.armed ? '<span class="signal-tag">재진입대기</span>' : ''}${!r.validated ? '<span class="signal-tag">이력부족</span>' : ''}</td></tr>`));
+
+            table('closed', ['Item', 'Entry', 'Exit', 'Days', 'Reason', 'P&L (만원)', 'P&L %'],
+                cl.slice().sort((a, b) => (b.exit || '').localeCompare(a.exit || '')).slice(0, 30).map(r =>
+                  `<tr><td>${nm(r.name)}</td><td>${r.entry}</td><td>${r.exit}</td><td>${r.days}</td><td>${r.reason || ''}</td>
+                   <td class="${pcls(r.total)}">${man(r.total)}</td><td class="${pcls(r.ret)}">${pct(r.ret)}</td></tr>`));
+
+            line('eq', eq.map(r => r.date), eq.map(r => Math.round(r.total / 1e4)));
+            if (d.backtest && d.backtest.dates) line('bt', d.backtest.dates, d.backtest.equity);
+        }
+        load(); setInterval(load, 180000);
+    </script>
 </body>
+
 </html>
