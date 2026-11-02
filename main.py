@@ -1,521 +1,299 @@
 #!/usr/bin/env python3
+"""
+stmon — 보통주 숏 / 우선주 롱 매매 프로그램 (주문은 직접, 나머지는 자동)
 
-import os
-import sys
-import psutil
-import atexit
-import asyncio
-import logging
+장중(평일 08:30~16:30) WAIT_TIME마다:
+  현재가 일괄 조회 → 쌍별 Z·보유 손익 계산 → 웹 JSON 갱신 → 장중 알림(손절선 접근/도달, 진입 근접)
+15:15  주문표(진입·청산·수량) 텔레그램 발송, 신호 기록
+15:45  확정 종가로 이력 갱신 → 재진입 상태·백테스트 재생 → 일별 손익 기록 → 트렌드 JSON → (금) 주간 리포트
+체결 기록: 텔레그램 /in, /out → data/pair-trades.json
+"""
+import os, sys, asyncio, atexit, logging, subprocess
 from logging.handlers import RotatingFileHandler
-from datetime import datetime, timedelta
-from pathlib import Path
-import json
-import subprocess
-
-import aiohttp
+from datetime import datetime, date, timedelta
 import pandas as pd
-import numpy as np
-from bs4 import BeautifulSoup
 
-from config import TICK_PAIRS, WAIT_TIME
-from modules.pairs import NPPair
-from modules.utils import is_market_time, safe_json_dump
-from modules.strategy import indicators
-from modules import v2 as v2sig
+ROOT = os.path.dirname(os.path.abspath(__file__))
+os.chdir(ROOT)
+sys.path.insert(0, ROOT)
+
+os.makedirs('logs', exist_ok=True)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    handlers=[RotatingFileHandler('logs/stock_monitor.log', maxBytes=10 * 1024 * 1024, backupCount=5),
+                              logging.StreamHandler()])
+log = logging.getLogger('stmon')
+
 import config as cfg
-
-# 로그 디렉토리 생성
-log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
-os.makedirs(log_dir, exist_ok=True)
-log_file = os.path.join(log_dir, 'stock_monitor.log')
-
-# 로그 설정
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-file_handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
-file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-logger.addHandler(file_handler)
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-logger.addHandler(console_handler)
-logging.info("Logging initialized")
-
-def obtain_lock():
-    lock_file_path = "/tmp/stmon_telegram.lock"
-    try:
-        if os.path.exists(lock_file_path):
-            with open(lock_file_path, 'r') as f:
-                pid = f.read().strip()
-            if pid and os.path.exists(f"/proc/{pid}"):
-                print(f"Another instance is already running with PID {pid}")
-                sys.exit(1)
-        with open(lock_file_path, 'w') as f:
-            f.write(str(os.getpid()))
-        def cleanup():
-            if os.path.exists(lock_file_path):
-                os.remove(lock_file_path)
-        atexit.register(cleanup)
-        return True
-    except Exception as e:
-        print(f"Error obtaining lock: {e}")
-        return False
-
-if not obtain_lock():
-    print("Failed to obtain lock. Another instance might be running.")
-    sys.exit(1)
-
-def ensure_single_instance():
-    script_name = os.path.basename(sys.argv[0])
-    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-        try:
-            if proc.name() == 'python3' and proc.pid != os.getpid():
-                for cmd in proc.cmdline():
-                    if os.path.basename(cmd) == script_name:
-                        print(f"Terminating existing instance with PID {proc.pid}")
-                        proc.kill()
-                        break
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            pass
-
-# 종목명 가중치 및 아이콘 표시
-def mark_special_stocks(stock_name):
-    """
-    종목명을 받아서 포맷팅된 종목명 반환
-    이 함수는 호환성을 위해 유지하지만, 내부적으로는 format_stock_name 사용
-    """
-    from modules.utils import format_stock_name
-    
-    # 종목 코드 추출 시도
-    code = None
-    
-    # 종목명에서 코드를 추출하는 로직 (기존 코드에 없다면 추가)
-    # 예: "삼성전자 (0.5 [2.3])" -> "005930"
-    # 이 부분은 코드 추출 로직이 필요하나, 여기서는 단순화를 위해 생략
-    
-    # 코드를 알 수 없는 경우 원래 이름 반환
-    if not code:
-        return stock_name
-    
-    return format_stock_name(code)
+from core import data, decide, ledger, report, web
+from core.decide import Risk
+from modules.utils import format_stock_name
 
 
-# 신호 텍스트를 웹용 JSON으로 파싱
-# 기존 함수 전체를 아래로 교체
-def parse_signals(signals_text):
-    import re
-    result = []
-    if not signals_text or "No divergent pairs" in signals_text:
-        return result
-    lines = signals_text.split('\n')
-    i = 0
-    while i < len(lines) - 1:
-        stock_name_line = re.sub(r'<[^>]+>', '', lines[i].strip())
-        signal_line = lines[i+1].strip() if i+1 < len(lines) else ""
-        if not stock_name_line or not signal_line:
-            i += 2
-            continue
-        sz_value = 0.0
-        signal = ""
-        price_a, price_b = None, None
-        skew_long, skew_short = None, None  # 추가
+def single_instance(path='/tmp/stmon_telegram.lock'):
+    if os.path.exists(path):
+        pid = open(path).read().strip()
+        if pid and os.path.exists(f'/proc/{pid}'):
+            print(f'이미 실행 중 (PID {pid})')
+            sys.exit(1)
+    open(path, 'w').write(str(os.getpid()))
+    atexit.register(lambda: os.path.exists(path) and os.remove(path))
 
-        signal_parts = signal_line.split('/')
-        try:
-            sz_value = float(signal_parts[0].strip())
-        except:
-            sz_value = 0.0
-        if len(signal_parts) > 1:
-            signal = signal_parts[1].strip()
-        if len(signal_parts) > 2:
-            price_items = signal_parts[2].strip().split(',')
-            if len(price_items) > 0:
-                try: price_a = float(price_items[0].strip())
-                except: pass
-            if len(price_items) > 1:
-                try: price_b = float(price_items[1].strip())
-                except: pass
-        # 추가: 왜도 파싱 (signal_parts[3])
-        if len(signal_parts) > 3:
-            try:
-                skew_long = float(signal_parts[3].replace('SKW', '').strip())
-                skew_short = float(signal_parts[4].strip()) if len(signal_parts) > 4 else None
-            except:
-                pass
 
-        signal_data = {
-            "stock_name": stock_name_line,
-            "sz_value": sz_value,
-            "signal": signal,
-            "price_a": price_a,
-            "price_b": price_b,
-            "skew_long": skew_long,    # 추가
-            "skew_short": skew_short,  # 추가
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        result.append(signal_data)
-        i += 2
-    return result
-
-# 웹 데이터 파일 저장
-def save_web_data(all_signals, divergent_signals):
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    data = {
-        "timestamp": current_time,
-        "last_updated": current_time,
-        "all_signals": parse_signals(all_signals),
-        "divergent_signals": parse_signals(divergent_signals)
-    }
-    safe_json_dump(data, "data/stock_data.json")
-
-# 트렌드 데이터 수집 및 저장
-async def collect_all_trends(pairs):
-    TRENDS_DIR = Path("data/trends")
-    TRENDS_DIR.mkdir(parents=True, exist_ok=True)
-    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-        for pair in pairs:
-            days_to_fetch = 365
-            end_date = datetime.now()
-            start_date = end_date - timedelta(days=days_to_fetch)
-            a_data = await fetch_stock_history(session, pair.A_code, start_date, days_to_fetch+30)
-            b_data = await fetch_stock_history(session, pair.B_code, start_date, days_to_fetch+30)
-            if not a_data or not b_data:
-                logger.warning(f"트렌드 데이터 수집 실패: {pair.A_name}")
-                continue
-            result = process_trend_data(pair, a_data, b_data)
-            if result:
-                file_path = TRENDS_DIR / f"{pair.A_code}.json"
-                safe_json_dump(result, file_path)
-                logger.info(f"{pair.A_name} 트렌드 데이터 저장 완료")
-
-async def fetch_stock_history(session, stock_code, start_date, days):
-    url = f"https://fchart.stock.naver.com/sise.nhn?symbol={stock_code}&timeframe=day&startTime={start_date.strftime('%Y%m%d')}&count={days}&requestType=0"
-    try:
-        async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
-            if response.status != 200:
-                return None
-            return await response.text()
-    except Exception as e:
-        logger.warning(f"{stock_code} 데이터 수집 실패: {e}")
-        return None
-
-def process_trend_data(pair, a_data, b_data):
-    try:
-        a_df = parse_stock_data(a_data, pair.A_code)
-        b_df = parse_stock_data(b_data, pair.B_code)
-        if a_df is None or b_df is None or a_df.empty or b_df.empty:
-            return None
-        merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
-        ind = indicators(merged_df.rename(columns={'close_A': 'C', 'close_B': 'P'}), pair.params)   # v2 지표
-        merged_df['dr'] = ind['dr']
-        merged_df['sz'] = ind['z']
-        result = {
-            'stock_code': pair.A_code,
-            'stock_name': pair.A_name,
-            'dates': merged_df.index.strftime('%Y-%m-%d').tolist(),
-            'common_prices': [None if pd.isna(x) else float(x) for x in merged_df['close_A'].tolist()],
-            'preferred_prices': [None if pd.isna(x) else float(x) for x in merged_df['close_B'].tolist()],
-            'discount_rates': [None if pd.isna(x) else float(x) for x in merged_df['dr'].tolist()],
-            'sz_values': [None if pd.isna(x) else float(x) for x in merged_df['sz'].tolist()],
-            'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }
-        return result
-    except Exception as e:
-        logger.warning(f"트렌드 데이터 처리 오류: {e}")
-        return None
-
-def parse_stock_data(data, code):
-    try:
-        soup = BeautifulSoup(data, 'html.parser')
-        chartdata = soup.find('chartdata')
-        if chartdata is None:
-            return None
-        name = chartdata.get('name', code)
-        items = soup.find_all('item')
-        if not items:
-            return None
-        dates, closes = [], []
-        for item in items:
-            if 'data' not in item.attrs:
-                continue
-            d = item['data'].split('|')
-            if len(d) >= 5:
-                try:
-                    dates.append(pd.to_datetime(d[0]))
-                    closes.append(float(d[4]))
-                except:
-                    continue
-        if not dates or not closes:
-            return None
-        df = pd.DataFrame({'close': closes}, index=dates)
-        df.name = name
-        return df
-    except Exception as e:
-        logger.warning(f"주식 데이터 파싱 오류: {e}")
-        return None
-
-# GitHub 커밋 및 푸시
-def commit_and_push_github(repo_path, commit_message=None):
-    if commit_message is None:
-        commit_message = f"데이터 업데이트: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-    os.chdir(repo_path)
-    status = subprocess.run("git status --porcelain", shell=True, capture_output=True, text=True)
-    if not status.stdout.strip():
-        logger.info("변경사항 없음, git push 생략")
-        return
-    subprocess.run("git add .", shell=True, check=True)
-    subprocess.run(f'git commit -m "{commit_message}"', shell=True, check=True)
-    subprocess.run("git push", shell=True, check=True)
-    logger.info("GitHub 저장소에 성공적으로 푸시되었습니다.")
-
-class StockMonitor:
+class App:
     def __init__(self):
-        from modules.telegram import TelegramBot
-        self.pairs = [NPPair(*pair) for pair in TICK_PAIRS]
-        self.telegram_bot = TelegramBot(self)  # monitor 인스턴스를 넘김!
-        self.running = True
-        self.last_r_signal_time = {}
-        self.v2_signal_date = None     # 오늘 매매 신호 발송 여부
-        self.v2_history_date = None    # 오늘 이력 갱신 여부
+        self.prm = cfg.V2_PARAMS
+        self.pp = cfg.V2_PAIR_PARAMS
+        self.risk = Risk(capital=cfg.V2_CAPITAL, slots=cfg.V2_SLOTS, gross_limit=cfg.V2_GROSS_LIMIT,
+                         liq_frac=cfg.V2_LIQ_FRAC, stop_warn=cfg.V2_STOP_WARN, bench_rate=cfg.V2_BENCH_RATE,
+                         sp_short=cfg.V2_SPREAD_SHORT, sp_long=cfg.V2_SPREAD_LONG)
+        have = set(data.pair_files())
+        self.pairs = [(a, b) for a, b, *_ in cfg.TICK_PAIRS if (a, b) in have]
+        miss = [(a, b) for a, b, *_ in cfg.TICK_PAIRS if (a, b) not in have]
+        if miss:
+            log.warning(f'이력 파일이 없어 제외: {miss}')
+        self.names = {a: format_stock_name(a) for a, _ in self.pairs}
+        self.prefs = {a: b for a, b in self.pairs}
+        self.hist, self.model, self.model_r, self.liq = {}, {'armed': {}, 'open': []}, None, {}
+        self.armed = {}
+        self.snap = None
+        self.last_orders = None
+        self.done = {}                  # 하루 1회 작업 기록: {작업: 날짜}
+        self.alerted = {}               # 장중 알림 중복 방지: {(코드, 종류): 날짜}
+        self.tg = None
+        if cfg.TELEGRAM_TOKEN:
+            from bot import TgBot
+            self.tg = TgBot(self, cfg.TELEGRAM_TOKEN, cfg.CHAT_ID, cfg.ALLOWED_USER_IDS)
+        else:
+            log.error('텔레그램 토큰 없음(config_secrets.py) — 알림 없이 실행')
 
-    def _live_prices(self):
-        """이번 주기에 받아둔 현재가(오늘 행)를 v2 계산에 재사용 → 네이버 중복 조회 방지"""
-        today = pd.Timestamp(datetime.now().date())
-        out = {}
-        for p in self.pairs:
-            if not p.data.empty and p.data.index[-1] == today:
-                r = p.data.iloc[-1]
-                out[p.A_code] = (float(r['close_A']), float(r['close_B']))
-        return out
+    # ------------------------------------------------------------ 상태 준비
+    def params_for(self, a):
+        return self.pp.get(a, self.prm)
 
-    async def run_v2_signals(self, force=False):
-        """v2 매매 신호 계산 → 텔레그램 발송 + data/v2_signals.json 저장"""
-        live = self._live_prices() or True
-        df, model = await asyncio.to_thread(
-            v2sig.compute, cfg.V2_PARAMS, live, cfg.V2_SLOTS, cfg.V2_CAPITAL, cfg.V2_PAIR_PARAMS, cfg.V2_BLACKOUT)
-        msg = v2sig.format_msg(df, cfg.V2_PARAMS)
-        held = set(df.loc[df.held, 'code'])
-        if set(model['open']) != held:
-            msg += f"\n(참고) 모델 보유와 실제 보유가 다름: 모델 {len(model['open'])}쌍 / 실제 {len(held)}쌍"
-        await self.telegram_bot.send_message(msg.replace('<', '&lt;'))
-        logger.info("v2 매매 신호 발송 완료")
-        return msg
+    def reload(self):
+        self.hist = data.load_all(self.pairs, min_rows=self.prm.min_history + 2)
+        self.model, self.model_r = decide.model_state(self.hist, self.prm, self.risk.slots, cfg.V2_BLACKOUT, self.pp)
+        trades = ledger.load()
+        self.armed = dict(self.model['armed'])
+        for a in decide.actual_stop_blocks(self.hist, self.prm, trades):
+            self.armed[a] = False
+        self.liq = data.liquidity()
+        log.info(f"이력 {len(self.hist)}쌍 로드, 모델 보유 {self.model['open']}, "
+                 f"재진입 대기 {sorted(k for k, v in self.armed.items() if not v)}")
 
-    async def v2_daily_jobs(self):
-        """15:15 매매 신호, 15:45 확정 종가로 이력 갱신 (하루 한 번씩)"""
-        now = datetime.now()
-        hm = (now.hour, now.minute)
-        today = now.date()
-        if now.weekday() > 4:
+    def compute_snapshot(self, live: dict):
+        self.snap = decide.snapshot(self.hist, live, self.pairs, self.names, self.prm, self.pp, self.armed,
+                                    ledger.open_positions())
+        return self.snap
+
+    def backtest_curve(self):
+        if self.model_r is None:
+            return {}
+        r = self.model_r['2024-01-01':]
+        eq = (1 + r).cumprod()
+        m = eq.resample('W').last()
+        return dict(dates=m.index.strftime('%Y-%m-%d').tolist(), equity=[round(float(x), 4) for x in m])
+
+    # ------------------------------------------------------------ 텍스트
+    def text_positions(self):
+        s = self.snap
+        if s is None or not s.held.any():
+            return '보유 없음'
+        L = ['<b>보유</b>']
+        for r in s[s.held].itertuples():
+            L.append(f"{r.name}\n  {int(r.cq)}/{int(r.pq)}주 · {int(r.days)}일 · Z {r.z:+.2f} · {r.pnl_won / 1e4:+,.0f}만원 "
+                     f"({r.pnl_ret:+.1%}) · 손절까지 {r.stop_gap:.1%}" + (f" · <b>{r.exit}</b>" if isinstance(r.exit, str) else ''))
+        tot = s.loc[s.held, 'pnl_won'].sum()
+        L.append(f"합계 {tot / 1e4:+,.0f}만원")
+        return '\n'.join(L)
+
+    def text_watch(self):
+        s = self.snap
+        if s is None:
+            return '데이터 준비 중'
+        w = s[(~s.held) & (s.z >= s.z_in - 0.5)].sort_values('z', ascending=False).head(15)
+        if not len(w):
+            return '진입 근접 없음'
+        return '<b>관심(Z 상위)</b>\n' + '\n'.join(
+            f"{r.name}  Z {r.z:+.2f} · 기대 " + (f"{r.edge:.1%}" if r.edge == r.edge else "- (진입 제외)") + ('' if r.armed else ' · 재진입대기')
+            + ('' if r.validated else ' · 이력부족') for r in w.itertuples())
+
+    def text_report(self):
+        return report.summary(self.risk.capital)
+
+    # ------------------------------------------------------------ 체결 기록
+    def record_in(self, code, cq, cp, pq, pp, when=None):
+        if code not in self.prefs:
+            raise ValueError(f'대상 쌍이 아님: {code}')
+        t = ledger.record_entry(code, self.prefs[code], self.names[code], cq, cp, pq, pp,
+                                self.risk.bench_rate, self.risk.sp_short, self.risk.sp_long, when)
+        self.refresh_after_fill()
+        return t
+
+    def record_out(self, code, cp, pp, why='', when=None):
+        pos = ledger.open_positions().get(code)
+        if not pos:
+            raise ValueError(f'보유 중이 아님: {code}')
+        r = pos.pnl(cp, pp, when or date.today())
+        closed = ledger.record_exit(code, cp, pp, why, when)
+        if (why or '').upper() == 'STOP' or r['ret_strategy'] <= -self.prm.stop:
+            self.armed[code] = False
+        self.refresh_after_fill()
+        return (f"✅ 청산 기록 {pos.name} ({len(closed)}건)\n손익 {r['total'] / 1e4:+,.0f}만원 ({r['ret']:+.1%}) · "
+                f"{r['days']}일 · 금리 {r['financing'] / 1e4:+,.0f}만원")
+
+    def refresh_after_fill(self):
+        if self.snap is not None:
+            live = {r.code: r.C for r in self.snap.itertuples() if r.live}
+            live.update({r.pref: r.P for r in self.snap.itertuples() if r.live})
+            self.compute_snapshot(live)
+            self.write_web()
+
+    # ------------------------------------------------------------ 작업
+    async def fetch_live(self):
+        codes = [c for a, b in self.pairs for c in (a, b)]
+        return await asyncio.to_thread(data.fetch_now, codes)
+
+    def write_web(self):
+        web.stock_data(self.snap, self.hist)
+        web.dashboard(self.snap, self.last_orders, self.model, self.prm, self.risk, self.backtest_curve())
+
+    async def preview_orders(self, live=None):
+        if live is None:
+            live = await self.fetch_live()
+        snap = self.compute_snapshot(live)
+        o = decide.orders(snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq)
+        return decide.fmt_orders(o, self.prm, self.model['open'])
+
+    async def job_orders(self, live):
+        o = decide.orders(self.snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq)
+        o.attrs['time'] = datetime.now().isoformat(timespec='seconds')
+        self.last_orders = o
+        report.log_signals(o)
+        await self.send(decide.fmt_orders(o, self.prm, self.model['open']))
+        log.info(f"주문표 발송: {o.action.value_counts().to_dict()}")
+
+    async def job_close(self):
+        res = await asyncio.to_thread(data.update_all, date.today(), self.pairs)
+        bad = [f'{c}:{m}' for c, m in res if m != 'ok']
+        await asyncio.to_thread(self.reload)
+        snap = self.compute_snapshot({})                 # 확정 종가 기준
+        row = report.mark_equity(snap)
+        await asyncio.to_thread(web.trends, self.hist, self.names, self.params_for)
+        log.info(f"마감 처리: 이력 {len(res)}쌍(확인 필요 {len(bad)}), 손익 {row['total']:,.0f}")
+        if bad:
+            await self.send('⚠️ 이력 갱신 확인 필요\n' + '\n'.join(bad[:20]))
+        if date.today().weekday() == 4:
+            await self.send(self.text_report())
+
+    async def intraday_alerts(self):
+        s, today = self.snap, date.today()
+        for r in s[s.held].itertuples():
+            if r.ret_rule <= -self.prm.stop:
+                kind, msg = 'stop', f"🚨 손절선 도달(장중) {r.name}  손익 {r.ret_rule:+.1%} — 종가 기준으로 15:15 주문표에서 확정"
+            elif r.ret_rule <= -self.risk.stop_warn:
+                kind, msg = 'warn', f"⚠️ 손절선 접근 {r.name}  손익 {r.ret_rule:+.1%} (손절 -{self.prm.stop:.0%})"
+            else:
+                continue
+            if self.alerted.get((r.code, kind)) != today and self.alerted.get((r.code, 'stop')) != today:
+                self.alerted[(r.code, kind)] = today
+                await self.send(msg)
+        for r in s[(~s.held) & s.armed & s.validated & ~s.stale & (s.z >= s.z_in) & (s.edge >= self.prm.min_edge)].itertuples():
+            if self.alerted.get((r.code, 'near')) != today:
+                self.alerted[(r.code, 'near')] = today
+                await self.send(f"👀 진입 조건 근접(장중) {r.name}  Z {r.z:+.2f} · 기대 {r.edge:.1%} — 확정은 15:15")
+
+    async def send(self, text):
+        if self.tg:
+            await self.tg.send(text)
+        else:
+            log.info('[TG] ' + text.replace('\n', ' | '))
+
+    def git_push(self):
+        if not cfg.GIT_PUSH:
             return
-        if hm >= tuple(cfg.V2_SIGNAL_TIME) and hm < tuple(cfg.V2_HISTORY_TIME) and self.v2_signal_date != today:
-            self.v2_signal_date = today
-            try:
-                await self.run_v2_signals()
-            except Exception as e:
-                logger.error(f"v2 신호 계산 실패: {e}")
-                await self.telegram_bot.send_message(f"⚠️ stmon v2 신호 계산 실패: {e}")
-        if hm >= tuple(cfg.V2_HISTORY_TIME) and self.v2_history_date != today:
-            self.v2_history_date = today
-            try:
-                log = await asyncio.to_thread(v2sig.update_all_history, today)
-                bad = [f"{c}:{m}" for c, m in log if m != 'ok']
-                logger.info(f"v2 이력 갱신 완료 ({len(log)}쌍, 확인 필요 {len(bad)})")
-                if bad:
-                    await self.telegram_bot.send_message("⚠️ stmon 이력 갱신 확인 필요\n" + "\n".join(bad[:20]))
-            except Exception as e:
-                logger.error(f"v2 이력 갱신 실패: {e}")
-
-    async def get_signals_with_divergent(self):
         try:
-            batch_size = 5
-            all_results = []
-
-            for i in range(0, len(self.pairs), batch_size):
-                logger.info(f"처리 중인 배치: {i+1}~{min(i+batch_size, len(self.pairs))} / {len(self.pairs)}")
-                batch_pairs = self.pairs[i:i+batch_size]
-                batch_tasks = [asyncio.create_task(pair.get_signal_now()) for pair in batch_pairs]
-                batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
-
-                for pair, result in zip(batch_pairs, batch_results):
-                    all_results.append((pair, result))
-
-                if i + batch_size < len(self.pairs):
-                    await asyncio.sleep(3)
-
-            all_messages = []
-            divergent_messages = []
-
-            in_signal_pairs = []
-            out_signal_pairs = []
-            chk_signal_pairs = []
-
-            for pair, result in all_results:
-                formatted_name = f"<b>{pair.A_name}</b>"
-                if isinstance(result, Exception):
-                    logger.error(f"Error getting signal for {pair.A_name}: {str(result)}")
-                    continue  # 신호 없는 종목은 웹에 저장하지 않음!    
-                elif result:
-                    signal_info = result
-                    all_messages.append(f"{formatted_name}\n{signal_info}")
-
-                    try:
-                        # sz, 신호명, 가격정보 파싱
-                        signal_parts = signal_info.split('/')
-                        sz_value = float(signal_parts[0].strip())
-                        signal_type = signal_parts[1].strip()
-                        # sl_in, sl_out은 pair 객체의 값 사용
-                        sl_in = pair.SL_in_val
-                        sl_out = pair.SL_out_val
-
-                        # divergent 기준: sz ≥ sl_in
-                        if sz_value >= sl_in:
-                            divergent_messages.append(f"{formatted_name}\n {signal_info}")
-
-                        # 신호명 분류(혹시 신호 생성부에서 잘못된 값이 들어올 때도 sl_in/sl_out 기준으로 재분류)
-                        if sz_value >= sl_in:
-                            in_signal_pairs.append((pair, signal_info))
-                        elif sz_value <= sl_out:
-                            out_signal_pairs.append((pair, signal_info))
-                        else:
-                            chk_signal_pairs.append((pair, signal_info))
-                    except (ValueError, IndexError):
-                        continue
-                else:
-                    continue  # 신호 없는 종목은 웹에 저장하지 않음!
-
-            # IN 신호 텔레그램 알림
-            for pair, signal_info in in_signal_pairs:
-                try:
-                    parts = signal_info.split('/')
-                    sz = float(parts[0].strip())
-                    current_time = datetime.now()
-                    last_signal_time = self.last_r_signal_time.get(pair.A_name)
-                    # 1시간 이내 중복 알림 방지
-                    if (not last_signal_time) or (current_time - last_signal_time > timedelta(hours=1)):
-                        clean_name = mark_special_stocks(pair.A_name)
-                        formatted_name = f"<b>{clean_name}</b>"
-                        in_message = (
-                            f"👀 장중 Z≥{pair.SL_in_val} (참고용 · 매매 신호는 {cfg.V2_SIGNAL_TIME[0]}:{cfg.V2_SIGNAL_TIME[1]:02d})\n"
-                            f"{formatted_name}\n"
-                            f" {signal_info}\n"
-                        )
-                        await self.telegram_bot.send_message(in_message)
-                        self.last_r_signal_time[pair.A_name] = current_time
-                except Exception as e:
-                    logger.error(f"Error processing IN signal for {pair.A_name}: {str(e)}")
-
-            all_signals = "\n".join(all_messages)
-            divergent_signals = "\n".join(divergent_messages) if divergent_messages else "No divergent pairs found at the moment."
-
-            return all_signals, divergent_signals, all_results
-
+            if not subprocess.run('git status --porcelain data', shell=True, capture_output=True, text=True).stdout.strip():
+                return
+            subprocess.run('git add data', shell=True, check=True)
+            subprocess.run(f'git commit -q -m "데이터 업데이트: {datetime.now():%Y-%m-%d %H:%M:%S}"', shell=True, check=True)
+            subprocess.run('git pull -q --rebase --autostash', shell=True, check=False)
+            subprocess.run('git push -q', shell=True, check=True)
         except Exception as e:
-            logger.error(f"Error in get_signals_with_divergent: {str(e)}")
-            raise
+            log.error(f'git push 실패: {e}')
 
+    def due(self, name, hm):
+        now = datetime.now()
+        return now.weekday() < 5 and (now.hour, now.minute) >= tuple(hm) and self.done.get(name) != now.date()
 
-    async def get_all_signals(self, divergence_only: bool = False) -> str:
+    def market_open(self):
+        now = datetime.now()
+        (h1, m1), (h2, m2) = cfg.MARKET_HOURS
+        return now.weekday() < 5 and (h1, m1) <= (now.hour, now.minute) <= (h2, m2)
+
+    def restore_today(self):
+        """재시작해도 오늘 이미 한 작업(주문표·마감)은 다시 하지 않음. 오늘 주문표는 대시보드에서 복원."""
+        today = date.today().isoformat()
         try:
-            all_signals, divergent_signals, _ = await self.get_signals_with_divergent()
-            return divergent_signals if divergence_only else all_signals
-        except Exception as e:
-            logger.error(f"Error in get_all_signals: {str(e)}")
-            raise
+            import json
+            d = json.load(open(os.path.join(ROOT, 'data', 'v2_dashboard.json'), encoding='utf-8'))
+            if (d.get('orders_time') or '').startswith(today):
+                self.done['orders'] = date.today()
+                o = pd.DataFrame(d.get('orders') or [])
+                if len(o):
+                    o.attrs['time'] = d['orders_time']
+                    self.last_orders = o
+        except Exception:
+            pass
+        if os.path.exists(report.EQUITY):
+            e = pd.read_csv(report.EQUITY)
+            if len(e) and str(e.date.iloc[-1]) == today:
+                self.done['close'] = date.today()
+        log.info(f'오늘 완료된 작업: {list(self.done)}')
 
-    async def send_periodic_updates(self):
-        GITHUB_REPO_PATH = os.environ.get('GITHUB_REPO_PATH', '/home/ubuntu/stmon')
-        
-        # 하루에 한 번만 트렌드 데이터 업데이트 (과거 데이터 중요하므로 유지)
-        last_trend_update = datetime.now() - timedelta(hours=23)   # 시작 후 곧 한 번 실행되도록
-
-        while self.running:
+    async def loop(self):
+        self.restore_today()
+        await asyncio.to_thread(self.reload)
+        await asyncio.to_thread(web.trends, self.hist, self.names, self.params_for)
+        self.compute_snapshot({})
+        self.write_web()
+        while True:
             try:
-                if not is_market_time():
+                if not self.market_open():
                     await asyncio.sleep(60)
                     continue
-
-                logger.info("Fetching signals for periodic update...")
-
-                # ==================== 실시간 신호 계산 (한 번만 호출) ====================
-                all_signals, divergent_signals, all_signal_pairs_raw = await self.get_signals_with_divergent()
-
-                # 정기 메시지 발송 제거 — IN 신호 즉시 알림만 사용
-                logger.info("Periodic update completed (IN-signal alerts only)")
-
-                # 웹 데이터 파일 저장
-                save_web_data(all_signals, divergent_signals)
-
-                # v2 매매 신호(15:15) / 이력 갱신(15:45)
-                await self.v2_daily_jobs()
-
-                # ==================== 과거 트렌드 데이터는 하루에 한 번만 ====================
-                if (datetime.now() - last_trend_update).total_seconds() > 86400:  # 24시간
-                    logger.info("=== Starting DAILY trend data collection (heavy task) ===")
-                    try:
-                        await collect_all_trends(self.pairs)
-                        last_trend_update = datetime.now()
-                        logger.info("Daily trend data update completed successfully.")
-                    except Exception as e:
-                        logger.error(f"Trend collection failed: {e}")
-                else:
-                    remaining_hours = (last_trend_update + timedelta(days=1) - datetime.now()).total_seconds() / 3600
-                    logger.info(f"Skipping trend update. Next daily update in {remaining_hours:.1f} hours.")
-
-                # GitHub 커밋/푸시
-                commit_and_push_github(GITHUB_REPO_PATH)
-
-                # 실시간 업데이트 주기 (CPU 절약 핵심!)
-                await asyncio.sleep(WAIT_TIME)
-
+                live = await self.fetch_live()
+                if len(live) < len(self.pairs):          # 장 시작 전·종목 정지 등은 확정 종가 사용
+                    log.info(f'현재가 {len(live)}/{len(self.pairs) * 2}종목')
+                self.compute_snapshot(live)
+                self.write_web()
+                await self.intraday_alerts()
+                if self.due('orders', cfg.V2_SIGNAL_TIME) and datetime.now().time() < datetime.strptime(
+                        '%02d:%02d' % tuple(cfg.V2_HISTORY_TIME), '%H:%M').time():
+                    self.done['orders'] = date.today()
+                    await self.job_orders(live)
+                    self.write_web()
+                if self.due('close', cfg.V2_HISTORY_TIME):
+                    self.done['close'] = date.today()
+                    await self.job_close()
+                    self.write_web()
+                await asyncio.to_thread(self.git_push)
+                await asyncio.sleep(cfg.WAIT_TIME)
             except Exception as e:
-                logger.error(f"Error in periodic update: {str(e)}")
+                log.exception(f'주기 처리 오류: {e}')
                 await asyncio.sleep(30)
-                
-    async def get_signals_with_divergent_pairs(self):
-        try:
-            batch_size = 5
-            all_results = []
 
-            for i in range(0, len(self.pairs), batch_size):
-                logger.info(f"처리 중인 배치: {i+1}~{min(i+batch_size, len(self.pairs))} / {len(self.pairs)}")
-                batch_pairs = self.pairs[i:i+batch_size]
-                batch_tasks = [asyncio.create_task(pair.get_signal_now()) for pair in batch_pairs]
-                batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+    async def run(self):
+        log.info('stmon 시작')
+        tasks = [asyncio.create_task(self.loop())]
+        if self.tg:
+            tasks.append(asyncio.create_task(self.tg.start()))
+        await asyncio.gather(*tasks)
 
-                for pair, result in zip(batch_pairs, batch_results):
-                    all_results.append((pair, result))
 
-                if i + batch_size < len(self.pairs):
-                    await asyncio.sleep(3)
-
-            return all_results
-        except Exception as e:
-            logger.error(f"Error in get_signals_with_divergent_pairs: {str(e)}")
-            raise
-            
-    async def start(self):
-        logger.info("Starting Stock Monitor...")
-        await self.telegram_bot.start(self.pairs)
-        asyncio.create_task(self.telegram_bot.start_polling())
-        await self.send_periodic_updates()
-
-    async def shutdown(self):
-        logger.info("Shutting down Stock Monitor...")
-        self.running = False
-        await self.telegram_bot.stop()
-        
-async def main():
-    monitor = StockMonitor()
+if __name__ == '__main__':
+    single_instance()
     try:
-        await monitor.start()
+        asyncio.run(App().run())
     except KeyboardInterrupt:
-        logger.info("Received shutdown signal")
-        await monitor.shutdown()
-    except Exception as e:
-        logger.error(f"Fatal error: {str(e)}")
-        await monitor.shutdown()
-        sys.exit(1)
-
-if __name__ == "__main__":
-    ensure_single_instance()
-    asyncio.run(main())
+        pass

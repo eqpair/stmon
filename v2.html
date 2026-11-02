@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stmon — Pair Trading Desk</title>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { background:#f9fafb; color:#111827; font-feature-settings:"tnum"; }
+  .card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; }
+  th { font-weight:600; color:#6b7280; font-size:11px; text-transform:uppercase; letter-spacing:.03em; }
+  td, th { padding:6px 8px; white-space:nowrap; }
+  tr + tr td { border-top:1px solid #f3f4f6; }
+  .up { color:#dc2626; } .dn { color:#2563eb; }
+  .tag { font-size:11px; padding:1px 6px; border-radius:4px; background:#f3f4f6; color:#374151; }
+  .tag.strong { background:#111827; color:#fff; }
+  .num { text-align:right; }
+  /* CDN(Tailwind) 실패 대비 최소 레이아웃 */
+  body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;margin:0}
+  .max-w-6xl{max-width:72rem}.mx-auto{margin-left:auto;margin-right:auto}.space-y-4>*+*{margin-top:1rem}
+  .flex{display:flex}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-between{justify-content:space-between}
+  .gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.grid{display:grid}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media(min-width:768px){.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:p-6{padding:1.5rem}}
+  .p-3{padding:.75rem}.p-4{padding:1rem}.px-3{padding-left:.75rem;padding-right:.75rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}
+  .mb-2{margin-bottom:.5rem}.mt-4{margin-top:1rem}.w-full{width:100%}.overflow-x-auto{overflow-x:auto}.rounded{border-radius:.25rem}
+  .text-xs{font-size:.75rem}.text-sm{font-size:.875rem}.text-lg{font-size:1.125rem}.text-xl{font-size:1.25rem}
+  .font-bold{font-weight:700}.font-semibold{font-weight:600}.text-gray-500{color:#6b7280}.text-gray-400{color:#9ca3af}
+  .bg-gray-100{background:#f3f4f6} a{color:inherit;text-decoration:none} table{border-collapse:collapse}
+</style>
+</head>
+<body class="p-3 md:p-6">
+<div class="max-w-6xl mx-auto space-y-4">
+  <div class="flex items-center justify-between">
+    <div>
+      <div class="text-lg font-bold">Pair Trading Desk</div>
+      <div class="text-xs text-gray-500">Short Common / Long Preferred · <span id="params"></span></div>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <span class="text-gray-500" id="updated"></span>
+      <a href="index.html" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Monitor</a>
+      <a href="pair-report.html" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Report</a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="kpis"></div>
+
+  <div class="card p-4">
+    <div class="flex justify-between items-baseline mb-2"><div class="font-semibold">Orders <span class="text-xs text-gray-500">(15:15 주문표)</span></div><div class="text-xs text-gray-500" id="otime"></div></div>
+    <div class="overflow-x-auto"><table class="w-full text-sm" id="orders"></table></div>
+  </div>
+
+  <div class="card p-4">
+    <div class="font-semibold mb-2">Positions</div>
+    <div class="overflow-x-auto"><table class="w-full text-sm" id="positions"></table></div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card p-4">
+      <div class="font-semibold mb-2">Watchlist <span class="text-xs text-gray-500">(Z 상위)</span></div>
+      <div class="overflow-x-auto"><table class="w-full text-sm" id="watch"></table></div>
+    </div>
+    <div class="card p-4">
+      <div class="font-semibold mb-2">P&amp;L <span class="text-xs text-gray-500">(실제 누적손익 · 만원)</span></div>
+      <canvas id="eq" height="180"></canvas>
+      <div class="font-semibold mt-4 mb-2">Backtest <span class="text-xs text-gray-500">(같은 규칙, 2024~ 모델 수익곡선)</span></div>
+      <canvas id="bt" height="140"></canvas>
+    </div>
+  </div>
+
+  <div class="card p-4">
+    <div class="font-semibold mb-2">Closed Trades</div>
+    <div class="overflow-x-auto"><table class="w-full text-sm" id="closed"></table></div>
+  </div>
+  <div class="text-xs text-gray-400">Signals are rule outputs, not investment advice. Execution is manual; record fills with /in and /out.</div>
+</div>
+<script>
+const man = v => v == null ? '-' : (v/1e4).toLocaleString('ko-KR',{maximumFractionDigits:0});
+const pct = (v,d=1) => v == null ? '-' : (v*100).toFixed(d)+'%';
+const sgn = v => v == null ? '' : (v>0?'up':(v<0?'dn':''));
+const z2 = v => v == null ? '-' : (v>0?'+':'')+v.toFixed(2);
+const nm = s => (s||'').replace(/\s*\[.*\]\s*$/,'');
+const ACT = {ENTER:'진입',EXIT_TARGET:'청산(목표)',EXIT_STOP:'청산(손절)',EXIT_TIME:'청산(기간)',HOLD:'보유',
+             WAIT_SLOT:'슬롯대기',BLOCKED_BAN:'금지기간',BLOCKED_LIQ:'유동성부족',WATCH:'관찰'};
+function table(el, head, rows){ document.getElementById(el).innerHTML =
+  '<tr>'+head.map(h=>`<th class="${h[1]||''}">${h[0]}</th>`).join('')+'</tr>' +
+  (rows.length? rows.join('') : `<tr><td colspan="${head.length}" class="text-gray-400">없음</td></tr>`); }
+let charts = {};
+function line(id, labels, data){
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id), {type:'line',
+    data:{labels, datasets:[{data, borderColor:'#111827', borderWidth:1.5, pointRadius: data.length < 40 ? 2 : 0, fill:false, tension:0}]},
+    options:{plugins:{legend:{display:false}}, scales:{x:{ticks:{maxTicksLimit:6,font:{size:10}}}, y:{ticks:{font:{size:10}}}}}});
+}
+async function load(){
+  const d = await (await fetch('data/v2_dashboard.json?t='+Date.now())).json();
+  const p = d.params;
+  document.getElementById('params').textContent = `${p.window}d log spread · Z in ${p.z_in} / out ${p.z_out} · stop ${pct(p.stop,0)} · ${d.risk.slots} slots`;
+  document.getElementById('updated').textContent = 'Updated ' + d.updated.replace('T',' ');
+  const pos = d.positions||[], eq = d.equity||[], cl = d.realized||[];
+  const open = pos.reduce((a,r)=>a+(r.pnl_won||0),0);
+  const last = eq.length? eq[eq.length-1] : null;
+  const wins = cl.filter(r=>r.total>0).length;
+  const k = [['Open Positions', `${pos.length} / ${d.risk.slots}`],
+             ['Open P&L (만원)', man(open), sgn(open)],
+             ['Cumulative P&L (만원)', last? man(last.total): '-', last? sgn(last.total):''],
+             ['Closed · Win rate', cl.length? `${cl.length} · ${pct(wins/cl.length,0)}` : '-']];
+  document.getElementById('kpis').innerHTML = k.map(x=>`<div class="card p-3"><div class="text-xs text-gray-500">${x[0]}</div><div class="text-xl font-bold ${x[2]||''}">${x[1]}</div></div>`).join('');
+  document.getElementById('otime').textContent = d.orders_time? d.orders_time.replace('T',' ') : '오늘 주문표 전';
+  table('orders', [['Pair'],['Action'],['Z','num'],['Edge','num'],['Common qty','num'],['Pref qty','num'],['Note']],
+    (d.orders||[]).filter(r=>r.action!=='WATCH').map(r=>`<tr><td>${nm(r.name)}</td><td><span class="tag ${/ENTER|EXIT/.test(r.action)?'strong':''}">${ACT[r.action]||r.action}</span></td>
+      <td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td><td class="num">${r.qty_C??''}</td><td class="num">${r.qty_P??''}</td><td class="text-xs text-gray-500">${r.note||''}</td></tr>`));
+  table('positions', [['Pair'],['Entry'],['Days','num'],['Qty C/P','num'],['Z','num'],['P&L (만원)','num'],['P&L %','num'],['To stop','num'],['Rule']],
+    pos.map(r=>`<tr><td>${nm(r.name)}</td><td>${r.entry_date}</td><td class="num">${r.days}</td><td class="num">${r.cq}/${r.pq}</td>
+      <td class="num">${z2(r.z)}</td><td class="num ${sgn(r.pnl_won)}">${man(r.pnl_won)}</td><td class="num ${sgn(r.pnl_ret)}">${pct(r.pnl_ret)}</td>
+      <td class="num">${pct(r.stop_gap)}</td><td>${r.exit? `<span class="tag strong">${r.exit}</span>`:''}</td></tr>`));
+  table('watch', [['Pair'],['Z','num'],['Edge','num'],['Status']],
+    (d.watch||[]).slice(0,15).map(r=>`<tr><td>${nm(r.name)}</td><td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td>
+      <td>${!r.armed?'<span class="tag">재진입대기</span>':''}${!r.validated?'<span class="tag">이력부족</span>':''}</td></tr>`));
+  table('closed', [['Pair'],['Entry'],['Exit'],['Days','num'],['Reason'],['P&L (만원)','num'],['P&L %','num']],
+    cl.slice().sort((a,b)=>(b.exit||'').localeCompare(a.exit||'')).slice(0,30).map(r=>`<tr><td>${nm(r.name)}</td><td>${r.entry}</td><td>${r.exit}</td><td class="num">${r.days}</td>
+      <td>${r.reason||''}</td><td class="num ${sgn(r.total)}">${man(r.total)}</td><td class="num ${sgn(r.ret)}">${pct(r.ret)}</td></tr>`));
+  line('eq', eq.map(r=>r.date), eq.map(r=>Math.round(r.total/1e4)));
+  if (d.backtest && d.backtest.dates) line('bt', d.backtest.dates, d.backtest.equity);
+}
+load(); setInterval(load, 180000);
+</script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """stmon v2 백테스트 실행: python3 backtest.py [--lag 1] [--slots 10] [--window 120 ...]"""
 import argparse
-from modules.engine import load_history, simulate, report
-from modules.strategy import Params
+from core.engine import load_history, simulate, report
+from core.strategy import Params
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
