@@ -44,7 +44,15 @@ def trends(hist: dict, names: dict, params_for, days: int = 400):
                    os.path.join(D, 'trends', f'{a}.json'))
 
 
-def dashboard(snap: pd.DataFrame, last_orders: pd.DataFrame | None, model: dict, prm, risk, backtest_curve=None):
+def _orders_records(o):
+    if o is None or 'action' not in o:
+        return []
+    cols = ['code', 'name', 'action', 'z', 'edge', 'qty_C', 'qty_P', 'C', 'P', 'leg_won', 'note', 'pnl_won', 'pnl_ret', 'stop_gap']
+    return o[(o.action != '') & (o.action != 'WATCH')][[c for c in cols if c in o]].to_dict('records')
+
+
+def dashboard(snap: pd.DataFrame, last_orders: pd.DataFrame | None, model: dict, prm, risk, backtest_curve=None,
+              live_orders: pd.DataFrame | None = None, market_open: bool = False):
     cols = ['code', 'pref', 'name', 'C', 'P', 'z', 'edge', 'signal', 'armed', 'validated', 'held',
             'entry_date', 'days', 'cq', 'pq', 'c0', 'p0', 'pnl_won', 'pnl_ret', 'ret_rule', 'stop_gap', 'exit']
     pos = snap[snap.held][[c for c in cols if c in snap]]
@@ -54,9 +62,9 @@ def dashboard(snap: pd.DataFrame, last_orders: pd.DataFrame | None, model: dict,
     out = dict(updated=datetime.now().isoformat(timespec='seconds'), params=prm.to_dict(),
                risk=dict(capital=risk.capital, slots=risk.slots, gross_limit=risk.gross_limit, liq_frac=risk.liq_frac),
                positions=pos.to_dict('records'), watch=watch.to_dict('records'),
-               orders=(last_orders[last_orders.action != ''][[c for c in ['code', 'name', 'action', 'z', 'edge', 'qty_C', 'qty_P',
-                       'C', 'P', 'note'] if c in last_orders]].to_dict('records')
-                       if last_orders is not None and 'action' in last_orders else []),
+               orders=_orders_records(last_orders), live_orders=_orders_records(live_orders), market_open=market_open,
+               live_breadth=(live_orders.attrs.get('breadth') if live_orders is not None else None),
+               banned=(bool(live_orders.attrs.get('banned')) if live_orders is not None else False),
                orders_time=(last_orders.attrs.get('time') if last_orders is not None else None),
                model_open=model.get('open', []), equity=eq, realized=ledger.realized(),
                backtest=backtest_curve or {})

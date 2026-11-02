@@ -57,6 +57,7 @@ class App:
         self.armed = {}
         self.snap = None
         self.last_orders = None
+        self.live_orders = None          # 매 주기 현재가 기준 판단(웹 표시용, 기록 안 함)
         self.done = {}                  # 하루 1회 작업 기록: {작업: 날짜}
         self.alerted = {}               # 장중 알림 중복 방지: {(코드, 종류): 날짜}
         self.tg = None
@@ -155,8 +156,13 @@ class App:
         return await asyncio.to_thread(data.fetch_now, codes)
 
     def write_web(self):
+        try:
+            self.live_orders = decide.orders(self.snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq)
+        except Exception as e:
+            log.error(f'실시간 판단 계산 실패: {e}')
         web.stock_data(self.snap, self.hist)
-        web.dashboard(self.snap, self.last_orders, self.model, self.prm, self.risk, self.backtest_curve())
+        web.dashboard(self.snap, self.last_orders, self.model, self.prm, self.risk, self.backtest_curve(),
+                      live_orders=self.live_orders, market_open=self.market_open())
 
     async def preview_orders(self, live=None):
         if live is None:
@@ -170,7 +176,8 @@ class App:
         o.attrs['time'] = datetime.now().isoformat(timespec='seconds')
         self.last_orders = o
         report.log_signals(o)
-        await self.send(decide.fmt_orders(o, self.prm, self.model['open']))
+        if getattr(cfg, 'TG_ORDER_SHEET', True):
+            await self.send(decide.fmt_orders(o, self.prm, self.model['open']))
         log.info(f"주문표 발송: {o.action.value_counts().to_dict()}")
 
     async def job_close(self):
@@ -181,12 +188,15 @@ class App:
         row = report.mark_equity(snap)
         await asyncio.to_thread(web.trends, self.hist, self.names, self.params_for)
         log.info(f"마감 처리: 이력 {len(res)}쌍(확인 필요 {len(bad)}), 손익 {row['total']:,.0f}")
-        if bad:
-            await self.send('⚠️ 이력 갱신 확인 필요\n' + '\n'.join(bad[:20]))
-        if date.today().weekday() == 4:
-            await self.send(self.text_report())
+        if getattr(cfg, 'TG_DAILY_WARNINGS', True):
+            if bad:
+                await self.send('⚠️ 이력 갱신 확인 필요\n' + '\n'.join(bad[:20]))
+            if date.today().weekday() == 4:
+                await self.send(self.text_report())
 
     async def intraday_alerts(self):
+        if not getattr(cfg, 'TG_INTRADAY_ALERTS', False):
+            return
         s, today = self.snap, date.today()
         for r in s[s.held].itertuples():
             if r.ret_rule <= -self.prm.stop:

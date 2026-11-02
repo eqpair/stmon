@@ -38,6 +38,7 @@
       <div class="text-xs text-gray-500">Short Common / Long Preferred · <span id="params"></span></div>
     </div>
     <div class="flex items-center gap-2 text-xs">
+      <span id="fresh" class="tag"></span>
       <span class="text-gray-500" id="updated"></span>
       <a href="index.html" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Monitor</a>
       <a href="pair-report.html" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Report</a>
@@ -46,8 +47,13 @@
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="kpis"></div>
 
+  <div class="card p-4" style="border-color:#111827">
+    <div class="flex justify-between items-baseline mb-2"><div class="font-semibold">Now <span class="text-xs text-gray-500">(지금 가격 기준 규칙 판단 · 3분마다 갱신 · 확정은 종가)</span></div><div class="text-xs text-gray-500" id="nowinfo"></div></div>
+    <div class="overflow-x-auto"><table class="w-full text-sm" id="now"></table></div>
+  </div>
+
   <div class="card p-4">
-    <div class="flex justify-between items-baseline mb-2"><div class="font-semibold">Orders <span class="text-xs text-gray-500">(15:15 주문표)</span></div><div class="text-xs text-gray-500" id="otime"></div></div>
+    <div class="flex justify-between items-baseline mb-2"><div class="font-semibold">Orders <span class="text-xs text-gray-500">(15:15 확정 주문표 · 기록됨)</span></div><div class="text-xs text-gray-500" id="otime"></div></div>
     <div class="overflow-x-auto"><table class="w-full text-sm" id="orders"></table></div>
   </div>
 
@@ -81,6 +87,9 @@ const pct = (v,d=1) => v == null ? '-' : (v*100).toFixed(d)+'%';
 const sgn = v => v == null ? '' : (v>0?'up':(v<0?'dn':''));
 const z2 = v => v == null ? '-' : (v>0?'+':'')+v.toFixed(2);
 const nm = s => (s||'').replace(/\s*\[.*\]\s*$/,'');
+const link = r => `<a href="trade-detail.html?code=${r.code}&name=${encodeURIComponent(r.name||'')}" style="border-bottom:1px dotted #9ca3af">${nm(r.name)}</a>`;
+const gapCls = g => g == null ? '' : (g < 0 ? 'up font-bold' : (g < 0.05 ? 'up' : ''));
+const qty = r => (r.qty_C!=null && r.qty_C===r.qty_C) ? `${Number(r.qty_C).toLocaleString()} / ${Number(r.qty_P).toLocaleString()}` : '';
 const ACT = {ENTER:'진입',EXIT_TARGET:'청산(목표)',EXIT_STOP:'청산(손절)',EXIT_TIME:'청산(기간)',HOLD:'보유',
              WAIT_SLOT:'슬롯대기',BLOCKED_BAN:'금지기간',BLOCKED_LIQ:'유동성부족',WATCH:'관찰'};
 function table(el, head, rows){ document.getElementById(el).innerHTML =
@@ -98,6 +107,17 @@ async function load(){
   const p = d.params;
   document.getElementById('params').textContent = `${p.window}d log spread · Z in ${p.z_in} / out ${p.z_out} · stop ${pct(p.stop,0)} · ${d.risk.slots} slots`;
   document.getElementById('updated').textContent = 'Updated ' + d.updated.replace('T',' ');
+  const age = (Date.now() - new Date(d.updated).getTime()) / 60000, fr = document.getElementById('fresh');
+  if (!d.market_open) { fr.textContent = '장 마감 · 마지막 종가 기준'; fr.className = 'tag'; }
+  else if (age <= 8) { fr.textContent = '실시간'; fr.className = 'tag strong'; }
+  else { fr.textContent = `⚠ ${Math.round(age)}분 전 데이터`; fr.className = 'tag'; fr.style.background = '#fef3c7'; fr.style.color = '#92400e'; }
+  const lo = d.live_orders || [];
+  document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '') + (d.live_breadth!=null ? `Z≥진입 비율 ${pct(d.live_breadth,0)}` : '');
+  table('now', [['Pair'],['판단'],['Z','num'],['Edge','num'],['수량 보통/우선','num'],['P&L (만원)','num'],['손절까지','num'],['Note']],
+    lo.map(r=>`<tr><td>${link(r)}</td><td><span class="tag ${/ENTER|EXIT/.test(r.action)?'strong':''}">${ACT[r.action]||r.action}</span></td>
+      <td class="num">${z2(r.z)}</td><td class="num">${r.action==='HOLD'||/EXIT/.test(r.action)?'':pct(r.edge)}</td><td class="num">${/EXIT|HOLD/.test(r.action)?'':qty(r)}</td>
+      <td class="num ${sgn(r.pnl_won)}">${r.pnl_won!=null&&r.pnl_won===r.pnl_won?man(r.pnl_won):''}</td>
+      <td class="num ${gapCls(r.stop_gap)}">${r.stop_gap!=null&&r.stop_gap===r.stop_gap?pct(r.stop_gap):''}</td><td class="text-xs text-gray-500">${r.note&&r.note===r.note?r.note:''}</td></tr>`));
   const pos = d.positions||[], eq = d.equity||[], cl = d.realized||[];
   const open = pos.reduce((a,r)=>a+(r.pnl_won||0),0);
   const last = eq.length? eq[eq.length-1] : null;
@@ -109,14 +129,14 @@ async function load(){
   document.getElementById('kpis').innerHTML = k.map(x=>`<div class="card p-3"><div class="text-xs text-gray-500">${x[0]}</div><div class="text-xl font-bold ${x[2]||''}">${x[1]}</div></div>`).join('');
   document.getElementById('otime').textContent = d.orders_time? d.orders_time.replace('T',' ') : '오늘 주문표 전';
   table('orders', [['Pair'],['Action'],['Z','num'],['Edge','num'],['Common qty','num'],['Pref qty','num'],['Note']],
-    (d.orders||[]).filter(r=>r.action!=='WATCH').map(r=>`<tr><td>${nm(r.name)}</td><td><span class="tag ${/ENTER|EXIT/.test(r.action)?'strong':''}">${ACT[r.action]||r.action}</span></td>
-      <td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td><td class="num">${r.qty_C??''}</td><td class="num">${r.qty_P??''}</td><td class="text-xs text-gray-500">${r.note||''}</td></tr>`));
+    (d.orders||[]).filter(r=>r.action!=='WATCH').map(r=>`<tr><td>${link(r)}</td><td><span class="tag ${/ENTER|EXIT/.test(r.action)?'strong':''}">${ACT[r.action]||r.action}</span></td>
+      <td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td><td class="num">${r.qty_C!=null&&r.qty_C===r.qty_C?r.qty_C:''}</td><td class="num">${r.qty_P!=null&&r.qty_P===r.qty_P?r.qty_P:''}</td><td class="text-xs text-gray-500">${r.note&&r.note===r.note?r.note:''}</td></tr>`));
   table('positions', [['Pair'],['Entry'],['Days','num'],['Qty C/P','num'],['Z','num'],['P&L (만원)','num'],['P&L %','num'],['To stop','num'],['Rule']],
-    pos.map(r=>`<tr><td>${nm(r.name)}</td><td>${r.entry_date}</td><td class="num">${r.days}</td><td class="num">${r.cq}/${r.pq}</td>
+    pos.map(r=>`<tr><td>${link(r)}</td><td>${r.entry_date}</td><td class="num">${r.days}</td><td class="num">${r.cq}/${r.pq}</td>
       <td class="num">${z2(r.z)}</td><td class="num ${sgn(r.pnl_won)}">${man(r.pnl_won)}</td><td class="num ${sgn(r.pnl_ret)}">${pct(r.pnl_ret)}</td>
-      <td class="num">${pct(r.stop_gap)}</td><td>${r.exit? `<span class="tag strong">${r.exit}</span>`:''}</td></tr>`));
+      <td class="num ${gapCls(r.stop_gap)}">${pct(r.stop_gap)}</td><td>${r.exit? `<span class="tag strong">${r.exit}</span>`:''}</td></tr>`));
   table('watch', [['Pair'],['Z','num'],['Edge','num'],['Status']],
-    (d.watch||[]).slice(0,15).map(r=>`<tr><td>${nm(r.name)}</td><td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td>
+    (d.watch||[]).slice(0,15).map(r=>`<tr><td>${link(r)}</td><td class="num">${z2(r.z)}</td><td class="num">${pct(r.edge)}</td>
       <td>${!r.armed?'<span class="tag">재진입대기</span>':''}${!r.validated?'<span class="tag">이력부족</span>':''}</td></tr>`));
   table('closed', [['Pair'],['Entry'],['Exit'],['Days','num'],['Reason'],['P&L (만원)','num'],['P&L %','num']],
     cl.slice().sort((a,b)=>(b.exit||'').localeCompare(a.exit||'')).slice(0,30).map(r=>`<tr><td>${nm(r.name)}</td><td>${r.entry}</td><td>${r.exit}</td><td class="num">${r.days}</td>
