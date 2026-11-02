@@ -265,8 +265,10 @@ class App:
                 live = await self.fetch_live()
                 if len(live) < len(self.pairs):          # 장 시작 전·종목 정지 등은 확정 종가 사용
                     log.info(f'현재가 {len(live)}/{len(self.pairs) * 2}종목')
-                self.compute_snapshot(live)
+                snap = self.compute_snapshot(live)
                 self.write_web()
+                log.info(f"주기: 현재가 {len(live)}/{len(self.pairs) * 2}종목 · 보유 {int(snap.held.sum())} · "
+                         f"Z≥진입 {int(((snap.z >= snap.z_in) & ~snap.held).sum())}쌍")
                 await self.intraday_alerts()
                 if self.due('orders', cfg.V2_SIGNAL_TIME) and datetime.now().time() < datetime.strptime(
                         '%02d:%02d' % tuple(cfg.V2_HISTORY_TIME), '%H:%M').time():
