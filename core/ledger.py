@@ -122,7 +122,7 @@ def realized(trades: list[dict] | None = None) -> list[dict]:
     """청산 거래별 실현손익(고객 관점)."""
     out = []
     for t in (trades if trades is not None else load()):
-        if t.get('status') != 'Closed' or not t.get('exit_date') or not t.get('common_exit'):
+        if t.get('status') != 'Closed' or not t.get('exit_date') or t.get('common_exit') is None or t.get('preferred_exit') is None:
             continue
         p = Position(code=t['common_code'], pref=t['preferred_code'], name=t.get('pair_name', ''),
                      entry_date=t['entry_date'], c0=t['common_entry'], p0=t['preferred_entry'],
@@ -131,6 +131,6 @@ def realized(trades: list[dict] | None = None) -> list[dict]:
                      sp_long=t.get('preferred_floating_spread_bps', 200) or 0,
                      borrow=t.get('common_borrow_fee_pct', 0) or 0)
         r = p.pnl(t['common_exit'], t['preferred_exit'], date.fromisoformat(t['exit_date']))
-        out.append(dict(trade_id=t.get('trade_id'), code=p.code, name=p.name, entry=p.entry_date,
+        out.append(dict(trade_id=t.get('trade_id'), code=p.code, name=p.name, entry=p.entry_date, leg=max(p.c0 * p.cq, p.p0 * p.pq),
                         exit=t['exit_date'], reason=t.get('exit_reason'), **r))
     return out

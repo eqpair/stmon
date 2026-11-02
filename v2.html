@@ -174,6 +174,27 @@
                 { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
 
+        // 같은 종목에서 보유 기간이 겹치는 청산 거래 = 한 묶음 (같은 날 청산 후 재진입은 새 묶음)
+        function groupClosed(cl) {
+            const by = {}; cl.forEach(r => { (by[r.code] = by[r.code] || []).push(r); });
+            const out = [];
+            for (const code in by) {
+                let g = null;
+                for (const r of by[code].slice().sort((a, b) => a.entry.localeCompare(b.entry))) {
+                    if (g && r.entry < g.exit) { g.items.push(r); if (r.exit > g.exit) g.exit = r.exit; }
+                    else { g = { code, name: r.name, entry: r.entry, exit: r.exit, items: [r] }; out.push(g); }
+                }
+            }
+            out.forEach(g => {
+                g.total = g.items.reduce((a, r) => a + (r.total || 0), 0);
+                const leg = g.items.reduce((a, r) => a + (r.leg || 0), 0);
+                g.ret = leg ? g.total / leg : null;
+                g.days = Math.round((new Date(g.exit) - new Date(g.entry)) / 864e5);
+                g.reason = g.items.some(r => (r.reason || '').toUpperCase() === 'STOP') ? 'STOP' : ((g.items.find(r => r.reason) || {}).reason || '');
+            });
+            return out.sort((a, b) => b.exit.localeCompare(a.exit));
+        }
+
         let charts = {};
         function line(id, labels, data) {
             if (charts[id]) charts[id].destroy();
@@ -199,11 +220,12 @@
             const pos = d.positions || [], eq = d.equity || [], cl = d.realized || [];
             const open = pos.reduce((a, r) => a + (r.pnl_won || 0), 0);
             const last = eq.length ? eq[eq.length - 1] : null;
-            const wins = cl.filter(r => r.total > 0).length;
+            const grp = groupClosed(cl);
+            const wins = grp.filter(r => r.total > 0).length;
             const k = [['Open Positions', `${pos.length} / ${d.risk.slots}`, ''],
                        ['Open P&amp;L (만원)', man(open), pcls(open)],
                        ['Cumulative P&amp;L (만원)', last ? man(last.total) : '-', last ? pcls(last.total) : ''],
-                       ['Closed · Win Rate', cl.length ? `${cl.length} · ${pct(wins / cl.length, 0)}` : '-', '']];
+                       ['Closed · Win Rate', grp.length ? `${grp.length} · ${pct(wins / grp.length, 0)}` : '-', '']];
             document.getElementById('kpis').innerHTML = k.map(x =>
                 `<div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">${x[0]}</div><div class="text-2xl font-bold ${x[2]}">${x[1]}</div></div>`).join('');
 
@@ -234,10 +256,10 @@
                 (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td>
                   <td>${!r.armed ? '<span class="signal-tag">재진입대기</span>' : ''}${!r.validated ? '<span class="signal-tag">이력부족</span>' : ''}</td></tr>`));
 
-            table('closed', ['Item', 'Entry', 'Exit', 'Days', 'Reason', 'P&L (만원)', 'P&L %'],
-                cl.slice().sort((a, b) => (b.exit || '').localeCompare(a.exit || '')).slice(0, 30).map(r =>
-                  `<tr><td>${nm(r.name)}</td><td>${r.entry}</td><td>${r.exit}</td><td>${r.days}</td><td>${r.reason || ''}</td>
-                   <td class="${pcls(r.total)}">${man(r.total)}</td><td class="${pcls(r.ret)}">${pct(r.ret)}</td></tr>`));
+            table('closed', ['Item', '건수', 'First Entry', 'Last Exit', 'Days', 'Reason', 'P&L (만원)', 'P&L %'],
+                grp.slice(0, 30).map(g =>
+                  `<tr><td>${nm(g.name)}</td><td>${g.items.length}</td><td>${g.entry}</td><td>${g.exit}</td><td>${g.days}</td><td>${g.reason}</td>
+                   <td class="${pcls(g.total)}">${man(g.total)}</td><td class="${pcls(g.ret)}">${pct(g.ret)}</td></tr>`));
 
             line('eq', eq.map(r => r.date), eq.map(r => Math.round(r.total / 1e4)));
             if (d.backtest && d.backtest.dates) line('bt', d.backtest.dates, d.backtest.equity);
