@@ -155,6 +155,14 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
 def fmt_orders(df: pd.DataFrame, prm: Params, model_open=None) -> str:
     t = datetime.now()
     L = [f'📋 <b>stmon 주문표 {t:%m-%d %H:%M}</b>  (진입 Z≥{prm.z_in} / 청산 Z≤{prm.z_out} / 손절 {prm.stop:.0%})']
+    _v, _vb = df.attrs.get('vol_ratio'), df.attrs.get('vol_block')
+    _vt = f"{_v:.2f}배" if isinstance(_v, (int, float)) and _v == _v else '-'
+    if df.attrs.get('banned'):
+        L.append('⛔ <b>신규 진입 쉼</b> · 공매도 금지 기간')
+    elif df.attrs.get('vol_hot'):
+        L.append(f'🌪 <b>신규 진입 쉼</b> · 시장 변동성 {_vt} > 기준 {_vb}배')
+    else:
+        L.append(f'✅ <b>진입 가능</b> · 시장 변동성 {_vt} (기준 {_vb}배)')
     ex = df[df.action.str.startswith('EXIT')]
     for _, r in ex.iterrows():
         L.append(f"🔴 <b>청산</b> {r['name']}  [{r.action[5:]}]\n    보통주 {int(r.cq)}주 매수상환 · 우선주 {int(r.pq)}주 매도"

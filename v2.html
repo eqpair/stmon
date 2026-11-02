@@ -69,6 +69,11 @@
             </div>
         </header>
 
+        <!-- Entry gate: 오늘 신규 진입 가능 여부 -->
+        <div id="gate" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+            <div class="text-gray-400 text-sm">Loading...</div>
+        </div>
+
         <!-- Summary -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
             <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Desk Summary</h2>
@@ -232,6 +237,38 @@
             const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, BLOCKED_VOL: 6, HOLD: 7 };
             const lo = (d.live_orders || []).slice().sort((a, b) =>
                 ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0)));
+            // ---- 진입 가능 신호등
+            {
+                const ent = lo.filter(r => r.action === 'ENTER'), ex = lo.filter(r => /^EXIT/.test(r.action));
+                const vb = lo.filter(r => r.action === 'BLOCKED_VOL'), ws = lo.filter(r => r.action === 'WAIT_SLOT');
+                const age = (Date.now() - new Date(d.updated).getTime()) / 60000;
+                const vr = has(d.vol_ratio) ? d.vol_ratio : null, vth = d.vol_block || null, br = has(d.live_breadth) ? d.live_breadth : null;
+                const free = d.risk.slots - (pos.length - ex.length);
+                let dot, title, why = [];
+                if (d.market_open && age > 8) { dot = 'bg-gray-400'; title = '데이터 지연 — 판단 보류'; why.push(`${Math.round(age)}분째 갱신 없음 · 서버 확인 필요`); }
+                else if (d.banned) { dot = 'bg-red-500'; title = '신규 진입 쉼'; why.push('공매도 금지 기간'); }
+                else if (vth && vr != null && vr > vth) { dot = 'bg-red-500'; title = '신규 진입 쉼'; why.push(`시장 변동성 ${vr.toFixed(2)}배 > 기준 ${Number(vth).toFixed(1)}배`); }
+                else {
+                    if (vr != null && vr >= 1.5) why.push(`시장 변동성 ${vr.toFixed(2)}배 (기준 ${vth ? Number(vth).toFixed(1) : '-'}배에 근접)`);
+                    if (br != null && br >= 0.2) why.push(`Z≥진입 비율 ${pct(br, 0)} — 괴리가 동시에 벌어지는 장, 나눠서 진입 권장`);
+                    if (free <= 0) why.push('슬롯 가득 참');
+                    dot = why.length ? 'bg-yellow-400' : 'bg-green-500';
+                    title = why.length ? '진입 가능 · 주의' : (ent.length ? '진입 가능' : '진입 가능 · 오늘 후보 없음');
+                }
+                const chip = (label, val) => `<div class="p-3 bg-gray-50 rounded-lg"><div class="text-gray-500 text-xs font-medium mb-1">${label}</div><div class="text-sm font-semibold text-gray-800">${val}</div></div>`;
+                document.getElementById('gate').innerHTML = `
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <div class="w-4 h-4 rounded-full ${dot}"></div>
+                        <div class="text-2xl font-bold text-gray-800">${title}</div>
+                        <div class="text-sm text-gray-500">${why.join(' · ') || (d.market_open ? '평소 장 · 표의 판단대로' : '장 마감 · 마지막 종가 기준')}</div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-3 mt-4">
+                        ${chip(`진입 후보 ${ent.length}쌍`, ent.length ? ent.map(r => nm(r.name)).join(', ') : (vb.length ? `고변동 대기 ${vb.length}쌍` : '없음'))}
+                        ${chip(`청산 대상 ${ex.length}쌍`, ex.length ? ex.map(r => nm(r.name)).join(', ') : '없음')}
+                        ${chip('빈 슬롯 (청산 후)', `${Math.max(free, 0)} / ${d.risk.slots}` + (ws.length ? ` · 대기 ${ws.length}쌍` : ''))}
+                        ${chip('시장 변동성 · Z≥진입 비율', `${vr != null ? vr.toFixed(2) + '배' : '-'} (기준 ${vth ? Number(vth).toFixed(1) : '-'}배) · ${br != null ? pct(br, 0) : '-'}`)}
+                    </div>`;
+            }
             document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '')
                 + (has(d.vol_ratio) ? `시장 변동성 ${d.vol_ratio.toFixed(2)}배` + (d.vol_block ? (d.vol_ratio > d.vol_block ? ` (기준 ${d.vol_block}배 초과 · 신규 진입 쉼)` : ` (기준 ${d.vol_block}배)`) : '') + ' · ' : '')
                 + (has(d.live_breadth) ? `Z≥진입 비율 ${pct(d.live_breadth, 0)}` : '');
