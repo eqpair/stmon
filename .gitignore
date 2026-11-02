@@ -70,3 +70,9 @@ data_cache/
 *.bak
 *~
 main.py.bak.*
+
+# stmon v2
+data/history/
+data/v2_signal_log.csv
+config_secrets.py
+*.bak.*

@@ -34,6 +34,7 @@ class TelegramBot:
                 "Available commands:\n"
                 "/c - Get current status\n"
                 "/d - Get divergent pairs\n"
+                "/v2 - v2 매매 신호 지금 계산\n"
                 "/h - Show this help message"
             )
 
@@ -44,6 +45,13 @@ class TelegramBot:
                 f"📊 Current Status\n{status}",
                 parse_mode='HTML'
             )
+
+        @self.dp.message(Command('v2'))
+        async def v2_command(message: types.Message):
+            try:
+                await self.monitor.run_v2_signals(force=True)
+            except Exception as e:
+                await message.reply(f"v2 신호 계산 실패: {e}")
 
         @self.dp.message(Command('d'))
         async def divergence_command(message: types.Message):

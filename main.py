@@ -20,6 +20,9 @@ from bs4 import BeautifulSoup
 from config import TICK_PAIRS, WAIT_TIME
 from modules.pairs import NPPair
 from modules.utils import is_market_time, safe_json_dump
+from modules.strategy import indicators
+from modules import v2 as v2sig
+import config as cfg
 
 # 로그 디렉토리 생성
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -202,10 +205,9 @@ def process_trend_data(pair, a_data, b_data):
         if a_df is None or b_df is None or a_df.empty or b_df.empty:
             return None
         merged_df = pd.merge(a_df, b_df, left_index=True, right_index=True, suffixes=('_A', '_B'))
-        merged_df['dr'] = (merged_df['close_A'] - merged_df['close_B']) / merged_df['close_A']
-        merged_df['dr_avg'] = merged_df['dr'].rolling(window=pair.avg_period).mean().shift(1)
-        merged_df['std'] = merged_df['dr'].rolling(window=pair.avg_period).std().shift(1)
-        merged_df['sz'] = (merged_df['dr'] - merged_df['dr_avg']) / merged_df['std']
+        ind = indicators(merged_df.rename(columns={'close_A': 'C', 'close_B': 'P'}), pair.params)   # v2 지표
+        merged_df['dr'] = ind['dr']
+        merged_df['sz'] = ind['z']
         result = {
             'stock_code': pair.A_code,
             'stock_name': pair.A_name,
@@ -272,6 +274,56 @@ class StockMonitor:
         self.telegram_bot = TelegramBot(self)  # monitor 인스턴스를 넘김!
         self.running = True
         self.last_r_signal_time = {}
+        self.v2_signal_date = None     # 오늘 매매 신호 발송 여부
+        self.v2_history_date = None    # 오늘 이력 갱신 여부
+
+    def _live_prices(self):
+        """이번 주기에 받아둔 현재가(오늘 행)를 v2 계산에 재사용 → 네이버 중복 조회 방지"""
+        today = pd.Timestamp(datetime.now().date())
+        out = {}
+        for p in self.pairs:
+            if not p.data.empty and p.data.index[-1] == today:
+                r = p.data.iloc[-1]
+                out[p.A_code] = (float(r['close_A']), float(r['close_B']))
+        return out
+
+    async def run_v2_signals(self, force=False):
+        """v2 매매 신호 계산 → 텔레그램 발송 + data/v2_signals.json 저장"""
+        live = self._live_prices() or True
+        df, model = await asyncio.to_thread(
+            v2sig.compute, cfg.V2_PARAMS, live, cfg.V2_SLOTS, cfg.V2_CAPITAL, cfg.V2_PAIR_PARAMS, cfg.V2_BLACKOUT)
+        msg = v2sig.format_msg(df, cfg.V2_PARAMS)
+        held = set(df.loc[df.held, 'code'])
+        if set(model['open']) != held:
+            msg += f"\n(참고) 모델 보유와 실제 보유가 다름: 모델 {len(model['open'])}쌍 / 실제 {len(held)}쌍"
+        await self.telegram_bot.send_message(msg.replace('<', '&lt;'))
+        logger.info("v2 매매 신호 발송 완료")
+        return msg
+
+    async def v2_daily_jobs(self):
+        """15:15 매매 신호, 15:45 확정 종가로 이력 갱신 (하루 한 번씩)"""
+        now = datetime.now()
+        hm = (now.hour, now.minute)
+        today = now.date()
+        if now.weekday() > 4:
+            return
+        if hm >= tuple(cfg.V2_SIGNAL_TIME) and hm < tuple(cfg.V2_HISTORY_TIME) and self.v2_signal_date != today:
+            self.v2_signal_date = today
+            try:
+                await self.run_v2_signals()
+            except Exception as e:
+                logger.error(f"v2 신호 계산 실패: {e}")
+                await self.telegram_bot.send_message(f"⚠️ stmon v2 신호 계산 실패: {e}")
+        if hm >= tuple(cfg.V2_HISTORY_TIME) and self.v2_history_date != today:
+            self.v2_history_date = today
+            try:
+                log = await asyncio.to_thread(v2sig.update_all_history, today)
+                bad = [f"{c}:{m}" for c, m in log if m != 'ok']
+                logger.info(f"v2 이력 갱신 완료 ({len(log)}쌍, 확인 필요 {len(bad)})")
+                if bad:
+                    await self.telegram_bot.send_message("⚠️ stmon 이력 갱신 확인 필요\n" + "\n".join(bad[:20]))
+            except Exception as e:
+                logger.error(f"v2 이력 갱신 실패: {e}")
 
     async def get_signals_with_divergent(self):
         try:
@@ -343,7 +395,7 @@ class StockMonitor:
                         clean_name = mark_special_stocks(pair.A_name)
                         formatted_name = f"<b>{clean_name}</b>"
                         in_message = (
-                            f"🚨 IN Signal Detected\n"
+                            f"👀 장중 Z≥{pair.SL_in_val} (참고용 · 매매 신호는 {cfg.V2_SIGNAL_TIME[0]}:{cfg.V2_SIGNAL_TIME[1]:02d})\n"
                             f"{formatted_name}\n"
                             f" {signal_info}\n"
                         )
@@ -392,6 +444,9 @@ class StockMonitor:
 
                 # 웹 데이터 파일 저장
                 save_web_data(all_signals, divergent_signals)
+
+                # v2 매매 신호(15:15) / 이력 갱신(15:45)
+                await self.v2_daily_jobs()
 
                 # ==================== 과거 트렌드 데이터는 하루에 한 번만 ====================
                 if (datetime.now() - last_trend_update).total_seconds() > 86400:  # 24시간

@@ -1,5 +1,34 @@
-TELEGRAM_TOKEN = "1017606432:AAHQNWYkJDxgQuTHRbYgTkxv-HKtN3Lh9g0"
-CHAT_ID = "-1001471005474"
+import os
+from modules.strategy import Params
+
+# ---------------------------------------------------------------- 텔레그램
+# 토큰은 저장소(공개)에 두지 않는다. 서버의 config_secrets.py(.gitignore 대상) 또는 환경변수에서 읽음.
+#   config_secrets.py 예시:
+#       TELEGRAM_TOKEN = "새로 발급받은 토큰"
+#       CHAT_ID = "-1001471005474"
+try:
+    from config_secrets import TELEGRAM_TOKEN, CHAT_ID
+except ImportError:
+    TELEGRAM_TOKEN = os.environ.get('STMON_TG_TOKEN', '')
+    CHAT_ID = os.environ.get('STMON_TG_CHAT', '')
+
+# ---------------------------------------------------------------- v2 매매 규칙
+# 검증: 1997~2026, 78쌍, 편도 30bp + 스왑 연 4%, 공매도 금지기간 진입 제외 (README_v2.md 참고)
+V2_PARAMS = Params()            # 120일 / 진입 Z≥2.0 / 청산 Z≤0.4 / 손절 -15% / 재진입 Z<1.0
+V2_SLOTS = 10                   # 동시 보유 쌍 수
+V2_CAPITAL = None               # 총 운용자금(원). 숫자를 넣으면 진입 수량을 텔레그램에 같이 표시
+V2_SIGNAL_TIME = (15, 15)       # 매매 신호 계산·발송 시각
+V2_HISTORY_TIME = (15, 45)      # 확정 종가로 data/history 갱신 시각
+# 공매도 금지 기간(신규 진입 안 함). 새 금지 조치가 나오면 여기에 추가.
+V2_BLACKOUT = [('2008-10-01', '2009-05-31'), ('2011-08-10', '2011-11-09'),
+               ('2020-03-16', '2021-05-02'), ('2023-11-06', '2025-03-30')]
+# 쌍별 예외 기준(기본은 비워둠: 검증상 쌍별 기준이 일관되게 낫지 않았음)
+#   예) V2_PAIR_PARAMS = {'005930': Params(z_in=2.5)}
+V2_PAIR_PARAMS = {}
+
+# ---------------------------------------------------------------- 대상 쌍
+# 튜플: (보통주, 우선주, 진입, 청산, -, -, 기간) — v2에서는 앞의 두 코드만 사용, 기준값은 V2_PARAMS
+# 상장폐지 등으로 빼는 쌍은 여기서 지우고 data/history/{보통주}_{우선주}.csv 도 삭제
 
 TICK_PAIRS = [
     ('005930', '005935', 2.0, 0.4, -15, -20, 249), #삼성전자 [2.0-0.4]

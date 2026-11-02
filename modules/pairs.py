@@ -9,6 +9,7 @@ import json
 import asyncio
 from modules.exceptions import MarketDataError
 from .utils import add_weight_info
+from .strategy import indicators
 from bs4 import XMLParsedAsHTMLWarning
 import warnings
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -20,8 +21,11 @@ class NPPair:
                  ls_in: float, ls_out: float, avg_period: int):
         self.A_code = code1
         self.B_code = code2
-        self.SL_in_val = sl_in
-        self.SL_out_val = sl_out
+        # v2: 진입·청산 기준은 config.V2_PARAMS (쌍별 예외는 V2_PAIR_PARAMS). 튜플의 기준값은 더 이상 쓰지 않음
+        from config import V2_PARAMS, V2_PAIR_PARAMS
+        self.params = V2_PAIR_PARAMS.get(code1, V2_PARAMS)
+        self.SL_in_val = self.params.z_in
+        self.SL_out_val = self.params.z_out
         self.LS_in_val = ls_in
         self.LS_out_val = ls_out
         self.avg_period = avg_period
@@ -153,10 +157,12 @@ class NPPair:
             raise MarketDataError(f"Failed to parse stock data for {code}: {str(e)}")
 
     def _calculate_metrics(self):
-        self.data['dr'] = (self.data['close_A'] - self.data['close_B']) / self.data['close_A']
-        self.data['dr_avg'] = self.data['dr'].rolling(window=self.avg_period).mean().shift(1)
-        self.data['std'] = self.data['dr'].rolling(window=self.avg_period).std().shift(1)
-        self.data['sz'] = (self.data['dr'] - self.data['dr_avg']) / self.data['std']
+        # v2: 화면·알림의 sz도 매매 규칙(modules/strategy.py)과 같은 Z를 사용
+        ind = indicators(self.data.rename(columns={'close_A': 'C', 'close_B': 'P'}), self.params)
+        self.data['dr'] = ind['dr']
+        self.data['dr_avg'] = ind['mu']
+        self.data['std'] = ind['sd']
+        self.data['sz'] = ind['z']
         
         self.skew_long = round(self.data['dr'].skew(), 2)
         self.skew_short = round(self.data['dr'].tail(60).skew(), 2)
