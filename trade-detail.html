@@ -852,6 +852,7 @@
                     let cleanName = name.replace(/<[^>]+>/g, '');
                     cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
                     cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
+                    cleanName = cleanName.replace(/\s*\[[^\]]*\]$/, '').trim();
                     return cleanName.trim();
                 };
 
