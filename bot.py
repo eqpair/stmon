@@ -25,7 +25,8 @@ class TgBot:
         self._routes()
 
     def _ok(self, m: types.Message) -> bool:
-        return str(m.chat.id) == self.chat_id or (m.from_user and str(m.from_user.id) in self.allowed)
+        # 알림 채널(채널 게시물은 from_user 없음) 또는 허용된 사용자
+        return str(m.chat.id) == self.chat_id or bool(m.from_user and str(m.from_user.id) in self.allowed)
 
     async def send(self, text: str):
         for i in range(0, len(text), 3900):
@@ -38,39 +39,47 @@ class TgBot:
     def _routes(self):
         dp, app = self.dp, self.app
 
+        def on(*cmds):
+            """일반 대화(message)와 채널 게시물(channel_post) 모두에서 명령을 받음"""
+            def deco(f):
+                dp.message.register(f, Command(*cmds))
+                dp.channel_post.register(f, Command(*cmds))
+                return f
+            return deco
+
         async def guard(m):
             if not self._ok(m):
                 log.warning(f'허용되지 않은 사용자 명령 무시: chat={m.chat.id} user={getattr(m.from_user, "id", None)}')
                 return False
             return True
 
-        @dp.message(Command('h', 'help', 'start'))
+        @on('h', 'help', 'start')
         async def h(m: types.Message):
             if await guard(m):
                 await m.reply(__doc__.split('\n', 2)[2])
 
-        @dp.message(Command('p', 'c'))
+        @on('p', 'c')
         async def p(m: types.Message):
             if await guard(m):
                 await m.reply(app.text_positions(), parse_mode='HTML')
 
-        @dp.message(Command('w', 'd'))
+        @on('w', 'd')
         async def w(m: types.Message):
             if await guard(m):
                 await m.reply(app.text_watch(), parse_mode='HTML')
 
-        @dp.message(Command('o', 'v2'))
+        @on('o', 'v2')
         async def o(m: types.Message):
             if await guard(m):
                 txt = await app.preview_orders()
                 await m.reply(txt, parse_mode='HTML')
 
-        @dp.message(Command('r'))
+        @on('r')
         async def r(m: types.Message):
             if await guard(m):
                 await m.reply(app.text_report(), parse_mode='HTML')
 
-        @dp.message(Command('in'))
+        @on('in')
         async def cin(m: types.Message):
             if not await guard(m):
                 return
@@ -87,7 +96,7 @@ class TgBot:
             except Exception as e:
                 await m.reply(f'기록 실패: {e}')
 
-        @dp.message(Command('out'))
+        @on('out')
         async def cout(m: types.Message):
             if not await guard(m):
                 return
