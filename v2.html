@@ -22,6 +22,7 @@
         .report-table th:not(:last-child), .report-table td:not(:last-child) { border-right: 1px solid #f3f4f6; }
         .report-table th { background: #f9fafb; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; color: #6b7280; }
         .report-table td:first-child { text-align: left; }
+        .report-table tr.item-group { border-top: 2px solid #d1d5db; }
         .report-table td.empty { text-align: center; color: #9ca3af; }
 
         .profit-plus { color: #dc2626; font-weight: bold; }
@@ -74,16 +75,6 @@
             <div class="text-gray-400 text-sm">Loading...</div>
         </div>
 
-        <!-- Summary -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Desk Summary</h2>
-            <div class="grid grid-cols-4 gap-4" id="kpis">
-                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Open Positions</div><div class="text-2xl font-bold">-</div></div>
-                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Open P&amp;L (만원)</div><div class="text-2xl font-bold">-</div></div>
-                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Cumulative P&amp;L (만원)</div><div class="text-2xl font-bold">-</div></div>
-                <div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">Closed · Win Rate</div><div class="text-2xl font-bold">-</div></div>
-            </div>
-        </div>
 
         <!-- Now -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
@@ -179,6 +170,63 @@
                 { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
 
+        // ---- Closed Trades: Report(pair-report.html)와 같은 계산·묶음·열
+        function normName(name) {
+            if (!name) return '';
+            let c = name.replace(/<[^>]+>/g, '').trim();
+            c = c.replace(/^[^\w\s가-힣]+/, '').trim();
+            c = c.replace(/-\d+(\.\d+)?$/, '').trim();
+            c = c.replace(/\s*\[[^\]]*\]$/, '').trim();
+            return c;
+        }
+        const won = v => Math.round(v).toLocaleString();
+        const rcls = v => v > 0 ? 'profit-plus' : (v < 0 ? 'profit-minus' : '');
+        const yymmdd = s => s ? s.slice(2, 4) + s.slice(5, 7) + s.slice(8, 10) : '-';
+        async function renderClosed() {
+            const el = document.getElementById('closed');
+            const head = ['', 'N Profit', 'N %', 'T Exp', 'Dir', 'Ref P', 'Val P', 'Qty', 'I Profit', 'I %', 'I Exp', 'Entry', 'Exit', 'Days'];
+            let trades = [];
+            try { trades = await (await fetch('data/pair-trades.json?t=' + Date.now())).json(); } catch (e) { console.error(e); }
+            const agg = {};
+            for (const t of trades.filter(t => t.status === 'Closed')) {
+                const key = normName(t.pair_name);
+                const a = agg[key] = agg[key] || { name: t.pair_name, code: t.common_code, ce: 0, cx: 0, cq: 0, pe: 0, px: 0, pq: 0,
+                                                   sp: 0, lp: 0, first: t.entry_date, last: t.exit_date };
+                if (t.entry_date < a.first) a.first = t.entry_date;
+                if (t.exit_date && (!a.last || t.exit_date > a.last)) a.last = t.exit_date;
+                const cxp = t.common_exit || t.common_entry, pxp = t.preferred_exit || t.preferred_entry;
+                const days = Math.max(1, Math.floor((new Date(t.exit_date) - new Date(t.entry_date)) / 864e5));
+                const br = (t.benchmark_rate_pct || 0) / 100;
+                const sS = (t.common_floating_spread_bps ?? -202) / 10000, sL = (t.preferred_floating_spread_bps ?? 200) / 10000;
+                const sFl = -Math.round(t.common_entry * t.common_qty * (br + sS) * (days / 365));
+                const lFl = Math.round(t.preferred_entry * t.preferred_qty * (br + sL) * (days / 365));
+                const borrow = (t.common_borrow_fee_pct || 0) ? t.common_entry * t.common_qty * (t.common_borrow_fee_pct / 100) * (days / 365) : 0;
+                a.sp += (cxp - t.common_entry) * t.common_qty + sFl - borrow;
+                a.lp += (t.preferred_entry - pxp) * t.preferred_qty + lFl;
+                a.ce += t.common_entry * t.common_qty; a.cx += cxp * t.common_qty; a.cq += t.common_qty;
+                a.pe += t.preferred_entry * t.preferred_qty; a.px += pxp * t.preferred_qty; a.pq += t.preferred_qty;
+            }
+            const rows = Object.values(agg).sort((x, y) => (y.last || '').localeCompare(x.last || '')).map(a => {
+                const tot = -(a.sp + a.lp), inv = a.ce + a.pe;
+                const r = (p, i) => i ? p / i * 100 : 0;
+                const tr = r(tot, inv), sr = r(-a.sp, a.ce), lr = r(-a.lp, a.pe);
+                const days = Math.floor((new Date(a.last) - new Date(a.first)) / 864e5);
+                const nmv = a.name.replace(/\s*\[.*?\]/g, '').trim();
+                const tail = `<td>${yymmdd(a.first)}</td><td>${yymmdd(a.last)}</td><td>${days}</td>`;
+                return `<tr class="item-group">
+                    <td rowspan="2" class="clickable-item"><a href="trade-detail.html?code=${a.code}&name=${encodeURIComponent(normName(nmv))}"><b>${nmv}</b></a></td>
+                    <td rowspan="2" class="${rcls(tot)}">${won(tot)}</td><td rowspan="2" class="${rcls(tr)}">${tr.toFixed(2)}%</td>
+                    <td rowspan="2">${won(inv)}</td><td><b>S</b></td>
+                    <td>${a.cq ? won(a.ce / a.cq) : '-'}</td><td>${a.cq ? won(a.cx / a.cq) : '-'}</td><td>${a.cq}</td>
+                    <td class="${rcls(-a.sp)}">${won(-a.sp)}</td><td class="${rcls(sr)}">${sr.toFixed(2)}%</td><td>${won(a.ce)}</td>${tail}</tr>
+                  <tr><td><b>L</b></td>
+                    <td>${a.pq ? won(a.pe / a.pq) : '-'}</td><td>${a.pq ? won(a.px / a.pq) : '-'}</td><td>${a.pq}</td>
+                    <td class="${rcls(-a.lp)}">${won(-a.lp)}</td><td class="${rcls(lr)}">${lr.toFixed(2)}%</td><td>${won(a.pe)}</td>${tail}</tr>`;
+            });
+            el.innerHTML = '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
+                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">없음</td></tr>`) + '</tbody>';
+        }
+
         // 같은 종목에서 보유 기간이 겹치는 청산 거래 = 한 묶음 (같은 날 청산 후 재진입은 새 묶음)
         function groupClosed(cl) {
             const by = {}; cl.forEach(r => { (by[r.code] = by[r.code] || []).push(r); });
@@ -225,14 +273,6 @@
             const pos = d.positions || [], eq = d.equity || [], cl = d.realized || [];
             const open = pos.reduce((a, r) => a + (r.pnl_won || 0), 0);
             const last = eq.length ? eq[eq.length - 1] : null;
-            const grp = groupClosed(cl);
-            const wins = grp.filter(r => r.total > 0).length;
-            const k = [['Open Positions', `${pos.length} / ${d.risk.slots}`, ''],
-                       ['Open P&amp;L (만원)', man(open), pcls(open)],
-                       ['Cumulative P&amp;L (만원)', last ? man(last.total) : '-', last ? pcls(last.total) : ''],
-                       ['Closed · Win Rate', grp.length ? `${grp.length} · ${pct(wins / grp.length, 0)}` : '-', '']];
-            document.getElementById('kpis').innerHTML = k.map(x =>
-                `<div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">${x[0]}</div><div class="text-2xl font-bold ${x[2]}">${x[1]}</div></div>`).join('');
 
             const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, BLOCKED_VOL: 6, HOLD: 7 };
             const lo = (d.live_orders || []).slice().sort((a, b) =>
@@ -295,10 +335,7 @@
                 (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td>
                   <td>${!r.armed ? '<span class="signal-tag">재진입대기</span>' : ''}${!r.validated ? '<span class="signal-tag">이력부족</span>' : ''}</td></tr>`));
 
-            table('closed', ['Item', '건수', 'First Entry', 'Last Exit', 'Days', 'Reason', 'P&L (만원)', 'P&L %'],
-                grp.slice(0, 30).map(g =>
-                  `<tr><td>${nm(g.name)}</td><td>${g.items.length}</td><td>${g.entry}</td><td>${g.exit}</td><td>${g.days}</td><td>${g.reason}</td>
-                   <td class="${pcls(g.total)}">${man(g.total)}</td><td class="${pcls(g.ret)}">${pct(g.ret)}</td></tr>`));
+            renderClosed();
 
             line('eq', eq.map(r => r.date), eq.map(r => Math.round(r.total / 1e4)));
             if (d.backtest && d.backtest.dates) line('bt', d.backtest.dates, d.backtest.equity);
