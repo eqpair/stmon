@@ -32,11 +32,11 @@ def in_blackout(d: date, blackout) -> bool:
     return any(pd.Timestamp(a) <= pd.Timestamp(d) <= pd.Timestamp(b) for a, b in blackout)
 
 
-def model_state(hist: dict, prm: Params, slots: int, blackout, pair_params: dict):
+def model_state(hist: dict, prm: Params, slots: int, blackout, pair_params: dict, entry_block=None):
     """확정 종가로 백테스트 재생 → (state{'armed','open','date'}, 일별수익률 Series)"""
     bt = {k: v for k, v in hist.items() if len(v) >= 400}
     r, _, _, st = simulate(bt, prm, slots=slots, return_state=True, start='2015-01-01',
-                           blackout=blackout, pair_params=pair_params)
+                           blackout=blackout, pair_params=pair_params, entry_block=entry_block)
     return st, r
 
 
@@ -100,7 +100,8 @@ def snapshot(hist: dict, live: dict[str, float], pairs: list[tuple[str, str]], n
     return pd.DataFrame(rows)
 
 
-def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, today: date | None = None) -> pd.DataFrame:
+def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, today: date | None = None,
+           vol_ratio: float | None = None, vol_block: float | None = None) -> pd.DataFrame:
     """15:15 주문표. action: EXIT_TARGET/EXIT_STOP/EXIT_TIME, HOLD, ENTER, WAIT_SLOT, BLOCKED_BAN, BLOCKED_LIQ, WATCH"""
     today = today or date.today()
     df = snap.copy()
@@ -119,6 +120,9 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
         df.loc[df.action == 'CAND', 'action'] = 'BLOCKED_BAN'
     elif breadth > prm.max_breadth:
         df.loc[df.action == 'CAND', 'action'] = 'WATCH'
+    vol_hot = bool(vol_block and vol_ratio is not None and vol_ratio == vol_ratio and vol_ratio > vol_block)
+    if vol_hot:                                  # 시장 고변동: 신규 진입 쉼
+        df.loc[df.action == 'CAND', 'action'] = 'BLOCKED_VOL'
     # 수량·유동성
     unit = (risk.capital / risk.slots) if risk.capital else None
     if unit:
@@ -144,7 +148,7 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
     cand = df[df.action == 'CAND'].sort_values('rank', ascending=False)
     df.loc[cand.index[:free], 'action'] = 'ENTER'
     df.loc[df.action == 'CAND', 'action'] = 'WAIT_SLOT'
-    df.attrs.update(breadth=breadth, banned=banned, free=free)
+    df.attrs.update(breadth=breadth, banned=banned, free=free, vol_ratio=vol_ratio, vol_block=vol_block, vol_hot=vol_hot)
     return df
 
 
@@ -162,7 +166,7 @@ def fmt_orders(df: pd.DataFrame, prm: Params, model_open=None) -> str:
         L.append(f"🟢 <b>진입</b> {r['name']}  Z {r.z:+.2f} · 기대 {r.edge:.1%}{q}")
     for _, r in df[df.action == 'HOLD'].iterrows():
         L.append(f"⚪ 보유 {r['name']}  Z {r.z:+.2f} · {r.pnl_won / 1e4:+,.0f}만원 ({r.pnl_ret:+.1%}) · 손절까지 {r.stop_gap:.1%}")
-    for act, label in [('WAIT_SLOT', '⏳ 슬롯 부족'), ('BLOCKED_BAN', '⛔ 공매도 금지기간'), ('BLOCKED_LIQ', '💧 거래대금 부족')]:
+    for act, label in [('WAIT_SLOT', '⏳ 슬롯 부족'), ('BLOCKED_BAN', '⛔ 공매도 금지기간'), ('BLOCKED_LIQ', '💧 거래대금 부족'), ('BLOCKED_VOL', '🌪 시장 고변동(신규 진입 쉼)')]:
         x = df[df.action == act]
         if len(x):
             L.append(f"{label}: " + ', '.join(x['name']))

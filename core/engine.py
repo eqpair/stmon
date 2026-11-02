@@ -37,7 +37,8 @@ def load_history(folder=os.path.join(HERE, 'data', 'history'), min_rows=400):
 
 
 def simulate(data: dict, prm: Params, slots: int = 10, start='1997-01-01', warmup_days=400,
-             exec_lag: int = 0, return_state: bool = False, blackout=None, pair_params: dict | None = None):
+             exec_lag: int = 0, return_state: bool = False, blackout=None, pair_params: dict | None = None,
+             entry_block=None):
     """exec_lag=0: t일 종가로 판단·체결(장 마감 직전 판단 가정)
        exec_lag=1: t-1일 종가로 판단, t일 종가 체결(가장 보수적)"""
     tb = prm.cost_bps / 1e4
@@ -65,6 +66,10 @@ def simulate(data: dict, prm: Params, slots: int = 10, start='1997-01-01', warmu
     blk = np.zeros(len(cal), bool)
     for a_, b_ in blackout:
         blk |= (cal >= pd.Timestamp(a_)) & (cal <= pd.Timestamp(b_))
+    if entry_block is not None:                 # 국면 필터: True인 날(판단일 기준)은 신규 진입 없음
+        eb = entry_block.reindex(cal).fillna(False).values.astype(bool)
+    else:
+        eb = np.zeros(len(cal), bool)
     pos = {}
     armed = {k: True for k in keys}
     daily = np.zeros(len(cal))
@@ -112,7 +117,7 @@ def simulate(data: dict, prm: Params, slots: int = 10, start='1997-01-01', warmu
                  if k not in pos and A[k]['live'][s] and A[k]['live'][t] and A[k]['nat'][t]
                  and entry_ok(A[k]['z'][s], A[k]['edge'][s], armed[k], PP[k])]
         cands.sort(reverse=True)
-        if breadth > prm.max_breadth or blk[t]:
+        if breadth > prm.max_breadth or blk[t] or eb[s]:
             cands = []
         free = (slots - len(pos)) if slots > 0 else len(cands)
         for e, k in cands[:max(free, 0)]:

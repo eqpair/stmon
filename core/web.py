@@ -65,6 +65,8 @@ def dashboard(snap: pd.DataFrame, last_orders: pd.DataFrame | None, model: dict,
                orders=_orders_records(last_orders), live_orders=_orders_records(live_orders), market_open=market_open,
                live_breadth=(live_orders.attrs.get('breadth') if live_orders is not None else None),
                banned=(bool(live_orders.attrs.get('banned')) if live_orders is not None else False),
+               vol_ratio=(live_orders.attrs.get('vol_ratio') if live_orders is not None else None),
+               vol_block=(live_orders.attrs.get('vol_block') if live_orders is not None else None),
                orders_time=(last_orders.attrs.get('time') if last_orders is not None else None),
                model_open=model.get('open', []), equity=eq, realized=ledger.realized(),
                backtest=backtest_curve or {})

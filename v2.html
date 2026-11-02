@@ -143,7 +143,7 @@
         const link = r => `<span class="clickable-item"><a href="trade-detail.html?code=${r.code}&name=${encodeURIComponent(r.name || '')}">${nm(r.name)}</a></span>`;
         const gapCls = g => !has(g) ? '' : (g < 0 ? 'stop-over' : (g < 0.05 ? 'stop-near' : ''));
         const ACT = { ENTER: '진입', EXIT_TARGET: '청산(목표)', EXIT_STOP: '청산(손절)', EXIT_TIME: '청산(기간)', HOLD: '보유',
-                      WAIT_SLOT: '슬롯대기', BLOCKED_BAN: '금지기간', BLOCKED_LIQ: '유동성부족', WATCH: '관찰' };
+                      WAIT_SLOT: '슬롯대기', BLOCKED_BAN: '금지기간', BLOCKED_LIQ: '유동성부족', BLOCKED_VOL: '고변동 대기', WATCH: '관찰' };
         const tag = a => `<span class="signal-tag ${/ENTER|EXIT/.test(a) ? 'strong' : ''}">${ACT[a] || a}</span>`;
 
         function table(el, head, rows) {
@@ -229,10 +229,12 @@
             document.getElementById('kpis').innerHTML = k.map(x =>
                 `<div class="p-4 bg-gray-50 rounded-lg"><div class="text-gray-700 text-sm font-medium mb-1">${x[0]}</div><div class="text-2xl font-bold ${x[2]}">${x[1]}</div></div>`).join('');
 
-            const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, HOLD: 7 };
+            const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, BLOCKED_VOL: 6, HOLD: 7 };
             const lo = (d.live_orders || []).slice().sort((a, b) =>
                 ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0)));
-            document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '') + (has(d.live_breadth) ? `Z≥진입 비율 ${pct(d.live_breadth, 0)}` : '');
+            document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '')
+                + (has(d.vol_ratio) ? `시장 변동성 ${d.vol_ratio.toFixed(2)}배` + (d.vol_block ? (d.vol_ratio > d.vol_block ? ` (기준 ${d.vol_block}배 초과 · 신규 진입 쉼)` : ` (기준 ${d.vol_block}배)`) : '') + ' · ' : '')
+                + (has(d.live_breadth) ? `Z≥진입 비율 ${pct(d.live_breadth, 0)}` : '');
             table('now', ['Item', '판단', 'Z', 'Edge', '보통주 / 우선주 수량', 'P&L (만원)', '손절까지', 'Note'],
                 lo.map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
                   <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td>

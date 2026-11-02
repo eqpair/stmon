@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 log = logging.getLogger('stmon')
 
 import config as cfg
-from core import data, decide, ledger, report, web
+from core import data, decide, ledger, report, web, regime
 from core.decide import Risk
 from modules.utils import format_stock_name
 
@@ -57,6 +57,7 @@ class App:
         self.armed = {}
         self.snap = None
         self.last_orders = None
+        self.live_px = {}                # 이번 주기 현재가(시장 변동성 계산용)
         self.live_orders = None          # 매 주기 현재가 기준 판단(웹 표시용, 기록 안 함)
         self.done = {}                  # 하루 1회 작업 기록: {작업: 날짜}
         self.alerted = {}               # 장중 알림 중복 방지: {(코드, 종류): 날짜}
@@ -73,7 +74,8 @@ class App:
 
     def reload(self):
         self.hist = data.load_all(self.pairs, min_rows=self.prm.min_history + 2)
-        self.model, self.model_r = decide.model_state(self.hist, self.prm, self.risk.slots, cfg.V2_BLACKOUT, self.pp)
+        self.model, self.model_r = decide.model_state(self.hist, self.prm, self.risk.slots, cfg.V2_BLACKOUT, self.pp,
+                                                            entry_block=self.vol_block_series())
         trades = ledger.load()
         self.armed = dict(self.model['armed'])
         for a in decide.actual_stop_blocks(self.hist, self.prm, trades):
@@ -81,6 +83,17 @@ class App:
         self.liq = data.liquidity()
         log.info(f"이력 {len(self.hist)}쌍 로드, 모델 보유 {self.model['open']}, "
                  f"재진입 대기 {sorted(k for k, v in self.armed.items() if not v)}")
+
+    def vol_block_series(self):
+        th = getattr(cfg, 'V2_VOL_BLOCK', None)
+        return (regime.vol_ratio_series(self.hist) > th) if th else None
+
+    def vol_args(self):
+        try:
+            v = regime.vol_ratio_now(self.hist, self.live_px)
+        except Exception as e:
+            log.error(f'시장 변동성 계산 실패: {e}'); v = None
+        return dict(vol_ratio=v, vol_block=getattr(cfg, 'V2_VOL_BLOCK', None))
 
     def compute_snapshot(self, live: dict):
         self.snap = decide.snapshot(self.hist, live, self.pairs, self.names, self.prm, self.pp, self.armed,
@@ -157,7 +170,7 @@ class App:
 
     def write_web(self):
         try:
-            self.live_orders = decide.orders(self.snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq)
+            self.live_orders = decide.orders(self.snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq, **self.vol_args())
         except Exception as e:
             log.error(f'실시간 판단 계산 실패: {e}')
         web.stock_data(self.snap, self.hist)
@@ -167,12 +180,13 @@ class App:
     async def preview_orders(self, live=None):
         if live is None:
             live = await self.fetch_live()
+        self.live_px = live
         snap = self.compute_snapshot(live)
-        o = decide.orders(snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq)
+        o = decide.orders(snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq, **self.vol_args())
         return decide.fmt_orders(o, self.prm, self.model['open'])
 
     async def job_orders(self, live):
-        o = decide.orders(self.snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq)
+        o = decide.orders(self.snap, self.prm, self.risk, cfg.V2_BLACKOUT, self.liq, **self.vol_args())
         o.attrs['time'] = datetime.now().isoformat(timespec='seconds')
         self.last_orders = o
         report.log_signals(o)
@@ -273,6 +287,7 @@ class App:
                     await asyncio.sleep(60)
                     continue
                 live = await self.fetch_live()
+                self.live_px = live
                 if len(live) < len(self.pairs):          # 장 시작 전·종목 정지 등은 확정 종가 사용
                     log.info(f'현재가 {len(live)}/{len(self.pairs) * 2}종목')
                 snap = self.compute_snapshot(live)
