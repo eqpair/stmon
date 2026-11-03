@@ -79,7 +79,7 @@
         <!-- Now -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
             <div class="flex justify-between items-baseline flex-wrap gap-2 mb-4">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Now <span class="normal-case font-normal text-gray-400">· 지금 가격 기준 규칙 판단 (3분마다 갱신, 확정은 종가)</span></h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Now <span class="normal-case font-normal text-gray-400">· Rule check on live prices (every 3 min · final at close)</span></h2>
                 <span class="text-xs text-gray-500" id="nowinfo"></span>
             </div>
             <div class="overflow-x-auto"><table class="report-table" id="now"></table></div>
@@ -88,7 +88,7 @@
         <!-- Orders -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
             <div class="flex justify-between items-baseline flex-wrap gap-2 mb-4">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Orders <span class="normal-case font-normal text-gray-400">· 15:15 확정 주문표</span></h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Orders <span class="normal-case font-normal text-gray-400">· 15:15 order sheet</span></h2>
                 <span class="text-xs text-gray-500" id="otime"></span>
             </div>
             <div class="overflow-x-auto"><table class="report-table" id="orders"></table></div>
@@ -103,14 +103,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- Watchlist -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Watchlist <span class="normal-case font-normal text-gray-400">· Z 상위</span></h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Watchlist <span class="normal-case font-normal text-gray-400">· Top Z</span></h2>
                 <div class="overflow-x-auto"><table class="report-table" id="watch"></table></div>
             </div>
             <!-- Charts -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">P&amp;L <span class="normal-case font-normal text-gray-400">· 실제 누적손익 (만원)</span></h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">P&amp;L <span class="normal-case font-normal text-gray-400">· Actual cumulative (만원)</span></h2>
                 <div style="height:180px"><canvas id="eq"></canvas></div>
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mt-6 mb-4">Backtest <span class="normal-case font-normal text-gray-400">· 같은 규칙의 모델 수익곡선 (2024~)</span></h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mt-6 mb-4">Backtest <span class="normal-case font-normal text-gray-400">· Model equity, same rules (2024~)</span></h2>
                 <div style="height:150px"><canvas id="bt"></canvas></div>
             </div>
         </div>
@@ -124,7 +124,7 @@
 
     <footer class="bg-white py-6 mt-8 border-t border-gray-100">
         <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
-            <p>© 2026 L/S Monitoring System. · 신호는 규칙 계산 결과이며 주문은 직접 실행합니다. 체결은 /in, /out 으로 기록.</p>
+            <p>© 2026 L/S Monitoring System. · Signals are rule outputs · orders placed manually · log fills with /in, /out · C = common, P = preferred</p>
         </div>
     </footer>
 
@@ -138,14 +138,14 @@
         const nm = s => (s || '').replace(/\s*\[.*\]\s*$/, '');
         const link = r => `<span class="clickable-item"><a href="trade-detail.html?code=${r.code}&name=${encodeURIComponent(r.name || '')}">${nm(r.name)}</a></span>`;
         const gapCls = g => !has(g) ? '' : (g < 0 ? 'stop-over' : (g < 0.05 ? 'stop-near' : ''));
-        const ACT = { ENTER: '진입', EXIT_TARGET: '청산(목표)', EXIT_STOP: '청산(손절)', EXIT_TIME: '청산(기간)', HOLD: '보유',
-                      WAIT_SLOT: '슬롯대기', BLOCKED_BAN: '금지기간', BLOCKED_LIQ: '유동성부족', BLOCKED_VOL: '고변동 대기', WATCH: '관찰' };
+        const ACT = { ENTER: 'Enter', EXIT_TARGET: 'Exit · Target', EXIT_STOP: 'Exit · Stop', EXIT_TIME: 'Exit · Time', HOLD: 'Hold',
+                      WAIT_SLOT: 'Wait · Slot', BLOCKED_BAN: 'Blocked · Ban', BLOCKED_LIQ: 'Blocked · Liquidity', BLOCKED_VOL: 'Blocked · Vol', WATCH: 'Watch' };
         const tag = a => `<span class="signal-tag ${/ENTER|EXIT/.test(a) ? 'strong' : ''}">${ACT[a] || a}</span>`;
 
         function table(el, head, rows) {
             document.getElementById(el).innerHTML =
                 '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
-                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">없음</td></tr>`) + '</tbody>';
+                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">None</td></tr>`) + '</tbody>';
         }
 
         function updateMarket(d) {
@@ -173,10 +173,10 @@
             const ind = document.getElementById('status-indicator'), txt = document.getElementById('status-text');
             if (!d) { ind.className = 'w-3 h-3 rounded-full bg-red-500 mr-2'; txt.textContent = 'Failed to load data'; return; }
             const age = (Date.now() - new Date(d.updated).getTime()) / 60000;
-            if (staleNow(d, age)) { ind.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink'; txt.textContent = `${Math.round(age)}분 전 데이터 (서버 확인 필요)`; }
-            else if (!liveNow(d)) { ind.className = 'w-3 h-3 rounded-full bg-gray-400 mr-2'; txt.textContent = '장 마감 · 마지막 종가 기준'; }
-            else if (true) { ind.className = 'w-3 h-3 rounded-full bg-green-500 mr-2'; txt.textContent = '실시간'; }
-            else { ind.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink'; txt.textContent = `${Math.round(age)}분 전 데이터 (서버 확인 필요)`; }
+            if (staleNow(d, age)) { ind.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink'; txt.textContent = `Stale · ${Math.round(age)} min old (check server)`; }
+            else if (!liveNow(d)) { ind.className = 'w-3 h-3 rounded-full bg-gray-400 mr-2'; txt.textContent = 'Market closed · last close'; }
+            else if (true) { ind.className = 'w-3 h-3 rounded-full bg-green-500 mr-2'; txt.textContent = 'Live'; }
+            else { ind.className = 'w-3 h-3 rounded-full bg-yellow-400 mr-2 blink'; txt.textContent = `Stale · ${Math.round(age)} min old (check server)`; }
             document.getElementById('lastUpdated').textContent = new Date(d.updated).toLocaleString('ko-KR',
                 { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
@@ -235,7 +235,7 @@
                     <td class="${rcls(-a.lp)}">${won(-a.lp)}</td><td class="${rcls(lr)}">${lr.toFixed(2)}%</td><td>${won(a.pe)}</td>${tail}</tr>`;
             });
             el.innerHTML = '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
-                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">없음</td></tr>`) + '</tbody>';
+                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">None</td></tr>`) + '</tbody>';
         }
 
         // 같은 종목에서 보유 기간이 겹치는 청산 거래 = 한 묶음 (같은 날 청산 후 재진입은 새 묶음)
@@ -278,8 +278,8 @@
             if (!d) return;
             const p = d.params;
             document.getElementById('params').textContent =
-                `Rule: ${p.window}일 로그 스프레드 · 진입 Z≥${p.z_in} · 청산 Z≤${p.z_out} · 손절 ${pct(p.stop, 0)} · ${d.risk.slots}슬롯` +
-                (d.risk.capital ? ` · 자본 ${Math.round(d.risk.capital / 1e8 * 10) / 10}억` : ' · 자본 미설정(수량 미표시)');
+                `Rule: ${p.window}D log spread · Entry Z≥${p.z_in} · Exit Z≤${p.z_out} · Stop ${pct(p.stop, 0)} · ${d.risk.slots} slots` +
+                (d.risk.capital ? ` · Capital ₩${Math.round(d.risk.capital / 1e6).toLocaleString()}M` : ' · Capital not set (no order qty)');
 
             const pos = d.positions || [], eq = d.equity || [], cl = d.realized || [];
             const open = pos.reduce((a, r) => a + (r.pnl_won || 0), 0);
@@ -288,55 +288,71 @@
             const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, BLOCKED_VOL: 6, HOLD: 7 };
             const lo = (d.live_orders || []).slice().sort((a, b) =>
                 ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0)));
-            // ---- 진입 가능 신호등
+            // ---- Entry gate: 조건별 판정을 그대로 보여줌
             {
                 const ent = lo.filter(r => r.action === 'ENTER'), ex = lo.filter(r => /^EXIT/.test(r.action));
-                const vb = lo.filter(r => r.action === 'BLOCKED_VOL'), ws = lo.filter(r => r.action === 'WAIT_SLOT');
+                const vbk = lo.filter(r => r.action === 'BLOCKED_VOL'), ws = lo.filter(r => r.action === 'WAIT_SLOT');
                 const age = (Date.now() - new Date(d.updated).getTime()) / 60000;
                 const vr = has(d.vol_ratio) ? d.vol_ratio : null, vth = d.vol_block || null, br = has(d.live_breadth) ? d.live_breadth : null;
+                const zin = p.z_in, me = has(p.min_edge) ? p.min_edge : 0.03, BR = 0.2;
                 const free = d.risk.slots - (pos.length - ex.length);
-                let dot, title, why = [];
-                if (staleNow(d, age)) { dot = 'bg-gray-400'; title = '데이터 지연 — 판단 보류'; why.push(`${Math.round(age)}분째 갱신 없음 · 서버 확인 필요`); }
-                else if (d.banned) { dot = 'bg-red-500'; title = '신규 진입 쉼'; why.push('공매도 금지 기간'); }
-                else if (vth && vr != null && vr > vth) { dot = 'bg-red-500'; title = '신규 진입 쉼'; why.push(`시장 변동성 ${vr.toFixed(2)}배 > 기준 ${Number(vth).toFixed(1)}배`); }
-                else {
-                    if (vr != null && vr >= 1.5) why.push(`시장 변동성 ${vr.toFixed(2)}배 (기준 ${vth ? Number(vth).toFixed(1) : '-'}배에 근접)`);
-                    if (br != null && br >= 0.2) why.push(`Z≥진입 비율 ${pct(br, 0)} — 괴리가 동시에 벌어지는 장, 나눠서 진입 권장`);
-                    if (free <= 0) why.push('슬롯 가득 참');
-                    dot = why.length ? 'bg-yellow-400' : 'bg-green-500';
-                    title = why.length ? '진입 가능 · 주의' : (ent.length ? '진입 가능' : '진입 가능 · 오늘 후보 없음');
-                }
+                // [상태 ok/warn/bad, 영문, 한국어 설명]
+                const chk = [];
+                chk.push(d.banned ? ['bad', 'Short-sale ban in effect', '공매도 금지 기간'] : ['ok', 'No short-sale ban', '공매도 금지 기간 아님']);
+                if (vr != null && vth) chk.push(vr > vth ? ['bad', `Market vol ${vr.toFixed(2)}x > ${Number(vth).toFixed(1)}x limit`, '시장 20일 변동성이 평소(1년 중앙값)의 기준 배수 초과 → 신규 진입 쉼']
+                                           : [vr >= 1.5 ? 'warn' : 'ok', `Market vol ${vr.toFixed(2)}x < ${Number(vth).toFixed(1)}x limit`, '시장 20일 변동성 ÷ 1년 중앙값']);
+                if (br != null) chk.push([br >= BR ? 'warn' : 'ok', `Signal breadth ${pct(br, 0)}` + (br >= BR ? ` ≥ ${pct(BR, 0)} · scale in` : ` < ${pct(BR, 0)}`), '전체 쌍 중 Z≥진입선인 비율. 높으면 괴리가 동시에 벌어지는 장 → 나눠서 진입']);
+                chk.push(ent.length ? ['ok', `${ent.length} pair${ent.length > 1 ? 's' : ''} meet Z ≥ ${zin} & Edge ≥ ${pct(me, 0)}`, '진입 조건을 충족한 후보 수']
+                                    : ['warn', `No pair meets Z ≥ ${zin} & Edge ≥ ${pct(me, 0)}` + (vbk.length ? ` (${vbk.length} on vol hold)` : ''), '진입 조건을 충족한 후보 없음']);
+                if (free <= 0) chk.push(['bad', `Slots full (${d.risk.slots}/${d.risk.slots})` + (ws.length ? ` · ${ws.length} waiting` : ''), '보유 슬롯이 모두 참']);
+                let dot, title;
+                if (staleNow(d, age)) { dot = 'bg-gray-400'; title = 'Data Delayed — Hold Decisions';
+                    chk.unshift(['bad', `No update for ${Math.round(age)} min · check server`, '서버 갱신 지연']); }
+                else if (d.banned || (vth && vr != null && vr > vth)) { dot = 'bg-red-500'; title = 'Entry Closed'; }
+                else if (free <= 0) { dot = 'bg-red-500'; title = 'Entry Closed · Slots Full'; }
+                else { const w = chk.some(c => c[0] === 'warn' && !/^No pair/.test(c[1]));
+                       dot = w ? 'bg-yellow-400' : 'bg-green-500';
+                       title = (w ? 'Entry Open · Caution' : 'Entry Open') + (ent.length ? '' : ' · No Candidates'); }
+                const IC = { ok: ['✓', 'text-green-600'], warn: ['!', 'text-yellow-600'], bad: ['✕', 'text-red-600'] };
+                const pill = c => `<span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-md text-sm text-gray-700" title="${c[2]}"><b class="${IC[c[0]][1]}">${IC[c[0]][0]}</b>${c[1]}</span>`;
                 const chip = (label, val) => `<div class="p-3 bg-gray-50 rounded-lg"><div class="text-gray-500 text-xs font-medium mb-1">${label}</div><div class="text-sm font-semibold text-gray-800">${val}</div></div>`;
                 document.getElementById('gate').innerHTML = `
                     <div class="flex items-center gap-3 flex-wrap">
                         <div class="w-4 h-4 rounded-full ${dot}"></div>
                         <div class="text-2xl font-bold text-gray-800">${title}</div>
-                        <div class="text-sm text-gray-500">${why.join(' · ') || (liveNow(d) ? '평소 장 · 표의 판단대로' : '장 마감 · 마지막 종가 기준')}</div>
+                        <div class="text-sm text-gray-400">${liveNow(d) ? 'Live prices' : 'As of last close'}</div>
                     </div>
-                    <div class="grid grid-cols-4 gap-3 mt-4">
-                        ${chip(`진입 후보 ${ent.length}쌍`, ent.length ? ent.map(r => nm(r.name)).join(', ') : (vb.length ? `고변동 대기 ${vb.length}쌍` : '없음'))}
-                        ${chip(`청산 대상 ${ex.length}쌍`, ex.length ? ex.map(r => nm(r.name)).join(', ') : '없음')}
-                        ${chip('빈 슬롯 (청산 후)', `${Math.max(free, 0)} / ${d.risk.slots}` + (ws.length ? ` · 대기 ${ws.length}쌍` : ''))}
-                        ${chip('시장 변동성 · Z≥진입 비율', `${vr != null ? vr.toFixed(2) + '배' : '-'} (기준 ${vth ? Number(vth).toFixed(1) : '-'}배) · ${br != null ? pct(br, 0) : '-'}`)}
+                    <div class="flex flex-wrap gap-2 mt-3">${chk.map(pill).join('')}</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                        ${chip(`Entry Candidates (${ent.length})`, ent.length ? ent.map(r => nm(r.name)).join(', ') : '-')}
+                        ${chip(`Exit Targets (${ex.length})`, ex.length ? ex.map(r => nm(r.name)).join(', ') : '-')}
                     </div>`;
             }
-            document.getElementById('nowinfo').textContent = (d.banned ? '공매도 금지 기간 · ' : '')
-                + (has(d.vol_ratio) ? `시장 변동성 ${d.vol_ratio.toFixed(2)}배` + (d.vol_block ? (d.vol_ratio > d.vol_block ? ` (기준 ${d.vol_block}배 초과 · 신규 진입 쉼)` : ` (기준 ${d.vol_block}배)`) : '') + ' · ' : '')
-                + (has(d.live_breadth) ? `Z≥진입 비율 ${pct(d.live_breadth, 0)}` : '');
-            table('now', ['Item', '판단', 'Z', 'Edge', '보통주 / 우선주 수량', 'P&L (만원)', '손절까지', 'Note'],
-                lo.map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
+            document.getElementById('nowinfo').textContent = (d.banned ? 'Short-sale ban · ' : '')
+                + (has(d.vol_ratio) ? `Market vol ${d.vol_ratio.toFixed(2)}x` + (d.vol_block ? ` (limit ${d.vol_block}x)` : '') + ' · ' : '')
+                + (has(d.live_breadth) ? `Breadth ${pct(d.live_breadth, 0)}` : '');
+            // 보유 쌍은 장부(/in) 기록값을 붙임
+            const PB = {}; pos.forEach(x => { PB[x.code] = x; });
+            const num = v => has(v) ? Math.round(Number(v)).toLocaleString() : '';
+            table('now', ['Item', 'Signal', 'Z', 'Edge', 'Entry', 'Days', 'Qty (C / P)', 'Entry Px (C / P)', 'P&L (만원)', 'P&L %', 'To Stop', 'Note'],
+                lo.map(r => { const q = PB[r.code];
+                  const qty = q ? `${num(q.cq)} / ${num(q.pq)}` : (has(r.qty_C) ? `${num(r.qty_C)} / ${num(r.qty_P)}` : '');
+                  const ret = has(r.pnl_ret) ? r.pnl_ret : (q ? q.pnl_ret : null);
+                  return `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
                   <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td>
-                  <td>${!/EXIT|HOLD/.test(r.action) && has(r.qty_C) ? `${Number(r.qty_C).toLocaleString()} / ${Number(r.qty_P).toLocaleString()}` : ''}</td>
+                  <td>${q && q.entry_date ? q.entry_date : ''}</td><td>${q && has(q.days) ? q.days : ''}</td>
+                  <td>${qty}</td><td>${q ? `${num(q.c0)} / ${num(q.p0)}` : ''}</td>
                   <td class="${pcls(r.pnl_won)}">${has(r.pnl_won) ? man(r.pnl_won) : ''}</td>
-                  <td class="${gapCls(r.stop_gap)}">${has(r.stop_gap) ? pct(r.stop_gap) : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`));
+                  <td class="${pcls(ret)}">${has(ret) ? pct(ret) : ''}</td>
+                  <td class="${gapCls(r.stop_gap)}">${has(r.stop_gap) ? pct(r.stop_gap) : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`; }));
 
-            document.getElementById('otime').textContent = d.orders_time ? d.orders_time.replace('T', ' ') : '오늘 주문표 전';
-            table('orders', ['Item', 'Action', 'Z', 'Edge', '보통주 수량', '우선주 수량', 'Note'],
+            document.getElementById('otime').textContent = d.orders_time ? d.orders_time.replace('T', ' ') : 'Not issued yet today';
+            table('orders', ['Item', 'Action', 'Z', 'Edge', 'Qty C', 'Qty P', 'Note'],
                 (d.orders || []).slice().sort((a, b) => ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0))).map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
                   <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td><td>${has(r.qty_C) ? Number(r.qty_C).toLocaleString() : ''}</td>
                   <td>${has(r.qty_P) ? Number(r.qty_P).toLocaleString() : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`));
 
-            table('positions', ['Item', 'Entry', 'Days', '보통주 / 우선주', 'Z', 'P&L (만원)', 'P&L %', '손절까지', 'Rule'],
+            table('positions', ['Item', 'Entry', 'Days', 'Qty (C / P)', 'Z', 'P&L (만원)', 'P&L %', 'To Stop', 'Rule'],
                 pos.map(r => `<tr><td>${link(r)}</td><td>${r.entry_date}</td><td>${r.days}</td><td>${r.cq} / ${r.pq}</td>
                   <td class="${zcls(r.z)}">${z2(r.z)}</td><td class="${pcls(r.pnl_won)}">${man(r.pnl_won)}</td>
                   <td class="${pcls(r.pnl_ret)}">${pct(r.pnl_ret)}</td><td class="${gapCls(r.stop_gap)}">${pct(r.stop_gap)}</td>
@@ -344,7 +360,7 @@
 
             table('watch', ['Item', 'Z', 'Edge', 'Status'],
                 (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td>
-                  <td>${!r.armed ? '<span class="signal-tag">재진입대기</span>' : ''}${!r.validated ? '<span class="signal-tag">이력부족</span>' : ''}</td></tr>`));
+                  <td>${!r.armed ? '<span class="signal-tag">Re-arm Wait</span>' : ''}${!r.validated ? '<span class="signal-tag">Short History</span>' : ''}</td></tr>`));
 
             renderClosed();
 
