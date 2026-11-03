@@ -327,7 +327,7 @@
             const DL = d.day_leg || {};
             const dlt = c => has(DL[c]) && !(has(ML[c]) && ML[c] < LMIN) ? man(DL[c]) : '-';
             const mlc = c => has(ML[c]) && ML[c] < LMIN ? 'text-gray-400 line-through' : 'font-semibold';
-            table('now', ['Item', 'Signal', 'Z', 'Edge', 'Max / Stock (만원)', '1-Day / Stock (만원)', 'Entry', 'Days', 'Qty (C / P)', 'Entry Px (C / P)', 'P&L (만원)', 'P&L %', 'To Stop', 'Note'],
+            table('now', ['Item', 'Signal', 'Z', 'Edge', 'Max<br>/ Stock', '1-Day<br>/ Stock', 'Entry', 'Days', 'Qty<br>C / P', 'Entry Px<br>C / P', 'P&L', 'P&L %', 'To Stop', 'Note'],
                 lo.map(r => { const q = PB[r.code];
                   const qty = q ? `${num(q.cq)} / ${num(q.pq)}` : (has(r.qty_C) ? `${num(r.qty_C)} / ${num(r.qty_P)}` : '');
                   const ret = has(r.pnl_ret) ? r.pnl_ret : (q ? q.pnl_ret : null);
@@ -341,13 +341,13 @@
                   <td class="${gapCls(r.stop_gap)}">${has(r.stop_gap) ? pct(r.stop_gap) : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`; }));
 
 
-            table('positions', ['Item', 'Entry', 'Days', 'Qty (C / P)', 'Z', 'P&L (만원)', 'P&L %', 'To Stop', 'Rule'],
+            table('positions', ['Item', 'Entry', 'Days', 'Qty<br>C / P', 'Z', 'P&L', 'P&L %', 'To Stop', 'Rule'],
                 pos.map(r => `<tr><td>${link(r)}</td><td>${r.entry_date}</td><td>${r.days}</td><td>${r.cq} / ${r.pq}</td>
                   <td class="${zcls(r.z)}">${z2(r.z)}</td><td class="${pcls(r.pnl_won)}">${man(r.pnl_won)}</td>
                   <td class="${pcls(r.pnl_ret)}">${pct(r.pnl_ret)}</td><td class="${gapCls(r.stop_gap)}">${pct(r.stop_gap)}</td>
                   <td>${r.exit ? `<span class="signal-tag strong">${r.exit}</span>` : ''}</td></tr>`));
 
-            table('watch', ['Item', 'Z', 'Edge', 'Max / Stock (만원)', '1-Day / Stock (만원)', 'Status'],
+            table('watch', ['Item', 'Z', 'Edge', 'Max<br>/ Stock', '1-Day<br>/ Stock', 'Status'],
                 (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td><td class="${mlc(r.code)}">${mlt(r.code)}</td><td>${dlt(r.code)}</td>
                   <td>${!r.armed ? '<span class="signal-tag">Re-arm Wait</span>' : ''}${!r.validated ? '<span class="signal-tag">Short History</span>' : ''}</td></tr>`));
 
