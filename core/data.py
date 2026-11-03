@@ -77,15 +77,37 @@ def naver_daily(code: str, count: int = 40) -> pd.DataFrame:
     return pd.DataFrame.from_dict(rows, orient='index', columns=['close', 'volume']).sort_index()
 
 
+def _source() -> str:
+    """config.V2_DATA_SOURCE: 'kis'(KRX 기준, 실패 시 네이버) 또는 'naver'"""
+    try:
+        import config
+        return getattr(config, 'V2_DATA_SOURCE', 'naver')
+    except Exception:
+        return 'naver'
+
+
+def daily(code: str, count: int = 40) -> pd.DataFrame:
+    """일봉(수정주가) close, volume — 설정이 kis면 KIS(KRX 종가) 먼저, 실패하면 네이버"""
+    if _source() == 'kis':
+        try:
+            from core import kis
+            df = kis.daily(code, count)
+            if len(df):
+                return df
+        except Exception as e:
+            log.warning(f'KIS 일봉 실패 {code}: {e} → 네이버')
+    return naver_daily(code, count)
+
+
 def update_pair(a: str, b: str, today: date, count: int = 40) -> tuple[str, dict]:
     """이력 CSV에 최근 일봉 추가. 겹치는 날 가격이 다르면(분할·감자 등 수정주가 재계산) 과거 전체를 비율 조정.
     장 마감 확정(15:40) 전에는 오늘 봉을 저장하지 않음. 반환: (결과, 거래대금 정보)"""
     f = os.path.join(HIST, f'{a}_{b}.csv')
     h = pd.read_csv(f, index_col=0, parse_dates=True)
-    da, db = naver_daily(a, count), naver_daily(b, count)
+    da, db = daily(a, count), daily(b, count)
     new = pd.DataFrame({'C': da.close, 'P': db.close}).dropna()
     if len(new) and len(new.index.intersection(h.index)) == 0:
-        da, db = naver_daily(a, 600), naver_daily(b, 600)
+        da, db = daily(a, 600), daily(b, 600)
         new = pd.DataFrame({'C': da.close, 'P': db.close}).dropna()
         if len(new.index.intersection(h.index)) == 0:
             raise RuntimeError('이력과 겹치는 날짜가 없어 이어붙일 수 없음')
@@ -157,6 +179,22 @@ def _parse_realtime(txt: str) -> dict[str, float]:
 
 
 def fetch_now(codes: list[str], chunk: int = 40) -> dict[str, float]:
+    """현재가 {코드: 가격}. 설정이 kis면 KIS(KRX) 먼저, 빠진 종목은 네이버로."""
+    codes = list(dict.fromkeys(codes))
+    out: dict[str, float] = {}
+    if _source() == 'kis':
+        try:
+            from core import kis
+            out.update(kis.prices(codes))
+        except Exception as e:
+            log.warning(f'KIS 현재가 실패: {e} → 네이버')
+    miss = [c for c in codes if c not in out]
+    if miss:
+        out.update(_fetch_now_naver(miss, chunk))
+    return out
+
+
+def _fetch_now_naver(codes: list[str], chunk: int = 40) -> dict[str, float]:
     """현재가 {코드: 가격}. 묶음 조회 후 빠진 종목만 개별 조회. 0원(거래 없음)은 제외."""
     codes = list(dict.fromkeys(codes))
     out: dict[str, float] = {}
