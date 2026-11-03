@@ -329,7 +329,7 @@
             const mlc = c => has(ML[c]) && ML[c] < LMIN ? 'text-gray-400 line-through' : 'font-semibold';
             table('now', ['Item', 'Signal', 'Z', 'Edge', 'Max<br>/ Stock', '1-Day<br>/ Stock', 'Entry', 'Days', 'Qty<br>C / P', 'Entry Px<br>C / P', 'P&L', 'P&L %', 'To Stop', 'Note'],
                 lo.map(r => { const q = PB[r.code];
-                  const qty = q ? `${num(q.cq)} / ${num(q.pq)}` : (has(r.qty_C) ? `${num(r.qty_C)} / ${num(r.qty_P)}` : '');
+                  const qty = q ? `${num(q.cq)} / ${num(q.pq)}` : (has(r.qty_C) ? `${num(r.qty_C)} / ${num(r.qty_P)}` + (has(DL[r.code]) && has(ML[r.code]) && DL[r.code] < ML[r.code] && r.C && r.P ? ` (${num(Math.floor(DL[r.code] / r.C))} / ${num(Math.floor(DL[r.code] / r.P))})` : '') : '');
                   const ret = has(r.pnl_ret) ? r.pnl_ret : (q ? q.pnl_ret : null);
                   return `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
                   <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td>
