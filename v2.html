@@ -278,8 +278,7 @@
             if (!d) return;
             const p = d.params;
             document.getElementById('params').textContent =
-                `Rule: ${p.window}D log spread · Entry Z≥${p.z_in} · Exit Z≤${p.z_out} · Stop ${pct(p.stop, 0)} · ${d.risk.slots} slots` +
-                (d.risk.capital ? ` · Capital ₩${Math.round(d.risk.capital / 1e6).toLocaleString()}M` : ' · Capital not set (no order qty)');
+                `Rule: ${p.window}D log spread · Entry Z≥${p.z_in} · Exit Z≤${p.z_out}`;
 
             const pos = d.positions || [], eq = d.equity || [], cl = d.realized || [];
             const open = pos.reduce((a, r) => a + (r.pnl_won || 0), 0);
