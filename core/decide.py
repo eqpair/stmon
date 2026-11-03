@@ -26,6 +26,9 @@ class Risk:
     bench_rate: float = 2.5         # 신규 진입 기록 시 기본 기준금리(%)
     sp_short: float = -202          # 기본 숏 스프레드(bp)
     sp_long: float = 200            # 기본 롱 스프레드(bp)
+    leg_min: float | None = None    # 레그 최소 금액(원)
+    leg_max: float | None = None    # 레그 최대 금액(원)
+    adv_mult: float = 1.5           # 레그 ≤ 20일 평균 거래대금 × adv_mult
 
 
 def in_blackout(d: date, blackout) -> bool:
@@ -100,6 +103,15 @@ def snapshot(hist: dict, live: dict[str, float], pairs: list[tuple[str, str]], n
     return pd.DataFrame(rows)
 
 
+def max_leg(liq: dict, code: str, risk: Risk):
+    """종목별 진입 최대금액 = min(최대 레그, 보통주·우선주 중 작은 20일 평균 거래대금 × 배수). 데이터 없으면 None"""
+    if not risk.leg_max:
+        return None
+    x = liq.get(code) or {}
+    v = [a for a in (x.get('C'), x.get('P')) if a]
+    return float(min(risk.leg_max, min(v) * risk.adv_mult)) if v else None
+
+
 def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, today: date | None = None,
            vol_ratio: float | None = None, vol_block: float | None = None) -> pd.DataFrame:
     """15:15 주문표. action: EXIT_TARGET/EXIT_STOP/EXIT_TIME, HOLD, ENTER, WAIT_SLOT, BLOCKED_BAN, BLOCKED_LIQ, WATCH"""
@@ -123,9 +135,23 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
     vol_hot = bool(vol_block and vol_ratio is not None and vol_ratio == vol_ratio and vol_ratio > vol_block)
     if vol_hot:                                  # 시장 고변동: 신규 진입 쉼
         df.loc[df.action == 'CAND', 'action'] = 'BLOCKED_VOL'
-    # 수량·유동성
+    # 종목별 최대 레그(거래대금 기준)
+    ML = {c: max_leg(liq, c, risk) for c in df.code}
+    if risk.leg_max:
+        for i in df.index[df.action == 'CAND']:
+            ml = ML.get(df.at[i, 'code'])
+            if ml is None:
+                continue
+            if ml < (risk.leg_min or 0):
+                df.at[i, 'action'] = 'BLOCKED_LIQ'
+                df.at[i, 'note'] = f'Max leg {ml / 1e4:,.0f}만 < {risk.leg_min / 1e4:,.0f}만'
+                continue
+            df.at[i, 'leg_won'] = ml
+            df.at[i, 'qty_C'] = int(ml // df.at[i, 'C'])
+            df.at[i, 'qty_P'] = int(ml // df.at[i, 'P'])
+    # 수량·유동성(자본 기준, 최대 레그 미설정 시)
     unit = (risk.capital / risk.slots) if risk.capital else None
-    if unit:
+    if unit and not risk.leg_max:
         for i in df.index[df.action == 'CAND']:
             lc, lp = (liq.get(df.at[i, 'code']) or {}).get('C'), (liq.get(df.at[i, 'code']) or {}).get('P')
             cap = min([x * risk.liq_frac for x in (lc, lp) if x] or [unit])
@@ -148,6 +174,7 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
     cand = df[df.action == 'CAND'].sort_values('rank', ascending=False)
     df.loc[cand.index[:free], 'action'] = 'ENTER'
     df.loc[df.action == 'CAND', 'action'] = 'WAIT_SLOT'
+    df.attrs['max_leg'] = {c: v for c, v in ML.items() if v is not None}
     df.attrs.update(breadth=breadth, banned=banned, free=free, vol_ratio=vol_ratio, vol_block=vol_block, vol_hot=vol_hot)
     return df
 
@@ -169,7 +196,7 @@ def fmt_orders(df: pd.DataFrame, prm: Params, model_open=None) -> str:
                  f"  | Z {r.z:+.2f} · 손익 {r.pnl_won / 1e4:+,.0f}만원 ({r.pnl_ret:+.1%})")
     en = df[df.action == 'ENTER']
     for _, r in en.iterrows():
-        q = (f"\n    보통주 {int(r.qty_C)}주 공매도(~{r.C:,.0f}) · 우선주 {int(r.qty_P)}주 매수(~{r.P:,.0f})"
+        q = (f"\n    레그 {r.leg_won / 1e4:,.0f}만원 · 보통주 {int(r.qty_C)}주 공매도(~{r.C:,.0f}) · 우선주 {int(r.qty_P)}주 매수(~{r.P:,.0f})"
              if 'qty_C' in r and pd.notna(r.get('qty_C')) else '')
         L.append(f"🟢 <b>진입</b> {r['name']}  Z {r.z:+.2f} · 기대 {r.edge:.1%}{q}")
     for _, r in df[df.action == 'HOLD'].iterrows():

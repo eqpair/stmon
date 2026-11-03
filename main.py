@@ -45,7 +45,9 @@ class App:
         self.pp = cfg.V2_PAIR_PARAMS
         self.risk = Risk(capital=cfg.V2_CAPITAL, slots=cfg.V2_SLOTS, gross_limit=cfg.V2_GROSS_LIMIT,
                          liq_frac=cfg.V2_LIQ_FRAC, stop_warn=cfg.V2_STOP_WARN, bench_rate=cfg.V2_BENCH_RATE,
-                         sp_short=cfg.V2_SPREAD_SHORT, sp_long=cfg.V2_SPREAD_LONG)
+                         sp_short=cfg.V2_SPREAD_SHORT, sp_long=cfg.V2_SPREAD_LONG,
+                         leg_min=getattr(cfg, 'V2_LEG_MIN', None), leg_max=getattr(cfg, 'V2_LEG_MAX', None),
+                         adv_mult=getattr(cfg, 'V2_ADV_MULT', 1.5))
         have = set(data.pair_files())
         self.pairs = [(a, b) for a, b, *_ in cfg.TICK_PAIRS if (a, b) in have]
         miss = [(a, b) for a, b, *_ in cfg.TICK_PAIRS if (a, b) not in have]

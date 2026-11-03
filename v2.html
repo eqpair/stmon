@@ -322,12 +322,16 @@
             // 보유 쌍은 장부(/in) 기록값을 붙임
             const PB = {}; pos.forEach(x => { PB[x.code] = x; });
             const num = v => has(v) ? Math.round(Number(v)).toLocaleString() : '';
-            table('now', ['Item', 'Signal', 'Z', 'Edge', 'Entry', 'Days', 'Qty (C / P)', 'Entry Px (C / P)', 'P&L (만원)', 'P&L %', 'To Stop', 'Note'],
+            const ML = d.max_leg || {}, LMIN = (d.risk && d.risk.leg_min) || 0;
+            const mlt = c => has(ML[c]) ? man(ML[c]) : '-';
+            const mlc = c => has(ML[c]) && ML[c] < LMIN ? 'text-gray-400 line-through' : 'font-semibold';
+            table('now', ['Item', 'Signal', 'Z', 'Edge', 'Max Leg (만원)', 'Entry', 'Days', 'Qty (C / P)', 'Entry Px (C / P)', 'P&L (만원)', 'P&L %', 'To Stop', 'Note'],
                 lo.map(r => { const q = PB[r.code];
                   const qty = q ? `${num(q.cq)} / ${num(q.pq)}` : (has(r.qty_C) ? `${num(r.qty_C)} / ${num(r.qty_P)}` : '');
                   const ret = has(r.pnl_ret) ? r.pnl_ret : (q ? q.pnl_ret : null);
                   return `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
                   <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td>
+                  <td class="${mlc(r.code)}">${mlt(r.code)}</td>
                   <td>${q && q.entry_date ? q.entry_date : ''}</td><td>${q && has(q.days) ? q.days : ''}</td>
                   <td>${qty}</td><td>${q ? `${num(q.c0)} / ${num(q.p0)}` : ''}</td>
                   <td class="${pcls(r.pnl_won)}">${has(r.pnl_won) ? man(r.pnl_won) : ''}</td>
@@ -341,8 +345,8 @@
                   <td class="${pcls(r.pnl_ret)}">${pct(r.pnl_ret)}</td><td class="${gapCls(r.stop_gap)}">${pct(r.stop_gap)}</td>
                   <td>${r.exit ? `<span class="signal-tag strong">${r.exit}</span>` : ''}</td></tr>`));
 
-            table('watch', ['Item', 'Z', 'Edge', 'Status'],
-                (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td>
+            table('watch', ['Item', 'Z', 'Edge', 'Max Leg (만원)', 'Status'],
+                (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td><td class="${mlc(r.code)}">${mlt(r.code)}</td>
                   <td>${!r.armed ? '<span class="signal-tag">Re-arm Wait</span>' : ''}${!r.validated ? '<span class="signal-tag">Short History</span>' : ''}</td></tr>`));
 
             renderClosed();

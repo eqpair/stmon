@@ -60,13 +60,15 @@ def dashboard(snap: pd.DataFrame, last_orders: pd.DataFrame | None, model: dict,
         [c for c in cols if c in snap]]
     eq = pd.read_csv(report.EQUITY).to_dict('records') if os.path.exists(report.EQUITY) else []
     out = dict(updated=datetime.now().isoformat(timespec='seconds'), params=prm.to_dict(),
-               risk=dict(capital=risk.capital, slots=risk.slots, gross_limit=risk.gross_limit, liq_frac=risk.liq_frac),
+               risk=dict(capital=risk.capital, slots=risk.slots, gross_limit=risk.gross_limit, liq_frac=risk.liq_frac,
+                         leg_min=getattr(risk, 'leg_min', None), leg_max=getattr(risk, 'leg_max', None)),
                positions=pos.to_dict('records'), watch=watch.to_dict('records'),
                orders=_orders_records(last_orders), live_orders=_orders_records(live_orders), market_open=market_open,
                live_breadth=(live_orders.attrs.get('breadth') if live_orders is not None else None),
                banned=(bool(live_orders.attrs.get('banned')) if live_orders is not None else False),
                vol_ratio=(live_orders.attrs.get('vol_ratio') if live_orders is not None else None),
                vol_block=(live_orders.attrs.get('vol_block') if live_orders is not None else None),
+               max_leg=(live_orders.attrs.get('max_leg') if live_orders is not None else None),
                orders_time=(last_orders.attrs.get('time') if last_orders is not None else None),
                model_open=model.get('open', []), equity=eq, realized=ledger.realized(),
                backtest=backtest_curve or {})
