@@ -154,7 +154,7 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
                 continue
             if ml < (risk.leg_min or 0):
                 df.at[i, 'action'] = 'BLOCKED_LIQ'
-                df.at[i, 'note'] = f'Max pair {2 * ml / 1e4:,.0f}만 < {2 * risk.leg_min / 1e4:,.0f}만'
+                df.at[i, 'note'] = f'종목당 최대 {ml / 1e4:,.0f}만 < {risk.leg_min / 1e4:,.0f}만'
                 continue
             df.at[i, 'leg_won'] = ml
             df.at[i, 'day_won'] = DL.get(df.at[i, 'code'])
@@ -208,7 +208,7 @@ def fmt_orders(df: pd.DataFrame, prm: Params, model_open=None) -> str:
                  f"  | Z {r.z:+.2f} · 손익 {r.pnl_won / 1e4:+,.0f}만원 ({r.pnl_ret:+.1%})")
     en = df[df.action == 'ENTER']
     for _, r in en.iterrows():
-        q = (f"\n    쌍 {2 * r.leg_won / 1e4:,.0f}만원 (하루 {2 * (r.get('day_won') or 0) / 1e4:,.0f}만원) · 보통주 {int(r.qty_C)}주 공매도(~{r.C:,.0f}) · 우선주 {int(r.qty_P)}주 매수(~{r.P:,.0f})"
+        q = (f"\n    종목당 {r.leg_won / 1e4:,.0f}만원 (하루 {(r.get('day_won') or 0) / 1e4:,.0f}만원) · 보통주 {int(r.qty_C)}주 공매도(~{r.C:,.0f}) · 우선주 {int(r.qty_P)}주 매수(~{r.P:,.0f})"
              if 'qty_C' in r and pd.notna(r.get('qty_C')) else '')
         L.append(f"🟢 <b>진입</b> {r['name']}  Z {r.z:+.2f} · 기대 {r.edge:.1%}{q}")
     for _, r in df[df.action == 'HOLD'].iterrows():
