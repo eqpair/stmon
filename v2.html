@@ -92,18 +92,11 @@
             <div class="overflow-x-auto"><table class="report-table" id="positions"></table></div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="mb-6">
             <!-- Watchlist -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Watchlist <span class="normal-case font-normal text-gray-400">· Top Z</span></h2>
                 <div class="overflow-x-auto"><table class="report-table" id="watch"></table></div>
-            </div>
-            <!-- Charts -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">P&amp;L <span class="normal-case font-normal text-gray-400">· Actual cumulative (만원)</span></h2>
-                <div style="height:180px"><canvas id="eq"></canvas></div>
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mt-6 mb-4">Backtest <span class="normal-case font-normal text-gray-400">· Model equity, same rules (2024~)</span></h2>
-                <div style="height:150px"><canvas id="bt"></canvas></div>
             </div>
         </div>
 
@@ -353,8 +346,6 @@
 
             renderClosed();
 
-            line('eq', eq.map(r => r.date), eq.map(r => Math.round(r.total / 1e4)));
-            if (d.backtest && d.backtest.dates) line('bt', d.backtest.dates, d.backtest.equity);
         }
         load(); setInterval(load, 180000);
     </script>
