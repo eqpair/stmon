@@ -298,7 +298,7 @@
                 const free = d.risk.slots - (pos.length - ex.length);
                 // [상태 ok/warn/bad, 영문, 한국어 설명]
                 const chk = [];
-                chk.push(d.banned ? ['bad', 'Short-sale ban in effect', '공매도 금지 기간'] : ['ok', 'No short-sale ban', '공매도 금지 기간 아님']);
+                if (d.banned) chk.push(['bad', 'Short-sale ban in effect', '공매도 금지 기간']);
                 if (vr != null && vth) chk.push(vr > vth ? ['bad', `Market vol ${vr.toFixed(2)}x > ${Number(vth).toFixed(1)}x limit`, '시장 20일 변동성이 평소(1년 중앙값)의 기준 배수 초과 → 신규 진입 쉼']
                                            : [vr >= 1.5 ? 'warn' : 'ok', `Market vol ${vr.toFixed(2)}x < ${Number(vth).toFixed(1)}x limit`, '시장 20일 변동성 ÷ 1년 중앙값']);
                 if (br != null) chk.push([br >= BR ? 'warn' : 'ok', `Signal breadth ${pct(br, 0)}` + (br >= BR ? ` ≥ ${pct(BR, 0)} · scale in` : ` < ${pct(BR, 0)}`), '전체 쌍 중 Z≥진입선인 비율. 높으면 괴리가 동시에 벌어지는 장 → 나눠서 진입']);
