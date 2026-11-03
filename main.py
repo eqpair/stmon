@@ -198,7 +198,8 @@ class App:
 
     async def job_close(self):
         res = await asyncio.to_thread(data.update_all, date.today(), self.pairs)
-        bad = [f'{c}:{m}' for c, m in res if m != 'ok']
+        stale = [f"{self.names.get(c, c)} ({c}) · 마지막 거래 {m.split()[1]}" for c, m in res if m.startswith('stale')]
+        bad = [f'{c}:{m}' for c, m in res if m != 'ok' and not m.startswith('stale')]
         await asyncio.to_thread(self.reload)
         snap = self.compute_snapshot({})                 # 확정 종가 기준
         row = report.mark_equity(snap)
@@ -207,6 +208,9 @@ class App:
         if getattr(cfg, 'TG_DAILY_WARNINGS', True):
             if bad:
                 await self.send('⚠️ 이력 갱신 확인 필요\n' + '\n'.join(bad[:20]))
+            if stale:
+                await self.send('⛔ 거래 없음 — 상장폐지·거래정지 의심 (진입 후보에서는 자동 제외)\n' + '\n'.join(stale)
+                                + '\n쌍 목록(config.py TICK_PAIRS)에서 빼는 걸 검토하세요.')
             if date.today().weekday() == 4:
                 await self.send(self.text_report())
 

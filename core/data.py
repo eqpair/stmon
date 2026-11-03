@@ -140,6 +140,21 @@ def update_pair(a: str, b: str, today: date, count: int = 40) -> tuple[str, dict
     return msg, liq
 
 
+def stale_pairs(pairs=None, lag_days: int = 3) -> dict[str, str]:
+    """마지막 거래일이 전체 최신 거래일보다 lag_days 영업일 이상 뒤처진 쌍 {보통주코드: 마지막 거래일}"""
+    import numpy as np
+    last = {}
+    for a, b in (pairs or pair_files()):
+        try:
+            last[a] = load_pair(a, b).index[-1]
+        except Exception:
+            continue
+    if not last:
+        return {}
+    newest = max(last.values())
+    return {a: str(d.date()) for a, d in last.items() if np.busday_count(d.date(), newest.date()) >= lag_days}
+
+
 def update_all(today: date | None = None, pairs=None) -> list[tuple[str, str]]:
     today = today or date.today()
     out, liq = [], {}
@@ -153,6 +168,8 @@ def update_all(today: date | None = None, pairs=None) -> list[tuple[str, str]]:
         time.sleep(0.15)
     if liq:
         write_json({'updated': datetime.now().isoformat(timespec='seconds'), 'avg20_value': liq}, LIQ)
+    st = stale_pairs(pairs)
+    out = [(a, f'stale {st[a]}' if a in st and m in ('ok', 'no data') else m) for a, m in out]
     return out
 
 
