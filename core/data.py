@@ -77,12 +77,12 @@ def naver_daily(code: str, count: int = 40) -> pd.DataFrame:
     return pd.DataFrame.from_dict(rows, orient='index', columns=['close', 'volume']).sort_index()
 
 
-def update_pair(a: str, b: str, today: date) -> tuple[str, dict]:
+def update_pair(a: str, b: str, today: date, count: int = 40) -> tuple[str, dict]:
     """이력 CSV에 최근 일봉 추가. 겹치는 날 가격이 다르면(분할·감자 등 수정주가 재계산) 과거 전체를 비율 조정.
     장 마감 확정(15:40) 전에는 오늘 봉을 저장하지 않음. 반환: (결과, 거래대금 정보)"""
     f = os.path.join(HIST, f'{a}_{b}.csv')
     h = pd.read_csv(f, index_col=0, parse_dates=True)
-    da, db = naver_daily(a), naver_daily(b)
+    da, db = naver_daily(a, count), naver_daily(b, count)
     new = pd.DataFrame({'C': da.close, 'P': db.close}).dropna()
     if len(new) and len(new.index.intersection(h.index)) == 0:
         da, db = naver_daily(a, 600), naver_daily(b, 600)
@@ -99,11 +99,17 @@ def update_pair(a: str, b: str, today: date) -> tuple[str, dict]:
     msg = 'ok'
     ov = new.index.intersection(h.index)
     if len(ov):
-        last = ov[-1]
-        k = new.loc[last] / h.loc[last]
+        # 이어붙이는 경계(가장 오래된 겹친 날들)에서 비율 측정. 분할·감자 등 수정주가 재계산이면
+        # 이 날들이 모두 같은 비율로 달라짐. 최근 하루 종가 차이(NXT 등)는 아래에서 네이버 값으로 덮어씀.
+        head = ov[:5]
+        r = new.loc[head] / h.loc[head]
+        k = r.median()
         if (abs(k - 1) > 0.002).any():
-            h = h * k
-            msg = f'rescaled C×{k.C:.4f} P×{k.P:.4f}'
+            if ((r - k).abs() <= 0.003).all().all():
+                h = h * k
+                msg = f'rescaled C×{k.C:.4f} P×{k.P:.4f}'
+            else:
+                msg = f'check C×{k.C:.4f} P×{k.P:.4f} (경계 비율 불안정, 재조정 안 함)'
     h = pd.concat([h[h.index < new.index[0]], new]).sort_index()
     h = h[~h.index.duplicated(keep='last')]
     tmp = f + '.tmp'
