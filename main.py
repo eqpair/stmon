@@ -47,7 +47,7 @@ class App:
                          liq_frac=cfg.V2_LIQ_FRAC, stop_warn=cfg.V2_STOP_WARN, bench_rate=cfg.V2_BENCH_RATE,
                          sp_short=cfg.V2_SPREAD_SHORT, sp_long=cfg.V2_SPREAD_LONG,
                          leg_min=(getattr(cfg, 'V2_PAIR_MIN', 0) or 0) / 2 or None, leg_max=(getattr(cfg, 'V2_PAIR_MAX', 0) or 0) / 2 or None,
-                         adv_mult=getattr(cfg, 'V2_ADV_MULT', 1.5))
+                         adv_mult=getattr(cfg, 'V2_ADV_MULT', 1.5), day_frac=getattr(cfg, 'V2_DAY_FRAC', 0.3))
         have = set(data.pair_files())
         self.pairs = [(a, b) for a, b, *_ in cfg.TICK_PAIRS if (a, b) in have]
         miss = [(a, b) for a, b, *_ in cfg.TICK_PAIRS if (a, b) not in have]
