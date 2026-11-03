@@ -85,14 +85,6 @@
             <div class="overflow-x-auto"><table class="report-table" id="now"></table></div>
         </div>
 
-        <!-- Orders -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-            <div class="flex justify-between items-baseline flex-wrap gap-2 mb-4">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Orders <span class="normal-case font-normal text-gray-400">· 15:15 order sheet</span></h2>
-                <span class="text-xs text-gray-500" id="otime"></span>
-            </div>
-            <div class="overflow-x-auto"><table class="report-table" id="orders"></table></div>
-        </div>
 
         <!-- Positions -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
@@ -342,11 +334,6 @@
                   <td class="${pcls(ret)}">${has(ret) ? pct(ret) : ''}</td>
                   <td class="${gapCls(r.stop_gap)}">${has(r.stop_gap) ? pct(r.stop_gap) : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`; }));
 
-            document.getElementById('otime').textContent = d.orders_time ? d.orders_time.replace('T', ' ') : 'Not issued yet today';
-            table('orders', ['Item', 'Action', 'Z', 'Edge', 'Qty C', 'Qty P', 'Note'],
-                (d.orders || []).slice().sort((a, b) => ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0))).map(r => `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
-                  <td>${/EXIT|HOLD/.test(r.action) ? '' : pct(r.edge)}</td><td>${has(r.qty_C) ? Number(r.qty_C).toLocaleString() : ''}</td>
-                  <td>${has(r.qty_P) ? Number(r.qty_P).toLocaleString() : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`));
 
             table('positions', ['Item', 'Entry', 'Days', 'Qty (C / P)', 'Z', 'P&L (만원)', 'P&L %', 'To Stop', 'Rule'],
                 pos.map(r => `<tr><td>${link(r)}</td><td>${r.entry_date}</td><td>${r.days}</td><td>${r.cq} / ${r.pq}</td>
