@@ -1448,6 +1448,25 @@
             document.getElementById('preferred-share-quantity').textContent = preferredShareQuantity.toLocaleString() + ' 주';
         }
     </script>
+<script data-namefix="1">
+/* 표시용: 종목명 앞 신호등 이모지와 '(비)' 제거 */
+(function () {
+    const RE = /[🔴🟠🟡🟢🔵🟣⚪⚫🟤]️?[ \t]*|\(비\)/gu, T = /[🔴🟠🟡🟢🔵🟣⚪⚫🟤]|\(비\)/u;
+    function fix(root) {
+        if (root.nodeType === 3) { if (T.test(root.nodeValue)) root.nodeValue = root.nodeValue.replace(RE, ''); return; }
+        const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        let n; while ((n = w.nextNode())) if (T.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace(RE, '');
+        if (T.test(document.title)) document.title = document.title.replace(RE, '');
+    }
+    function start() {
+        fix(document.body);
+        new MutationObserver(ms => ms.forEach(m => {
+            if (m.type === 'characterData') fix(m.target); else m.addedNodes.forEach(fix);
+        })).observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 </body>
 
 </html>

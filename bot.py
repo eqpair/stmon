@@ -15,12 +15,34 @@ from aiogram.filters import Command
 log = logging.getLogger(__name__)
 
 
+# 텔레그램 표시용: 종목명 앞 신호등 이모지와 '(비)' 제거 (주문표의 🔴청산/🟢진입/⚪보유 표시는 유지)
+_NAME_EM = re.compile(r'[🔴🟠🟡🟢🔵🟣⚪⚫🟤]\uFE0F?[ \t]*(?=[^\s<])(?!보유)')
+
+
+def clean_names(t: str) -> str:
+    return _NAME_EM.sub('', t.replace('(비)', ''))
+
+
+try:
+    from aiogram.client.session.middlewares.base import BaseRequestMiddleware
+
+    class _CleanNames(BaseRequestMiddleware):
+        async def __call__(self, make_request, bot, method):
+            if isinstance(getattr(method, 'text', None), str):
+                method.text = clean_names(method.text)
+            return await make_request(bot, method)
+except Exception:          # 구버전 aiogram이면 생략
+    _CleanNames = None
+
+
 class TgBot:
     def __init__(self, app, token: str, chat_id: str, allowed_users=()):
         self.app = app
         self.chat_id = str(chat_id)
         self.allowed = {str(u) for u in allowed_users}
         self.bot = Bot(token=token)
+        if _CleanNames:
+            self.bot.session.middleware(_CleanNames())
         self.dp = Dispatcher()
         self._routes()
 
