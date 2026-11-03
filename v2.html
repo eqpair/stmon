@@ -302,8 +302,6 @@
                 if (vr != null && vth) chk.push(vr > vth ? ['bad', `Market vol ${vr.toFixed(2)}x > ${Number(vth).toFixed(1)}x limit`, '시장 20일 변동성이 평소(1년 중앙값)의 기준 배수 초과 → 신규 진입 쉼']
                                            : [vr >= 1.5 ? 'warn' : 'ok', `Market vol ${vr.toFixed(2)}x < ${Number(vth).toFixed(1)}x limit`, '시장 20일 변동성 ÷ 1년 중앙값']);
                 if (br != null) chk.push([br >= BR ? 'warn' : 'ok', `Signal breadth ${pct(br, 0)}` + (br >= BR ? ` ≥ ${pct(BR, 0)} · scale in` : ` < ${pct(BR, 0)}`), '전체 쌍 중 Z≥진입선인 비율. 높으면 괴리가 동시에 벌어지는 장 → 나눠서 진입']);
-                chk.push(ent.length ? ['ok', `${ent.length} pair${ent.length > 1 ? 's' : ''} meet Z ≥ ${zin} & Edge ≥ ${pct(me, 0)}`, '진입 조건을 충족한 후보 수']
-                                    : ['warn', `No pair meets Z ≥ ${zin} & Edge ≥ ${pct(me, 0)}` + (vbk.length ? ` (${vbk.length} on vol hold)` : ''), '진입 조건을 충족한 후보 없음']);
                 if (free <= 0) chk.push(['bad', `Slots full (${d.risk.slots}/${d.risk.slots})` + (ws.length ? ` · ${ws.length} waiting` : ''), '보유 슬롯이 모두 참']);
                 let dot, title;
                 if (staleNow(d, age)) { dot = 'bg-gray-400'; title = 'Data Delayed — Hold Decisions';
@@ -320,7 +318,6 @@
                     <div class="flex items-center gap-3 flex-wrap">
                         <div class="w-4 h-4 rounded-full ${dot}"></div>
                         <div class="text-2xl font-bold text-gray-800">${title}</div>
-                        <div class="text-sm text-gray-400">${liveNow(d) ? 'Live prices' : 'As of last close'}</div>
                     </div>
                     <div class="flex flex-wrap gap-2 mt-3">${chk.map(pill).join('')}</div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
