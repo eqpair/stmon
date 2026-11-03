@@ -180,3 +180,19 @@ def asking(code: str) -> tuple[float | None, float | None]:
     except ValueError:
         return None, None
     return (a or None), (b or None)
+
+
+def status(code: str) -> dict:
+    """종목 상태: 가격, 시가총액(억원), 상장주식수, 관리종목·정리매매·거래정지·시장경보"""
+    o = _call(PRICE, 'FHKST01010100', {'fid_cond_mrkt_div_code': 'J', 'fid_input_iscd': code}).get('output') or {}
+
+    def num(k):
+        try:
+            return float(o.get(k) or 0)
+        except ValueError:
+            return 0.0
+    st = str(o.get('iscd_stat_cls_code') or '')
+    return dict(price=num('stck_prpr'), cap=num('hts_avls'), shares=int(num('lstn_stcn')), stat=st,
+                mang=o.get('mang_issu_cls_code') == 'Y' or st == '51', sltr=o.get('sltr_yn') == 'Y',
+                stop=o.get('temp_stop_yn') == 'Y' or st == '58', warn=str(o.get('mrkt_warn_cls_code') or '00'),
+                caful=o.get('invt_caful_yn') == 'Y')

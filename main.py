@@ -198,6 +198,11 @@ class App:
 
     async def job_close(self):
         res = await asyncio.to_thread(data.update_all, date.today(), self.pairs)
+        try:
+            risk_new = await asyncio.to_thread(data.update_listing, self.pairs)
+        except Exception as e:
+            log.warning(f'상장 위험 점검 실패: {e}')
+            risk_new = []
         stale = [f"{self.names.get(c, c)} ({c}) · 마지막 거래 {m.split()[1]}" for c, m in res if m.startswith('stale')]
         bad = [f'{c}:{m}' for c, m in res if m != 'ok' and not m.startswith('stale')]
         await asyncio.to_thread(self.reload)
@@ -211,6 +216,10 @@ class App:
             if stale:
                 await self.send('⛔ 거래 없음 — 상장폐지·거래정지 의심 (진입 후보에서는 자동 제외)\n' + '\n'.join(stale)
                                 + '\n쌍 목록(config.py TICK_PAIRS)에서 빼는 걸 검토하세요.')
+            if risk_new:
+                await self.send('🚫 상장 유지 위험 — 새로 걸린 쌍\n' + '\n'.join(
+                    f"{'⛔' if b else '⚠️'} {self.names.get(a, a)} — {t}" for a, t, b in risk_new)
+                    + '\n⛔ 는 진입 후보에서 자동 제외')
             if date.today().weekday() == 4:
                 await self.send(self.text_report())
 

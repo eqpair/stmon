@@ -144,6 +144,16 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
     vol_hot = bool(vol_block and vol_ratio is not None and vol_ratio == vol_ratio and vol_ratio > vol_block)
     if vol_hot:                                  # 시장 고변동: 신규 진입 쉼
         df.loc[df.action == 'CAND', 'action'] = 'BLOCKED_VOL'
+    # 상장 유지 위험(우선주 시총 20억 미만·관리종목·거래정지·정리매매 등) — data/listing.json
+    for i in df.index:
+        x = liq.get(df.at[i, 'code']) or {}
+        if df.at[i, 'action'] == 'CAND' and x.get('block'):
+            df.at[i, 'action'] = 'BLOCKED_RISK'
+            df.at[i, 'note'] = '상장폐지 위험: ' + x['block']
+        elif bool(df.at[i, 'held']) and (x.get('block') or x.get('warn')):
+            df.at[i, 'note'] = '⚠ ' + (x.get('block') or x.get('warn'))
+        elif df.at[i, 'action'] == 'CAND' and x.get('warn'):
+            df.at[i, 'note'] = '주의: ' + x['warn']
     # 종목별 최대 레그(거래대금 기준)
     ML = {c: max_leg(liq, c, risk) for c in df.code}
     DL = {c: day_leg(liq, c, risk) for c in df.code}
@@ -213,10 +223,13 @@ def fmt_orders(df: pd.DataFrame, prm: Params, model_open=None) -> str:
         L.append(f"🟢 <b>진입</b> {r['name']}  Z {r.z:+.2f} · 기대 {r.edge:.1%}{q}")
     for _, r in df[df.action == 'HOLD'].iterrows():
         L.append(f"⚪ 보유 {r['name']}  Z {r.z:+.2f} · {r.pnl_won / 1e4:+,.0f}만원 ({r.pnl_ret:+.1%}) · 손절까지 {r.stop_gap:.1%}")
-    for act, label in [('WAIT_SLOT', '⏳ 슬롯 부족'), ('BLOCKED_BAN', '⛔ 공매도 금지기간'), ('BLOCKED_LIQ', '💧 거래대금 부족'), ('BLOCKED_VOL', '🌪 시장 고변동(신규 진입 쉼)')]:
+    for act, label in [('WAIT_SLOT', '⏳ 슬롯 부족'), ('BLOCKED_BAN', '⛔ 공매도 금지기간'), ('BLOCKED_LIQ', '💧 거래대금 부족'), ('BLOCKED_VOL', '🌪 시장 고변동(신규 진입 쉼)'), ('BLOCKED_RISK', '🚫 상장폐지 위험')]:
         x = df[df.action == act]
         if len(x):
             L.append(f"{label}: " + ', '.join(x['name']))
+    if 'note' in df:
+        for _, r in df[df.held & df.note.astype(str).str.startswith('⚠')].iterrows():
+            L.append(f"🚨 보유 쌍 상장 위험: {r['name']} — {r.note[2:]}")
     if len(ex) == 0 and len(en) == 0:
         L.append('오늘 주문 없음')
     if model_open is not None:

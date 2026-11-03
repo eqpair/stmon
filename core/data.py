@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST = os.path.join(ROOT, 'data', 'history')
 LIQ = os.path.join(ROOT, 'data', 'liquidity.json')
+LISTING = os.path.join(ROOT, 'data', 'listing.json')
 UA = {'User-Agent': 'Mozilla/5.0'}
 
 
@@ -174,10 +175,71 @@ def update_all(today: date | None = None, pairs=None) -> list[tuple[str, str]]:
 
 
 def liquidity() -> dict:
+    """{보통주코드: {'C': 거래대금, 'P': 거래대금, 'block': 차단 사유, 'warn': 주의 사유}}"""
     try:
-        return json.load(open(LIQ, encoding='utf-8')).get('avg20_value', {})
+        liq = json.load(open(LIQ, encoding='utf-8')).get('avg20_value', {})
     except Exception:
-        return {}
+        liq = {}
+    try:
+        for a, v in json.load(open(LISTING, encoding='utf-8')).get('pairs', {}).items():
+            liq.setdefault(a, {}).update(block=v.get('block', ''), warn=v.get('warn', ''))
+    except Exception:
+        pass
+    return liq
+
+
+# ---------------------------------------------------------------- 상장 유지 위험
+PREF_CAP_MIN, PREF_CAP_WARN, PREF_SHARES_MIN, COMMON_CAP_WARN = 20, 30, 50_000, 500   # 억원, 주
+WARN_NAME = {'01': '투자주의', '02': '투자경고', '03': '투자위험'}
+
+
+def listing_flags(c: dict | None, p: dict | None) -> tuple[str, str]:
+    block, warn = [], []
+    for side, x in (('보통주', c), ('우선주', p)):
+        if not x:
+            continue
+        if x['sltr']:
+            block.append(f'{side} 정리매매')
+        if x['mang']:
+            block.append(f'{side} 관리종목')
+        if x['stop']:
+            block.append(f'{side} 거래정지')
+        if not x['price'] and not (x['sltr'] or x['stop']):
+            block.append(f'{side} 가격 없음')
+        if x['warn'] not in ('00', '', '0'):
+            warn.append(f"{side} {WARN_NAME.get(x['warn'], '시장경보 ' + x['warn'])}")
+    if p and p['price']:
+        if p['cap'] < PREF_CAP_MIN:
+            block.append(f"우선주 시총 {p['cap']:.0f}억 < {PREF_CAP_MIN}억")
+        elif p['cap'] < PREF_CAP_WARN:
+            warn.append(f"우선주 시총 {p['cap']:.0f}억 (기준 {PREF_CAP_MIN}억 근접)")
+        if 0 < p['shares'] < PREF_SHARES_MIN:
+            warn.append(f"우선주 상장주식 {p['shares']:,}주 < 5만주")
+    if c and c['price'] and c['cap'] < COMMON_CAP_WARN:
+        warn.append(f"보통주 시총 {c['cap']:.0f}억 (2027년 기준 {COMMON_CAP_WARN}억 미만)")
+    return '; '.join(block), '; '.join(warn)
+
+
+def update_listing(pairs=None) -> list[tuple[str, str, bool]]:
+    """KIS 종목 상태로 data/listing.json 갱신. 반환: 새로 걸리거나 사유가 바뀐 쌍 [(코드, 사유, 차단여부)]"""
+    from core import kis
+    try:
+        prev = json.load(open(LISTING, encoding='utf-8')).get('pairs', {})
+    except Exception:
+        prev = {}
+    out = {}
+    for a, b in (pairs or pair_files()):
+        try:
+            c, p = kis.status(a), kis.status(b)
+        except Exception as e:
+            log.warning(f'종목 상태 조회 실패 {a}/{b}: {e}')
+            continue
+        blk, wrn = listing_flags(c, p)
+        out[a] = dict(pref=b, C=c, P=p, block=blk, warn=wrn)
+    if out:
+        write_json({'updated': datetime.now().isoformat(timespec='seconds'), 'pairs': out}, LISTING)
+    return [(a, v['block'] or v['warn'], bool(v['block'])) for a, v in out.items()
+            if (v['block'] or v['warn']) and (v['block'], v['warn']) != (prev.get(a, {}).get('block', ''), prev.get(a, {}).get('warn', ''))]
 
 
 # ---------------------------------------------------------------- 현재가

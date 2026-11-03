@@ -119,7 +119,7 @@
         const link = r => `<span class="clickable-item"><a href="trade-detail.html?code=${r.code}&name=${encodeURIComponent(r.name || '')}">${nm(r.name)}</a></span>`;
         const gapCls = g => !has(g) ? '' : (g < 0 ? 'stop-over' : (g < 0.05 ? 'stop-near' : ''));
         const ACT = { ENTER: 'Enter', EXIT_TARGET: 'Exit · Target', EXIT_STOP: 'Exit · Stop', EXIT_TIME: 'Exit · Time', HOLD: 'Hold',
-                      WAIT_SLOT: 'Wait · Slot', BLOCKED_BAN: 'Blocked · Ban', BLOCKED_LIQ: 'Blocked · Liquidity', BLOCKED_VOL: 'Blocked · Vol', WATCH: 'Watch' };
+                      WAIT_SLOT: 'Wait · Slot', BLOCKED_BAN: 'Blocked · Ban', BLOCKED_LIQ: 'Blocked · Liquidity', BLOCKED_VOL: 'Blocked · Vol', BLOCKED_RISK: 'Blocked · Delist Risk', WATCH: 'Watch' };
         const tag = a => `<span class="signal-tag ${/ENTER|EXIT/.test(a) ? 'strong' : ''}">${ACT[a] || a}</span>`;
 
         function table(el, head, rows) {
@@ -264,7 +264,7 @@
             const open = pos.reduce((a, r) => a + (r.pnl_won || 0), 0);
             const last = eq.length ? eq[eq.length - 1] : null;
 
-            const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, BLOCKED_VOL: 6, HOLD: 7 };
+            const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, ENTER: 3, WAIT_SLOT: 4, BLOCKED_BAN: 5, BLOCKED_LIQ: 6, BLOCKED_VOL: 6, BLOCKED_RISK: 6, HOLD: 7 };
             const lo = (d.live_orders || []).slice().sort((a, b) =>
                 ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0)));
             // ---- Entry gate: 조건별 판정을 그대로 보여줌
