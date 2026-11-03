@@ -86,11 +86,6 @@
         </div>
 
 
-        <!-- Positions -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Positions</h2>
-            <div class="overflow-x-auto"><table class="report-table" id="positions"></table></div>
-        </div>
 
         <div class="mb-6">
             <!-- Watchlist -->
@@ -334,11 +329,6 @@
                   <td class="${gapCls(r.stop_gap)}">${has(r.stop_gap) ? pct(r.stop_gap) : ''}</td><td class="text-gray-500">${has(r.note) ? r.note : ''}</td></tr>`; }));
 
 
-            table('positions', ['Item', 'Entry', 'Days', 'Qty<br>C / P', 'Z', 'P&L', 'P&L %', 'To Stop', 'Rule'],
-                pos.map(r => `<tr><td>${link(r)}</td><td>${r.entry_date}</td><td>${r.days}</td><td>${r.cq} / ${r.pq}</td>
-                  <td class="${zcls(r.z)}">${z2(r.z)}</td><td class="${pcls(r.pnl_won)}">${man(r.pnl_won)}</td>
-                  <td class="${pcls(r.pnl_ret)}">${pct(r.pnl_ret)}</td><td class="${gapCls(r.stop_gap)}">${pct(r.stop_gap)}</td>
-                  <td>${r.exit ? `<span class="signal-tag strong">${r.exit}</span>` : ''}</td></tr>`));
 
             table('watch', ['Item', 'Z', 'Edge', 'Max<br>/ Stock', '1-Day<br>/ Stock', 'Status'],
                 (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td><td class="${mlc(r.code)}">${mlt(r.code)}</td><td>${dlt(r.code)}</td>
