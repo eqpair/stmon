@@ -853,7 +853,8 @@
                     cleanName = cleanName.replace(/^[\u{1F534}\u{1F7E0}\u{1F7E2}\u{1F535}]\s+/u, '');
                     cleanName = cleanName.replace(/-\d+(\.\d+)?-$/, '').replace(/\s*\(\d+(\.\d+)?\)$/, '');
                     cleanName = cleanName.replace(/\s*\[[^\]]*\]$/, '').trim();
-                    return cleanName.trim();
+            cleanName = cleanName.replace(/\(비\)/g, '').trim();
+                    return cleanName.replace(/\(비\)/g, '').trim();
                 };
 
                 const normalizedCurrentName = normalizeStockName(stockName);
@@ -1449,7 +1450,7 @@
         }
     </script>
 <script data-namefix="1">
-/* 표시용: 종목명 앞 신호등 이모지와 '(비)' 제거 */
+/* 표시용: 종목명 앞 신호등 이모지와 '' 제거 */
 (function () {
     const RE = /[🔴🟠🟡🟢🔵🟣⚪⚫🟤]️?[ \t]*|\(비\)/gu, T = /[🔴🟠🟡🟢🔵🟣⚪⚫🟤]|\(비\)/u;
     function fix(root) {
