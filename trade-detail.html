@@ -603,7 +603,9 @@
                 stockData.history.commonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 stockData.history.preferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
                 // v2: Z = (ln(보통주/우선주) - 직전 120일 평균) / 직전 120일 표준편차  (ln(C/P) = -ln(1 - 괴리율))
-                const windowData = trendData.discount_rates ? trendData.discount_rates.slice(-(SZ_WINDOW + 1), -1).filter(v => v != null).map(toSpread) : [];
+                const _today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);   // KST 오늘 — 서버와 같이 '오늘 이전 120일'
+                const _dts = trendData.dates || [], _drs = trendData.discount_rates || [];
+                const windowData = _drs.filter((v, i) => v != null && _dts[i] < _today).slice(-SZ_WINDOW).map(toSpread);
 
                 if (!windowData.length) {
                     console.warn('windowData is empty. Mean and StdDev will be set to 0.');
