@@ -100,6 +100,7 @@ class App:
     def compute_snapshot(self, live: dict):
         self.snap = decide.snapshot(self.hist, live, self.pairs, self.names, self.prm, self.pp, self.armed,
                                     ledger.open_positions())
+        self.snap['excluded'] = self.snap.code.map(lambda c: bool((self.liq.get(c) or {}).get('excluded')))
         return self.snap
 
     def backtest_curve(self):
@@ -199,7 +200,7 @@ class App:
     async def job_close(self):
         res = await asyncio.to_thread(data.update_all, date.today(), self.pairs)
         try:
-            risk_new = await asyncio.to_thread(data.update_listing, self.pairs)
+            risk_new = await asyncio.to_thread(data.update_listing, self.pairs, self.risk.leg_min, self.risk.adv_mult)
         except Exception as e:
             log.warning(f'상장 위험 점검 실패: {e}')
             risk_new = []
@@ -217,9 +218,8 @@ class App:
                 await self.send('⛔ 거래 없음 — 상장폐지·거래정지 의심 (진입 후보에서는 자동 제외)\n' + '\n'.join(stale)
                                 + '\n쌍 목록(config.py TICK_PAIRS)에서 빼는 걸 검토하세요.')
             if risk_new:
-                await self.send('🚫 상장 유지 위험 — 새로 걸린 쌍\n' + '\n'.join(
-                    f"{'⛔' if b else '⚠️'} {self.names.get(a, a)} — {t}" for a, t, b in risk_new)
-                    + '\n⛔ 는 진입 후보에서 자동 제외')
+                await self.send('🧺 포트 편입 변경\n' + '\n'.join(
+                    (f"⛔ 제외 {self.names.get(a, a)} — {t}" if b else f"✅ 복귀 {self.names.get(a, a)}") for a, t, b in risk_new))
             if date.today().weekday() == 4:
                 await self.send(self.text_report())
 

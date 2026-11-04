@@ -147,6 +147,12 @@ def orders(snap: pd.DataFrame, prm: Params, risk: Risk, blackout, liq: dict, tod
     # 상장 유지 위험(우선주 시총 20억 미만·관리종목·거래정지·정리매매 등) — data/listing.json
     for i in df.index:
         x = liq.get(df.at[i, 'code']) or {}
+        if x.get('excluded'):                     # 포트 편입 자격 없음 → 진입·표시 안 함(보유 중이면 경고만)
+            if bool(df.at[i, 'held']):
+                df.at[i, 'note'] = '⚠ 포트 제외: ' + x['excluded']
+            else:
+                df.at[i, 'action'] = ''
+            continue
         if df.at[i, 'action'] == 'CAND' and x.get('block'):
             df.at[i, 'action'] = 'BLOCKED_RISK'
             df.at[i, 'note'] = '상장폐지 위험: ' + x['block']

@@ -1,11 +1,11 @@
 {
- "updated": "2026-11-04T08:56:05",
+ "updated": "2026-11-04T09:07:44",
  "pairs": {
   "005930": {
    "pref": "005935",
    "C": {
-    "price": 219500.0,
-    "cap": 12832582.0,
+    "price": 226500.0,
+    "cap": 13241821.0,
     "shares": 5846278608,
     "stat": "55",
     "mang": false,
@@ -15,8 +15,8 @@
     "caful": false
    },
    "P": {
-    "price": 171600.0,
-    "cap": 1376869.0,
+    "price": 177800.0,
+    "cap": 1426616.0,
     "shares": 802371203,
     "stat": "55",
     "mang": false,
@@ -26,40 +26,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
-  },
-  "450140": {
-   "pref": "45014K",
-   "C": {
-    "price": 0.0,
-    "cap": 0.0,
-    "shares": 0,
-    "stat": "00",
-    "mang": false,
-    "sltr": false,
-    "stop": false,
-    "warn": "00",
-    "caful": false
-   },
-   "P": {
-    "price": 0.0,
-    "cap": 0.0,
-    "shares": 0,
-    "stat": "00",
-    "mang": false,
-    "sltr": false,
-    "stop": false,
-    "warn": "00",
-    "caful": false
-   },
-   "block": "보통주 가격 없음; 우선주 가격 없음",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "004100": {
    "pref": "004105",
    "C": {
-    "price": 2730.0,
-    "cap": 1002.0,
+    "price": 2710.0,
+    "cap": 995.0,
     "shares": 36700000,
     "stat": "57",
     "mang": false,
@@ -69,8 +43,8 @@
     "caful": false
    },
    "P": {
-    "price": 3960.0,
-    "cap": 131.0,
+    "price": 3900.0,
+    "cap": 129.0,
     "shares": 3300000,
     "stat": "57",
     "mang": false,
@@ -80,13 +54,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "004250": {
    "pref": "004255",
    "C": {
-    "price": 2515.0,
-    "cap": 924.0,
+    "price": 2520.0,
+    "cap": 925.0,
     "shares": 36720000,
     "stat": "55",
     "mang": false,
@@ -96,7 +71,7 @@
     "caful": false
    },
    "P": {
-    "price": 1848.0,
+    "price": 1859.0,
     "cap": 98.0,
     "shares": 5280000,
     "stat": "57",
@@ -107,13 +82,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 1,403만 < 2,000만)"
   },
   "001790": {
    "pref": "001795",
    "C": {
-    "price": 2755.0,
-    "cap": 2376.0,
+    "price": 2760.0,
+    "cap": 2380.0,
     "shares": 86241915,
     "stat": "55",
     "mang": false,
@@ -134,13 +110,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "004830": {
    "pref": "004835",
    "C": {
-    "price": 2935.0,
-    "cap": 460.0,
+    "price": 2975.0,
+    "cap": 466.0,
     "shares": 15680000,
     "stat": "57",
     "mang": false,
@@ -150,8 +127,8 @@
     "caful": false
    },
    "P": {
-    "price": 4400.0,
-    "cap": 61.0,
+    "price": 4670.0,
+    "cap": 65.0,
     "shares": 1392000,
     "stat": "57",
     "mang": false,
@@ -161,13 +138,14 @@
     "caful": false
    },
    "block": "",
-   "warn": "보통주 시총 460억 (2027년 기준 500억 미만)"
+   "warn": "보통주 시총 466억 (2027년 기준 500억 미만)",
+   "excluded": "보통주 시총 466억 (2027년 기준 500억 미만)"
   },
   "007810": {
    "pref": "007815",
    "C": {
-    "price": 71200.0,
-    "cap": 17076.0,
+    "price": 78100.0,
+    "cap": 18730.0,
     "shares": 23982620,
     "stat": "55",
     "mang": false,
@@ -177,8 +155,8 @@
     "caful": false
    },
    "P": {
-    "price": 18050.0,
-    "cap": 535.0,
+    "price": 18370.0,
+    "cap": 545.0,
     "shares": 2964690,
     "stat": "57",
     "mang": false,
@@ -188,13 +166,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "002020": {
    "pref": "002025",
    "C": {
-    "price": 20100.0,
-    "cap": 2594.0,
+    "price": 20250.0,
+    "cap": 2614.0,
     "shares": 12907680,
     "stat": "55",
     "mang": false,
@@ -215,13 +194,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "005380": {
    "pref": "005385",
    "C": {
-    "price": 277500.0,
-    "cap": 564620.0,
+    "price": 278500.0,
+    "cap": 566654.0,
     "shares": 203466492,
     "stat": "55",
     "mang": false,
@@ -231,8 +211,8 @@
     "caful": false
    },
    "P": {
-    "price": 148000.0,
-    "cap": 33802.0,
+    "price": 148800.0,
+    "cap": 33984.0,
     "shares": 22839037,
     "stat": "55",
     "mang": false,
@@ -242,13 +222,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "003540": {
    "pref": "003545",
    "C": {
-    "price": 22250.0,
-    "cap": 10260.0,
+    "price": 22550.0,
+    "cap": 10398.0,
     "shares": 46112489,
     "stat": "55",
     "mang": false,
@@ -258,8 +239,8 @@
     "caful": false
    },
    "P": {
-    "price": 18390.0,
-    "cap": 4335.0,
+    "price": 18480.0,
+    "cap": 4357.0,
     "shares": 23575001,
     "stat": "55",
     "mang": false,
@@ -269,7 +250,8 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "004980": {
    "pref": "004985",
@@ -285,7 +267,7 @@
     "caful": false
    },
    "P": {
-    "price": 8220.0,
+    "price": 8180.0,
     "cap": 60.0,
     "shares": 735645,
     "stat": "57",
@@ -296,7 +278,8 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 1,073만 < 2,000만)"
   },
   "003070": {
    "pref": "003075",
@@ -323,13 +306,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 956만 < 2,000만)"
   },
   "005940": {
    "pref": "005945",
    "C": {
-    "price": 23850.0,
-    "cap": 88056.0,
+    "price": 24050.0,
+    "cap": 88794.0,
     "shares": 369206105,
     "stat": "55",
     "mang": false,
@@ -339,8 +323,8 @@
     "caful": false
    },
    "P": {
-    "price": 20600.0,
-    "cap": 3887.0,
+    "price": 20850.0,
+    "cap": 3935.0,
     "shares": 18870968,
     "stat": "55",
     "mang": false,
@@ -350,13 +334,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "019170": {
    "pref": "019175",
    "C": {
-    "price": 8260.0,
-    "cap": 4330.0,
+    "price": 8280.0,
+    "cap": 4340.0,
     "shares": 52418522,
     "stat": "57",
     "mang": false,
@@ -377,13 +362,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "066570": {
    "pref": "066575",
    "C": {
-    "price": 144500.0,
-    "cap": 235368.0,
+    "price": 149200.0,
+    "cap": 243024.0,
     "shares": 162884638,
     "stat": "55",
     "mang": false,
@@ -393,8 +379,8 @@
     "caful": false
    },
    "P": {
-    "price": 54000.0,
-    "cap": 9278.0,
+    "price": 55700.0,
+    "cap": 9570.0,
     "shares": 17181299,
     "stat": "55",
     "mang": false,
@@ -404,7 +390,8 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "009830": {
    "pref": "009835",
@@ -420,8 +407,8 @@
     "caful": false
    },
    "P": {
-    "price": 14690.0,
-    "cap": 374.0,
+    "price": 14520.0,
+    "cap": 369.0,
     "shares": 2544616,
     "stat": "57",
     "mang": false,
@@ -431,13 +418,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "004360": {
    "pref": "004365",
    "C": {
-    "price": 12520.0,
-    "cap": 2393.0,
+    "price": 12580.0,
+    "cap": 2405.0,
     "shares": 19115603,
     "stat": "55",
     "mang": false,
@@ -458,13 +446,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "003530": {
    "pref": "003535",
    "C": {
-    "price": 3940.0,
-    "cap": 10423.0,
+    "price": 3995.0,
+    "cap": 10569.0,
     "shares": 264547775,
     "stat": "55",
     "mang": false,
@@ -474,8 +463,8 @@
     "caful": false
    },
    "P": {
-    "price": 5630.0,
-    "cap": 270.0,
+    "price": 5580.0,
+    "cap": 268.0,
     "shares": 4800000,
     "stat": "57",
     "mang": false,
@@ -485,13 +474,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "051900": {
    "pref": "051905",
    "C": {
-    "price": 262000.0,
-    "cap": 39236.0,
+    "price": 228500.0,
+    "cap": 34219.0,
     "shares": 14975523,
     "stat": "55",
     "mang": false,
@@ -501,8 +491,8 @@
     "caful": false
    },
    "P": {
-    "price": 97300.0,
-    "cap": 2040.0,
+    "price": 89700.0,
+    "cap": 1880.0,
     "shares": 2096259,
     "stat": "55",
     "mang": false,
@@ -512,13 +502,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "090430": {
    "pref": "090435",
    "C": {
-    "price": 130100.0,
-    "cap": 76099.0,
+    "price": 127600.0,
+    "cap": 74637.0,
     "shares": 58492759,
     "stat": "55",
     "mang": false,
@@ -528,8 +519,8 @@
     "caful": false
    },
    "P": {
-    "price": 37450.0,
-    "cap": 3954.0,
+    "price": 36850.0,
+    "cap": 3891.0,
     "shares": 10557830,
     "stat": "55",
     "mang": false,
@@ -539,13 +530,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "051910": {
    "pref": "051915",
    "C": {
-    "price": 237500.0,
-    "cap": 167657.0,
+    "price": 239000.0,
+    "cap": 168716.0,
     "shares": 70592341,
     "stat": "55",
     "mang": false,
@@ -555,8 +547,8 @@
     "caful": false
    },
    "P": {
-    "price": 105700.0,
-    "cap": 8121.0,
+    "price": 109600.0,
+    "cap": 8420.0,
     "shares": 7682759,
     "stat": "55",
     "mang": false,
@@ -566,13 +558,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "002790": {
    "pref": "002795",
    "C": {
-    "price": 26900.0,
-    "cap": 20567.0,
+    "price": 26400.0,
+    "cap": 20185.0,
     "shares": 76458180,
     "stat": "55",
     "mang": false,
@@ -582,8 +575,8 @@
     "caful": false
    },
    "P": {
-    "price": 10620.0,
-    "cap": 678.0,
+    "price": 10610.0,
+    "cap": 677.0,
     "shares": 6381172,
     "stat": "57",
     "mang": false,
@@ -593,13 +586,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "003490": {
    "pref": "003495",
    "C": {
-    "price": 29150.0,
-    "cap": 107336.0,
+    "price": 29850.0,
+    "cap": 109914.0,
     "shares": 368220609,
     "stat": "55",
     "mang": false,
@@ -609,8 +603,8 @@
     "caful": false
    },
    "P": {
-    "price": 22500.0,
-    "cap": 250.0,
+    "price": 20300.0,
+    "cap": 225.0,
     "shares": 1110791,
     "stat": "57",
     "mang": false,
@@ -620,13 +614,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "010950": {
    "pref": "010955",
    "C": {
-    "price": 114700.0,
-    "cap": 129132.0,
+    "price": 116900.0,
+    "cap": 131609.0,
     "shares": 112582792,
     "stat": "55",
     "mang": false,
@@ -636,8 +631,8 @@
     "caful": false
    },
    "P": {
-    "price": 69000.0,
-    "cap": 2775.0,
+    "price": 70100.0,
+    "cap": 2819.0,
     "shares": 4021927,
     "stat": "55",
     "mang": false,
@@ -647,13 +642,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "180640": {
    "pref": "18064K",
    "C": {
-    "price": 175200.0,
-    "cap": 116968.0,
+    "price": 170000.0,
+    "cap": 113496.0,
     "shares": 66762275,
     "stat": "55",
     "mang": false,
@@ -663,8 +659,8 @@
     "caful": false
    },
    "P": {
-    "price": 39000.0,
-    "cap": 207.0,
+    "price": 41400.0,
+    "cap": 220.0,
     "shares": 530297,
     "stat": "57",
     "mang": false,
@@ -674,13 +670,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "001510": {
    "pref": "001515",
    "C": {
-    "price": 1882.0,
-    "cap": 4353.0,
+    "price": 1916.0,
+    "cap": 4432.0,
     "shares": 231295085,
     "stat": "55",
     "mang": false,
@@ -690,8 +687,8 @@
     "caful": false
    },
    "P": {
-    "price": 3525.0,
-    "cap": 69.0,
+    "price": 3575.0,
+    "cap": 70.0,
     "shares": 1956257,
     "stat": "59",
     "mang": false,
@@ -701,13 +698,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "071050": {
    "pref": "071055",
    "C": {
-    "price": 147600.0,
-    "cap": 82252.0,
+    "price": 150200.0,
+    "cap": 83700.0,
     "shares": 55725992,
     "stat": "55",
     "mang": false,
@@ -717,8 +715,8 @@
     "caful": false
    },
    "P": {
-    "price": 125000.0,
-    "cap": 7323.0,
+    "price": 126000.0,
+    "cap": 7381.0,
     "shares": 5858251,
     "stat": "55",
     "mang": false,
@@ -728,13 +726,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "363280": {
    "pref": "36328K",
    "C": {
-    "price": 1830.0,
-    "cap": 833.0,
+    "price": 1826.0,
+    "cap": 831.0,
     "shares": 45497333,
     "stat": "57",
     "mang": false,
@@ -744,7 +743,7 @@
     "caful": false
    },
    "P": {
-    "price": 2725.0,
+    "price": 2740.0,
     "cap": 32.0,
     "shares": 1174949,
     "stat": "57",
@@ -755,13 +754,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "006800": {
    "pref": "006805",
    "C": {
-    "price": 24350.0,
-    "cap": 132226.0,
+    "price": 24650.0,
+    "cap": 133855.0,
     "shares": 543021051,
     "stat": "55",
     "mang": false,
@@ -771,8 +771,8 @@
     "caful": false
    },
    "P": {
-    "price": 9620.0,
-    "cap": 1294.0,
+    "price": 9860.0,
+    "cap": 1327.0,
     "shares": 13454133,
     "stat": "57",
     "mang": false,
@@ -782,13 +782,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "005960": {
    "pref": "005965",
    "C": {
-    "price": 7580.0,
-    "cap": 1739.0,
+    "price": 7650.0,
+    "cap": 1755.0,
     "shares": 22946663,
     "stat": "55",
     "mang": false,
@@ -798,7 +799,7 @@
     "caful": false
    },
    "P": {
-    "price": 15850.0,
+    "price": 16000.0,
     "cap": 36.0,
     "shares": 225732,
     "stat": "57",
@@ -809,13 +810,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 803만 < 2,000만)"
   },
   "264900": {
    "pref": "26490K",
    "C": {
-    "price": 7160.0,
-    "cap": 897.0,
+    "price": 7120.0,
+    "cap": 892.0,
     "shares": 12523850,
     "stat": "57",
     "mang": false,
@@ -836,13 +838,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 611만 < 2,000만)"
   },
   "000150": {
    "pref": "000155",
    "C": {
-    "price": 841000.0,
-    "cap": 119737.0,
+    "price": 900000.0,
+    "cap": 128137.0,
     "shares": 14237411,
     "stat": "55",
     "mang": false,
@@ -852,8 +855,8 @@
     "caful": false
    },
    "P": {
-    "price": 299000.0,
-    "cap": 10262.0,
+    "price": 317000.0,
+    "cap": 10880.0,
     "shares": 3432220,
     "stat": "57",
     "mang": false,
@@ -863,13 +866,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "008350": {
    "pref": "008355",
    "C": {
-    "price": 1062.0,
-    "cap": 1371.0,
+    "price": 1060.0,
+    "cap": 1368.0,
     "shares": 129079090,
     "stat": "57",
     "mang": false,
@@ -879,7 +883,7 @@
     "caful": false
    },
    "P": {
-    "price": 6980.0,
+    "price": 6720.0,
     "cap": 21.0,
     "shares": 307890,
     "stat": "57",
@@ -890,13 +894,14 @@
     "caful": false
    },
    "block": "",
-   "warn": "우선주 시총 21억 (기준 20억 근접)"
+   "warn": "우선주 시총 21억 (기준 20억 근접)",
+   "excluded": "우선주 시총 21억 (기준 20억 근접)"
   },
   "011780": {
    "pref": "011785",
    "C": {
-    "price": 107300.0,
-    "cap": 26739.0,
+    "price": 107000.0,
+    "cap": 26664.0,
     "shares": 24919697,
     "stat": "55",
     "mang": false,
@@ -917,13 +922,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "005720": {
    "pref": "005725",
    "C": {
-    "price": 6190.0,
-    "cap": 3252.0,
+    "price": 6210.0,
+    "cap": 3263.0,
     "shares": 52543977,
     "stat": "55",
     "mang": false,
@@ -944,13 +950,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 522만 < 2,000만)"
   },
   "108670": {
    "pref": "108675",
    "C": {
-    "price": 28200.0,
-    "cap": 2529.0,
+    "price": 28350.0,
+    "cap": 2542.0,
     "shares": 8967670,
     "stat": "55",
     "mang": false,
@@ -960,7 +967,7 @@
     "caful": false
    },
    "P": {
-    "price": 17460.0,
+    "price": 17450.0,
     "cap": 180.0,
     "shares": 1032330,
     "stat": "57",
@@ -971,13 +978,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "000810": {
    "pref": "000815",
    "C": {
-    "price": 651000.0,
-    "cap": 290655.0,
+    "price": 652000.0,
+    "cap": 291102.0,
     "shares": 44647473,
     "stat": "55",
     "mang": false,
@@ -987,8 +995,8 @@
     "caful": false
    },
    "P": {
-    "price": 387000.0,
-    "cap": 11637.0,
+    "price": 389000.0,
+    "cap": 11697.0,
     "shares": 3007020,
     "stat": "55",
     "mang": false,
@@ -998,13 +1006,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "084690": {
    "pref": "084695",
    "C": {
-    "price": 7300.0,
-    "cap": 2644.0,
+    "price": 7210.0,
+    "cap": 2611.0,
     "shares": 36212538,
     "stat": "55",
     "mang": false,
@@ -1025,13 +1034,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "285130": {
    "pref": "28513K",
    "C": {
-    "price": 41600.0,
-    "cap": 7196.0,
+    "price": 41500.0,
+    "cap": 7179.0,
     "shares": 17298766,
     "stat": "55",
     "mang": false,
@@ -1041,8 +1051,8 @@
     "caful": false
    },
    "P": {
-    "price": 23500.0,
-    "cap": 497.0,
+    "price": 23550.0,
+    "cap": 498.0,
     "shares": 2115429,
     "stat": "57",
     "mang": false,
@@ -1052,40 +1062,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
-  },
-  "032680": {
-   "pref": "032685",
-   "C": {
-    "price": 857.0,
-    "cap": 198.0,
-    "shares": 23055881,
-    "stat": "57",
-    "mang": false,
-    "sltr": false,
-    "stop": false,
-    "warn": "00",
-    "caful": false
-   },
-   "P": {
-    "price": 0.0,
-    "cap": 0.0,
-    "shares": 71362,
-    "stat": "51",
-    "mang": true,
-    "sltr": true,
-    "stop": false,
-    "warn": "00",
-    "caful": false
-   },
-   "block": "우선주 정리매매; 우선주 관리종목",
-   "warn": "보통주 시총 198억 (2027년 기준 500억 미만)"
+   "warn": "",
+   "excluded": ""
   },
   "009150": {
    "pref": "009155",
    "C": {
-    "price": 1105000.0,
-    "cap": 825365.0,
+    "price": 1149000.0,
+    "cap": 858231.0,
     "shares": 74693696,
     "stat": "55",
     "mang": false,
@@ -1095,8 +1079,8 @@
     "caful": false
    },
    "P": {
-    "price": 384500.0,
-    "cap": 11177.0,
+    "price": 397000.0,
+    "cap": 11541.0,
     "shares": 2906984,
     "stat": "55",
     "mang": false,
@@ -1106,13 +1090,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "000320": {
    "pref": "000325",
    "C": {
-    "price": 13940.0,
-    "cap": 1853.0,
+    "price": 14220.0,
+    "cap": 1890.0,
     "shares": 13291151,
     "stat": "55",
     "mang": false,
@@ -1133,13 +1118,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 252만 < 2,000만)"
   },
   "003550": {
    "pref": "003555",
    "C": {
-    "price": 94700.0,
-    "cap": 143179.0,
+    "price": 95900.0,
+    "cap": 144993.0,
     "shares": 151192004,
     "stat": "55",
     "mang": false,
@@ -1149,8 +1135,8 @@
     "caful": false
    },
    "P": {
-    "price": 62400.0,
-    "cap": 1879.0,
+    "price": 62800.0,
+    "cap": 1891.0,
     "shares": 3011199,
     "stat": "55",
     "mang": false,
@@ -1160,13 +1146,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "006400": {
    "pref": "006405",
    "C": {
-    "price": 488500.0,
-    "cap": 393660.0,
+    "price": 504000.0,
+    "cap": 406151.0,
     "shares": 80585530,
     "stat": "55",
     "mang": false,
@@ -1176,8 +1163,8 @@
     "caful": false
    },
    "P": {
-    "price": 204000.0,
-    "cap": 3301.0,
+    "price": 207000.0,
+    "cap": 3349.0,
     "shares": 1617896,
     "stat": "55",
     "mang": false,
@@ -1187,13 +1174,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "120110": {
    "pref": "120115",
    "C": {
-    "price": 40100.0,
-    "cap": 12008.0,
+    "price": 41000.0,
+    "cap": 12278.0,
     "shares": 29946032,
     "stat": "55",
     "mang": false,
@@ -1203,8 +1191,8 @@
     "caful": false
    },
    "P": {
-    "price": 22500.0,
-    "cap": 623.0,
+    "price": 22700.0,
+    "cap": 628.0,
     "shares": 2767860,
     "stat": "57",
     "mang": false,
@@ -1214,13 +1202,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "006340": {
    "pref": "006345",
    "C": {
-    "price": 8890.0,
-    "cap": 6971.0,
+    "price": 9310.0,
+    "cap": 7300.0,
     "shares": 78414416,
     "stat": "55",
     "mang": false,
@@ -1230,8 +1219,8 @@
     "caful": false
    },
    "P": {
-    "price": 7690.0,
-    "cap": 202.0,
+    "price": 7930.0,
+    "cap": 208.0,
     "shares": 2621200,
     "stat": "57",
     "mang": false,
@@ -1241,13 +1230,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "009410": {
    "pref": "009415",
    "C": {
-    "price": 1491.0,
-    "cap": 4914.0,
+    "price": 1496.0,
+    "cap": 4931.0,
     "shares": 329604650,
     "stat": "57",
     "mang": false,
@@ -1257,8 +1247,8 @@
     "caful": false
    },
    "P": {
-    "price": 5690.0,
-    "cap": 37.0,
+    "price": 5500.0,
+    "cap": 36.0,
     "shares": 649974,
     "stat": "59",
     "mang": false,
@@ -1268,13 +1258,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 1,040만 < 2,000만)"
   },
   "000540": {
    "pref": "000545",
    "C": {
-    "price": 3105.0,
-    "cap": 1995.0,
+    "price": 3165.0,
+    "cap": 2033.0,
     "shares": 64242645,
     "stat": "55",
     "mang": false,
@@ -1295,13 +1286,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 218만 < 2,000만)"
   },
   "021040": {
    "pref": "021045",
    "C": {
-    "price": 952.0,
-    "cap": 207.0,
+    "price": 937.0,
+    "cap": 203.0,
     "shares": 21704774,
     "stat": "57",
     "mang": false,
@@ -1322,13 +1314,14 @@
     "caful": false
    },
    "block": "우선주 시총 12억 < 20억",
-   "warn": "보통주 시총 207억 (2027년 기준 500억 미만)"
+   "warn": "보통주 시총 203억 (2027년 기준 500억 미만)",
+   "excluded": "우선주 시총 12억 < 20억"
   },
   "012200": {
    "pref": "012205",
    "C": {
-    "price": 2505.0,
-    "cap": 887.0,
+    "price": 2520.0,
+    "cap": 893.0,
     "shares": 35422829,
     "stat": "57",
     "mang": false,
@@ -1349,13 +1342,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "001750": {
    "pref": "001755",
    "C": {
-    "price": 18700.0,
-    "cap": 2825.0,
+    "price": 18640.0,
+    "cap": 2816.0,
     "shares": 15109486,
     "stat": "55",
     "mang": false,
@@ -1376,13 +1370,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 1,106만 < 2,000만)"
   },
   "008770": {
    "pref": "008775",
    "C": {
-    "price": 36100.0,
-    "cap": 14169.0,
+    "price": 35950.0,
+    "cap": 14110.0,
     "shares": 39248121,
     "stat": "55",
     "mang": false,
@@ -1403,13 +1398,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "096770": {
    "pref": "096775",
    "C": {
-    "price": 119100.0,
-    "cap": 201342.0,
+    "price": 122200.0,
+    "cap": 206583.0,
     "shares": 169052788,
     "stat": "55",
     "mang": false,
@@ -1419,8 +1415,8 @@
     "caful": false
    },
    "P": {
-    "price": 60600.0,
-    "cap": 757.0,
+    "price": 61900.0,
+    "cap": 773.0,
     "shares": 1248426,
     "stat": "57",
     "mang": false,
@@ -1430,40 +1426,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
-  },
-  "004410": {
-   "pref": "004415",
-   "C": {
-    "price": 1298.0,
-    "cap": 512.0,
-    "shares": 39455013,
-    "stat": "57",
-    "mang": false,
-    "sltr": false,
-    "stop": false,
-    "warn": "00",
-    "caful": false
-   },
-   "P": {
-    "price": 0.0,
-    "cap": 0.0,
-    "shares": 222450,
-    "stat": "51",
-    "mang": true,
-    "sltr": true,
-    "stop": false,
-    "warn": "00",
-    "caful": false
-   },
-   "block": "우선주 정리매매; 우선주 관리종목",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "000720": {
    "pref": "000725",
    "C": {
-    "price": 88000.0,
-    "cap": 97993.0,
+    "price": 90250.0,
+    "cap": 100499.0,
     "shares": 111355765,
     "stat": "55",
     "mang": false,
@@ -1473,8 +1443,8 @@
     "caful": false
    },
    "P": {
-    "price": 42000.0,
-    "cap": 443.0,
+    "price": 42950.0,
+    "cap": 453.0,
     "shares": 1054693,
     "stat": "57",
     "mang": false,
@@ -1484,13 +1454,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "375500": {
    "pref": "37550K",
    "C": {
-    "price": 53100.0,
-    "cap": 20546.0,
+    "price": 53800.0,
+    "cap": 20817.0,
     "shares": 38693623,
     "stat": "55",
     "mang": false,
@@ -1511,13 +1482,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "078930": {
    "pref": "078935",
    "C": {
-    "price": 77800.0,
-    "cap": 72273.0,
+    "price": 78500.0,
+    "cap": 72923.0,
     "shares": 92895495,
     "stat": "55",
     "mang": false,
@@ -1538,13 +1510,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "014280": {
    "pref": "014285",
    "C": {
-    "price": 4025.0,
-    "cap": 1181.0,
+    "price": 4090.0,
+    "cap": 1200.0,
     "shares": 29329357,
     "stat": "55",
     "mang": false,
@@ -1565,13 +1538,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 738만 < 2,000만)"
   },
   "001680": {
    "pref": "001685",
    "C": {
-    "price": 17130.0,
-    "cap": 5935.0,
+    "price": 17020.0,
+    "cap": 5897.0,
     "shares": 34648025,
     "stat": "55",
     "mang": false,
@@ -1581,8 +1555,8 @@
     "caful": false
    },
    "P": {
-    "price": 13970.0,
-    "cap": 191.0,
+    "price": 14000.0,
+    "cap": 192.0,
     "shares": 1370223,
     "stat": "57",
     "mang": false,
@@ -1592,13 +1566,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "002990": {
    "pref": "002995",
    "C": {
-    "price": 8200.0,
-    "cap": 3055.0,
+    "price": 8470.0,
+    "cap": 3156.0,
     "shares": 37259974,
     "stat": "57",
     "mang": false,
@@ -1608,8 +1583,8 @@
     "caful": false
    },
    "P": {
-    "price": 12480.0,
-    "cap": 36.0,
+    "price": 12900.0,
+    "cap": 38.0,
     "shares": 292266,
     "stat": "57",
     "mang": false,
@@ -1619,13 +1594,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "097950": {
    "pref": "097955",
    "C": {
-    "price": 176700.0,
-    "cap": 26601.0,
+    "price": 176000.0,
+    "cap": 26495.0,
     "shares": 15054186,
     "stat": "55",
     "mang": false,
@@ -1635,8 +1611,8 @@
     "caful": false
    },
    "P": {
-    "price": 102500.0,
-    "cap": 1361.0,
+    "price": 102600.0,
+    "cap": 1362.0,
     "shares": 1327433,
     "stat": "55",
     "mang": false,
@@ -1646,13 +1622,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "006120": {
    "pref": "006125",
    "C": {
-    "price": 59100.0,
-    "cap": 10292.0,
+    "price": 60500.0,
+    "cap": 10535.0,
     "shares": 17413751,
     "stat": "55",
     "mang": false,
@@ -1673,13 +1650,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "000210": {
    "pref": "000215",
    "C": {
-    "price": 39850.0,
-    "cap": 8351.0,
+    "price": 45050.0,
+    "cap": 9441.0,
     "shares": 20955884,
     "stat": "55",
     "mang": false,
@@ -1689,8 +1667,8 @@
     "caful": false
    },
    "P": {
-    "price": 19610.0,
-    "cap": 331.0,
+    "price": 20900.0,
+    "cap": 352.0,
     "shares": 1686115,
     "stat": "57",
     "mang": false,
@@ -1700,13 +1678,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "090350": {
    "pref": "090355",
    "C": {
-    "price": 8070.0,
-    "cap": 1614.0,
+    "price": 8180.0,
+    "cap": 1636.0,
     "shares": 20000000,
     "stat": "55",
     "mang": false,
@@ -1727,13 +1706,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 502만 < 2,000만)"
   },
   "001520": {
    "pref": "001525",
    "C": {
-    "price": 947.0,
-    "cap": 1014.0,
+    "price": 951.0,
+    "cap": 1019.0,
     "shares": 107122032,
     "stat": "57",
     "mang": false,
@@ -1743,8 +1723,8 @@
     "caful": false
    },
    "P": {
-    "price": 5800.0,
-    "cap": 15.0,
+    "price": 6000.0,
+    "cap": 16.0,
     "shares": 262615,
     "stat": "57",
     "mang": false,
@@ -1753,14 +1733,15 @@
     "warn": "00",
     "caful": false
    },
-   "block": "우선주 시총 15억 < 20억",
-   "warn": ""
+   "block": "우선주 시총 16억 < 20억",
+   "warn": "",
+   "excluded": "우선주 시총 16억 < 20억"
   },
   "001040": {
    "pref": "001045",
    "C": {
-    "price": 113300.0,
-    "cap": 33058.0,
+    "price": 115100.0,
+    "cap": 33583.0,
     "shares": 29176998,
     "stat": "55",
     "mang": false,
@@ -1770,8 +1751,8 @@
     "caful": false
    },
    "P": {
-    "price": 56200.0,
-    "cap": 1270.0,
+    "price": 56400.0,
+    "cap": 1275.0,
     "shares": 2260223,
     "stat": "55",
     "mang": false,
@@ -1781,13 +1762,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "005740": {
    "pref": "005745",
    "C": {
-    "price": 4830.0,
-    "cap": 717.0,
+    "price": 4930.0,
+    "cap": 732.0,
     "shares": 14847347,
     "stat": "57",
     "mang": false,
@@ -1797,7 +1779,7 @@
     "caful": false
    },
    "P": {
-    "price": 4615.0,
+    "price": 4700.0,
     "cap": 28.0,
     "shares": 600726,
     "stat": "57",
@@ -1808,13 +1790,14 @@
     "caful": false
    },
    "block": "",
-   "warn": "우선주 시총 28억 (기준 20억 근접)"
+   "warn": "우선주 시총 28억 (기준 20억 근접)",
+   "excluded": "우선주 시총 28억 (기준 20억 근접)"
   },
   "005300": {
    "pref": "005305",
    "C": {
-    "price": 104000.0,
-    "cap": 9650.0,
+    "price": 104200.0,
+    "cap": 9669.0,
     "shares": 9278884,
     "stat": "55",
     "mang": false,
@@ -1835,13 +1818,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "034730": {
    "pref": "03473K",
    "C": {
-    "price": 506000.0,
-    "cap": 366864.0,
+    "price": 526000.0,
+    "cap": 381364.0,
     "shares": 72502703,
     "stat": "55",
     "mang": false,
@@ -1862,13 +1846,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "014910": {
    "pref": "014915",
    "C": {
-    "price": 1512.0,
-    "cap": 330.0,
+    "price": 1540.0,
+    "cap": 337.0,
     "shares": 21857257,
     "stat": "57",
     "mang": false,
@@ -1878,8 +1863,8 @@
     "caful": false
    },
    "P": {
-    "price": 4050.0,
-    "cap": 24.0,
+    "price": 4100.0,
+    "cap": 25.0,
     "shares": 600000,
     "stat": "59",
     "mang": false,
@@ -1889,13 +1874,14 @@
     "caful": false
    },
    "block": "",
-   "warn": "우선주 시총 24억 (기준 20억 근접); 보통주 시총 330억 (2027년 기준 500억 미만)"
+   "warn": "우선주 시총 25억 (기준 20억 근접); 보통주 시총 337억 (2027년 기준 500억 미만)",
+   "excluded": "우선주 시총 25억 (기준 20억 근접); 보통주 시총 337억 (2027년 기준 500억 미만)"
   },
   "007570": {
    "pref": "007575",
    "C": {
-    "price": 6830.0,
-    "cap": 1304.0,
+    "price": 6810.0,
+    "cap": 1300.0,
     "shares": 19085664,
     "stat": "57",
     "mang": false,
@@ -1916,13 +1902,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 248만 < 2,000만)"
   },
   "004990": {
    "pref": "00499K",
    "C": {
-    "price": 22300.0,
-    "cap": 22225.0,
+    "price": 22400.0,
+    "cap": 22325.0,
     "shares": 99663776,
     "stat": "55",
     "mang": false,
@@ -1932,8 +1919,8 @@
     "caful": false
    },
    "P": {
-    "price": 22450.0,
-    "cap": 181.0,
+    "price": 22600.0,
+    "cap": 182.0,
     "shares": 805603,
     "stat": "57",
     "mang": false,
@@ -1943,13 +1930,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 1,360만 < 2,000만)"
   },
   "004540": {
    "pref": "004545",
    "C": {
-    "price": 1397.0,
-    "cap": 520.0,
+    "price": 1339.0,
+    "cap": 499.0,
     "shares": 37240693,
     "stat": "57",
     "mang": false,
@@ -1959,8 +1947,8 @@
     "caful": false
    },
    "P": {
-    "price": 2385.0,
-    "cap": 9.0,
+    "price": 3100.0,
+    "cap": 11.0,
     "shares": 366160,
     "stat": "51",
     "mang": true,
@@ -1969,14 +1957,15 @@
     "warn": "00",
     "caful": false
    },
-   "block": "우선주 관리종목; 우선주 시총 9억 < 20억",
-   "warn": ""
+   "block": "우선주 관리종목; 우선주 시총 11억 < 20억",
+   "warn": "보통주 시총 499억 (2027년 기준 500억 미만)",
+   "excluded": "우선주 관리종목; 우선주 시총 11억 < 20억"
   },
   "000100": {
    "pref": "000105",
    "C": {
-    "price": 77000.0,
-    "cap": 56684.0,
+    "price": 76300.0,
+    "cap": 56169.0,
     "shares": 73615781,
     "stat": "55",
     "mang": false,
@@ -1986,8 +1975,8 @@
     "caful": false
    },
    "P": {
-    "price": 65000.0,
-    "cap": 746.0,
+    "price": 63800.0,
+    "cap": 733.0,
     "shares": 1148340,
     "stat": "57",
     "mang": false,
@@ -1997,13 +1986,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "001270": {
    "pref": "001275",
    "C": {
-    "price": 40500.0,
-    "cap": 4200.0,
+    "price": 41000.0,
+    "cap": 4252.0,
     "shares": 10369886,
     "stat": "55",
     "mang": false,
@@ -2024,13 +2014,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "003920": {
    "pref": "003925",
    "C": {
-    "price": 41550.0,
-    "cap": 2357.0,
+    "price": 41100.0,
+    "cap": 2332.0,
     "shares": 5673447,
     "stat": "57",
     "mang": false,
@@ -2051,7 +2042,8 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "003460": {
    "pref": "003465",
@@ -2067,8 +2059,8 @@
     "caful": false
    },
    "P": {
-    "price": 2880.0,
-    "cap": 503.0,
+    "price": 2780.0,
+    "cap": 486.0,
     "shares": 17476425,
     "stat": "57",
     "mang": false,
@@ -2078,7 +2070,8 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 447만 < 2,000만)"
   },
   "145990": {
    "pref": "145995",
@@ -2105,13 +2098,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "001060": {
    "pref": "001065",
    "C": {
-    "price": 22900.0,
-    "cap": 5629.0,
+    "price": 23050.0,
+    "cap": 5666.0,
     "shares": 24581534,
     "stat": "55",
     "mang": false,
@@ -2121,8 +2115,8 @@
     "caful": false
    },
    "P": {
-    "price": 20450.0,
-    "cap": 70.0,
+    "price": 20850.0,
+    "cap": 71.0,
     "shares": 341951,
     "stat": "57",
     "mang": false,
@@ -2132,13 +2126,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 273만 < 2,000만)"
   },
   "000140": {
    "pref": "000145",
    "C": {
-    "price": 7610.0,
-    "cap": 1766.0,
+    "price": 7550.0,
+    "cap": 1752.0,
     "shares": 23206765,
     "stat": "55",
     "mang": false,
@@ -2148,7 +2143,7 @@
     "caful": false
    },
    "P": {
-    "price": 8500.0,
+    "price": 8400.0,
     "cap": 40.0,
     "shares": 470810,
     "stat": "57",
@@ -2159,7 +2154,8 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 339만 < 2,000만)"
   },
   "001460": {
    "pref": "001465",
@@ -2175,8 +2171,8 @@
     "caful": false
    },
    "P": {
-    "price": 23950.0,
-    "cap": 516.0,
+    "price": 23850.0,
+    "cap": 514.0,
     "shares": 2153850,
     "stat": "57",
     "mang": false,
@@ -2186,13 +2182,14 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": ""
   },
   "014820": {
    "pref": "014825",
    "C": {
-    "price": 20750.0,
-    "cap": 6016.0,
+    "price": 20900.0,
+    "cap": 6059.0,
     "shares": 28991282,
     "stat": "55",
     "mang": false,
@@ -2213,7 +2210,8 @@
     "caful": false
    },
    "block": "",
-   "warn": ""
+   "warn": "",
+   "excluded": "거래 얇음(종목당 최대 197만 < 2,000만)"
   }
  }
 }

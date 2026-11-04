@@ -182,7 +182,7 @@ def liquidity() -> dict:
         liq = {}
     try:
         for a, v in json.load(open(LISTING, encoding='utf-8')).get('pairs', {}).items():
-            liq.setdefault(a, {}).update(block=v.get('block', ''), warn=v.get('warn', ''))
+            liq.setdefault(a, {}).update(block=v.get('block', ''), warn=v.get('warn', ''), excluded=v.get('excluded', ''))
     except Exception:
         pass
     return liq
@@ -220,8 +220,8 @@ def listing_flags(c: dict | None, p: dict | None) -> tuple[str, str]:
     return '; '.join(block), '; '.join(warn)
 
 
-def update_listing(pairs=None) -> list[tuple[str, str, bool]]:
-    """KIS 종목 상태로 data/listing.json 갱신. 반환: 새로 걸리거나 사유가 바뀐 쌍 [(코드, 사유, 차단여부)]"""
+def update_listing(pairs=None, leg_min=None, adv_mult: float = 1.5) -> list[tuple[str, str, bool]]:
+    """KIS 종목 상태로 data/listing.json 갱신 + 포트 편입 자격 판정. 반환: 제외·복귀가 바뀐 쌍 [(코드, 사유, 제외여부)]"""
     from core import kis
     try:
         prev = json.load(open(LISTING, encoding='utf-8')).get('pairs', {})
@@ -236,10 +236,41 @@ def update_listing(pairs=None) -> list[tuple[str, str, bool]]:
             continue
         blk, wrn = listing_flags(c, p)
         out[a] = dict(pref=b, C=c, P=p, block=blk, warn=wrn)
+    for a, b in (pairs or pair_files()):          # 조회 실패한 쌍은 이전 판정 유지
+        if a not in out and a in prev:
+            out[a] = prev[a]
+    eligibility(out, prev, pairs, leg_min, adv_mult)
     if out:
         write_json({'updated': datetime.now().isoformat(timespec='seconds'), 'pairs': out}, LISTING)
-    return [(a, v['block'] or v['warn'], bool(v['block'])) for a, v in out.items()
-            if (v['block'] or v['warn']) and (v['block'], v['warn']) != (prev.get(a, {}).get('block', ''), prev.get(a, {}).get('warn', ''))]
+    chg = []
+    for a, v in out.items():
+        was, now = prev.get(a, {}).get('excluded', ''), v.get('excluded', '')
+        if now and not was:
+            chg.append((a, now, True))
+        elif was and not now:
+            chg.append((a, '', False))
+    return chg
+
+
+def eligibility(out: dict, prev: dict, pairs=None, leg_min=None, adv_mult: float = 1.5) -> None:
+    """포트 편입 자격 판정 → out[코드]['excluded'] = 제외 사유('' 이면 편입)"""
+    try:
+        liqv = json.load(open(LIQ, encoding='utf-8')).get('avg20_value', {})
+    except Exception:
+        liqv = {}
+    st = stale_pairs(pairs)
+    for a, v in out.items():
+        why = v.get('block') or v.get('warn') or ''
+        x = liqv.get(a) or {}
+        vv = [x.get('C'), x.get('P')]
+        if not why and leg_min and all(vv):
+            ml = min(vv) * adv_mult
+            was = bool(prev.get(a, {}).get('excluded'))
+            if ml < leg_min * (1.25 if was else 1.0):
+                why = f'거래 얇음(종목당 최대 {ml / 1e4:,.0f}만 < {leg_min * (1.25 if was else 1.0) / 1e4:,.0f}만)'
+        if not why and a in st:
+            why = f'거래 없음(마지막 거래 {st[a]})'
+        v['excluded'] = why
 
 
 # ---------------------------------------------------------------- 현재가

@@ -56,7 +56,8 @@ def dashboard(snap: pd.DataFrame, last_orders: pd.DataFrame | None, model: dict,
     cols = ['code', 'pref', 'name', 'C', 'P', 'z', 'edge', 'signal', 'armed', 'validated', 'held',
             'entry_date', 'days', 'cq', 'pq', 'c0', 'p0', 'pnl_won', 'pnl_ret', 'ret_rule', 'stop_gap', 'exit']
     pos = snap[snap.held][[c for c in cols if c in snap]]
-    watch = snap[(~snap.held) & (snap.z >= snap.z_in - 0.3)].sort_values('z', ascending=False)[
+    ex = snap['excluded'].astype(bool) if 'excluded' in snap else pd.Series(False, index=snap.index)
+    watch = snap[(~snap.held) & (snap.z >= snap.z_in - 0.3) & ~ex].sort_values('z', ascending=False)[
         [c for c in cols if c in snap]]
     eq = pd.read_csv(report.EQUITY).to_dict('records') if os.path.exists(report.EQUITY) else []
     out = dict(updated=datetime.now().isoformat(timespec='seconds'), params=prm.to_dict(),
