@@ -396,7 +396,7 @@
             <!-- Statistical Distribution Chart -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-1">Statistical Distribution Analysis</h2>
-                <p class="text-sm text-gray-400 mb-4">괴리율(dr) 분포 · 현재 위치 · σ 구간 · 왜도</p>
+                <p class="text-sm text-gray-400 mb-4">최근 120일 ln(보통주/우선주) 분포(축은 괴리율로 표시) · 현재가 위치 · σ 구간 · 왜도 — SZ는 서버·시나리오와 같은 기준</p>
                 <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1rem;">
                     <div
                         style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
@@ -415,7 +415,7 @@
                     </div>
                     <div
                         style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
-                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">σ (std)</div>
+                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">σ (ln 비율)</div>
                         <div style="font-size:1rem; font-weight:700; color:#374151;" id="dist-std">-</div>
                     </div>
                     <div
@@ -1057,24 +1057,26 @@
         }
         function renderDistChart(trendData) {
             try {
-                const avgPeriod = 249;
-                const allDr = (trendData.discount_rates || []).filter(v => v !== null && !isNaN(v));
-                if (allDr.length < avgPeriod + 1) return;
-
-                const drWindow = allDr.slice(-avgPeriod);
-                const curDr = allDr[allDr.length - 1];
+                // 서버(stmon)와 같은 기준: x = ln(보통주/우선주), 오늘 이전 120일, 표본 표준편차, 현재가
+                const _today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+                const _dts = trendData.dates || [], _drs = trendData.discount_rates || [];
+                const drWindow = _drs.filter((v, i) => v != null && !isNaN(v) && _dts[i] < _today).slice(-SZ_WINDOW).map(toSpread);
+                if (drWindow.length < SZ_WINDOW * 0.9) return;
+                const _lastDr = _drs.filter(v => v != null && !isNaN(v)).slice(-1)[0];
+                const curDr = toSpread(stockData.current.discountRate || _lastDr);
                 const n = drWindow.length;
                 const mean = drWindow.reduce((a, b) => a + b, 0) / n;
-                const std = Math.sqrt(drWindow.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n);
+                const std = Math.sqrt(drWindow.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (n - 1));
                 const skew = std > 0 ? drWindow.reduce((a, b) => a + Math.pow((b - mean) / std, 3), 0) / n : 0;
                 const sz = std > 0 ? (curDr - mean) / std : 0;
+                const toDr = x => 1 - Math.exp(-x);   // ln 비율 → 괴리율(표시용)
 
                 // 뱃지
                 const szEl = document.getElementById('dist-sz');
                 szEl.textContent = sz.toFixed(2);
                 szEl.style.color = sz >= 2.5 ? '#111827' : sz >= 1.5 ? '#374151' : '#6b7280';
-                document.getElementById('dist-dr').textContent = (curDr * 100).toFixed(2) + '%';
-                document.getElementById('dist-mean').textContent = (mean * 100).toFixed(2) + '%';
+                document.getElementById('dist-dr').textContent = (toDr(curDr) * 100).toFixed(2) + '%';
+                document.getElementById('dist-mean').textContent = (toDr(mean) * 100).toFixed(2) + '%';
                 document.getElementById('dist-std').textContent = (std * 100).toFixed(3) + '%';
                 const skewEl = document.getElementById('dist-skew');
                 skewEl.textContent = (skew >= 0 ? '+' : '') + skew.toFixed(2);
@@ -1086,8 +1088,9 @@
 
                 // 히스토그램
                 const bins = 24;
-                const minDr = Math.min(...drWindow, curDr) * 0.97;
-                const maxDr = Math.max(...drWindow, curDr) * 1.03;
+                const _lo = Math.min(...drWindow, curDr), _hi = Math.max(...drWindow, curDr), _pad = (_hi - _lo) * 0.03 || 0.001;
+                const minDr = _lo - _pad;
+                const maxDr = _hi + _pad;
                 const bSize = (maxDr - minDr) / bins;
                 const counts = Array(bins).fill(0);
                 drWindow.forEach(v => {
@@ -1095,7 +1098,7 @@
                     counts[idx]++;
                 });
                 const binCenters = counts.map((_, i) => minDr + (i + 0.5) * bSize);
-                const labels = binCenters.map(v => (v * 100).toFixed(2) + '%');
+                const labels = binCenters.map(v => (toDr(v) * 100).toFixed(2) + '%');
                 const curBin = Math.min(Math.floor((curDr - minDr) / bSize), bins - 1);
                 const barColors = binCenters.map((v, i) => {
                     if (i === curBin) return 'rgba(17,24,39,0.85)';
