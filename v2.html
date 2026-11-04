@@ -192,7 +192,7 @@
                 const sFl = -Math.round(t.common_entry * t.common_qty * (br + sS) * (days / 365));
                 const lFl = Math.round(t.preferred_entry * t.preferred_qty * (br + sL) * (days / 365));
                 const borrow = (t.common_borrow_fee_pct || 0) ? t.common_entry * t.common_qty * (t.common_borrow_fee_pct / 100) * (days / 365) : 0;
-                a.sp += (cxp - t.common_entry) * t.common_qty + sFl - borrow;
+                a.sp += (cxp - t.common_entry) * t.common_qty + sFl + borrow;
                 a.lp += (t.preferred_entry - pxp) * t.preferred_qty + lFl;
                 a.ce += t.common_entry * t.common_qty; a.cx += cxp * t.common_qty; a.cq += t.common_qty;
                 a.pe += t.preferred_entry * t.preferred_qty; a.px += pxp * t.preferred_qty; a.pq += t.preferred_qty;
