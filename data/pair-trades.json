@@ -1,5 +1,24 @@
 [
  {
+  "trade_id": "LTCS",
+  "pair_name": "롯데칠성",
+  "common_code": "005300",
+  "preferred_code": "005305",
+  "entry_date": "2026-11-04",
+  "exit_date": null,
+  "common_entry": 103770,
+  "preferred_entry": 63952,
+  "common_qty": 120,
+  "preferred_qty": 194,
+  "common_floating_spread_bps": -202.0,
+  "preferred_floating_spread_bps": 200.0,
+  "benchmark_rate_pct": 3.35,
+  "common_exit": null,
+  "preferred_exit": null,
+  "common_borrow_fee_pct": 1.0,
+  "status": "Open"
+ },
+ {
   "trade_id": "HDC",
   "pair_name": "현대차",
   "common_code": "005380",
