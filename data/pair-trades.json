@@ -57,25 +57,6 @@
   "status": "Open"
  },
  {
-  "trade_id": "SOI",
-  "pair_name": "S-Oil",
-  "common_code": "010950",
-  "preferred_code": "010955",
-  "entry_date": "2025-10-15",
-  "exit_date": null,
-  "common_entry": 71643,
-  "preferred_entry": 43105,
-  "common_qty": 2250,
-  "preferred_qty": 3730,
-  "common_floating_spread_bps": -202.0,
-  "preferred_floating_spread_bps": 200.0,
-  "benchmark_rate_pct": 2.54,
-  "common_exit": null,
-  "preferred_exit": null,
-  "common_borrow_fee_pct": 0,
-  "status": "Open"
- },
- {
   "trade_id": "DSS",
   "pair_name": "대신증권",
   "common_code": "003540",
@@ -93,6 +74,25 @@
   "preferred_exit": null,
   "common_borrow_fee_pct": 0,
   "status": "Open"
+ },
+ {
+  "trade_id": "SOI",
+  "pair_name": "S-Oil",
+  "common_code": "010950",
+  "preferred_code": "010955",
+  "entry_date": "2025-10-15",
+  "exit_date": "2026-11-05",
+  "common_entry": 71643,
+  "preferred_entry": 43105,
+  "common_qty": 2250,
+  "preferred_qty": 3730,
+  "common_floating_spread_bps": -202.0,
+  "preferred_floating_spread_bps": 200.0,
+  "benchmark_rate_pct": 2.54,
+  "common_exit": 109162,
+  "preferred_exit": 70553,
+  "common_borrow_fee_pct": 0,
+  "status": "Closed"
  },
  {
   "trade_id": "SSYH",
