@@ -265,8 +265,12 @@
             const last = eq.length ? eq[eq.length - 1] : null;
 
             const ORD = { EXIT_STOP: 0, EXIT_TARGET: 1, EXIT_TIME: 2, HOLD: 3, ENTER: 4, WAIT_SLOT: 5, BLOCKED_BAN: 6, BLOCKED_LIQ: 7, BLOCKED_VOL: 7, BLOCKED_RISK: 7 };
-            const lo = (d.live_orders || []).slice().sort((a, b) =>
-                ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0)));
+            const ED = {}; pos.forEach(x => { ED[x.code] = String(x.entry_date || ''); });   // 보유: 최근 진입이 위, 오래된 종목이 아래 (Report와 같은 순서)
+            const lo = (d.live_orders || []).slice().sort((a, b) => {
+                const ha = a.code in ED, hb = b.code in ED;
+                if (ha !== hb) return ha ? -1 : 1;
+                if (ha) return ED[b.code].localeCompare(ED[a.code]);
+                return ((ORD[a.action] ?? 9) - (ORD[b.action] ?? 9)) || ((b.edge || 0) - (a.edge || 0)); });
             // ---- Entry gate: 조건별 판정을 그대로 보여줌
             {
                 const ent = lo.filter(r => r.action === 'ENTER'), ex = lo.filter(r => /^EXIT/.test(r.action));
