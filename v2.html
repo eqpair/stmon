@@ -100,7 +100,7 @@
         <!-- Now -->
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
             <div class="flex justify-between items-baseline flex-wrap gap-2 mb-4">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Now <span class="normal-case font-normal text-gray-400">· Rule check on live prices (every 3 min · final at close)</span></h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Now <span class="normal-case font-normal text-gray-400">· Rule check on live prices (every 1 min · final at close)</span></h2>
                 <span class="text-xs text-gray-500" id="nowinfo"></span>
             </div>
             <div class="overflow-x-auto"><table class="report-table" id="now"></table></div>
@@ -168,7 +168,7 @@
         function liveNow(d) { const k = kstMin(); if (!d || !d.market_open || !k.wd || k.t < 510 || k.t > 990) return false;
             return ymd(kst(d.updated)) === k.day; }
         // 평일 08:40~16:30인데 8분 넘게 갱신이 없으면 지연(서버 정지 포함)
-        function staleNow(d, age) { const k = kstMin(); return k.wd && k.t >= 520 && k.t <= 990 && age > 8; }
+        function staleNow(d, age) { const k = kstMin(); return k.wd && k.t >= 520 && k.t <= 990 && age > 4; }
 
         function updateStatus(d) {
             const ind = document.getElementById('status-indicator'), txt = document.getElementById('status-text');
