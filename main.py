@@ -305,6 +305,7 @@ class App:
                     await asyncio.to_thread(self.git_push, True)   # 장 마감 후 남은 변경분 1회 push
                     await asyncio.sleep(60)
                     continue
+                _t0 = time.time()
                 live = await self.fetch_live()
                 self.live_px = live
                 if len(live) < len(self.pairs):          # 장 시작 전·종목 정지 등은 확정 종가 사용
@@ -324,7 +325,7 @@ class App:
                     await self.job_close()
                     self.write_web()
                 await asyncio.to_thread(self.git_push)
-                await asyncio.sleep(cfg.WAIT_TIME)
+                await asyncio.sleep(max(5, cfg.WAIT_TIME - (time.time() - _t0)))   # 주기 시작 기준 WAIT_TIME 간격
             except Exception as e:
                 log.exception(f'주기 처리 오류: {e}')
                 await asyncio.sleep(30)
