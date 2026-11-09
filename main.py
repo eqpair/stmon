@@ -8,7 +8,7 @@ stmon — 보통주 숏 / 우선주 롱 매매 프로그램 (주문은 직접, �
 15:45  확정 종가로 이력 갱신 → 재진입 상태·백테스트 재생 → 일별 손익 기록 → 트렌드 JSON → (금) 주간 리포트
 체결 기록: 텔레그램 /in, /out → data/pair-trades.json
 """
-import os, sys, asyncio, atexit, logging, subprocess
+import os, sys, asyncio, atexit, logging, subprocess, time
 from logging.handlers import RotatingFileHandler
 from datetime import datetime, date, timedelta
 import pandas as pd
@@ -248,8 +248,10 @@ class App:
         else:
             log.info('[TG] ' + text.replace('\n', ' | '))
 
-    def git_push(self):
+    def git_push(self, force=False):
         if not cfg.GIT_PUSH:
+            return
+        if not force and time.time() - getattr(self, '_last_push', 0) < getattr(cfg, 'GIT_PUSH_EVERY', 0):
             return
         try:
             if not subprocess.run('git status --porcelain data', shell=True, capture_output=True, text=True).stdout.strip():
@@ -258,6 +260,7 @@ class App:
             subprocess.run(f'git commit -q -m "데이터 업데이트: {datetime.now():%Y-%m-%d %H:%M:%S}"', shell=True, check=True)
             subprocess.run('git pull -q --rebase --autostash', shell=True, check=False)
             subprocess.run('git push -q', shell=True, check=True)
+            self._last_push = time.time()
         except Exception as e:
             log.error(f'git push 실패: {e}')
 
@@ -299,6 +302,7 @@ class App:
         while True:
             try:
                 if not self.market_open():
+                    await asyncio.to_thread(self.git_push, True)   # 장 마감 후 남은 변경분 1회 push
                     await asyncio.sleep(60)
                     continue
                 live = await self.fetch_live()

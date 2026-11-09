@@ -40,8 +40,9 @@ V2_SPREAD_LONG = 200            # 우선주 롱 스프레드(bp)
 V2_SIGNAL_TIME = (15, 15)       # 주문표 발송
 V2_HISTORY_TIME = (15, 45)      # 확정 종가로 이력 갱신 + 일별 손익 기록
 MARKET_HOURS = ((8, 30), (16, 30))
-WAIT_TIME = 180                 # 장중 갱신 주기(초)
-GIT_PUSH = True                 # 매 주기 GitHub Pages로 데이터 푸시
+WAIT_TIME = 60                  # 장중 갱신 주기(초) (2026-11-09: 180 → 60)
+GIT_PUSH = True                 # GitHub Pages로 데이터 푸시 (백업·히스토리용)
+GIT_PUSH_EVERY = 900            # 장중 push 최소 간격(초). 실시간 화면은 EC2 /stmon-data/ 에서 읽음
 
 # ---------------------------------------------------------------- 대상 쌍
 # (보통주, 우선주, ...) — 앞의 두 코드만 사용. 빼는 쌍은 줄 삭제 + data/history/{보통주}_{우선주}.csv 삭제
