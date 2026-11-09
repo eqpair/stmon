@@ -14,7 +14,7 @@
                     var u = new URL(raw, location.href);
                     var m = u.origin === location.origin && u.pathname.match(/\/data\/([A-Za-z0-9_\-]+\.json)$/);
                     if (m && FILES.indexOf(m[1]) >= 0) {
-                        return orig(LIVE + m[1] + u.search, init)
+                        return orig(LIVE + m[1] + u.search, { cache: 'no-store' })   // 사용자 헤더 제거(CORS 사전확인 방지)
                             .then(function (r) { if (!r.ok) throw new Error(r.status); return r; })
                             .catch(function () { return orig(input, init); });
                     }
