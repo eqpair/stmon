@@ -824,6 +824,32 @@
 
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', init);
+
+        // 데이터 자동 갱신: 1분마다 stock_data.json 확인 → 바뀌었을 때만 다시 그림 (탭이 보일 때만)
+        var _prLast = null, _prBusy = false;
+        async function pairReportRefresh() {
+            if (document.hidden || _prBusy) return;
+            _prBusy = true;
+            try {
+                const r = await fetch(`data/stock_data.json?t=${Date.now()}`);
+                if (!r.ok) return;
+                const t = await r.text();
+                if (_prLast === null) { _prLast = t; return; }
+                if (t === _prLast) return;
+                _prLast = t;
+                await updateLastUpdate();
+                await fetchTradesData();
+                const stockSignals = await fetchStockData();
+                await renderTable(stockSignals);
+            } catch (e) {
+                console.error('[pair-report] 자동 갱신 실패:', e);
+            } finally {
+                _prBusy = false;
+            }
+        }
+        setTimeout(pairReportRefresh, 5000);
+        setInterval(pairReportRefresh, 60 * 1000);
+        document.addEventListener('visibilitychange', function () { if (!document.hidden) pairReportRefresh(); });
     </script>
 <script data-namefix="1">
 /* 표시용: 종목명 앞 신호등 이모지와 '' 제거 */
