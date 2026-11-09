@@ -2,6 +2,27 @@
 <html lang="en">
 
 <head>
+    <script>
+        // EQ_STMON_LIVE: 실시간 데이터는 EC2(nginx)에서 바로, 실패하면 GitHub Pages 사본으로
+        (function () {
+            var LIVE = 'https://eqmon.duckdns.org/stmon-data/';
+            var FILES = ['stock_data.json', 'pair-trades.json', 'v2_dashboard.json'];
+            var orig = window.fetch.bind(window);
+            window.fetch = function (input, init) {
+                try {
+                    var raw = typeof input === 'string' ? input : (input && input.url) || '';
+                    var u = new URL(raw, location.href);
+                    var m = u.origin === location.origin && u.pathname.match(/\/data\/([A-Za-z0-9_\-]+\.json)$/);
+                    if (m && FILES.indexOf(m[1]) >= 0) {
+                        return orig(LIVE + m[1] + u.search, init)
+                            .then(function (r) { if (!r.ok) throw new Error(r.status); return r; })
+                            .catch(function () { return orig(input, init); });
+                    }
+                } catch (e) { }
+                return orig(input, init);
+            };
+        })();
+    </script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -341,7 +362,8 @@
             renderClosed();
 
         }
-        load(); setInterval(load, 180000);
+        load(); setInterval(function () { if (!document.hidden) load(); }, 30000);
+            document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
     </script>
 <script data-namefix="1">
 /* 표시용: 종목명 앞 신호등 이모지와 '(비)' 제거 */
