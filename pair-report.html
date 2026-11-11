@@ -788,7 +788,7 @@
                     </td>
                     <td rowspan="2">${f2(st.entry_z)}</td>
                     <td rowspan="2">${fp(st.entry_edge)}</td>
-                    <td rowspan="2" class="${isClosed ? '' : szClass}">${isClosed ? f2(st.exit_z) : (szValue !== null ? szValue.toFixed(2) : '-')}</td>
+                    <td rowspan="2" style="${isClosed ? '' : 'font-weight:700;color:#111827'}">${isClosed ? f2(st.exit_z) : (szValue !== null ? szValue.toFixed(2) : '-')}</td>
                     <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                     <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                     <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
