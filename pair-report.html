@@ -228,11 +228,11 @@
 
         <div id="content-container" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card hidden">
             <div class="overflow-x-auto">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Open</h2>
                 <table class="report-table">
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Status</th>
                             <th>Z</th>
                             <th>Edge</th>
                             <th>Z(N/E)</th>
@@ -252,6 +252,35 @@
                         </tr>
                     </thead>
                     <tbody id="report-body">
+                        <tr>
+                            <td colspan="19" style="text-align:center;">Loading Data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3 mt-8">Closed</h2>
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Z</th>
+                            <th>Edge</th>
+                            <th>Z(N/E)</th>
+                            <th>N %</th>
+                            <th>N Profit</th>
+                            <th>T Exp</th>
+                            <th>Dir</th>
+                            <th>Ref P</th>
+                            <th>Val P</th>
+                            <th>Qty</th>
+                            <th>I Profit</th>
+                            <th>I %</th>
+                            <th>I Exp</th>
+                            <th>Entry</th>
+                            <th>Exit</th>
+                            <th>Days</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-body-closed">
                         <tr>
                             <td colspan="19" style="text-align:center;">Loading Data...</td>
                         </tr>
@@ -569,6 +598,8 @@
         async function renderTable(stockSignals) {
             const tbody = document.getElementById('report-body');
             tbody.innerHTML = '';
+            const tbodyC = document.getElementById('report-body-closed');
+            tbodyC.innerHTML = '';
             let totalExposure = 0;
             let totalOpenPnL = 0;
 
@@ -755,7 +786,6 @@
                             <b>${displayStockName}</b>
                         </a>
                     </td>
-                    <td rowspan="2" class="${agg.status === 'Open' ? 'open-green' : ''}">${agg.status}</td>
                     <td rowspan="2">${f2(st.entry_z)}</td>
                     <td rowspan="2">${fp(st.entry_edge)}</td>
                     <td rowspan="2" class="${isClosed ? '' : szClass}">${isClosed ? f2(st.exit_z) : (szValue !== null ? szValue.toFixed(2) : '-')}</td>
@@ -773,7 +803,7 @@
                     <td>${formatDateToYYMMDD(isClosed ? agg.latest_exit : '-')}</td>
                     <td>${totalDays}</td>
                 `;
-                            tbody.appendChild(trShort);
+                            (isClosed ? tbodyC : tbody).appendChild(trShort);
 
                 // Long(우선주) 행
                 const trLong = document.createElement('tr');
@@ -792,7 +822,7 @@
                     <td>${formatDateToYYMMDD(isClosed ? agg.latest_exit : '-')}</td>
                     <td>${totalDays}</td>
                 `;
-                tbody.appendChild(trLong);
+                (isClosed ? tbodyC : tbody).appendChild(trLong);
             }
 
             // Total Exposure와 Open P&L 업데이트
