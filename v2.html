@@ -277,6 +277,7 @@
         }
 
         async function load() {
+            let TSG = {}; try { TSG = await (await fetch('data/trade-stats.json?t=' + Date.now())).json(); } catch (e) { }
             let d = null;
             try { d = await (await fetch('data/v2_dashboard.json?t=' + Date.now())).json(); } catch (e) { console.error(e); }
             updateMarket(); updateStatus(d);
@@ -344,12 +345,12 @@
             const DL = d.day_leg || {};
             const dlt = c => has(DL[c]) && !(has(ML[c]) && ML[c] < LMIN) ? man(DL[c]) : '-';
             const mlc = c => has(ML[c]) && ML[c] < LMIN ? 'text-gray-400 line-through' : 'font-semibold';
-            table('now', ['Item', 'Signal', 'Z', 'Edge', 'Max<br>/ Stock', '1-Day<br>/ Stock', 'Entry', 'Days', 'Qty<br>C / P', 'Entry Px<br>C / P', 'P&L', 'P&L %', 'To Stop', 'Note'],
+            table('now', ['Item', 'Signal', 'Z', 'Edge', 'Z(N)', 'Max<br>/ Stock', '1-Day<br>/ Stock', 'Entry', 'Days', 'Qty<br>C / P', 'Entry Px<br>C / P', 'P&L', 'P&L %', 'To Stop', 'Note'],
                 lo.map(r => { const q = PB[r.code];
                   const qty = q ? `${num(q.cq)} / ${num(q.pq)}` : (has(r.qty_C) ? `${num(r.qty_C)} / ${num(r.qty_P)}` + (has(DL[r.code]) && has(ML[r.code]) && DL[r.code] < ML[r.code] && r.C && r.P ? ` (${num(Math.floor(DL[r.code] / r.C))} / ${num(Math.floor(DL[r.code] / r.P))})` : '') : '');
                   const ret = has(r.pnl_ret) ? r.pnl_ret : (q ? q.pnl_ret : null);
-                  return `<tr><td>${link(r)}</td><td>${tag(r.action)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td>
-                  <td>${/EXIT|HOLD/.test(r.action) ? '<span style="color:#9ca3af" title="목표(Z 0.4)까지 남은 기대 수익. 마이너스 = 목표를 이미 지남">' + pct(r.edge) + '</span>' : pct(r.edge)}</td>
+                  return `<tr><td>${link(r)}</td><td>${tag(r.action)}</td>${q ? `<td title="진입일 Z">${z2((TSG[r.code] || {}).entry_z)}</td><td title="진입 때 예측한 괴리 축소폭">${pct((TSG[r.code] || {}).entry_edge)}</td><td class="${zcls(r.z)}" title="지금 Z">${z2(r.z)}</td>`
+                        : `<td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td><td></td>`}
                   <td class="${mlc(r.code)}">${mlt(r.code)}</td><td>${dlt(r.code)}</td>
                   <td>${q && q.entry_date ? q.entry_date : ''}</td><td>${q && q.entry_date ? Math.max(1, Math.floor((new Date(kstMin().day) - new Date(String(q.entry_date).slice(0, 10))) / 864e5)) : ''}</td>
                   <td>${qty}</td><td>${q ? `${num(q.c0)} / ${num(q.p0)}` : ''}</td>
