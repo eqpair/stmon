@@ -1510,7 +1510,7 @@
                         var a = document.activeElement;
                         var busy = document.querySelector('.modal-backdrop.open') ||
                             (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
-                        if (v !== base && !busy) location.reload();
+                        if (v !== base) { if (v === window.__eqPend && !busy) location.reload(); window.__eqPend = v; } else { window.__eqPend = null; }
                     })
                     .catch(function () {});
             }

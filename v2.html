@@ -138,10 +138,11 @@
                       WAIT_SLOT: 'Wait · Slot', BLOCKED_BAN: 'Blocked · Ban', BLOCKED_LIQ: 'Blocked · Liquidity', BLOCKED_VOL: 'Blocked · Vol', BLOCKED_RISK: 'Blocked · Delist Risk', WATCH: 'Watch' };
         const tag = a => `<span class="signal-tag ${/ENTER|EXIT/.test(a) ? 'strong' : ''}">${ACT[a] || a}</span>`;
 
+        function setH(id, h) { const n = document.getElementById(id); if (n && n._h !== h) { n.innerHTML = h; n._h = h; } }   // 바뀐 때만 다시 그림
         function table(el, head, rows) {
-            document.getElementById(el).innerHTML =
+            setH(el,
                 '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
-                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">None</td></tr>`) + '</tbody>';
+                (rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="empty">None</td></tr>`) + '</tbody>');
         }
 
         function updateMarket(d) {
@@ -318,7 +319,7 @@
                 const IC = { ok: ['✓', 'text-green-600'], warn: ['!', 'text-yellow-600'], bad: ['✕', 'text-red-600'] };
                 const pill = c => `<span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-md text-sm text-gray-700" title="${c[2]}"><b class="${IC[c[0]][1]}">${IC[c[0]][0]}</b>${c[1]}</span>`;
                 const chip = (label, val) => `<div class="p-3 bg-gray-50 rounded-lg"><div class="text-gray-500 text-xs font-medium mb-1">${label}</div><div class="text-sm font-semibold text-gray-800">${val}</div></div>`;
-                document.getElementById('gate').innerHTML = `
+                setH('gate', `
                     <div class="flex items-center gap-3 flex-wrap">
                         <div class="w-4 h-4 rounded-full ${dot}"></div>
                         <div class="text-2xl font-bold text-gray-800">${title}</div>
@@ -327,7 +328,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
                         ${chip(`Entry Candidates (${ent.length})`, ent.length ? ent.map(r => nm(r.name)).join(', ') : '-')}
                         ${chip(`Exit Targets (${ex.length})`, ex.length ? ex.map(r => nm(r.name)).join(', ') : '-')}
-                    </div>`;
+                    </div>`);
             }
             document.getElementById('nowinfo').textContent = (d.banned ? 'Short-sale ban · ' : '')
                 + (has(d.vol_ratio) ? `Market vol ${d.vol_ratio.toFixed(2)}x` + (d.vol_block ? ` (limit ${d.vol_block}x)` : '') + ' · ' : '')
@@ -399,7 +400,7 @@
                         var a = document.activeElement;
                         var busy = document.querySelector('.modal-backdrop.open') ||
                             (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
-                        if (v !== base && !busy) location.reload();
+                        if (v !== base) { if (v === window.__eqPend && !busy) location.reload(); window.__eqPend = v; } else { window.__eqPend = null; }
                     })
                     .catch(function () {});
             }
