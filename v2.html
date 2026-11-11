@@ -116,11 +116,6 @@
             </div>
         </div>
 
-        <!-- Closed -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Closed</h2>
-            <div class="overflow-x-auto"><table class="report-table" id="closed"></table></div>
-        </div>
     </div>
 
     <footer class="bg-white py-6 mt-8 border-t border-gray-100">
@@ -364,7 +359,6 @@
                 (d.watch || []).slice(0, 15).map(r => `<tr><td>${link(r)}</td><td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td><td class="${mlc(r.code)}">${mlt(r.code)}</td><td>${dlt(r.code)}</td>
                   <td>${!r.armed ? '<span class="signal-tag">Re-arm Wait</span>' : ''}${!r.validated ? '<span class="signal-tag">Short History</span>' : ''}</td></tr>`));
 
-            renderClosed();
 
         }
         load(); setInterval(function () { if (!document.hidden) load(); }, 30000);
