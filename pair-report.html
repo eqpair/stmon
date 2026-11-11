@@ -233,7 +233,10 @@
                         <tr>
                             <th></th>
                             <th>Status</th>
-                            <th>SZ</th>
+                            <th>Entry Z</th>
+                            <th>Entry Edge</th>
+                            <th>Z<br>Now / Exit</th>
+                            <th>Edge Now</th>
                             <th>N Profit</th>
                             <th>N %</th>
                             <th>T Exp</th>
@@ -576,6 +579,11 @@
             }
 
             const todayStr = new Date().toISOString().slice(0, 10);
+            let TS = {}, LV = {};
+            try { TS = await (await fetch(`data/trade-stats.json?t=${Date.now()}`)).json(); } catch (e) { }
+            try { const dd = await (await fetch(`data/v2_dashboard.json?t=${Date.now()}`)).json(); (dd.live_orders || []).forEach(r => { LV[r.code] = r.edge; }); } catch (e) { }
+            const f2 = v => (v == null || v !== v) ? '-' : (v >= 0 ? '+' : '') + Number(v).toFixed(2);
+            const fp = v => (v == null || v !== v) ? '-' : (Number(v) * 100).toFixed(1) + '%';
 
             // 종목별로 거래 합산
             const aggregatedTrades = {};
@@ -730,6 +738,7 @@
                 }
  
                 const isClosed = agg.status === "Closed";
+                const st = TS[agg.common_code] || {};
 
                 // Days 계산 (전체 기간)
                 const totalDays = Math.floor((new Date(agg.latest_exit || todayStr) - new Date(agg.earliest_entry)) / (1000 * 60 * 60 * 24));
@@ -748,7 +757,10 @@
                         </a>
                     </td>
                     <td rowspan="2" class="${agg.status === 'Open' ? 'open-green' : ''}">${agg.status}</td>
-                    <td rowspan="2" class="${szClass}">${szValue !== null ? szValue.toFixed(2) : '-'}</td>
+                    <td rowspan="2">${f2(st.entry_z)}</td>
+                    <td rowspan="2">${fp(st.entry_edge)}</td>
+                    <td rowspan="2" class="${isClosed ? '' : szClass}">${isClosed ? f2(st.exit_z) : (szValue !== null ? szValue.toFixed(2) : '-')}</td>
+                    <td rowspan="2">${isClosed ? '' : fp(LV[agg.common_code])}</td>
                     <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                     <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
                     <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>

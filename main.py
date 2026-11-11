@@ -210,6 +210,11 @@ class App:
         snap = self.compute_snapshot({})                 # 확정 종가 기준
         row = report.mark_equity(snap)
         await asyncio.to_thread(web.trends, self.hist, self.names, self.params_for)
+        try:
+            from core import tradestats
+            await asyncio.to_thread(tradestats.build)
+        except Exception as e:
+            log.warning(f'trade-stats 실패: {e}')
         log.info(f"마감 처리: 이력 {len(res)}쌍(확인 필요 {len(bad)}), 손익 {row['total']:,.0f}")
         if getattr(cfg, 'TG_DAILY_WARNINGS', True):
             if bad:
