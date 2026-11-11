@@ -596,15 +596,15 @@
 
         // 테이블 렌더링 함수
         async function renderTable(stockSignals) {
-            const tbody = document.getElementById('report-body');
-            tbody.innerHTML = '';
-            const tbodyC = document.getElementById('report-body-closed');
-            tbodyC.innerHTML = '';
+            // 새 표를 화면 밖에서 다 만든 뒤 한 번에 교체 (깜빡임 방지)
+            const tbodyOld = document.getElementById('report-body'), tbodyCOld = document.getElementById('report-body-closed');
+            const tbody = document.createElement('tbody'); tbody.id = 'report-body';
+            const tbodyC = document.createElement('tbody'); tbodyC.id = 'report-body-closed';
             let totalExposure = 0;
             let totalOpenPnL = 0;
 
             if (tradesData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="19" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
+                tbodyOld.innerHTML = '<tr><td colspan="19" style="text-align:center;">매매 기록이 없습니다.</td></tr>';
                 return;
             }
 
@@ -824,6 +824,8 @@
                 `;
                 (isClosed ? tbodyC : tbody).appendChild(trLong);
             }
+
+            tbodyOld.replaceWith(tbody); tbodyCOld.replaceWith(tbodyC);
 
             // Total Exposure와 Open P&L 업데이트
             const totalExposureElement = document.getElementById('totalExposure');
