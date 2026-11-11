@@ -134,7 +134,7 @@
         const nm = s => (s || '').replace(/\s*\[.*\]\s*$/, '');
         const link = r => `<span class="clickable-item"><a href="trade-detail.html?code=${r.code}&name=${encodeURIComponent(r.name || '')}">${nm(r.name)}</a></span>`;
         const gapCls = g => !has(g) ? '' : (g < 0 ? 'stop-over' : (g < 0.05 ? 'stop-near' : ''));
-        const ACT = { ENTER: 'Enter', EXIT_TARGET: 'Exit · Target', EXIT_STOP: 'Exit · Stop', EXIT_TIME: 'Exit · Time', HOLD: 'Hold',
+        const ACT = { ENTER: 'Enter', EXIT_TARGET: 'Exit', EXIT_STOP: 'Exit', EXIT_TIME: 'Exit', HOLD: 'Hold',
                       WAIT_SLOT: 'Wait · Slot', BLOCKED_BAN: 'Blocked · Ban', BLOCKED_LIQ: 'Blocked · Liquidity', BLOCKED_VOL: 'Blocked · Vol', BLOCKED_RISK: 'Blocked · Delist Risk', WATCH: 'Watch' };
         const tag = a => `<span class="signal-tag ${/ENTER|EXIT/.test(a) ? 'strong' : ''}">${ACT[a] || a}</span>`;
 
@@ -344,7 +344,7 @@
                 lo.map(r => { const q = PB[r.code];
                   const qty = q ? `${num(q.cq)} / ${num(q.pq)}` : (has(r.qty_C) ? `${num(r.qty_C)} / ${num(r.qty_P)}` + (has(DL[r.code]) && has(ML[r.code]) && DL[r.code] < ML[r.code] && r.C && r.P ? ` (${num(Math.floor(DL[r.code] / r.C))} / ${num(Math.floor(DL[r.code] / r.P))})` : '') : '');
                   const ret = has(r.pnl_ret) ? r.pnl_ret : (q ? q.pnl_ret : null);
-                  return `<tr><td>${link(r)}</td><td>${tag(r.action)}</td>${q ? `<td title="진입일 Z">${z2((TSG[r.code] || {}).entry_z)}</td><td title="진입 때 예측한 괴리 축소폭">${pct((TSG[r.code] || {}).entry_edge)}</td><td class="${zcls(r.z)}" title="지금 Z">${z2(r.z)}</td>`
+                  return `<tr><td>${link(r)}</td><td>${tag(r.action)}</td>${q ? `<td title="진입일 Z">${z2((TSG[r.code] || {}).entry_z)}</td><td title="진입 때 예측한 괴리 축소폭">${pct((TSG[r.code] || {}).entry_edge)}</td><td style="font-weight:700;color:#111827" title="지금 Z">${z2(r.z)}</td>`
                         : `<td class="${zcls(r.z)}">${z2(r.z)}</td><td>${pct(r.edge)}</td><td></td>`}
                   <td class="${mlc(r.code)}">${mlt(r.code)}</td><td>${dlt(r.code)}</td>
                   <td>${q && q.entry_date ? q.entry_date : ''}</td><td>${q && q.entry_date ? Math.max(1, Math.floor((new Date(kstMin().day) - new Date(String(q.entry_date).slice(0, 10))) / 864e5)) : ''}</td>
