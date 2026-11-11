@@ -28,7 +28,10 @@ def build():
     for c, g in G.items():
         f = os.path.join(data.HIST, f"{c}_{g['pref']}.csv")
         if not os.path.exists(f):
-            continue
+            alt = sorted(x for x in os.listdir(data.HIST) if x.startswith(c + '_') and x.endswith('.csv'))
+            if not alt:
+                continue
+            f = os.path.join(data.HIST, alt[0])
         h = pd.read_csv(f, index_col=0, parse_dates=True).dropna()
         x = np.log(h.C / h.P)
         ez, ee = _at(h, x, g['entry'])

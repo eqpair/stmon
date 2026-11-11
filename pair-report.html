@@ -233,12 +233,11 @@
                         <tr>
                             <th></th>
                             <th>Status</th>
-                            <th>Entry Z</th>
-                            <th>Entry Edge</th>
-                            <th>Z<br>Now / Exit</th>
-                            <th>Edge Now</th>
-                            <th>N Profit</th>
+                            <th>Z</th>
+                            <th>Edge</th>
+                            <th>Z(N)</th>
                             <th>N %</th>
+                            <th>N Profit</th>
                             <th>T Exp</th>
                             <th>Dir</th>
                             <th>Ref P</th>
@@ -760,9 +759,8 @@
                     <td rowspan="2">${f2(st.entry_z)}</td>
                     <td rowspan="2">${fp(st.entry_edge)}</td>
                     <td rowspan="2" class="${isClosed ? '' : szClass}">${isClosed ? f2(st.exit_z) : (szValue !== null ? szValue.toFixed(2) : '-')}</td>
-                    <td rowspan="2">${isClosed ? '' : fp(LV[agg.common_code])}</td>
-                    <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                     <td rowspan="2" class="${rateClass(totalRet)}">${totalRet.toFixed(2)}%</td>
+                    <td rowspan="2" class="${profitClass(totalPnl)}">${Math.round(totalPnl).toLocaleString()}</td>
                     <td rowspan="2">${Math.round(totalInvested).toLocaleString()}</td>
                     <td class="center-align"><b>S</b></td>
                     <td>${agg.common_qty > 0 ? Math.round(avgCommonEntry).toLocaleString() : '-'}</td>
