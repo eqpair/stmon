@@ -196,7 +196,7 @@
         const yymmdd = s => s ? s.slice(2, 4) + s.slice(5, 7) + s.slice(8, 10) : '-';
         async function renderClosed() {
             const el = document.getElementById('closed');
-            const head = ['', 'Z', 'Edge', 'Z(N)', 'N %', 'N Profit', 'T Exp', 'Dir', 'Ref P', 'Val P', 'Qty', 'I Profit', 'I %', 'I Exp', 'Entry', 'Exit', 'Days'];
+            const head = ['', 'Z', 'Edge', 'Z(E)', 'N %', 'N Profit', 'T Exp', 'Dir', 'Ref P', 'Val P', 'Qty', 'I Profit', 'I %', 'I Exp', 'Entry', 'Exit', 'Days'];
             let trades = [];
             try { trades = await (await fetch('data/pair-trades.json?t=' + Date.now())).json(); } catch (e) { console.error(e); }
             let TS = {}; try { TS = await (await fetch('data/trade-stats.json?t=' + Date.now())).json(); } catch (e) { }
