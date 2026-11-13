@@ -951,7 +951,7 @@
         const SZ_WINDOW = 120, Z_IN = 2.0, Z_OUT = 0.4;      // stmon 매매 규칙(config.V2_PARAMS)과 동일
         function toSpread(dr) { return -Math.log(1 - dr); }   // 괴리율 → ln(보통주/우선주)
 
-        // ---- Spread Band: 앞으로의 경향 (과거 54쌍에서 같은 Z 구간이었을 때)
+        // ---- Spread Band: 예측 (과거 54쌍에서 같은 Z 구간이었을 때)
         async function renderBandOutlook() {
             const note = document.getElementById('band-note'); if (!note) return;
             try {
@@ -963,10 +963,10 @@
                 const lo = k === 0 ? `${B[0]} 미만` : `${B[k - 1] >= 0 ? '+' : ''}${B[k - 1]}~${B[k - 1] + 0.5 >= 0 ? '+' : ''}${B[k - 1] + 0.5}`;
                 const dr = q => ((1 - Math.exp(-(x + q * sd))) * 100).toFixed(1);
                 const pc = v => Math.round(v * 100) + '%';
-                note.insertAdjacentHTML('beforeend', `<div class="mt-2 pt-2 border-t border-gray-100"><b class="text-gray-900">앞으로</b> · 과거 54쌍에서 Z가 ${lo}였을 때(${r60.n.toLocaleString()}개 표본): `
+                note.insertAdjacentHTML('beforeend', `<div class="mt-2 pt-2 border-t border-gray-100"><b class="text-gray-900">예측</b> · 과거 54쌍에서 Z가 ${lo}였을 때(${r60.n.toLocaleString()}개 표본): `
                     + `괴리가 더 좁혀진 비율 20일 뒤 ${pc(r20.p_narrow)}, 60일 뒤 ${pc(r60.p_narrow)}. `
                     + `60일 뒤 괴리율은 중앙 ${dr(r60.q50)}% (절반은 ${dr(r60.q25)}~${dr(r60.q75)}% 사이), 60일 안에 평균(Z 0)에 닿은 비율 ${pc(r60.p_mean)}.`
-                    + ` <span class="text-gray-400">과거 경향이며 예측은 아닙니다.</span></div>`);
+                    + ` <span class="text-gray-400">(54쌍 과거 통계 기반 확률)</span></div>`);
             } catch (e) { console.error('앞으로 줄 오류:', e); }
         }
 
