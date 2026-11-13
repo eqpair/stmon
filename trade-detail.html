@@ -309,7 +309,7 @@
                     <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Entry Check</h2>
                     <span class="text-xs text-gray-500" id="ec-summary"></span>
                 </div>
-                <div id="ec-grid" class="grid grid-cols-2 md:grid-cols-5 gap-2"></div>
+                <div id="ec-grid" class="grid gap-2" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"></div>
             </div>
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Scenario Analysis Tool</h2>
@@ -420,6 +420,7 @@
                     <div style="position: relative; height: 280px;">
                         <canvas id="price-chart"></canvas>
                     </div>
+                    <div id="band-note" class="text-xs text-gray-600 mt-3 leading-relaxed"></div>
                 </div>
             </div>
             <!-- Statistical Distribution Chart -->
@@ -678,6 +679,32 @@
                     scales: { x: XAX(6), y: { ...AX, ticks: { ...AX.ticks, callback: v => v + '%' } } }
                 }
             });
+
+            // ---- 한줄평
+            try {
+                const note = document.getElementById('band-note');
+                if (note && stockData.history.stdDev > 0) {
+                    const m = stockData.history.mean, sd = stockData.history.stdDev, drN = stockData.current.discountRate * 100;
+                    const mD = toDr(m), z = (toSpread(stockData.current.discountRate) - m) / sd;
+                    const pos = z >= Z_IN ? '+2σ 위 (진입 구간)' : z >= 1 ? '평균 위, +2σ에 접근 중' : z > -1 ? '평균 근처' : z > -Z_IN ? '평균 아래' : '−2σ 아래';
+                    const mv = mid.filter(v => v != null), slope = mv.length > 20 ? mv[mv.length - 1] - mv[mv.length - 21] : null;
+                    const slT = slope == null ? '' : Math.abs(slope) < 0.5 ? '평균선은 최근 20일 평탄' : `평균선은 최근 20일 ${slope > 0 ? '+' : ''}${slope.toFixed(1)}%p ${slope > 0 ? '상승' : '하락'}`;
+                    const wid = up.map((u, i) => (u != null && lo[i] != null) ? u - lo[i] : null).filter(v => v != null);
+                    const wN = wid[wid.length - 1], wM = wid.slice().sort((p, q) => p - q)[Math.floor(wid.length / 2)];
+                    const wT = wN == null ? '' : wN > wM * 1.25 ? '밴드 폭은 평소보다 넓음(변동성 큼)' : wN < wM * 0.8 ? '밴드 폭은 평소보다 좁음' : '밴드 폭은 보통';
+                    let hT = '';
+                    const op = ((typeof TD !== 'undefined' && TD.trades) || []).filter(t => t.status === 'Open');
+                    if (op.length) {
+                        const cq = op.reduce((p, t) => p + t.common_qty, 0), pq = op.reduce((p, t) => p + t.preferred_qty, 0);
+                        const ce = op.reduce((p, t) => p + t.common_entry * t.common_qty, 0) / cq, pe = op.reduce((p, t) => p + t.preferred_entry * t.preferred_qty, 0) / pq;
+                        const dE = (1 - pe / ce) * 100, d = drN - dE;
+                        hT = `진입가 기준 괴리 ${dE.toFixed(1)}% → 지금 ${drN.toFixed(1)}% (${d > 0 ? '+' : ''}${d.toFixed(1)}%p ${d < 0 ? '축소' : '확대'})`;
+                        if (Math.abs(d) < 1.5 && slope != null && slope < -1) hT += ' — Z가 내려온 건 주로 평균선이 따라 내려왔기 때문';
+                    }
+                    note.innerHTML = `<b class="text-gray-900">괴리율 ${drN.toFixed(1)}%</b> · 120일 평균 ${mD.toFixed(1)}%보다 ${Math.abs(drN - mD).toFixed(1)}%p ${drN >= mD ? '높음' : '낮음'} · ${pos}. `
+                        + [slT, wT].filter(Boolean).join(', ') + '.' + (hT ? `<br>${hT}.` : '');
+                }
+            } catch (e) { console.error('한줄평 오류:', e); }
         }
 
         function renderCharts(trendData) {
@@ -944,20 +971,20 @@
                 const man = n => n >= 1e8 ? (n / 1e8).toFixed(1).replace('.0', '') + '억' : Math.round(n / 1e4).toLocaleString() + '만';
                 const items = [
                     ['Z', z == null ? '-' : (z >= 0 ? '+' : '') + z.toFixed(2),
-                        z == null ? 'bad' : z >= Z_IN ? 'ok' : 'warn', z != null && z >= Z_IN ? '진입 구간' : `진입 기준 ${Z_IN} 미달`],
+                        z == null ? 'bad' : z >= Z_IN ? 'ok' : 'warn', z != null && z >= Z_IN ? '진입 구간' : '기준 미달'],
                     ['Edge', edge == null ? '-' : (edge * 100).toFixed(1) + '%',
-                        edge == null ? 'bad' : edge >= 0.08 ? 'ok' : edge >= 0.03 ? 'warn' : 'bad', edge == null ? '' : edge >= 0.08 ? '충분' : edge >= 0.03 ? '보통 (3~8%)' : '부족 (3% 미만)'],
-                    ['괴리 부호', (dr * 100).toFixed(2) + '%', dr >= 0 ? 'ok' : 'bad', dr >= 0 ? '플러스 괴리' : '마이너스 괴리 — 우선주가 더 비쌈'],
+                        edge == null ? 'bad' : edge >= 0.08 ? 'ok' : edge >= 0.03 ? 'warn' : 'bad', edge == null ? '' : edge >= 0.08 ? '충분' : edge >= 0.03 ? '3~8%' : '3% 미만'],
+                    ['괴리 부호', (dr * 100).toFixed(2) + '%', dr >= 0 ? 'ok' : 'bad', dr >= 0 ? '플러스 괴리' : '마이너스'],
                     ['유동성', ml ? '종목당 ' + man(ml) : '-',
                         !L ? 'warn' : L.excluded ? 'bad' : (ml || 0) >= 5e7 ? 'ok' : (ml || 0) >= 2e7 ? 'warn' : 'bad',
-                        !L ? '관리 대상 54쌍 아님' : L.excluded ? L.excluded : (ml || 0) >= 5e7 ? '충분' : '얇은 편'],
-                    ['평균선 기울기', sl == null ? '-' : (sl >= 0 ? '+' : '') + sl.toFixed(2) + 'σ',
+                        !L ? '관리 대상 아님' : L.excluded ? L.excluded : (ml || 0) >= 5e7 ? '충분' : '얇은 편'],
+                    ['평균 기울기', sl == null ? '-' : (sl >= 0 ? '+' : '') + sl.toFixed(2) + 'σ',
                         sl == null ? 'warn' : (sl > 0.35 || sl < -0.10) ? 'warn' : 'ok',
-                        sl == null ? '데이터 부족' : sl > 0.35 ? '평균이 빠르게 올라가는 중' : sl < -0.10 ? '평균이 내려가는 중' : '평탄'],
+                        sl == null ? '데이터 부족' : sl > 0.35 ? '상승 중' : sl < -0.10 ? '하락 중' : '평탄'],
                 ];
                 const IC = { ok: ['✓', '#16a34a'], warn: ['!', '#ca8a04'], bad: ['✕', '#dc2626'] };
                 const TIPS = { 'Z': '진입 기준 Z ≥ 2.0', 'Edge': '(Z − 0.4) × σ · 8% 이상 양호, 3% 미만 부족', '괴리 부호': '마이너스 괴리는 과거 손절 비율 약 2배',
-                               '유동성': '종목당 최대 금액 · 5천만 이상 양호, 2천만 미만 제외', '평균선 기울기': '120일 평균이 최근 20일 동안 움직인 폭(σ) · +0.35 초과 또는 −0.10 미만이면 과거 손절 비율 높음' };
+                               '유동성': '종목당 최대 금액 · 5천만 이상 양호, 2천만 미만 제외', '평균 기울기': '120일 평균이 최근 20일 동안 움직인 폭(σ) · +0.35 초과 또는 −0.10 미만이면 과거 손절 비율 높음' };
                 grid.innerHTML = items.map(([lab, val, st, note]) => `<div class="px-3 py-2 bg-white rounded-md border border-gray-200" title="${note}${TIPS && TIPS[lab] ? ' — ' + TIPS[lab] : ''}">
                     <div class="flex items-center justify-between text-gray-500" style="font-size:0.7rem"><span>${lab}</span><span style="color:${IC[st][1]};font-weight:700">${IC[st][0]} ${st === 'ok' ? '' : note}</span></div>
                     <div class="text-base font-bold text-gray-900" style="font-variant-numeric:tabular-nums">${val}</div></div>`).join('');
