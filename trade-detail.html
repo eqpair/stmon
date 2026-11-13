@@ -299,18 +299,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Position (보유 중일 때만) -->
-            <div id="pos-card" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6 hidden">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Position</h2>
-                <div class="overflow-x-auto"><table id="pos-table"></table></div>
-                <p class="text-xs text-gray-400 mt-2">손익은 Report와 같은 방식(진입가 기준 이자·차입수수료 포함, 배당 제외). 손절까지 = 레그 기준 손익 −15%까지 남은 폭.</p>
-            </div>
-            <!-- Target Prices -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-1">Target Prices</h2>
-                <p class="text-xs text-gray-500 mb-4">오늘 Z 기준선(오늘 이전 120일 평균·표준편차)에서 Z가 각 값이 되는 가격입니다. 한쪽 가격은 지금 그대로라고 가정하고, 호가 단위로 반올림했습니다.</p>
-                <div class="overflow-x-auto"><table id="target-table"></table></div>
-            </div>
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Scenario Analysis Tool</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -658,7 +646,6 @@
 
                 updateCurrentInfo();
                 await loadTradeInfo(stockCode);
-                try { renderTargets(); renderPosition(); } catch (e) { console.error('목표가/포지션 표시 오류:', e); }
                 renderCharts(trendData);
                 renderHistoryData(trendData);
 
