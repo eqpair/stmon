@@ -408,7 +408,7 @@
                 <!-- Z Trend -->
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                     <div class="flex items-baseline justify-between mb-3"><h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Z Trend</h2>
-                        <span class="text-xs text-gray-400">최근 150일 · <span style="color:#b91c1c">▲</span> 진입 <span style="color:#dc2626">◆</span> 청산</span></div>
+                        <span class="text-xs text-gray-400"><span id="zt-range">최근 1년</span> · <span style="color:#b91c1c">▲</span> 진입 <span style="color:#dc2626">◆</span> 청산</span></div>
                     <div style="position: relative; height: 280px;">
                         <canvas id="sz-chart"></canvas>
                     </div>
@@ -687,7 +687,15 @@
                 const chartHeight = isMobile ? 250 : 300;
                 const pointRadius = isMobile ? 0 : 1;
 
-                const recentDates = trendData.dates.slice(-stockData.history.szValues.length);
+                // 기간: 기본 1년(250거래일), 보유 중이면 진입일부터
+                const zAll = calculateSZValues(trendData.discount_rates || []);
+                const opEntry = ((typeof TD !== 'undefined' && TD.trades) || []).filter(t => t.status === 'Open').map(t => t.entry_date).sort()[0];
+                let nShow = 250;
+                if (opEntry) { const ie = trendData.dates.findIndex(d => d >= opEntry); if (ie >= 0) nShow = Math.max(nShow, trendData.dates.length - ie + 5); }
+                const zs = zAll.slice(-nShow);
+                const recentDates = zs.map(v => trendData.dates[v.index]);
+                const zr = document.getElementById('zt-range');
+                if (zr) zr.textContent = opEntry ? (recentDates[0] > opEntry ? `진입 ${opEntry} (데이터는 ${recentDates[0]}부터)` : `진입 ${opEntry}부터`) : '최근 1년';
                 const recentCommonPrices = trendData.common_prices ? trendData.common_prices.slice(-150) : [];
                 const recentPreferredPrices = trendData.preferred_prices ? trendData.preferred_prices.slice(-150) : [];
                 const recentSzValues = stockData.history.szValues || [];
@@ -696,7 +704,7 @@
                     throw new Error(`차트 렌더링을 위한 데이터가 부족합니다: dates=${recentDates.length}, common_prices=${recentCommonPrices.length}, preferred_prices=${recentPreferredPrices.length}, sz_values=${recentSzValues.length}`);
                 }
 
-                renderSZChart(recentDates, stockData.history.szValues);
+                renderSZChart(recentDates, zs);
                 renderBandChart(trendData, recentDates);
                 renderDistChart(trendData);  // ← 이 줄 추가
             } catch (error) {

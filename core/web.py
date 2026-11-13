@@ -33,7 +33,7 @@ def stock_data(snap: pd.DataFrame, hist: dict):
                     divergent_signals=[s for s in sig if s['signal'] == 'IN']), os.path.join(D, 'stock_data.json'))
 
 
-def trends(hist: dict, names: dict, params_for, days: int = 400):
+def trends(hist: dict, names: dict, params_for, days: int = 700):
     os.makedirs(os.path.join(D, 'trends'), exist_ok=True)
     for a, h in hist.items():
         ind = indicators(h.tail(days + 200), params_for(a)).tail(days)
