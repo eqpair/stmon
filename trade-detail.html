@@ -299,6 +299,18 @@
                     </div>
                 </div>
             </div>
+            <!-- Position (보유 중일 때만) -->
+            <div id="pos-card" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6 hidden">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Position</h2>
+                <div class="overflow-x-auto"><table id="pos-table"></table></div>
+                <p class="text-xs text-gray-400 mt-2">손익은 Report와 같은 방식(진입가 기준 이자·차입수수료 포함, 배당 제외). 손절까지 = 레그 기준 손익 −15%까지 남은 폭.</p>
+            </div>
+            <!-- Target Prices -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-1">Target Prices</h2>
+                <p class="text-xs text-gray-500 mb-4">오늘 Z 기준선(오늘 이전 120일 평균·표준편차)에서 Z가 각 값이 되는 가격입니다. 한쪽 가격은 지금 그대로라고 가정하고, 호가 단위로 반올림했습니다.</p>
+                <div class="overflow-x-auto"><table id="target-table"></table></div>
+            </div>
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Scenario Analysis Tool</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -645,6 +657,8 @@
                 console.log('Calculated SZ Values:', stockData.history.szValues);
 
                 updateCurrentInfo();
+                await loadTradeInfo(stockCode);
+                try { renderTargets(); renderPosition(); } catch (e) { console.error('목표가/포지션 표시 오류:', e); }
                 renderCharts(trendData);
                 renderHistoryData(trendData);
 
@@ -1029,6 +1043,73 @@
         }
         const SZ_WINDOW = 120, Z_IN = 2.0, Z_OUT = 0.4;      // stmon 매매 규칙(config.V2_PARAMS)과 동일
         function toSpread(dr) { return -Math.log(1 - dr); }   // 괴리율 → ln(보통주/우선주)
+
+        // ---- 보유 정보 · 목표가 · 차트 표시 (trade-detail 보완)
+        let TD = { trades: [], stats: null };
+        async function loadTradeInfo(code) {
+            try { const all = await (await fetch('data/pair-trades.json?t=' + Date.now())).json(); TD.trades = (all || []).filter(t => t.common_code === code); } catch (e) { TD.trades = []; }
+            try { const st = await (await fetch('data/trade-stats.json?t=' + Date.now())).json(); TD.stats = (st || {})[code] || null; } catch (e) { TD.stats = null; }
+        }
+        const _pct = (v, d = 1) => (v == null || v !== v) ? '-' : (v >= 0 ? '+' : '') + (v * 100).toFixed(d) + '%';
+        const _z = v => (v == null || v !== v) ? '-' : (v >= 0 ? '+' : '') + Number(v).toFixed(2);
+        const _won = v => (v == null || v !== v) ? '-' : Math.round(v).toLocaleString();
+        const _cls = v => v > 0 ? 'color:#dc2626' : v < 0 ? 'color:#2563eb' : '';
+        function renderTargets() {
+            const el = document.getElementById('target-table'); if (!el) return;
+            const m = stockData.history.mean, sd = stockData.history.stdDev, C = stockData.current.commonPrice, P = stockData.current.preferredPrice;
+            if (!(sd > 0) || !C || !P) { el.innerHTML = '<tbody><tr><td>계산할 데이터가 부족합니다.</td></tr></tbody>'; return; }
+            const zNow = (toSpread(stockData.current.discountRate) - m) / sd;
+            const rows = [[zNow, '지금', true], [Z_IN, '진입 기준 (Entry)'], [1, '+1σ'], [Z_OUT, '청산 목표 (Exit)'], [0, '평균'], [-1, '−1σ'], [-2, '−2σ']];
+            let h = `<thead><tr><th>Z</th><th>구분</th><th>괴리율</th><th>우선주 가격<br><span style="font-weight:400">보통주 ${C.toLocaleString()} 고정</span></th><th>우선주 변화</th>`
+                  + `<th>보통주 가격<br><span style="font-weight:400">우선주 ${P.toLocaleString()} 고정</span></th><th>보통주 변화</th></tr></thead><tbody>`;
+            rows.forEach(([z, lab, now]) => {
+                const x = m + z * sd, dr = 1 - Math.exp(-x);
+                const pP = now ? P : roundToTickSize(C * Math.exp(-x)), cP = now ? C : roundToTickSize(P * Math.exp(x));
+                h += `<tr style="${now ? 'background:#f3f4f6;font-weight:700' : ''}"><td>${_z(z)}</td><td>${lab}</td><td>${(dr * 100).toFixed(2)}%</td>`
+                   + `<td>${pP.toLocaleString()}</td><td>${now ? '' : _pct(pP / P - 1, 2)}</td><td>${cP.toLocaleString()}</td><td>${now ? '' : _pct(cP / C - 1, 2)}</td></tr>`;
+            });
+            el.innerHTML = h + '</tbody>';
+        }
+        function renderPosition() {
+            const card = document.getElementById('pos-card'), el = document.getElementById('pos-table'); if (!card || !el) return;
+            const op = TD.trades.filter(t => t.status === 'Open');
+            if (!op.length) { card.classList.add('hidden'); return; }
+            const C = stockData.current.commonPrice, P = stockData.current.preferredPrice, today = new Date(new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10));
+            let cq = 0, pq = 0, ce = 0, pe = 0, eqp = 0, fin = 0, entry = null;
+            op.forEach(t => {
+                const d = Math.max(1, Math.floor((today - new Date(t.entry_date)) / 864e5)), b = (t.benchmark_rate_pct || 0) / 100;
+                const cn = t.common_entry * t.common_qty, pn = t.preferred_entry * t.preferred_qty;
+                cq += t.common_qty; pq += t.preferred_qty; ce += cn; pe += pn;
+                eqp += (t.common_entry - C) * t.common_qty + (P - t.preferred_entry) * t.preferred_qty;
+                fin += cn * (b + (t.common_floating_spread_bps || 0) / 1e4) * d / 365 - pn * (b + (t.preferred_floating_spread_bps || 0) / 1e4) * d / 365
+                     - cn * (t.common_borrow_fee_pct || 0) / 100 * d / 365;
+                if (!entry || t.entry_date < entry) entry = t.entry_date;
+            });
+            const tot = eqp + fin, exp = ce + pe, legRet = exp ? tot / (exp / 2) : 0, days = Math.max(1, Math.floor((today - new Date(entry)) / 864e5));
+            const st = TD.stats || {}, zNow = (toSpread(stockData.current.discountRate) - stockData.history.mean) / stockData.history.stdDev;
+            el.innerHTML = `<thead><tr><th>Entry</th><th>Days</th><th>Qty C / P</th><th>Entry Px C / P</th><th>Now Px C / P</th><th>Z</th><th>Edge</th><th>Z(N)</th>`
+                + `<th>가격 손익</th><th>이자·수수료</th><th>N Profit</th><th>N %</th><th>손절까지</th></tr></thead><tbody><tr>`
+                + `<td>${entry}</td><td>${days}</td><td>${cq.toLocaleString()} / ${pq.toLocaleString()}</td>`
+                + `<td>${_won(cq ? ce / cq : null)} / ${_won(pq ? pe / pq : null)}</td><td>${C.toLocaleString()} / ${P.toLocaleString()}</td>`
+                + `<td>${_z(st.entry_z)}</td><td>${st.entry_edge == null ? '-' : (st.entry_edge * 100).toFixed(1) + '%'}</td><td style="font-weight:700">${_z(zNow)}</td>`
+                + `<td style="${_cls(eqp)}">${_won(eqp)}</td><td style="${_cls(fin)}">${_won(fin)}</td><td style="${_cls(tot)};font-weight:700">${_won(tot)}</td>`
+                + `<td style="${_cls(tot)}">${exp ? (tot / exp * 100).toFixed(2) + '%' : '-'}</td><td>${((legRet + 0.15) * 100).toFixed(1)}%p</td></tr></tbody>`;
+            card.classList.remove('hidden');
+        }
+        function tradeMarkers(dates, szValues) {
+            const ent = dates.map(() => null), ex = dates.map(() => null), val = i => (szValues[i] && szValues[i].value != null) ? szValues[i].value : null;
+            const at = d => { if (!d) return -1; const i = dates.findIndex(x => x >= d); return i; };
+            (TD.trades || []).forEach(t => {
+                const i = at(t.entry_date); if (i >= 0) ent[i] = val(i);
+                if (t.exit_date) { const j = at(t.exit_date); if (j >= 0) ex[j] = val(j); }
+            });
+            const mk = (label, data, color, style) => ({ type: 'line', label, data, showLine: false, pointRadius: 6, pointHoverRadius: 7, pointStyle: style,
+                pointBackgroundColor: color, pointBorderColor: color, borderColor: color, backgroundColor: color });
+            const out = [];
+            if (ent.some(v => v != null)) out.push(mk('진입', ent, '#16a34a', 'triangle'));
+            if (ex.some(v => v != null)) out.push(mk('청산', ex, '#dc2626', 'rectRot'));
+            return out;
+        }
         function calculateSZValues(discountRates) {
             const x = discountRates.map(v => (v == null ? null : toSpread(v)));
             const result = [];
@@ -1053,13 +1134,6 @@
             const szElement = document.getElementById('current-sz-value');
             szElement.textContent = stockData.current.szValue.toFixed(2);
             szElement.classList.remove('sz-high', 'sz-medium', 'sz-low');
-            if (stockData.current.szValue >= 2.5) {
-                szElement.classList.add('sz-high');
-            } else if (stockData.current.szValue >= 1.5) {
-                szElement.classList.add('sz-medium');
-            } else {
-                szElement.classList.add('sz-low');
-            }
             const discountElement = document.getElementById('current-discount-rate');
             const discountPercent = (stockData.current.discountRate * 100).toFixed(2);
             discountElement.textContent = discountPercent + '%';
@@ -1095,7 +1169,7 @@
                 // 뱃지
                 const szEl = document.getElementById('dist-sz');
                 szEl.textContent = sz.toFixed(2);
-                szEl.style.color = sz >= 2.5 ? '#111827' : sz >= 1.5 ? '#374151' : '#6b7280';
+                szEl.style.color = '#111827';
                 document.getElementById('dist-dr').textContent = (toDr(curDr) * 100).toFixed(2) + '%';
                 document.getElementById('dist-mean').textContent = (toDr(mean) * 100).toFixed(2) + '%';
                 document.getElementById('dist-std').textContent = (std * 100).toFixed(3) + '%';
@@ -1103,9 +1177,9 @@
                 skewEl.textContent = (skew >= 0 ? '+' : '') + skew.toFixed(2);
                 skewEl.style.color = skew < -0.5 ? '#374151' : skew > 0.5 ? '#374151' : '#6b7280';
                 const judgeEl = document.getElementById('dist-judge');
-                if (skew > 0.5) { judgeEl.textContent = '진입유리'; judgeEl.style.color = '#374151'; }
-                else if (skew < -0.5) { judgeEl.textContent = '주의'; judgeEl.style.color = '#374151'; }
-                else { judgeEl.textContent = '중립'; judgeEl.style.color = '#6b7280'; }
+                if (skew > 0.5) { judgeEl.textContent = '오른쪽 꼬리'; judgeEl.style.color = '#374151'; }
+                else if (skew < -0.5) { judgeEl.textContent = '왼쪽 꼬리'; judgeEl.style.color = '#374151'; }
+                else { judgeEl.textContent = '대칭'; judgeEl.style.color = '#6b7280'; }
 
                 // 히스토그램
                 const bins = 24;
@@ -1275,11 +1349,12 @@
                                 ? `현재 괴리는 <strong>−1σ ~ −2σ 구간</strong>으로 평균보다 좁혀진 상태입니다(보유 중이면 청산 목표 Z 0.4를 이미 지남).`
                                 : `현재 괴리는 <strong>−2σ 아래</strong>로 평균보다 크게 좁혀진 상태입니다(보유 중이면 청산 목표를 크게 지남).`;
                 const skewMsg = skew > 0.5
-                    ? `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 오른쪽으로 치우쳐 있어 평균회귀 전략에 <strong style="color:#374151">유리</strong>한 구조입니다.`
+                    ? `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 최근 120일 동안 괴리가 가끔 크게 벌어진 날이 있었습니다(오른쪽 꼬리).`
                     : skew < -0.5
-                        ? `왜도 <strong>${skew.toFixed(2)}</strong> — 분포가 왼쪽으로 치우쳐 있어 현재 구간은 역사적 전례가 드물며 <strong style="color:#374151">주의</strong>가 필요합니다.`
-                        : `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 대칭에 가까워 Z-score 기준을 신뢰할 수 있습니다.`;
-                document.getElementById('dist-interp').innerHTML = `${sigmaMsg} ${skewMsg}`;
+                        ? `왜도 <strong>${skew.toFixed(2)}</strong> — 최근 120일 동안 괴리가 가끔 크게 좁혀진 날이 있었습니다(왼쪽 꼬리).`
+                        : `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 대칭에 가깝습니다.`;
+                const skewNote = ' <span style="color:#9ca3af">(왜도는 분포 모양 설명이며, 진입 판단 근거로 검증된 지표는 아닙니다.)</span>';
+                document.getElementById('dist-interp').innerHTML = `${sigmaMsg} ${skewMsg}${skewNote}`;
 
             } catch (e) {
                 console.error('분포 차트 오류:', e);
@@ -1322,7 +1397,8 @@
                             borderWidth: 1,
                             borderDash: [5, 5],
                             pointRadius: 0
-                        }
+                        },
+                        ...tradeMarkers(dates, szValues)
                     ]
                 },
                 options: {
