@@ -303,6 +303,15 @@
                     </div>
                 </div>
             </div>
+            <!-- Entry Check -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                <div class="flex items-baseline justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Entry Check</h2>
+                    <span class="text-xs text-gray-500" id="ec-summary"></span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="ec-grid"></div>
+                <p class="text-xs text-gray-400 mt-3">기준: Edge 8% 이상 양호·3% 미만 부족 · 마이너스 괴리는 과거 손절 비율 약 2배 · 유동성 종목당 최대 5천만 이상 양호·2천만 미만 제외 · 평균선 기울기 = 120일 평균이 최근 20일 동안 움직인 폭(σ 단위), 과거 진입 중 기울기가 컸던 경우(+0.35 초과, −0.10 미만) 손절 비율이 높았음</p>
+            </div>
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Scenario Analysis Tool</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -616,6 +625,7 @@
 
                 updateCurrentInfo();
                 await loadTradeInfo(stockCode);
+                renderEntryCheck(stockCode, trendData);
                 renderCharts(trendData);
                 renderHistoryData(trendData);
 
@@ -703,7 +713,7 @@
                 if (!D.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center text-gray-500">히스토리 데이터가 없습니다.</td></tr>'; return; }
                 const zm = {}; calculateSZValues(trendData.discount_rates || []).forEach(it => { zm[it.index] = it.value; });
                 const rows = [];
-                for (let i = D.length - 1; i >= Math.max(0, D.length - 150); i--) {
+                for (let i = D.length - 1; i >= Math.max(0, D.length - SZ_WINDOW); i--) {
                     const z = zm[i], zp = zm[i - 1], dr = trendData.discount_rates[i];
                     const dz = (z != null && zp != null) ? z - zp : null;
                     const f = v => (v >= 0 ? '+' : '') + v.toFixed(2);
@@ -904,6 +914,48 @@
         }
         const SZ_WINDOW = 120, Z_IN = 2.0, Z_OUT = 0.4;      // stmon 매매 규칙(config.V2_PARAMS)과 동일
         function toSpread(dr) { return -Math.log(1 - dr); }   // 괴리율 → ln(보통주/우선주)
+
+        // ---- Entry Check: 진입 판단에 쓰는 항목을 한곳에
+        async function renderEntryCheck(code, trendData) {
+            const grid = document.getElementById('ec-grid'); if (!grid) return;
+            try {
+                let dash = {}, lst = {};
+                try { dash = await (await fetch('data/v2_dashboard.json?t=' + Date.now())).json(); } catch (e) { }
+                try { lst = (await (await fetch('data/listing.json?t=' + Date.now())).json()).pairs || {}; } catch (e) { }
+                const m = stockData.history.mean, sd = stockData.history.stdDev, dr = stockData.current.discountRate;
+                const z = sd > 0 ? (toSpread(dr) - m) / sd : null, edge = z == null ? null : (z - Z_OUT) * sd;
+                const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+                const D = trendData.dates || [], DR = trendData.discount_rates || [];
+                const xs = DR.map((v, i) => (v == null || D[i] >= today) ? null : toSpread(v)).filter(v => v != null);
+                let sl = null;
+                if (xs.length >= SZ_WINDOW + 20 && sd > 0) {
+                    const avg = a => a.reduce((p, q) => p + q, 0) / a.length;
+                    sl = (avg(xs.slice(-SZ_WINDOW)) - avg(xs.slice(-SZ_WINDOW - 20, -20))) / sd;
+                }
+                const L = lst[code], ml = (dash.max_leg || {})[code];
+                const man = n => n >= 1e8 ? (n / 1e8).toFixed(1).replace('.0', '') + '억' : Math.round(n / 1e4).toLocaleString() + '만';
+                const items = [
+                    ['Z', z == null ? '-' : (z >= 0 ? '+' : '') + z.toFixed(2),
+                        z == null ? 'bad' : z >= Z_IN ? 'ok' : 'warn', z != null && z >= Z_IN ? '진입 구간' : `진입 기준 ${Z_IN} 미달`],
+                    ['Edge', edge == null ? '-' : (edge * 100).toFixed(1) + '%',
+                        edge == null ? 'bad' : edge >= 0.08 ? 'ok' : edge >= 0.03 ? 'warn' : 'bad', edge == null ? '' : edge >= 0.08 ? '충분' : edge >= 0.03 ? '보통 (3~8%)' : '부족 (3% 미만)'],
+                    ['괴리 부호', (dr * 100).toFixed(2) + '%', dr >= 0 ? 'ok' : 'bad', dr >= 0 ? '플러스 괴리' : '마이너스 괴리 — 우선주가 더 비쌈'],
+                    ['유동성', ml ? '종목당 ' + man(ml) : '-',
+                        !L ? 'warn' : L.excluded ? 'bad' : (ml || 0) >= 5e7 ? 'ok' : (ml || 0) >= 2e7 ? 'warn' : 'bad',
+                        !L ? '관리 대상 54쌍 아님' : L.excluded ? L.excluded : (ml || 0) >= 5e7 ? '충분' : '얇은 편'],
+                    ['평균선 기울기', sl == null ? '-' : (sl >= 0 ? '+' : '') + sl.toFixed(2) + 'σ',
+                        sl == null ? 'warn' : (sl > 0.35 || sl < -0.10) ? 'warn' : 'ok',
+                        sl == null ? '데이터 부족' : sl > 0.35 ? '평균이 빠르게 올라가는 중' : sl < -0.10 ? '평균이 내려가는 중' : '평탄'],
+                ];
+                const IC = { ok: ['✓', '#16a34a'], warn: ['!', '#ca8a04'], bad: ['✕', '#dc2626'] };
+                grid.innerHTML = items.map(([lab, val, st, note]) => `<div class="px-3 py-2 rounded-md border border-gray-200 bg-gray-50">
+                    <div class="flex items-center justify-between"><span class="text-gray-500" style="font-size:0.7rem">${lab}</span><b style="color:${IC[st][1]}">${IC[st][0]}</b></div>
+                    <div class="text-base font-bold text-gray-900" style="font-variant-numeric:tabular-nums">${val}</div>
+                    <div class="text-gray-500" style="font-size:0.7rem">${note}</div></div>`).join('');
+                const ok = items.filter(x => x[2] === 'ok').length, bad = items.filter(x => x[2] === 'bad').length;
+                document.getElementById('ec-summary').textContent = `${ok}/${items.length} 양호` + (bad ? ` · ${bad}개 주의` : '');
+            } catch (e) { console.error('Entry Check 오류:', e); grid.innerHTML = '<div class="text-sm text-gray-400">점검 항목을 계산할 수 없습니다.</div>'; }
+        }
 
         // ---- 보유 정보 · 목표가 · 차트 표시 (trade-detail 보완)
         let TD = { trades: [], stats: null };
@@ -1210,7 +1262,7 @@
                     : skew < -0.5
                         ? `왜도 <strong>${skew.toFixed(2)}</strong> — 최근 120일 동안 괴리가 가끔 크게 좁혀진 날이 있었습니다(왼쪽 꼬리).`
                         : `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 대칭에 가깝습니다.`;
-                const skewNote = ' <span style="color:#9ca3af">(왜도는 분포 모양 설명이며, 진입 판단 근거로 검증된 지표는 아닙니다.)</span>';
+                const skewNote = '';
                 document.getElementById('dist-interp').innerHTML = `${sigmaMsg} ${skewMsg}${skewNote}`;
 
             } catch (e) {
