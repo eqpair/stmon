@@ -364,34 +364,28 @@
                                 placeholder="백만원 단위로 입력" min="0" step="1">
                         </div>
                     </div>
-                    <div id="manual-result" class="bg-gray-50 rounded-lg p-6">
-                        <h3 class="text-lg font-medium text-gray-800 mb-4"><strong class="text-xl">SZ Result</strong>
-                        </h3>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="p-4 bg-white rounded-lg shadow">
-                                <div class="text-gray-700 text-sm font-medium mb-1">조정된 SZ 값</div>
-                                <div class="text-xl font-bold" id="adjusted-sz-value">-</div>
+                    <div id="manual-result" class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">SZ Result</div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="px-3 py-2 bg-white rounded-md border border-gray-200">
+                                <div class="text-gray-500" style="font-size:0.7rem">SZ</div>
+                                <div class="text-base font-bold" id="adjusted-sz-value">-</div>
                             </div>
-                            <div class="p-4 bg-white rounded-lg shadow">
-                                <div class="text-gray-700 text-sm font-medium mb-1">조정된 괴리율</div>
-                                <div class="text-xl font-bold" id="adjusted-discount-rate">-</div>
+                            <div class="px-3 py-2 bg-white rounded-md border border-gray-200">
+                                <div class="text-gray-500" style="font-size:0.7rem">괴리율</div>
+                                <div class="text-base font-bold" id="adjusted-discount-rate">-</div>
                             </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="p-4 bg-white rounded-lg shadow">
-                                <div class="text-gray-700 text-sm font-medium mb-1">보통주 [Short] 수량</div>
-                                <div class="text-xl font-bold" id="common-share-quantity">-</div>
+                            <div class="px-3 py-2 bg-white rounded-md border border-gray-200">
+                                <div class="text-gray-500" style="font-size:0.7rem">보통주 S 수량</div>
+                                <div class="text-base font-bold" id="common-share-quantity">-</div>
                             </div>
-                            <div class="p-4 bg-white rounded-lg shadow">
-                                <div class="text-gray-700 text-sm font-medium mb-1">우선주 [Long] 수량</div>
-                                <div class="text-xl font-bold" id="preferred-share-quantity">-</div>
+                            <div class="px-3 py-2 bg-white rounded-md border border-gray-200">
+                                <div class="text-gray-500" style="font-size:0.7rem">우선주 L 수량</div>
+                                <div class="text-base font-bold" id="preferred-share-quantity">-</div>
                             </div>
                         </div>
-                        <div class="p-4 bg-white rounded-lg shadow mt-4">
-                            <div class="text-gray-700 text-sm font-medium mb-2">Result Analysis</div>
-                            <div id="scenario-interpretation" class="text-sm text-gray-800">
-                                Adjust the price to calculate the scenario.
-                            </div>
+                        <div id="scenario-interpretation" class="text-xs text-gray-600 mt-2 leading-relaxed">
+                            Adjust the price to calculate the scenario.
                         </div>
                     </div>
                 </div>
