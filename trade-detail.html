@@ -33,6 +33,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     <style>
+        #signals-table-body td { text-align: right; font-variant-numeric: tabular-nums; padding: 6px 12px; font-size: 0.8rem; white-space: nowrap; }
+        #signals-table-body td:first-child { text-align: left; }
+        table:has(#signals-table-body) th { text-align: right; padding: 6px 12px; }
+        table:has(#signals-table-body) th:first-child { text-align: left; }
         .signal-card {
             transition: all 0.3s ease;
         }
@@ -391,86 +395,57 @@
                 </div>
             </div>
             <!-- 기존 코드에서 두 차트 영역을 아래처럼 묶어줍니다 -->
-            <div class="grid grid-cols-2 gap-6 mb-6">
-                <!-- SZ Value Trend -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card">
-                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">SZ Value Trend</h2>
-                    <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Z Trend -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <div class="flex items-baseline justify-between mb-3"><h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Z Trend</h2>
+                        <span class="text-xs text-gray-400">최근 150일 · <span style="color:#b91c1c">▲</span> 진입 <span style="color:#dc2626">◆</span> 청산</span></div>
+                    <div style="position: relative; height: 280px;">
                         <canvas id="sz-chart"></canvas>
                     </div>
                 </div>
 
-                <!-- Price Trend -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card">
-                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Price Trend</h2>
-                    <div class="chart-container h-96 md:h-80 sm:h-64" style="position: relative;">
+                <!-- Spread Band -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <div class="flex items-baseline justify-between mb-3"><h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Spread Band</h2>
+                        <span class="text-xs text-gray-400">괴리율 · 120일 평균 ±2σ</span></div>
+                    <div style="position: relative; height: 280px;">
                         <canvas id="price-chart"></canvas>
                     </div>
                 </div>
             </div>
             <!-- Statistical Distribution Chart -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card mb-6">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-1">Statistical Distribution Analysis</h2>
-                <p class="text-sm text-gray-400 mb-4">최근 120일 ln(보통주/우선주) 분포(축은 괴리율로 표시) · 현재가 위치 · σ 구간 · 왜도 — SZ는 서버·시나리오와 같은 기준</p>
-                <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1rem;">
-                    <div
-                        style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
-                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">현재 SZ</div>
-                        <div style="font-size:1rem; font-weight:700;" id="dist-sz">-</div>
-                    </div>
-                    <div
-                        style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
-                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">현재 dr</div>
-                        <div style="font-size:1rem; font-weight:700; color:#374151;" id="dist-dr">-</div>
-                    </div>
-                    <div
-                        style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
-                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">평균 dr</div>
-                        <div style="font-size:1rem; font-weight:700;" id="dist-mean">-</div>
-                    </div>
-                    <div
-                        style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
-                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">σ (ln 비율)</div>
-                        <div style="font-size:1rem; font-weight:700; color:#374151;" id="dist-std">-</div>
-                    </div>
-                    <div
-                        style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
-                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">왜도 SKW</div>
-                        <div style="font-size:1rem; font-weight:700;" id="dist-skew">-</div>
-                    </div>
-                    <div
-                        style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:0.5rem 1rem; min-width:90px; text-align:center;">
-                        <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:2px;">분포 판단</div>
-                        <div style="font-size:0.75rem; font-weight:700;" id="dist-judge">-</div>
-                    </div>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-1">Distribution</h2>
+                <p class="text-xs text-gray-400 mb-3">최근 120일 괴리 분포 · SZ는 서버·시나리오와 같은 기준</p>
+                <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-500 mb-3" style="font-variant-numeric:tabular-nums">
+                    <span>SZ <b id="dist-sz" class="text-gray-900">-</b></span>
+                    <span>괴리율 <b id="dist-dr" class="text-gray-900">-</b></span>
+                    <span>평균 <b id="dist-mean" class="text-gray-900">-</b></span>
+                    <span>σ <b id="dist-std" class="text-gray-900">-</b></span>
+                    <span>왜도 <b id="dist-skew">-</b> <span id="dist-judge" class="text-xs"></span></span>
                 </div>
-                <div style="position:relative; height:300px;">
+                <div style="position:relative; height:260px;">
                     <canvas id="dist-chart"></canvas>
                 </div>
-                <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:0.75rem; font-size:0.72rem; color:#6b7280;">
-                    <span>dr 빈도 분포</span>
-                    <span>분포 곡선 (왜도 반영)</span>
-                    <span>현재 dr 위치</span>
-                    <span style="background:rgba(156,163,175,0.35); padding:0 4px; border-radius:2px;">±2σ</span>
-                    <span style="background:rgba(107,114,128,0.45); padding:0 4px; border-radius:2px;">±1σ</span>
-                </div>
                 <div id="dist-interp"
-                    style="margin-top:0.75rem; background:#f9fafb; border-left:3px solid #9ca3af; border-radius:0 6px 6px 0; padding:0.75rem 1rem; font-size:0.8rem; color:#374151; line-height:1.7;">
+                    style="margin-top:0.75rem; font-size:0.75rem; color:#4b5563; line-height:1.6;">
                     분석 중...
                 </div>
             </div>
             <!-- SZ History -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 signal-card">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">SZ History</h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">History</h2>
                 <div class="overflow-x-auto">
                     <table>
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>SZ Value</th>
-                                <th>Trend</th>
-                                <th>Common Stock Price</th>
-                                <th>Preferred Stock Price</th>
+                                <th>Z</th>
+                                <th>ΔZ</th>
+                                <th>괴리율</th>
+                                <th>보통주</th>
+                                <th>우선주</th>
                             </tr>
                         </thead>
                         <tbody id="signals-table-body">
@@ -479,6 +454,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    <button id="hist-more-btn" type="button" class="hidden mt-3 text-xs text-gray-500 hover:text-gray-900"></button>
                 </div>
             </div>
         </div>
@@ -661,92 +637,35 @@
             }
         }
 
-        function renderPriceChart(dates, commonPrices, preferredPrices, chartHeight, pointRadius) {
-            const ctx = document.getElementById('price-chart').getContext('2d');
-            const screenWidth = window.innerWidth;
-            const isMobile = screenWidth <= 640;
-
-            new Chart(ctx, {
+        function renderBandChart(trendData, recentDates) {
+            const D = trendData.dates || [], DR = trendData.discount_rates || [], CP = trendData.common_prices || [], PP = trendData.preferred_prices || [];
+            const x = DR.map(v => (v == null ? null : toSpread(v))), at = {};
+            D.forEach((d, i) => { at[d] = i; });
+            const toDr = v => (1 - Math.exp(-v)) * 100;
+            const cur = [], mid = [], up = [], lo = [], cps = [], pps = [];
+            recentDates.forEach(d => {
+                const i = at[d]; const w = (i >= SZ_WINDOW) ? x.slice(i - SZ_WINDOW, i).filter(v => v != null) : [];
+                cps.push(CP[i]); pps.push(PP[i]);
+                cur.push(x[i] == null ? null : toDr(x[i]));
+                if (w.length < SZ_WINDOW * 0.9) { mid.push(null); up.push(null); lo.push(null); return; }
+                const m = w.reduce((a, b) => a + b, 0) / w.length, sd = Math.sqrt(w.reduce((a, b) => a + (b - m) ** 2, 0) / (w.length - 1));
+                mid.push(toDr(m)); up.push(toDr(m + Z_IN * sd)); lo.push(toDr(m - Z_IN * sd));
+            });
+            new Chart(document.getElementById('price-chart'), {
                 type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: [
-                        {
-                            label: 'Common Stock Price',
-                            data: commonPrices,
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 2,
-                            pointRadius: pointRadius,
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Preferred Stock Price',
-                            data: preferredPrices,
-                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                            borderColor: 'rgba(255, 206, 86, 1)',
-                            borderWidth: 2,
-                            pointRadius: pointRadius,
-                            tension: 0.1
-                        }
-                    ]
-                },
+                data: { labels: recentDates, datasets: [
+                    { label: '+2σ', data: up, borderColor: 'rgba(156,163,175,0.6)', borderWidth: 1, pointRadius: 0, fill: '+1', backgroundColor: 'rgba(156,163,175,0.12)' },
+                    { label: '−2σ', data: lo, borderColor: 'rgba(156,163,175,0.6)', borderWidth: 1, pointRadius: 0, fill: false },
+                    { label: '120일 평균', data: mid, borderColor: '#9ca3af', borderWidth: 1, borderDash: [4, 3], pointRadius: 0, fill: false },
+                    { label: '괴리율', data: cur, borderColor: '#111827', borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 3, tension: 0.15, fill: false },
+                ] },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    height: chartHeight,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return `${context.dataset.label}: ${context.raw ? context.raw.toLocaleString() : 'N/A'} KRW`;
-                                }
-                            },
-                            bodyFont: {
-                                size: isMobile ? 10 : 12
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Recent 5-month Price Trend',
-                            font: {
-                                size: isMobile ? 12 : 16
-                            }
-                        }
-                    },
-                    elements: {
-                        point: {
-                            hitRadius: isMobile ? 10 : 5
-                        }
-                    },
-                    scales: {
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Price (KRW)',
-                                font: {
-                                    size: isMobile ? 10 : 12
-                                }
-                            },
-                            ticks: {
-                                font: {
-                                    size: isMobile ? 9 : 12
-                                },
-                                callback: function (value) {
-                                    return value.toLocaleString();
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxTicksLimit: isMobile ? 5 : 10,
-                                autoSkip: true,
-                                font: {
-                                    size: isMobile ? 9 : 12
-                                }
-                            }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false },
+                               tooltip: { ...TIP, itemSort: (a, b) => b.datasetIndex - a.datasetIndex,
+                                          callbacks: { label: c => c.raw == null ? null : `${c.dataset.label} ${c.raw.toFixed(2)}%`,
+                                                       afterBody: items => { const i = items[0].dataIndex; return cps[i] ? [`보통주 ${Number(cps[i]).toLocaleString()} · 우선주 ${Number(pps[i]).toLocaleString()}`] : []; } } } },
+                    scales: { x: XAX(6), y: { ...AX, ticks: { ...AX.ticks, callback: v => v + '%' } } }
                 }
             });
         }
@@ -767,8 +686,8 @@
                     throw new Error(`차트 렌더링을 위한 데이터가 부족합니다: dates=${recentDates.length}, common_prices=${recentCommonPrices.length}, preferred_prices=${recentPreferredPrices.length}, sz_values=${recentSzValues.length}`);
                 }
 
-                renderSZChart(recentDates, stockData.history.szValues, chartHeight, pointRadius);
-                renderPriceChart(recentDates, recentCommonPrices, recentPreferredPrices, chartHeight, pointRadius);
+                renderSZChart(recentDates, stockData.history.szValues);
+                renderBandChart(trendData, recentDates);
                 renderDistChart(trendData);  // ← 이 줄 추가
             } catch (error) {
                 console.error('차트 렌더링 오류:', error);
@@ -778,73 +697,34 @@
         }
 
         function renderHistoryData(trendData) {
+            const tb = document.getElementById('signals-table-body');
             try {
-                const tableBody = document.getElementById('signals-table-body');
-                const fiveMonthsInDays = 150;
-                const startIndex = Math.max(0, trendData.dates.length - fiveMonthsInDays);
-                const displayIndices = [];
-                for (let i = trendData.dates.length - 1; i >= startIndex; i -= 1) {
-                    displayIndices.push(i);
+                const D = trendData.dates || [];
+                if (!D.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center text-gray-500">히스토리 데이터가 없습니다.</td></tr>'; return; }
+                const zm = {}; calculateSZValues(trendData.discount_rates || []).forEach(it => { zm[it.index] = it.value; });
+                const rows = [];
+                for (let i = D.length - 1; i >= Math.max(0, D.length - 150); i--) {
+                    const z = zm[i], zp = zm[i - 1], dr = trendData.discount_rates[i];
+                    const dz = (z != null && zp != null) ? z - zp : null;
+                    const f = v => (v >= 0 ? '+' : '') + v.toFixed(2);
+                    rows.push(`<tr class="${rows.length >= 20 ? 'hist-more hidden' : ''}"><td class="text-left text-gray-500">${D[i]}</td>`
+                        + `<td class="font-semibold">${z == null ? '-' : f(z)}</td>`
+                        + `<td style="color:${dz == null ? '#9ca3af' : dz > 0 ? '#b91c1c' : dz < 0 ? '#1d4ed8' : '#9ca3af'}">${dz == null ? '-' : f(dz)}</td>`
+                        + `<td>${dr == null ? '-' : (dr * 100).toFixed(2) + '%'}</td>`
+                        + `<td>${(trendData.common_prices[i] ?? 0).toLocaleString()}</td><td>${(trendData.preferred_prices[i] ?? 0).toLocaleString()}</td></tr>`);
                 }
-
-                if (!trendData || !trendData.dates || trendData.dates.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                    return;
+                tb.innerHTML = rows.join('');
+                const btn = document.getElementById('hist-more-btn');
+                if (btn) {
+                    btn.classList.toggle('hidden', rows.length <= 20);
+                    btn.onclick = () => { const open = btn.dataset.open === '1';
+                        tb.querySelectorAll('.hist-more').forEach(r => r.classList.toggle('hidden', open));
+                        btn.dataset.open = open ? '0' : '1'; btn.textContent = open ? `더 보기 (최근 ${rows.length}일)` : '접기'; };
+                    btn.textContent = `더 보기 (최근 ${rows.length}일)`; btn.dataset.open = '0';
                 }
-
-                tableBody.innerHTML = '';
-
-                const calculatedSZ = calculateSZValues(trendData.discount_rates);
-                const szValueMap = {};
-                calculatedSZ.forEach(item => {
-                    szValueMap[item.index] = item.value ?? 0;
-                });
-
-                for (const i of displayIndices) {
-                    const date = trendData.dates[i];
-                    const szValue = szValueMap[i] ?? 0;
-
-                    if (szValue === undefined) continue;
-
-                    let szClass = 'text-gray-600';
-                    if (szValue >= 2.5) {
-                        szClass = 'text-gray-900 font-bold';
-                    } else if (szValue >= 1.5) {
-                        szClass = 'text-gray-700 font-bold';
-                    }
-
-                    let trendIcon = '-';
-                    if (displayIndices.indexOf(i) < displayIndices.length - 1) {
-                        const prevIndex = displayIndices[displayIndices.indexOf(i) + 1];
-                        const prevSZ = szValueMap[prevIndex] ?? 0;
-
-                        if (szValue > prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-up text-gray-600"></i>';
-                        } else if (szValue < prevSZ) {
-                            trendIcon = '<i class="fas fa-arrow-down text-gray-600"></i>';
-                        } else {
-                            trendIcon = '<i class="fas fa-minus text-gray-500"></i>';
-                        }
-                    }
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${szClass}">${szValue.toFixed(2)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">${trendIcon}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.common_prices[i] ?? 0).toLocaleString()} KRW</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(trendData.preferred_prices[i] ?? 0).toLocaleString()} KRW</td>
-                `;
-
-                    tableBody.appendChild(row);
-                }
-
-                if (tableBody.children.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">이 종목에 대한 히스토리 데이터가 없습니다.</td></tr>';
-                }
-            } catch (error) {
-                console.error('히스토리 데이터 렌더링 오류:', error);
-                document.getElementById('signals-table-body').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
+            } catch (e) {
+                console.error('히스토리 렌더링 오류:', e);
+                tb.innerHTML = '<tr><td colspan="6" class="text-center text-red-500">히스토리 데이터를 로드할 수 없습니다.</td></tr>';
             }
         }
 
@@ -1079,7 +959,7 @@
         }
         function tradeMarkers(dates, szValues) {
             const ent = dates.map(() => null), ex = dates.map(() => null), val = i => (szValues[i] && szValues[i].value != null) ? szValues[i].value : null;
-            const at = d => { if (!d) return -1; const i = dates.findIndex(x => x >= d); return i; };
+            const at = d => { if (!d || d < dates[0] || d > dates[dates.length - 1]) return -1; return dates.findIndex(x => x >= d); };
             (TD.trades || []).forEach(t => {
                 const i = at(t.entry_date); if (i >= 0) ent[i] = val(i);
                 if (t.exit_date) { const j = at(t.exit_date); if (j >= 0) ex[j] = val(j); }
@@ -1176,16 +1056,12 @@
                 const binCenters = counts.map((_, i) => minDr + (i + 0.5) * bSize);
                 const labels = binCenters.map(v => (toDr(v) * 100).toFixed(2) + '%');
                 const curBin = Math.min(Math.floor((curDr - minDr) / bSize), bins - 1);
-                const barColors = binCenters.map((v, i) => {
-                    if (i === curBin) return 'rgba(17,24,39,0.85)';
-                    if (v >= mean - std && v <= mean + std) return 'rgba(107,114,128,0.45)';
-                    if (v >= mean - 2 * std && v <= mean + 2 * std) return 'rgba(156,163,175,0.35)';
-                    return 'rgba(209,213,219,0.4)';
-                });
+                const barColors = binCenters.map((v, i) => i === curBin ? 'rgba(17,24,39,0.9)'
+                    : (v >= mean - 2 * std && v <= mean + 2 * std) ? 'rgba(156,163,175,0.55)' : 'rgba(209,213,219,0.55)');
 
                 // 왜도 반영 분포 곡선
                 const maxCount = Math.max(...counts);
-                const scaleFactor = maxCount / (1 / (std * Math.sqrt(2 * Math.PI)));
+                const scaleFactor = maxCount * Math.sqrt(2 * Math.PI);
                 const normalCurve = binCenters.map(x => {
                     const z = (x - mean) / std;
                     const base = Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
@@ -1343,98 +1219,39 @@
                     `<p class="text-red-500 text-center text-sm">분포 차트를 로드할 수 없습니다: ${e.message}</p>`;
             }
         }
-        function renderSZChart(dates, szValues, chartHeight, pointRadius) {
-            const ctx = document.getElementById('sz-chart').getContext('2d');
-            const screenWidth = window.innerWidth;
-            const isMobile = screenWidth <= 640;
+        // ---- 공통 차트 스타일 (흑백)
+        const CHART_FONT = { size: 10 };
+        const AX = { ticks: { color: '#6b7280', font: CHART_FONT }, grid: { color: 'rgba(0,0,0,0.05)' }, border: { display: false } };
+        const XAX = (n) => ({ ticks: { color: '#6b7280', font: CHART_FONT, maxTicksLimit: n, maxRotation: 0, autoSkip: true,
+                                      callback: function (v) { const l = this.getLabelForValue(v) || ''; return l.slice(2, 7).replace('-', '.'); } },
+                              grid: { display: false }, border: { display: false } });
+        const TIP = { backgroundColor: 'rgba(17,24,39,0.92)', titleFont: { size: 11 }, bodyFont: { size: 11 }, padding: 8, displayColors: false };
+        if (window['chartjs-plugin-annotation']) { try { Chart.register(window['chartjs-plugin-annotation']); } catch (e) { } }
 
-            new Chart(ctx, {
+        function renderSZChart(dates, szValues) {
+            const vals = szValues.map(v => v.value), last = vals[vals.length - 1];
+            const ann = {
+                entryZone: { type: 'box', yMin: Z_IN, backgroundColor: 'rgba(220,38,38,0.06)', borderWidth: 0 },
+                exitZone: { type: 'box', yMax: Z_OUT, backgroundColor: 'rgba(37,99,235,0.05)', borderWidth: 0 },
+                entryLine: { type: 'line', yMin: Z_IN, yMax: Z_IN, borderColor: 'rgba(220,38,38,0.5)', borderWidth: 1, borderDash: [4, 3],
+                             label: { display: true, content: `Entry ${Z_IN}`, position: 'start', backgroundColor: 'transparent', color: '#b91c1c', font: { size: 9 }, yAdjust: -8 } },
+                exitLine: { type: 'line', yMin: Z_OUT, yMax: Z_OUT, borderColor: 'rgba(37,99,235,0.5)', borderWidth: 1, borderDash: [4, 3],
+                            label: { display: true, content: `Exit ${Z_OUT}`, position: 'start', backgroundColor: 'transparent', color: '#1d4ed8', font: { size: 9 }, yAdjust: 8 } },
+                zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(0,0,0,0.15)', borderWidth: 1 },
+            };
+            if (last != null) ann.now = { type: 'label', xValue: dates.length - 1, yValue: last, content: (last >= 0 ? '+' : '') + last.toFixed(2),
+                                          backgroundColor: '#111827', color: '#fff', font: { size: 10, weight: 'bold' }, padding: { x: 5, y: 2 }, borderRadius: 3, xAdjust: -22 };
+            new Chart(document.getElementById('sz-chart'), {
                 type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: [
-                        {
-                            label: 'SZ Value',
-                            data: szValues.map(item => item.value),
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 2,
-                            pointRadius: pointRadius,
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Exit Z = 0.4',
-                            data: Array(dates.length).fill(Z_OUT),
-                            borderColor: 'rgba(37, 99, 235, 0.8)',
-                            borderWidth: 1,
-                            borderDash: [3, 3],
-                            pointRadius: 0
-                        },
-                        {
-                            label: 'Entry Z = 2.0',
-                            data: Array(dates.length).fill(Z_IN),
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1,
-                            borderDash: [5, 5],
-                            pointRadius: 0
-                        },
-                        ...tradeMarkers(dates, szValues)
-                    ]
-                },
+                data: { labels: dates, datasets: [
+                    { label: 'Z', data: vals, borderColor: '#111827', borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 3, tension: 0.15, fill: false },
+                    ...(typeof tradeMarkers === 'function' ? tradeMarkers(dates, szValues) : [])
+                ] },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    height: chartHeight,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return `SZ Value: ${context.raw ? context.raw.toFixed(2) : 'N/A'}`;
-                                }
-                            },
-                            bodyFont: {
-                                size: isMobile ? 10 : 12
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Recent 5-month SZ Value Trend',
-                            font: {
-                                size: isMobile ? 12 : 16
-                            }
-                        }
-                    },
-                    elements: {
-                        point: {
-                            hitRadius: isMobile ? 10 : 5
-                        }
-                    },
-                    scales: {
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'SZ Value',
-                                font: {
-                                    size: isMobile ? 10 : 12
-                                }
-                            },
-                            ticks: {
-                                font: {
-                                    size: isMobile ? 9 : 12
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxTicksLimit: isMobile ? 5 : 10,
-                                autoSkip: true,
-                                font: {
-                                    size: isMobile ? 9 : 12
-                                }
-                            }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false }, annotation: { annotations: ann },
+                               tooltip: { ...TIP, callbacks: { label: c => c.raw == null ? null : (c.dataset.label === 'Z' ? `Z ${(c.raw >= 0 ? '+' : '') + c.raw.toFixed(2)}` : c.dataset.label) } } },
+                    scales: { x: XAX(6), y: { ...AX, ticks: { ...AX.ticks, callback: v => (v > 0 ? '+' : '') + v } } }
                 }
             });
         }
