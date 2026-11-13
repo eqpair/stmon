@@ -407,7 +407,7 @@
                 <!-- Z Trend -->
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                     <div class="flex items-baseline justify-between mb-3"><h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Z Trend</h2>
-                        <span class="text-xs text-gray-400"><span id="zt-range">최근 1년</span> · <span style="color:#b91c1c">▲</span> 진입 <span style="color:#dc2626">◆</span> 청산</span></div>
+                        <span class="text-xs text-gray-400"><span id="zt-range">최근 1년</span> · <span style="color:#16a34a">▲</span> 진입 <span style="color:#dc2626">◆</span> 청산</span></div>
                     <div style="position: relative; height: 280px;">
                         <canvas id="sz-chart"></canvas>
                     </div>
@@ -416,7 +416,7 @@
                 <!-- Spread Band -->
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                     <div class="flex items-baseline justify-between mb-3"><h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Spread Band</h2>
-                        <span class="text-xs text-gray-400">괴리율 · 120일 평균 ±2σ</span></div>
+                        <span class="text-xs text-gray-400">괴리율 · 120일 평균 ±2σ · <span style="color:#16a34a">▲</span> 진입 <span style="color:#dc2626">◆</span> 청산</span></div>
                     <div style="position: relative; height: 280px;">
                         <canvas id="price-chart"></canvas>
                     </div>
@@ -667,6 +667,7 @@
                     { label: '−2σ', data: lo, borderColor: 'rgba(156,163,175,0.6)', borderWidth: 1, pointRadius: 0, fill: false },
                     { label: '120일 평균', data: mid, borderColor: '#9ca3af', borderWidth: 1, borderDash: [4, 3], pointRadius: 0, fill: false },
                     { label: '괴리율', data: cur, borderColor: '#111827', borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 3, tension: 0.15, fill: false },
+                    ...(typeof tradeMarkers === 'function' ? tradeMarkers(recentDates, cur.map(v => ({ value: v }))) : [])
                 ] },
                 options: {
                     responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
