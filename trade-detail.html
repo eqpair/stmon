@@ -304,12 +304,12 @@
                 </div>
             </div>
             <!-- Entry Check -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm px-6 py-4 mb-6">
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mr-1">Entry Check</h2>
-                    <span class="text-xs text-gray-500 mr-2" id="ec-summary"></span>
-                    <div id="ec-grid" class="flex flex-wrap gap-2"></div>
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                <div class="flex items-baseline justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Entry Check</h2>
+                    <span class="text-xs text-gray-500" id="ec-summary"></span>
                 </div>
+                <div id="ec-grid" class="grid grid-cols-2 md:grid-cols-5 gap-2"></div>
             </div>
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Scenario Analysis Tool</h2>
@@ -958,8 +958,9 @@
                 const IC = { ok: ['✓', '#16a34a'], warn: ['!', '#ca8a04'], bad: ['✕', '#dc2626'] };
                 const TIPS = { 'Z': '진입 기준 Z ≥ 2.0', 'Edge': '(Z − 0.4) × σ · 8% 이상 양호, 3% 미만 부족', '괴리 부호': '마이너스 괴리는 과거 손절 비율 약 2배',
                                '유동성': '종목당 최대 금액 · 5천만 이상 양호, 2천만 미만 제외', '평균선 기울기': '120일 평균이 최근 20일 동안 움직인 폭(σ) · +0.35 초과 또는 −0.10 미만이면 과거 손절 비율 높음' };
-                grid.innerHTML = items.map(([lab, val, st, note]) => `<span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 border border-gray-200 rounded-md text-sm" title="${note} — ${TIPS[lab] || ''}">
-                    <b style="color:${IC[st][1]}">${IC[st][0]}</b><span class="text-gray-500">${lab}</span><b class="text-gray-900" style="font-variant-numeric:tabular-nums">${val}</b>${st === 'ok' ? '' : `<span class="text-gray-400 text-xs">${note}</span>`}</span>`).join('');
+                grid.innerHTML = items.map(([lab, val, st, note]) => `<div class="px-3 py-2 bg-white rounded-md border border-gray-200" title="${note}${TIPS && TIPS[lab] ? ' — ' + TIPS[lab] : ''}">
+                    <div class="flex items-center justify-between text-gray-500" style="font-size:0.7rem"><span>${lab}</span><span style="color:${IC[st][1]};font-weight:700">${IC[st][0]} ${st === 'ok' ? '' : note}</span></div>
+                    <div class="text-base font-bold text-gray-900" style="font-variant-numeric:tabular-nums">${val}</div></div>`).join('');
                 const ok = items.filter(x => x[2] === 'ok').length, bad = items.filter(x => x[2] === 'bad').length;
                 document.getElementById('ec-summary').textContent = `${ok}/${items.length} 양호` + (bad ? ` · ${bad}개 주의` : '');
             } catch (e) { console.error('Entry Check 오류:', e); grid.innerHTML = '<div class="text-sm text-gray-400">점검 항목을 계산할 수 없습니다.</div>'; }
