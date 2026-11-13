@@ -836,7 +836,8 @@
             const openPnLElement = document.getElementById('openPnL');
             if (openPnLElement) {
                 const pnlClass = totalOpenPnL >= 0 ? 'text-red-600' : 'text-blue-600';
-                openPnLElement.textContent = `${Math.round(totalOpenPnL).toLocaleString()}`;
+                const pnlPct = totalExposure ? totalOpenPnL / totalExposure * 100 : 0;
+                openPnLElement.textContent = `${Math.round(totalOpenPnL).toLocaleString()} (${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%)`;
                 openPnLElement.className = `font-medium ${pnlClass}`;
             }
         }
