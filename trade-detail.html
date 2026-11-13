@@ -1179,7 +1179,7 @@
                             legend: { display: false },
                             tooltip: {
                                 callbacks: {
-                                    title: ctx => `dr: ${ctx[0].label}`,
+                                    title: ctx => { const v = binCenters[ctx[0].dataIndex]; const zz = (v - mean) / std; return `괴리율 ${(toDr(v) * 100).toFixed(2)}% · Z ${(zz >= 0 ? '+' : '') + zz.toFixed(2)}`; },
                                     label: ctx => ctx.dataset.type === 'bar'
                                         ? `빈도: ${ctx.raw}일`
                                         : `곡선: ${Number(ctx.raw).toFixed(1)}`
@@ -1191,7 +1191,7 @@
                                         type: 'line', xMin: curBin, xMax: curBin,
                                         borderColor: 'rgba(17,24,39,1)', borderWidth: 2,
                                         label: {
-                                            display: true, content: `현재 SZ=${sz.toFixed(2)}`,
+                                            display: true, content: `현재 SZ ${sz.toFixed(2)} · ${(toDr(curDr) * 100).toFixed(1)}%`,
                                             position: 'start', backgroundColor: 'rgba(17,24,39,0.85)',
                                             color: '#fff', font: { size: 10, weight: 'bold' },
                                             padding: { x: 6, y: 3 }, yAdjust: -10
@@ -1201,7 +1201,7 @@
                                         type: 'line', xMin: toIdx(mean), xMax: toIdx(mean),
                                         borderColor: 'rgba(107,114,128,0.7)', borderWidth: 1.5, borderDash: [4, 3],
                                         label: {
-                                            display: true, content: '평균', position: 'end',
+                                            display: true, content: `평균 ${(toDr(mean) * 100).toFixed(1)}%`, position: 'end',
                                             backgroundColor: 'rgba(107,114,128,0.8)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 4, y: 2 }, yAdjust: 10
                                         }
@@ -1210,7 +1210,7 @@
                                         type: 'line', xMin: toIdx(mean + 2 * std), xMax: toIdx(mean + 2 * std),
                                         borderColor: 'rgba(107,114,128,0.6)', borderWidth: 1, borderDash: [3, 3],
                                         label: {
-                                            display: true, content: '+2σ', position: 'end',
+                                            display: true, content: `+2σ ${(toDr(mean + 2 * std) * 100).toFixed(1)}%`, position: 'end',
                                             backgroundColor: 'rgba(107,114,128,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 25
                                         }
@@ -1219,7 +1219,7 @@
                                         type: 'line', xMin: toIdx(mean - 2 * std), xMax: toIdx(mean - 2 * std),
                                         borderColor: 'rgba(107,114,128,0.6)', borderWidth: 1, borderDash: [3, 3],
                                         label: {
-                                            display: true, content: '-2σ', position: 'end',
+                                            display: true, content: `−2σ ${(toDr(mean - 2 * std) * 100).toFixed(1)}%`, position: 'end',
                                             backgroundColor: 'rgba(107,114,128,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 25
                                         }
@@ -1228,7 +1228,7 @@
                                         type: 'line', xMin: toIdx(mean + std), xMax: toIdx(mean + std),
                                         borderColor: 'rgba(156,163,175,0.5)', borderWidth: 1, borderDash: [2, 4],
                                         label: {
-                                            display: true, content: '+1σ', position: 'end',
+                                            display: true, content: `+1σ ${(toDr(mean + std) * 100).toFixed(1)}%`, position: 'end',
                                             backgroundColor: 'rgba(156,163,175,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 45
                                         }
@@ -1237,7 +1237,7 @@
                                         type: 'line', xMin: toIdx(mean - std), xMax: toIdx(mean - std),
                                         borderColor: 'rgba(156,163,175,0.5)', borderWidth: 1, borderDash: [2, 4],
                                         label: {
-                                            display: true, content: '-1σ', position: 'end',
+                                            display: true, content: `−1σ ${(toDr(mean - std) * 100).toFixed(1)}%`, position: 'end',
                                             backgroundColor: 'rgba(156,163,175,0.7)', color: '#fff',
                                             font: { size: 9 }, padding: { x: 3, y: 2 }, yAdjust: 45
                                         }
@@ -1247,7 +1247,12 @@
                         },
                         scales: {
                             x: {
-                                ticks: { maxTicksLimit: 8, font: { size: 9 }, color: '#9ca3af' },
+                                ticks: {
+                                    maxTicksLimit: 9, font: { size: 9 }, color: '#6b7280', maxRotation: 0,
+                                    callback: (val, i) => { const v = binCenters[val]; if (v == null) return ''; const zz = (v - mean) / std;
+                                        return [(toDr(v) * 100).toFixed(1) + '%', 'Z ' + (zz >= 0 ? '+' : '') + zz.toFixed(1)]; }
+                                },
+                                title: { display: true, text: '괴리율 (윗줄) · Z (아랫줄)', font: { size: 9 }, color: '#9ca3af' },
                                 grid: { display: false }
                             },
                             y: {
@@ -1261,10 +1266,14 @@
 
                 // 해석 텍스트
                 const sigmaMsg = sz >= 2
-                    ? `현재 dr은 <strong>+2σ 초과 구간</strong>으로 진입 신호 발생 중입니다.`
+                    ? `현재 괴리는 <strong>+2σ 초과 구간</strong>으로 진입 신호 구간입니다.`
                     : sz >= 1
-                        ? `현재 dr은 <strong>+1σ ~ +2σ 구간</strong>으로 경계 수준입니다.`
-                        : `현재 dr은 <strong>±1σ 이내 정상 구간</strong>입니다.`;
+                        ? `현재 괴리는 <strong>+1σ ~ +2σ 구간</strong>으로 진입 경계 수준입니다.`
+                        : sz > -1
+                            ? `현재 괴리는 <strong>±1σ 이내 정상 구간</strong>입니다.`
+                            : sz > -2
+                                ? `현재 괴리는 <strong>−1σ ~ −2σ 구간</strong>으로 평균보다 좁혀진 상태입니다(보유 중이면 청산 목표 Z 0.4를 이미 지남).`
+                                : `현재 괴리는 <strong>−2σ 아래</strong>로 평균보다 크게 좁혀진 상태입니다(보유 중이면 청산 목표를 크게 지남).`;
                 const skewMsg = skew > 0.5
                     ? `왜도 <strong>${skew >= 0 ? '+' : ''}${skew.toFixed(2)}</strong> — 분포가 오른쪽으로 치우쳐 있어 평균회귀 전략에 <strong style="color:#374151">유리</strong>한 구조입니다.`
                     : skew < -0.5
