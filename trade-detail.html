@@ -391,12 +391,15 @@
                             <div class="px-3 py-2 bg-white rounded-md border border-gray-200">
                                 <div class="text-gray-500" style="font-size:0.7rem">보통주 S 수량</div>
                                 <div class="text-base font-bold" id="common-share-quantity">-</div>
+                                <div class="text-gray-500" style="font-size:0.7rem" id="common-share-amount"></div>
                             </div>
                             <div class="px-3 py-2 bg-white rounded-md border border-gray-200">
                                 <div class="text-gray-500" style="font-size:0.7rem">우선주 L 수량</div>
                                 <div class="text-base font-bold" id="preferred-share-quantity">-</div>
+                                <div class="text-gray-500" style="font-size:0.7rem" id="preferred-share-amount"></div>
                             </div>
                         </div>
+                        <div id="qty-net-note" class="text-xs text-gray-500 mt-2 leading-relaxed"></div>
                         <div id="scenario-interpretation" class="text-xs text-gray-600 mt-2 leading-relaxed">
                             Adjust the price to calculate the scenario.
                         </div>
@@ -533,6 +536,7 @@
             document.getElementById('adjusted-sz-value').textContent = '-';
             document.getElementById('common-share-quantity').textContent = '-';
             document.getElementById('preferred-share-quantity').textContent = '-';
+            ['common-share-amount', 'preferred-share-amount', 'qty-net-note'].forEach(i => { const e = document.getElementById(i); if (e) e.textContent = ''; });
             document.getElementById('scenario-interpretation').textContent = '가격을 조정하여 시나리오를 계산하세요.';
         }
         document.addEventListener('DOMContentLoaded', () => {
@@ -1408,6 +1412,18 @@
             const lab = el.closest('.mb-4') && el.closest('.mb-4').querySelectorAll('.flex.justify-between span');
             if (lab && lab.length === 3) { lab[0].textContent = dn.toLocaleString() + ' (−5%)'; lab[2].textContent = up.toLocaleString() + ' (+5%)'; }
         }
+        // 수량별 금액: 균형은 시장가 금액(가격×수량) 기준. 수수료·세금은 노출이 아니라 비용이라 균형 계산에 넣지 않고 따로 표시
+        function showQty(cq, pq, c, pr) {
+            const ca = cq * c, pa = pq * pr, d = pa - ca;
+            document.getElementById('common-share-quantity').textContent = cq.toLocaleString() + ' 주';
+            document.getElementById('preferred-share-quantity').textContent = pq.toLocaleString() + ' 주';
+            const ce = document.getElementById('common-share-amount'), pe = document.getElementById('preferred-share-amount'), ne = document.getElementById('qty-net-note');
+            if (!cq || !pq) { [ce, pe, ne].forEach(e => e && (e.textContent = '')); return; }
+            ce.textContent = Math.round(ca).toLocaleString() + '원';
+            pe.textContent = Math.round(pa).toLocaleString() + '원 (차 ' + (d >= 0 ? '+' : '') + Math.round(d).toLocaleString() + ', ' + (d / ca * 100).toFixed(2) + '%)';
+            const cn = ca * (1 - 0.003), pn = pa * 1.001;   // 텀싯 Net: 숏 진입=매도(수수료10bp+거래세20bp), 롱 진입=매수(수수료10bp)
+            ne.textContent = `텀싯 Net 금액: 보통주 ${Math.round(cn).toLocaleString()} / 우선주 ${Math.round(pn).toLocaleString()} · 진입 수수료·세금 ${Math.round((ca - cn) + (pn - pa)).toLocaleString()}원 (균형은 시장가 금액 기준)`;
+        }
         function roundToTickSize(price) {
             const tickSizes = [
                 { max: 2000, step: 1 },
@@ -1432,7 +1448,7 @@
             const investmentInput = parseFloat(document.getElementById('investment-amount').value) || 0;
             const investmentAmount = investmentInput * 1000000;
             const commonShareQuantity = investmentAmount && adjustedCommon ? Math.floor(investmentAmount / adjustedCommon) : 0;
-            const preferredShareQuantity = investmentAmount && adjustedPreferred ? Math.floor(investmentAmount / adjustedPreferred) : 0;
+            const preferredShareQuantity = commonShareQuantity && adjustedPreferred ? Math.round(commonShareQuantity * adjustedCommon / adjustedPreferred) : 0;   // 보통주 금액에 맞춤
             const discountRateEl = document.getElementById('adjusted-discount-rate');
             discountRateEl.textContent = (adjustedDiscountRate * 100).toFixed(2) + '%';
             const szValueEl = document.getElementById('adjusted-sz-value');
@@ -1445,8 +1461,7 @@
             } else {
                 szValueEl.classList.add('sz-low');
             }
-            document.getElementById('common-share-quantity').textContent = commonShareQuantity.toLocaleString() + ' 주';
-            document.getElementById('preferred-share-quantity').textContent = preferredShareQuantity.toLocaleString() + ' 주';
+            showQty(commonShareQuantity, preferredShareQuantity, adjustedCommon, adjustedPreferred);
             const interpretationEl = document.getElementById('scenario-interpretation');
             const commonChangeText = commonPct >= 0 ? '상승' : '하락';
             const preferredChangeText = preferredPct >= 0 ? '상승' : '하락';
@@ -1480,9 +1495,8 @@
             const adjustedCommon = adjC;
             const adjustedPreferred = adjP;
             const commonShareQuantity = investmentAmount && adjustedCommon ? Math.floor(investmentAmount / adjustedCommon) : 0;
-            const preferredShareQuantity = investmentAmount && adjustedPreferred ? Math.floor(investmentAmount / adjustedPreferred) : 0;
-            document.getElementById('common-share-quantity').textContent = commonShareQuantity.toLocaleString() + ' 주';
-            document.getElementById('preferred-share-quantity').textContent = preferredShareQuantity.toLocaleString() + ' 주';
+            const preferredShareQuantity = commonShareQuantity && adjustedPreferred ? Math.round(commonShareQuantity * adjustedCommon / adjustedPreferred) : 0;   // 보통주 금액에 맞춤
+            showQty(commonShareQuantity, preferredShareQuantity, adjustedCommon, adjustedPreferred);
         }
     </script>
 <script data-namefix="1">
