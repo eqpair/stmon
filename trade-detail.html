@@ -357,13 +357,13 @@
                                 <span id="preferred-price-adjusted" class="font-bold text-gray-800">-</span>
                             </div>
                         </div>
-                        <div class="mt-6 grid grid-cols-2 gap-2">
+                        <div class="mt-6 flex gap-2">
                             <button id="reset-sliders-button"
-                                class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                                class="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
                                 초기화
                             </button>
                             <button id="calculate-button"
-                                class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                                class="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
                                 계산하기
                             </button>
                         </div>
@@ -1118,6 +1118,8 @@
             document.getElementById('preferred-price-slider').value = 0;
             document.getElementById('common-price-percent').textContent = '0%';
             document.getElementById('preferred-price-percent').textContent = '0%';
+            setupTickSlider('common-price-slider', stockData.current.commonPrice);
+            setupTickSlider('preferred-price-slider', stockData.current.preferredPrice);
         }
         function renderDistChart(trendData) {
             try {
@@ -1368,28 +1370,43 @@
             const commonSlider = document.getElementById('common-price-slider');
             const commonPercent = document.getElementById('common-price-percent');
             const commonAdjusted = document.getElementById('common-price-adjusted');
-            commonSlider.step = "0.01";
             commonSlider.addEventListener('input', function () {
-                const percent = parseFloat(this.value);
-                commonPercent.textContent = `${percent.toFixed(2)}%`;
-                const adjusted = stockData.current.commonPrice * (1 + percent / 100);
-                const roundedPrice = roundToTickSize(adjusted);
+                const roundedPrice = sliderPrice('c');
+                const percent = stockData.current.commonPrice ? (roundedPrice / stockData.current.commonPrice - 1) * 100 : 0;
+                commonPercent.textContent = `${percent >= 0 ? '+' : ''}${percent.toFixed(2)}% (${+this.value >= 0 ? '+' : ''}${this.value}호가)`;
                 commonAdjusted.textContent = roundedPrice.toLocaleString() + ' KRW';
                 updateShareQuantities();
             });
             const preferredSlider = document.getElementById('preferred-price-slider');
             const preferredPercent = document.getElementById('preferred-price-percent');
             const preferredAdjusted = document.getElementById('preferred-price-adjusted');
-            preferredSlider.step = "0.01";
             preferredSlider.addEventListener('input', function () {
-                const percent = parseFloat(this.value);
-                preferredPercent.textContent = `${percent.toFixed(2)}%`;
-                const adjusted = stockData.current.preferredPrice * (1 + percent / 100);
-                const roundedPrice = roundToTickSize(adjusted);
+                const roundedPrice = sliderPrice('p');
+                const percent = stockData.current.preferredPrice ? (roundedPrice / stockData.current.preferredPrice - 1) * 100 : 0;
+                preferredPercent.textContent = `${percent >= 0 ? '+' : ''}${percent.toFixed(2)}% (${+this.value >= 0 ? '+' : ''}${this.value}호가)`;
                 preferredAdjusted.textContent = roundedPrice.toLocaleString() + ' KRW';
                 updateShareQuantities();
             });
             document.getElementById('investment-amount').addEventListener('input', updateShareQuantities);
+        }
+        // KRX 호가단위 (2023~ 코스피·코스닥 공통). 슬라이더 값 = 현재가에서 몇 호가 떨어졌는지
+        function tickOf(px) { return px < 2000 ? 1 : px < 5000 ? 5 : px < 20000 ? 10 : px < 50000 ? 50 : px < 200000 ? 100 : px < 500000 ? 500 : 1000; }
+        function tickUp(px) { const t = tickOf(px); return Math.floor(px / t) * t + t; }
+        function tickDown(px) { const t = tickOf(px - 1); return Math.ceil(px / t) * t - t; }
+        function moveTicks(px, n) { let v = px; for (let i = 0; i < Math.abs(n); i++) v = n > 0 ? tickUp(v) : tickDown(v); return v; }
+        function sliderPrice(kind) {
+            const base = kind === 'c' ? stockData.current.commonPrice : stockData.current.preferredPrice;
+            const n = parseInt(document.getElementById(kind === 'c' ? 'common-price-slider' : 'preferred-price-slider').value) || 0;
+            return base ? moveTicks(base, n) : 0;
+        }
+        function setupTickSlider(id, base) {   // ±5% 근처까지 호가 수로 범위 설정
+            const el = document.getElementById(id); if (!el || !base) return;
+            let up = base, nu = 0, dn = base, nd = 0;
+            while (up < base * 1.05 && nu < 3000) { up = tickUp(up); nu++; }
+            while (dn > base * 0.95 && nd < 3000) { dn = tickDown(dn); nd++; }
+            el.min = -nd; el.max = nu; el.step = 1; el.value = 0;
+            const lab = el.closest('.mb-4') && el.closest('.mb-4').querySelectorAll('.flex.justify-between span');
+            if (lab && lab.length === 3) { lab[0].textContent = dn.toLocaleString() + ' (−5%)'; lab[2].textContent = up.toLocaleString() + ' (+5%)'; }
         }
         function roundToTickSize(price) {
             const tickSizes = [
@@ -1405,10 +1422,11 @@
             return Math.round(price / tickRule.step) * tickRule.step;
         }
         function calculateManualScenario() {
-            const commonPct = parseFloat(document.getElementById('common-price-slider').value);
-            const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
-            const adjustedCommon = roundToTickSize(stockData.current.commonPrice * (1 + commonPct / 100));
-            const adjustedPreferred = roundToTickSize(stockData.current.preferredPrice * (1 + preferredPct / 100));
+            const adjC = sliderPrice('c'), adjP = sliderPrice('p');
+            const commonPct = stockData.current.commonPrice ? +((adjC / stockData.current.commonPrice - 1) * 100).toFixed(2) : 0;
+            const preferredPct = stockData.current.preferredPrice ? +((adjP / stockData.current.preferredPrice - 1) * 100).toFixed(2) : 0;
+            const adjustedCommon = adjC;
+            const adjustedPreferred = adjP;
             const adjustedDiscountRate = (adjustedCommon - adjustedPreferred) / adjustedCommon;
             const adjustedSZValue = calculateSZValue(adjustedDiscountRate);
             const investmentInput = parseFloat(document.getElementById('investment-amount').value) || 0;
@@ -1454,12 +1472,13 @@
             `;
         }
         function updateShareQuantities() {
-            const commonPct = parseFloat(document.getElementById('common-price-slider').value);
-            const preferredPct = parseFloat(document.getElementById('preferred-price-slider').value);
+            const adjC = sliderPrice('c'), adjP = sliderPrice('p');
+            const commonPct = stockData.current.commonPrice ? +((adjC / stockData.current.commonPrice - 1) * 100).toFixed(2) : 0;
+            const preferredPct = stockData.current.preferredPrice ? +((adjP / stockData.current.preferredPrice - 1) * 100).toFixed(2) : 0;
             const investmentInput = parseFloat(document.getElementById('investment-amount').value) || 0;
             const investmentAmount = investmentInput * 1000000;
-            const adjustedCommon = roundToTickSize(stockData.current.commonPrice * (1 + commonPct / 100));
-            const adjustedPreferred = roundToTickSize(stockData.current.preferredPrice * (1 + preferredPct / 100));
+            const adjustedCommon = adjC;
+            const adjustedPreferred = adjP;
             const commonShareQuantity = investmentAmount && adjustedCommon ? Math.floor(investmentAmount / adjustedCommon) : 0;
             const preferredShareQuantity = investmentAmount && adjustedPreferred ? Math.floor(investmentAmount / adjustedPreferred) : 0;
             document.getElementById('common-share-quantity').textContent = commonShareQuantity.toLocaleString() + ' 주';
