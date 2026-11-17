@@ -65,10 +65,11 @@
                 <div><label>우선주 청산가 (롱)</label><input id="ppx" type="number" step="1" class="w-full num"></div>
                 <div><label>청산일</label><input id="xdate" type="date" class="w-full"></div>
                 <div><label>CD 금리 % (현재 기간)</label><input id="cd" type="number" step="0.01" class="w-full num"></div>
-                <div><label>보통주 청산 수량</label><input id="qs" type="number" step="1" min="0" class="w-full num"></div>
-                <div><label>우선주 청산 수량</label><input id="ql" type="number" step="1" min="0" class="w-full num"></div>
+                <div><label>보통주 체결(청산) 수량</label><input id="qs" type="number" step="1" min="0" class="w-full num"></div>
+                <div><label>우선주 체결(청산) 수량</label><input id="ql" type="number" step="1" min="0" class="w-full num"></div>
             </div>
             <div id="qtyBox" class="text-xs text-gray-600 mt-3 leading-relaxed"></div>
+            <div id="progBox" class="text-xs mt-3 leading-relaxed"></div>
             <div class="flex items-center gap-3 mt-3 flex-wrap">
                 <button id="resetPx" type="button" class="px-3 py-1 text-xs rounded bg-gray-900 text-white hover:bg-gray-700 font-medium">초기화</button>
                 <button id="ratioQ" type="button" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium">우선주: 보통주와 같은 비율</button>
@@ -190,6 +191,34 @@
                     + `<span class="${Math.abs(d) > Math.max(cpx, ppx) ? 'text-red-600 font-semibold' : ''}">차이 ${d >= 0 ? '+' : ''}${Math.round(d).toLocaleString()}원 (${ca ? (d / ca * 100).toFixed(2) : '0.00'}%)</span>`
                     + (part ? `<br><b class="text-gray-900">남는 포지션</b> 보통주 ${rq.toLocaleString()}주 (${Math.round(rc).toLocaleString()}원) · 우선주 ${rQ.toLocaleString()}주 (${Math.round(rp).toLocaleString()}원) · `
                         + `<span class="${Math.abs(rd) > Math.max(cpx, ppx) ? 'text-red-600 font-semibold' : ''}">차이 ${rd >= 0 ? '+' : ''}${Math.round(rd).toLocaleString()}원</span>` : ` <span class="text-gray-400">(전량 청산)</span>`);
+                // 진행 관리: 체결률, 남은 포지션 노출, 재개 시 먼저 맞출 수량
+                const pb = document.getElementById('progBox');
+                if (!part || (X.qs === 0 && X.ql === 0)) { pb.innerHTML = ''; }
+                else {
+                    const cr = X.qs / X.H.q * 100, pr = X.ql / X.H.Q * 100;
+                    // 금액 중립: 남는 두 다리 금액이 같아지도록
+                    let neu;
+                    if (rd > 0) { const k = Math.min(rQ, Math.round(rd / ppx)); neu = `우선주 <b>${k.toLocaleString()}주</b> 추가 매도`; }
+                    else if (rd < 0) { const k = Math.min(rq, Math.round(-rd / cpx)); neu = `보통주 <b>${k.toLocaleString()}주</b> 추가 매수`; }
+                    else neu = '이미 균형';
+                    // 같은 비율: 원래 보유 비율대로 진행률을 맞춤
+                    let rat;
+                    const qlT = Math.round(X.H.Q * X.qs / X.H.q), qsT = Math.round(X.H.q * X.ql / X.H.Q);
+                    if (X.ql < qlT) rat = `우선주 ${(qlT - X.ql).toLocaleString()}주 추가 매도`;
+                    else if (X.qs < qsT) rat = `보통주 ${(qsT - X.qs).toLocaleString()}주 추가 매수`;
+                    else rat = '이미 같은 비율';
+                    const per = rd > 0 ? Math.round(rc / ppx) : rQ;   // 금액 중립 후 남는 우선주
+                    const lc = rd < 0 ? rq - Math.min(rq, Math.round(-rd / cpx)) : rq;
+                    const ratio = lc ? Math.round(per / lc * 100) : 0;
+                    pb.innerHTML = `<div class="border border-gray-200 rounded-lg p-3 bg-gray-50">`
+                        + `<b class="text-gray-900">진행 상황</b> 보통주 ${X.qs.toLocaleString()}/${X.H.q.toLocaleString()}주 (${cr.toFixed(1)}%) · 우선주 ${X.ql.toLocaleString()}/${X.H.Q.toLocaleString()}주 (${pr.toFixed(1)}%)`
+                        + `<br><b class="text-gray-900">지금 노출</b> 남은 포지션이 ${rd > 0 ? '우선주(롱) 쪽으로' : rd < 0 ? '보통주(숏) 쪽으로' : ''} ${Math.abs(Math.round(rd)).toLocaleString()}원 기울어 있음`
+                        + ` <span class="text-gray-400">(이 금액만큼 한 방향 주가 노출)</span>`
+                        + `<br><b class="text-gray-900">재개할 때 먼저</b> ${neu} <span class="text-gray-400">→ 남은 두 다리 금액이 같아짐 (권장)</span>`
+                        + `<br><span class="text-gray-500">원래 보유 비율로 맞추려면: ${rat}</span>`
+                        + `<br><b class="text-gray-900">그다음</b> 보통주 100주당 우선주 약 ${ratio}주씩 짝지어 진행 (남은 보통주 ${lc.toLocaleString()}주 / 우선주 ${per.toLocaleString()}주)`
+                        + `</div>`;
+                }
             }
             const line = (label, k, sub) => `<tr class="${sub ? 'sub' : ''}"><td>${label}</td>`
                 + [R.S[k], R.L[k], R.S[k] + R.L[k]].map(v => `<td class="num ${cls(v)}">${fmt(v)}</td>`).join('') + '</tr>';
