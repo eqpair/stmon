@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <script>
+        // EQ_STMON_LIVE: 실시간 데이터는 EC2(nginx)에서 바로, 실패하면 GitHub Pages 사본으로
+        (function () {
+            var LIVE = 'https://eqmon.duckdns.org/stmon-data/';
+            var FILES = ['stock_data.json', 'pair-trades.json', 'v2_dashboard.json'];
+            var orig = window.fetch.bind(window);
+            window.fetch = function (input, init) {
+                try {
+                    var raw = typeof input === 'string' ? input : (input && input.url) || '';
+                    var u = new URL(raw, location.href);
+                    var m = u.origin === location.origin && u.pathname.match(/\/data\/([A-Za-z0-9_\-]+\.json)$/);
+                    if (m && FILES.indexOf(m[1]) >= 0) {
+                        return orig(LIVE + m[1] + u.search, { cache: 'no-store' })
+                            .then(function (r) { if (!r.ok) throw new Error(r.status); return r; })
+                            .catch(function () { return orig(input, init); });
+                    }
+                } catch (e) { }
+                return orig(input, init);
+            };
+        })();
+    </script>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L/S Trading EXIT</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif; }
+        .num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+        .tbl th { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; padding: 6px 10px; border-bottom: 1px solid #e5e7eb; text-align: right; }
+        .tbl th:first-child, .tbl td:first-child { text-align: left; }
+        .tbl td { padding: 6px 10px; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+        .tbl tr.sum td { border-top: 1px solid #d1d5db; font-weight: 700; color: #111827; }
+        .tbl tr.sub td { color: #6b7280; font-size: 12px; }
+        .pos { color: #dc2626; } .neg { color: #2563eb; }
+        input, select { border: 1px solid #d1d5db; border-radius: 6px; padding: 6px 8px; font-size: 14px; }
+        input:focus, select:focus { outline: none; border-color: #111827; }
+        label { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; display: block; margin-bottom: 4px; }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+        <header class="flex items-start justify-between flex-wrap gap-3 mb-5">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">L/S Trading <span class="text-xl font-normal text-gray-400">EXIT</span></h1>
+                <div class="text-sm text-gray-500 mt-1">이 가격에 전량 청산하면 남는 금액 (텀싯 방식, 수수료·세금·이자·정산 현금 포함)</div>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium">Main</a>
+                <a href="v2.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium">Desk</a>
+                <a href="pair-report.html" class="px-3 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium">Report</a>
+                <a href="exit.html" class="px-3 py-1 text-xs rounded bg-gray-900 text-white font-medium">Exit</a>
+            </div>
+        </header>
+
+        <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+            <div class="grid gap-3" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+                <div><label>종목</label><select id="pair" class="w-full"></select></div>
+                <div><label>보통주 청산가 (숏)</label><input id="cpx" type="number" step="1" class="w-full num"></div>
+                <div><label>우선주 청산가 (롱)</label><input id="ppx" type="number" step="1" class="w-full num"></div>
+                <div><label>청산일</label><input id="xdate" type="date" class="w-full"></div>
+                <div><label>CD 금리 % (현재 기간)</label><input id="cd" type="number" step="0.01" class="w-full num"></div>
+            </div>
+            <div id="live" class="text-xs text-gray-400 mt-3"></div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+            <div class="flex items-baseline justify-between flex-wrap gap-2 mb-3">
+                <div class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Result</div>
+                <div><span id="total" class="text-3xl font-bold">-</span> <span id="totalPct" class="text-lg font-semibold ml-1"></span></div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="tbl w-full">
+                    <thead><tr><th></th><th>보통주 숏</th><th>우선주 롱</th><th>합계</th></tr></thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+            <div id="note" class="text-xs text-gray-500 mt-3 leading-relaxed"></div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <div class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Price Sensitivity</div>
+            <div class="overflow-x-auto"><table class="tbl w-full" id="sens"></table></div>
+            <div class="text-xs text-gray-400 mt-2">세로 = 보통주 청산가, 가로 = 우선주 청산가. 가운데가 입력한 가격.</div>
+        </div>
+    </div>
+
+    <script>
+        const COMM = 10, TAX_SELL = 20;   // 청산: 보통주 숏 = 매수(수수료), 우선주 롱 = 매도(수수료+거래세)
+        let TRADES = [], LIVEPX = {};
+        const fmt = v => (v >= 0 ? '' : '-') + Math.abs(Math.round(v)).toLocaleString();
+        const cls = v => v > 0 ? 'pos' : v < 0 ? 'neg' : '';
+        const kstToday = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+        const daysBetween = (a, b) => Math.round((new Date(b) - new Date(a)) / 864e5);
+        const norm = s => String(s || '').replace(/<[^>]+>/g, '').replace(/^[^\w\s가-힣]+/, '').replace(/-\d+(\.\d+)?$/, '').trim().toLowerCase();
+
+        // Report(pair-report.html)와 같은 계산. 우리 기준: + 이익, − 손실
+        function calcTrade(t, cpx, ppx, xdate, cdOverride) {
+            const CUR = t.current || null;
+            const c0 = CUR ? CUR.common_s0 : t.common_entry, p0 = CUR ? CUR.preferred_s0 : t.preferred_entry;
+            const start = CUR ? CUR.start : t.entry_date;
+            const d = CUR ? Math.max(1, daysBetween(start, xdate)) : Math.max(1, Math.floor((new Date(xdate) - new Date(t.entry_date)) / 864e5));
+            const baseCd = CUR && CUR.cd != null ? CUR.cd : (t.benchmark_rate_pct || 0);
+            const cd = (cdOverride != null && !isNaN(cdOverride) ? cdOverride : baseCd) / 100;
+            const sS = (t.common_floating_spread_bps ?? -202) / 10000, sL = (t.preferred_floating_spread_bps ?? 200) / 10000;
+            const q = t.common_qty, Q = t.preferred_qty;
+            const S = {
+                price: (c0 - cpx) * q,
+                cost: -cpx * q * COMM / 10000,
+                interest: Math.round(c0 * q * (cd + sS) * d / 365),
+                borrow: -c0 * q * ((t.common_borrow_fee_pct || 0) / 100) * d / 365,
+                settled: t.settled_s || 0,
+            };
+            const L = {
+                price: (ppx - p0) * Q,
+                cost: -ppx * Q * (COMM + TAX_SELL) / 10000,
+                interest: -Math.round(p0 * Q * (cd + sL) * d / 365),
+                borrow: 0,
+                settled: t.settled_l || 0,
+            };
+            S.total = S.price + S.cost + S.interest + S.borrow + S.settled;
+            L.total = L.price + L.cost + L.interest + L.borrow + L.settled;
+            return { S, L, d, cd: cd * 100, c0, p0, start, exposure: t.common_entry * q + t.preferred_entry * Q };
+        }
+        function calcPair(name, cpx, ppx, xdate, cd) {
+            const rows = TRADES.filter(t => t.status === 'Open' && t.pair_name === name);
+            const keys = ['price', 'cost', 'interest', 'borrow', 'settled', 'total'];
+            const out = { S: {}, L: {}, exposure: 0, parts: [] };
+            keys.forEach(k => { out.S[k] = 0; out.L[k] = 0; });
+            rows.forEach(t => {
+                const r = calcTrade(t, cpx, ppx, xdate, cd); out.parts.push(r); out.exposure += r.exposure;
+                keys.forEach(k => { out.S[k] += r.S[k]; out.L[k] += r.L[k]; });
+            });
+            return out;
+        }
+
+        function render() {
+            const name = document.getElementById('pair').value;
+            const cpx = +document.getElementById('cpx').value, ppx = +document.getElementById('ppx').value;
+            const xdate = document.getElementById('xdate').value || kstToday();
+            const cdv = document.getElementById('cd').value; const cd = cdv === '' ? null : +cdv;
+            if (!name || !cpx || !ppx) return;
+            const R = calcPair(name, cpx, ppx, xdate, cd);
+            const line = (label, k, sub) => `<tr class="${sub ? 'sub' : ''}"><td>${label}</td>`
+                + [R.S[k], R.L[k], R.S[k] + R.L[k]].map(v => `<td class="num ${cls(v)}">${fmt(v)}</td>`).join('') + '</tr>';
+            const P = R.parts[0];
+            let h = line(`가격 손익 <span class="text-gray-400">(기준가 ${Math.round(P.c0).toLocaleString()} / ${Math.round(P.p0).toLocaleString()} → 청산가)</span>`, 'price')
+                + line('청산 수수료·세금 <span class="text-gray-400">(보통주 10bp, 우선주 30bp)</span>', 'cost')
+                + line(`이자 <span class="text-gray-400">(${P.start}~ ${P.d}일, CD ${P.cd.toFixed(2)}%)</span>`, 'interest');
+            if (R.S.borrow) h += line('차입수수료', 'borrow');
+            if (R.S.settled || R.L.settled) h += line('이미 정산된 현금 <span class="text-gray-400">(롤오버·배당)</span>', 'settled');
+            h += line('합계', 'total').replace('<tr class="">', '<tr class="sum">');
+            document.getElementById('rows').innerHTML = h;
+            const tot = R.S.total + R.L.total, pct = R.exposure ? tot / R.exposure * 100 : 0;
+            const te = document.getElementById('total'); te.textContent = fmt(tot); te.className = 'text-3xl font-bold ' + cls(tot);
+            const tp = document.getElementById('totalPct'); tp.textContent = `(${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%)`; tp.className = 'text-lg font-semibold ml-1 ' + cls(tot);
+            const t0 = TRADES.find(t => t.status === 'Open' && t.pair_name === name);
+            document.getElementById('note').innerHTML =
+                `투입금액 ${Math.round(R.exposure).toLocaleString()}원 대비. 진입가는 원장의 텀싯 Net Price(진입 수수료·세금 포함). `
+                + (t0 && t0.current ? '롤오버된 종목이라 현재 기간 기준가로 평가하고, 지난 기간 정산과 배당은 "이미 정산된 현금"에 들어 있습니다. '
+                    : '롤오버 정산 기록이 없어 진입가 기준으로 이자를 계산합니다. ')
+                + ((R.S.settled || R.L.settled) ? '' : '배당 기록이 없으면 배당은 빠져 있습니다.');
+            // 민감도: 보통주 ±2틱×step, 우선주 ±2틱×step
+            const stepOf = px => px >= 500000 ? 1000 : px >= 200000 ? 500 : px >= 50000 ? 100 : px >= 20000 ? 50 : px >= 5000 ? 10 : 5;
+            const sc = stepOf(cpx) * 2, sp = stepOf(ppx) * 2, off = [-2, -1, 0, 1, 2];
+            let s = '<thead><tr><th></th>' + off.map(o => `<th>${(ppx + o * sp).toLocaleString()}</th>`).join('') + '</tr></thead><tbody>';
+            off.forEach(oc => {
+                s += `<tr><td class="num" style="text-align:left;font-weight:600">${(cpx + oc * sc).toLocaleString()}</td>`;
+                off.forEach(op => {
+                    const r = calcPair(name, cpx + oc * sc, ppx + op * sp, xdate, cd), v = r.S.total + r.L.total;
+                    s += `<td class="num ${cls(v)}" style="${oc === 0 && op === 0 ? 'font-weight:700;background:#f9fafb' : ''}">${fmt(v)}</td>`;
+                });
+                s += '</tr>';
+            });
+            document.getElementById('sens').innerHTML = s + '</tbody>';
+            const u = new URL(location.href); u.searchParams.set('pair', name); u.searchParams.set('c', cpx); u.searchParams.set('p', ppx);
+            history.replaceState(null, '', u);
+        }
+
+        function fillPrices(force) {
+            const name = document.getElementById('pair').value, lp = LIVEPX[norm(name)];
+            const P = new URLSearchParams(location.search);
+            const c = document.getElementById('cpx'), p = document.getElementById('ppx');
+            if (force || !c.value) c.value = (!force && P.get('pair') === name && P.get('c')) || (lp ? lp.c : '');
+            if (force || !p.value) p.value = (!force && P.get('pair') === name && P.get('p')) || (lp ? lp.p : '');
+            const t = TRADES.find(x => x.status === 'Open' && x.pair_name === name);
+            const cdIn = document.getElementById('cd');
+            cdIn.placeholder = t ? String(t.current && t.current.cd != null ? t.current.cd : (t.benchmark_rate_pct || 0)) : '';
+            if (force) cdIn.value = '';
+            document.getElementById('live').textContent = lp ? `현재가 ${lp.c.toLocaleString()} / ${lp.p.toLocaleString()} (${lp.ts})` : '현재가 없음';
+        }
+
+        async function init() {
+            TRADES = await (await fetch(`data/pair-trades.json?t=${Date.now()}`)).json();
+            try {
+                const sd = await (await fetch(`data/stock_data.json?t=${Date.now()}`)).json();
+                (sd.all_signals || []).forEach(s => { if (s.price_a && s.price_b) LIVEPX[norm(s.stock_name)] = { c: s.price_a, p: s.price_b, ts: s.timestamp || '' }; });
+            } catch (e) { }
+            const names = [...new Set(TRADES.filter(t => t.status === 'Open').map(t => t.pair_name))];
+            const sel = document.getElementById('pair');
+            sel.innerHTML = names.map(n => `<option>${n}</option>`).join('');
+            const want = new URLSearchParams(location.search).get('pair');
+            if (want && names.includes(want)) sel.value = want;
+            document.getElementById('xdate').value = kstToday();
+            fillPrices(false); render();
+            sel.addEventListener('change', () => { fillPrices(true); render(); });
+            ['cpx', 'ppx', 'xdate', 'cd'].forEach(id => document.getElementById(id).addEventListener('input', render));
+        }
+        init();
+    </script>
+</body>
+
+</html>
