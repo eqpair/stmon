@@ -1,5 +1,25 @@
 [
  {
+  "trade_id": "097950-20261117-1",
+  "pair_name": "CJ제일제당",
+  "common_code": "097950",
+  "preferred_code": "097955",
+  "entry_date": "2026-11-17",
+  "exit_date": null,
+  "common_entry": 180903.656,
+  "preferred_entry": 99823.724,
+  "common_qty": 250,
+  "preferred_qty": 455,
+  "common_floating_spread_bps": -202,
+  "preferred_floating_spread_bps": 200,
+  "benchmark_rate_pct": 3.38,
+  "common_exit": null,
+  "preferred_exit": null,
+  "common_borrow_fee_pct": 0,
+  "status": "Open",
+  "recorded_at": "2026-11-17T15:18:29"
+ },
+ {
   "trade_id": "LTCS",
   "pair_name": "롯데칠성",
   "common_code": "005300",
