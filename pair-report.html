@@ -698,13 +698,13 @@
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
                 // Equity 계산 (수수료/세금 제외, 단순 가격 차이)
-                // 보유 중이면 오늘 청산 가정: 보통주 매수 +10bp, 우선주 매도 −10bp−거래세 20bp
+                // 청산 비용 반영: 보통주 매수 +10bp, 우선주 매도 −10bp−거래세 20bp (보유 중=오늘 청산 가정, /out 청산=기록된 체결가 기준. 정산 티켓이 들어오면 settlements.json이 우선)
                 // current(현재 롤오버 기간)가 있으면 그 기준가(S0)·CD로 평가. settled_s/l(배당·롤오버로 이미 오간 현금)은 항상 더함
-                const CUR = !isClosed && trade.current ? trade.current : null;
+                const CUR = trade.current || null;
                 const c0 = CUR ? CUR.common_s0 : trade.common_entry, p0 = CUR ? CUR.preferred_s0 : trade.preferred_entry;
-                const cEval = (commonPrice || trade.common_entry) * (isClosed ? 1 : 1.001);
-                const pEval = (preferredPrice || trade.preferred_entry) * (isClosed ? 1 : 0.997);
-                const SS = isClosed ? 0 : (trade.settled_s || 0), SL = isClosed ? 0 : (trade.settled_l || 0);   // 이미 받은/낸 현금(배당·롤오버)
+                const cEval = (commonPrice || trade.common_entry) * 1.001;
+                const pEval = (preferredPrice || trade.preferred_entry) * 0.997;
+                const SS = trade.settled_s || 0, SL = trade.settled_l || 0;   // 이미 받은/낸 현금(배당·롤오버)
                 const shortEquityAmt = (cEval - c0) * trade.common_qty - SS;
                 const longEquityAmt = (p0 - pEval) * trade.preferred_qty - SL;
 
