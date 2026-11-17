@@ -44,8 +44,8 @@
     "preferred_code": "078935",
     "entry_date": "2025-11-13",
     "exit_date": null,
-    "common_entry": 60727,
-    "preferred_entry": 49094,
+    "common_entry": 60575.9453,
+    "preferred_entry": 49141.7594,
     "common_qty": 850,
     "preferred_qty": 1050,
     "common_floating_spread_bps": -202.0,
@@ -54,7 +54,15 @@
     "common_exit": null,
     "preferred_exit": null,
     "common_borrow_fee_pct": 0,
-    "status": "Open"
+    "status": "Open",
+    "settled_s": -13779656,
+    "settled_l": 6309197,
+    "current": {
+      "start": "2026-11-16",
+      "common_s0": 77300,
+      "preferred_s0": 57700,
+      "cd": 2.81
+    }
   },
   {
     "trade_id": "DSS",
