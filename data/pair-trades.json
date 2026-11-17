@@ -36,14 +36,21 @@
     "preferred_exit": null,
     "common_borrow_fee_pct": 0,
     "status": "Open",
-    "settled_s": -130838449,
-    "settled_l": 15504070,
+    "settled_s": -132013449,
+    "settled_l": 17314570,
     "current": {
       "start": "2026-06-10",
       "common_s0": 602000,
       "preferred_s0": 240000,
       "cd": 2.94
-    }
+    },
+    "settled_log": [
+      {
+        "s": -1175000,
+        "l": 1810500,
+        "memo": "DIV 2026-04-27 현대차"
+      }
+    ]
   },
   {
     "trade_id": "GS",
