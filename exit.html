@@ -86,11 +86,27 @@
         <div class="bg-white rounded-xl border border-gray-200 p-5">
             <div class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Price Sensitivity</div>
             <div class="overflow-x-auto"><table class="tbl w-full" id="sens"></table></div>
-            <div class="text-xs text-gray-400 mt-2">세로 = 보통주 청산가, 가로 = 우선주 청산가. 가운데가 입력한 가격.</div>
+            <div class="text-xs text-gray-400 mt-2">세로 = 보통주 청산가, 가로 = 우선주 청산가 (2호가 간격). 가운데가 입력한 가격.</div>
         </div>
     </div>
 
     <script>
+        // KRX 호가단위 (2023~ 코스피·코스닥 공통)
+        function tickOf(px) { return px < 2000 ? 1 : px < 5000 ? 5 : px < 20000 ? 10 : px < 50000 ? 50 : px < 200000 ? 100 : px < 500000 ? 500 : 1000; }
+        function tickUp(px) { const t = tickOf(px); return Math.floor(px / t) * t + t; }
+        function tickDown(px) { const t = tickOf(px - 1); return Math.ceil(px / t) * t - t; }
+        // 위·아래 화살표(키보드·스핀 버튼)를 한 호가씩 움직이게
+        function bindTick(el) {
+            let prev = +el.value || 0;
+            const sync = () => { prev = +el.value || 0; el.step = tickOf(prev || 1); };
+            el.addEventListener('input', e => {
+                const v = +el.value;
+                if (!e.inputType && prev && v !== prev) el.value = v > prev ? tickUp(prev) : tickDown(prev);   // 스핀/화살표
+                sync();
+            });
+            el.addEventListener('focus', sync); el.addEventListener('change', sync);
+            sync();
+        }
         const COMM = 10, TAX_SELL = 20;   // 청산: 보통주 숏 = 매수(수수료), 우선주 롱 = 매도(수수료+거래세)
         let TRADES = [], LIVEPX = {};
         const fmt = v => (v >= 0 ? '' : '-') + Math.abs(Math.round(v)).toLocaleString();
@@ -166,13 +182,13 @@
                     : '롤오버 정산 기록이 없어 진입가 기준으로 이자를 계산합니다. ')
                 + ((R.S.settled || R.L.settled) ? '' : '배당 기록이 없으면 배당은 빠져 있습니다.');
             // 민감도: 보통주 ±2틱×step, 우선주 ±2틱×step
-            const stepOf = px => px >= 500000 ? 1000 : px >= 200000 ? 500 : px >= 50000 ? 100 : px >= 20000 ? 50 : px >= 5000 ? 10 : 5;
-            const sc = stepOf(cpx) * 2, sp = stepOf(ppx) * 2, off = [-2, -1, 0, 1, 2];
-            let s = '<thead><tr><th></th>' + off.map(o => `<th>${(ppx + o * sp).toLocaleString()}</th>`).join('') + '</tr></thead><tbody>';
+            const off = [-2, -1, 0, 1, 2];
+            const moveTicks = (px, n) => { let v = px; for (let i = 0; i < Math.abs(n); i++) v = n > 0 ? tickUp(v) : tickDown(v); return v; };
+            let s = '<thead><tr><th></th>' + off.map(o => `<th>${moveTicks(ppx, o * 2).toLocaleString()}</th>`).join('') + '</tr></thead><tbody>';
             off.forEach(oc => {
-                s += `<tr><td class="num" style="text-align:left;font-weight:600">${(cpx + oc * sc).toLocaleString()}</td>`;
+                s += `<tr><td class="num" style="text-align:left;font-weight:600">${moveTicks(cpx, oc * 2).toLocaleString()}</td>`;
                 off.forEach(op => {
-                    const r = calcPair(name, cpx + oc * sc, ppx + op * sp, xdate, cd), v = r.S.total + r.L.total;
+                    const r = calcPair(name, moveTicks(cpx, oc * 2), moveTicks(ppx, op * 2), xdate, cd), v = r.S.total + r.L.total;
                     s += `<td class="num ${cls(v)}" style="${oc === 0 && op === 0 ? 'font-weight:700;background:#f9fafb' : ''}">${fmt(v)}</td>`;
                 });
                 s += '</tr>';
@@ -207,8 +223,8 @@
             const want = new URLSearchParams(location.search).get('pair');
             if (want && names.includes(want)) sel.value = want;
             document.getElementById('xdate').value = kstToday();
-            fillPrices(false); render();
-            sel.addEventListener('change', () => { fillPrices(true); render(); });
+            fillPrices(false); bindTick(document.getElementById('cpx')); bindTick(document.getElementById('ppx')); render();
+            sel.addEventListener('change', () => { fillPrices(true); ['cpx', 'ppx'].forEach(id => document.getElementById(id).dispatchEvent(new Event('change'))); render(); });
             ['cpx', 'ppx', 'xdate', 'cd'].forEach(id => document.getElementById(id).addEventListener('input', render));
         }
         init();
