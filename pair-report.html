@@ -611,6 +611,8 @@
             const todayStr = new Date().toISOString().slice(0, 10);
             let TS = {}, LV = {};
             try { TS = await (await fetch(`data/trade-stats.json?t=${Date.now()}`)).json(); } catch (e) { }
+            let SETTLE = {};   // 완료 거래: 유안타 정산 티켓 실제 금액(롤오버·Unwind·배당)
+            try { SETTLE = await (await fetch(`data/settlements.json?t=${Date.now()}`)).json(); } catch (e) { }
             try { const dd = await (await fetch(`data/v2_dashboard.json?t=${Date.now()}`)).json(); (dd.live_orders || []).forEach(r => { LV[r.code] = r.edge; }); } catch (e) { }
             const f2 = v => (v == null || v !== v) ? '-' : (v >= 0 ? '+' : '') + Number(v).toFixed(2);
             const fp = v => (v == null || v !== v) ? '-' : (Number(v) * 100).toFixed(1) + '%';
@@ -695,19 +697,28 @@
                 const borrowFeePct = trade.common_borrow_fee_pct || 0;
 
                 // Equity 계산 (수수료/세금 제외, 단순 가격 차이)
-                const shortEquityAmt = ((commonPrice || trade.common_entry) - trade.common_entry) * trade.common_qty;
-                const longEquityAmt = (trade.preferred_entry - (preferredPrice || trade.preferred_entry)) * trade.preferred_qty;
+                // 보유 중이면 오늘 청산 가정: 보통주 매수 +10bp, 우선주 매도 −10bp−거래세 20bp
+                // current(현재 롤오버 기간)가 있으면 그 기준가(S0)·CD로 평가. settled_s/l(배당·롤오버로 이미 오간 현금)은 항상 더함
+                const CUR = !isClosed && trade.current ? trade.current : null;
+                const c0 = CUR ? CUR.common_s0 : trade.common_entry, p0 = CUR ? CUR.preferred_s0 : trade.preferred_entry;
+                const cEval = (commonPrice || trade.common_entry) * (isClosed ? 1 : 1.001);
+                const pEval = (preferredPrice || trade.preferred_entry) * (isClosed ? 1 : 0.997);
+                const SS = isClosed ? 0 : (trade.settled_s || 0), SL = isClosed ? 0 : (trade.settled_l || 0);   // 이미 받은/낸 현금(배당·롤오버)
+                const shortEquityAmt = (cEval - c0) * trade.common_qty - SS;
+                const longEquityAmt = (p0 - pEval) * trade.preferred_qty - SL;
 
                 // Floating Amount 계산
                 const benchmarkRate = trade.benchmark_rate_pct || 0;
                 const spreadShort = ((trade.common_floating_spread_bps ?? -202) / 10000);
                 const spreadLong = ((trade.preferred_floating_spread_bps ?? 200) / 10000);
 
-                const shortFloatingAmt = -Math.round(trade.common_entry * trade.common_qty * ((benchmarkRate / 100) + spreadShort) * (days / 365));
-                const longFloatingAmt = Math.round(trade.preferred_entry * trade.preferred_qty * ((benchmarkRate / 100) + spreadLong) * (days / 365));
+                const fDays = CUR ? Math.max(1, Math.round((new Date(lastDate) - new Date(CUR.start)) / 864e5)) : days;
+                const fRate = CUR && CUR.cd != null ? CUR.cd : benchmarkRate;
+                const shortFloatingAmt = -Math.round(c0 * trade.common_qty * ((fRate / 100) + spreadShort) * (fDays / 365));
+                const longFloatingAmt = Math.round(p0 * trade.preferred_qty * ((fRate / 100) + spreadLong) * (fDays / 365));
 
                 // 손익 계산
-                const shortPnl = shortEquityAmt + shortFloatingAmt + calcBorrowFee(trade.common_entry, trade.common_qty, borrowFeePct, days);
+                const shortPnl = shortEquityAmt + shortFloatingAmt + calcBorrowFee(c0, trade.common_qty, borrowFeePct, fDays);
                 const longPnl = longEquityAmt + longFloatingAmt;
 
                 // 투자금액 계산
@@ -737,6 +748,9 @@
                 const avgPreferredEntry = agg.preferred_qty > 0 ? agg.preferred_entry_total / agg.preferred_qty : 0;
                 const avgPreferredExit = agg.preferred_qty > 0 ? agg.preferred_exit_total / agg.preferred_qty : 0;
 
+                // 완료 거래는 정산 티켓 실제 금액으로 대체
+                const SE = agg.status !== 'Open' ? SETTLE[normalizeStockName(agg.pair_name)] || SETTLE[agg.pair_name] : null;
+                if (SE) { agg.shortPnl = -SE.s; agg.longPnl = -SE.l; }
                 // 전체 손익 (부호 반전)
                 const totalPnl = -(agg.shortPnl + agg.longPnl);
                 const totalInvested = agg.common_invested + agg.preferred_invested;
