@@ -25,8 +25,8 @@
     "preferred_code": "005385",
     "entry_date": "2025-12-09",
     "exit_date": null,
-    "common_entry": 322944,
-    "preferred_entry": 213153,
+    "common_entry": 322079.8037,
+    "preferred_entry": 213365.9697,
     "common_qty": 470,
     "preferred_qty": 710,
     "common_floating_spread_bps": -177.0,
@@ -35,7 +35,15 @@
     "common_exit": null,
     "preferred_exit": null,
     "common_borrow_fee_pct": 0,
-    "status": "Open"
+    "status": "Open",
+    "settled_s": -130838449,
+    "settled_l": 15504070,
+    "current": {
+      "start": "2026-06-10",
+      "common_s0": 602000,
+      "preferred_s0": 240000,
+      "cd": 2.83
+    }
   },
   {
     "trade_id": "GS",
