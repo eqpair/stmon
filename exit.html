@@ -66,7 +66,10 @@
                 <div><label>청산일</label><input id="xdate" type="date" class="w-full"></div>
                 <div><label>CD 금리 % (현재 기간)</label><input id="cd" type="number" step="0.01" class="w-full num"></div>
             </div>
-            <div id="live" class="text-xs text-gray-400 mt-3"></div>
+            <div class="flex items-center gap-3 mt-3 flex-wrap">
+                <button id="resetPx" type="button" class="px-3 py-1 text-xs rounded bg-gray-900 text-white hover:bg-gray-700 font-medium">현재가로 초기화</button>
+                <div id="live" class="text-xs text-gray-400"></div>
+            </div>
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
@@ -226,6 +229,17 @@
             fillPrices(false); bindTick(document.getElementById('cpx')); bindTick(document.getElementById('ppx')); render();
             sel.addEventListener('change', () => { fillPrices(true); ['cpx', 'ppx'].forEach(id => document.getElementById(id).dispatchEvent(new Event('change'))); render(); });
             ['cpx', 'ppx', 'xdate', 'cd'].forEach(id => document.getElementById(id).addEventListener('input', render));
+            // 현재가로 초기화: 시세를 새로 받아 청산가·청산일(오늘)·CD(원장값)를 되돌림
+            document.getElementById('resetPx').addEventListener('click', async () => {
+                try {
+                    const sd = await (await fetch(`data/stock_data.json?t=${Date.now()}`)).json();
+                    (sd.all_signals || []).forEach(s => { if (s.price_a && s.price_b) LIVEPX[norm(s.stock_name)] = { c: s.price_a, p: s.price_b, ts: s.timestamp || '' }; });
+                } catch (e) { }
+                document.getElementById('xdate').value = kstToday();
+                fillPrices(true);
+                ['cpx', 'ppx'].forEach(id => document.getElementById(id).dispatchEvent(new Event('change')));
+                render();
+            });
         }
         init();
     </script>
