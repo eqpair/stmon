@@ -118,6 +118,7 @@
         }
         const COMM = 10, TAX_SELL = 20;   // 청산: 보통주 숏 = 매수(수수료), 우선주 롱 = 매도(수수료+거래세)
         let TRADES = [], LIVEPX = {};
+        let FOLLOW = !new URLSearchParams(location.search).get('c');   // 청산가를 실시간 시세에 맞춰 따라갈지 (직접 고치면 멈춤, 초기화·종목 변경 시 다시 따라감)
         const fmt = v => (v >= 0 ? '' : '-') + Math.abs(Math.round(v)).toLocaleString();
         const cls = v => v > 0 ? 'pos' : v < 0 ? 'neg' : '';
         const kstToday = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
@@ -272,6 +273,30 @@
             document.getElementById('live').textContent = lp ? `현재가 ${lp.c.toLocaleString()} / ${lp.p.toLocaleString()} (${lp.ts})` : '현재가 없음';
         }
 
+        async function loadLive() {
+            const sd = await (await fetch(`data/stock_data.json?t=${Date.now()}`)).json();
+            (sd.all_signals || []).forEach(s => { if (s.price_a && s.price_b) LIVEPX[norm(s.stock_name)] = { c: s.price_a, p: s.price_b, ts: s.timestamp || '' }; });
+        }
+        // 30초마다: 원장·시세를 다시 받고, 따라가기 상태면 청산가를 현재가로 갱신
+        async function refreshLive() {
+            if (document.hidden) return;
+            try { TRADES = await (await fetch(`data/pair-trades.json?t=${Date.now()}`)).json(); } catch (e) { }
+            try { await loadLive(); } catch (e) { }
+            const sel = document.getElementById('pair'), cur = sel.value;
+            const names = [...new Set(TRADES.filter(t => t.status === 'Open').map(t => t.pair_name))];
+            if (names.join('|') !== [...sel.options].map(o => o.value).join('|')) {
+                sel.innerHTML = names.map(n => `<option>${n}</option>`).join('');
+                if (names.includes(cur)) sel.value = cur; else { fillPrices(true); FOLLOW = true; }
+            }
+            const name = sel.value, lp = LIVEPX[norm(name)], a = document.activeElement;
+            if (FOLLOW && lp && !(a && (a.id === 'cpx' || a.id === 'ppx'))) {
+                const c = document.getElementById('cpx'), p = document.getElementById('ppx');
+                c.value = lp.c; p.value = lp.p;
+                [c, p].forEach(el => el.dispatchEvent(new Event('change')));
+            }
+            document.getElementById('live').textContent = lp ? `현재가 ${lp.c.toLocaleString()} / ${lp.p.toLocaleString()} (${lp.ts})${FOLLOW ? ' · 자동 갱신 중' : ' · 직접 입력한 가격 유지 (초기화하면 다시 자동 갱신)'}` : '현재가 없음';
+            render();
+        }
         async function init() {
             TRADES = await (await fetch(`data/pair-trades.json?t=${Date.now()}`)).json();
             try {
@@ -285,7 +310,11 @@
             if (want && names.includes(want)) sel.value = want;
             document.getElementById('xdate').value = kstToday();
             fillPrices(false); bindTick(document.getElementById('cpx')); bindTick(document.getElementById('ppx')); render();
-            sel.addEventListener('change', () => { fillPrices(true); ['cpx', 'ppx'].forEach(id => document.getElementById(id).dispatchEvent(new Event('change'))); render(); });
+            ['cpx', 'ppx'].forEach(id => document.getElementById(id).addEventListener('input', e => { if (e.isTrusted) FOLLOW = false; }));
+            setInterval(refreshLive, 30000);
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshLive(); });
+            setTimeout(refreshLive, 1000);
+            sel.addEventListener('change', () => { FOLLOW = true; fillPrices(true); ['cpx', 'ppx'].forEach(id => document.getElementById(id).dispatchEvent(new Event('change'))); render(); });
             ['cpx', 'ppx', 'xdate', 'cd', 'qs', 'ql'].forEach(id => document.getElementById(id).addEventListener('input', render));
             document.getElementById('matchQ').addEventListener('click', () => {   // 보통주 청산 금액에 가장 가까운 우선주 수량
                 const name = document.getElementById('pair').value, X = exitQty(name);
@@ -304,12 +333,35 @@
                     (sd.all_signals || []).forEach(s => { if (s.price_a && s.price_b) LIVEPX[norm(s.stock_name)] = { c: s.price_a, p: s.price_b, ts: s.timestamp || '' }; });
                 } catch (e) { }
                 document.getElementById('xdate').value = kstToday();
-                fillPrices(true);
+                FOLLOW = true; fillPrices(true);
                 ['cpx', 'ppx'].forEach(id => document.getElementById(id).dispatchEvent(new Event('change')));
                 render();
             });
         }
         init();
+    </script>
+    <script>
+        // EQ_AUTO_RELOAD: 새 버전이 배포되면 탭을 자동 새로고침 (5분마다 확인, 탭이 보이고 입력 중이 아닐 때만)
+        (function () {
+            var base = null;
+            function h(t) { var x = 0; for (var i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) | 0; return x; }
+            function check() {
+                if (document.hidden) return;
+                fetch(location.pathname + '?_v=' + Date.now(), { cache: 'no-store' })
+                    .then(function (r) { return r.ok ? r.text() : null; })
+                    .then(function (t) {
+                        if (!t || t.indexOf('</html>') < 0) return;
+                        var v = h(t);
+                        if (base === null) { base = v; return; }
+                        var a = document.activeElement;
+                        var busy = a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);
+                        if (v !== base) { if (v === window.__eqPend && !busy) location.reload(); window.__eqPend = v; } else { window.__eqPend = null; }
+                    })
+                    .catch(function () {});
+            }
+            setTimeout(check, 3000);
+            setInterval(check, 5 * 60 * 1000);
+        })();
     </script>
 </body>
 

@@ -1519,6 +1519,36 @@
 })();
 </script>
     <script>
+        // EQ_DATA_RELOAD: 시세 데이터가 갱신되면 새로고침 (1분마다 확인, 슬라이더·입력을 건드리지 않았을 때만, 최소 2분 간격). 스크롤 위치 유지
+        (function () {
+            var KEY = 'td_scroll_' + location.search, t0 = Date.now(), base = null;
+            try { var y = sessionStorage.getItem(KEY); if (y) { sessionStorage.removeItem(KEY); window.addEventListener('load', function () { setTimeout(function () { window.scrollTo(0, +y); }, 300); }); } } catch (e) { }
+            function idle() {
+                var a = document.activeElement;
+                if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return false;
+                var c = document.getElementById('common-price-slider'), p = document.getElementById('preferred-price-slider'), m = document.getElementById('investment-amount');
+                if ((c && +c.value !== 0) || (p && +p.value !== 0) || (m && m.value)) return false;
+                return true;
+            }
+            function check() {
+                if (document.hidden) return;
+                fetch('data/stock_data.json?t=' + Date.now(), { cache: 'no-store' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (d) {
+                        if (!d) return;
+                        var v = d.timestamp || d.last_update || JSON.stringify((d.all_signals || [])[0] || '');
+                        if (base === null) { base = v; return; }
+                        if (v !== base && Date.now() - t0 > 120000 && idle()) {
+                            try { sessionStorage.setItem(KEY, String(window.scrollY)); } catch (e) { }
+                            location.reload();
+                        }
+                    }).catch(function () { });
+            }
+            setTimeout(check, 2000);
+            setInterval(check, 60000);
+        })();
+    </script>
+    <script>
         // EQ_AUTO_RELOAD: 새 버전이 배포되면 탭을 자동 새로고침 (5분마다 확인, 탭이 보이고 입력 중이 아닐 때만)
         (function () {
             var base = null;
