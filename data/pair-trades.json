@@ -56,8 +56,8 @@
     "preferred_exit": null,
     "common_borrow_fee_pct": 0,
     "status": "Open",
-    "settled_s": -132013449,
-    "settled_l": 17314570,
+    "settled_s": -134363449,
+    "settled_l": 20864570,
     "current": {
       "start": "2026-06-10",
       "common_s0": 602000,
@@ -69,6 +69,16 @@
         "s": -1175000,
         "l": 1810500,
         "memo": "DIV 2026-04-27 현대차"
+      },
+      {
+        "s": -1175000,
+        "l": 1775000,
+        "memo": "DIV 2026-07-02 현대차"
+      },
+      {
+        "s": -1175000,
+        "l": 1775000,
+        "memo": "DIV 2026-10-02 현대차"
       }
     ]
   },
@@ -90,14 +100,21 @@
     "preferred_exit": null,
     "common_borrow_fee_pct": 0,
     "status": "Open",
-    "settled_s": -13779656,
-    "settled_l": 6309197,
+    "settled_s": -16329656,
+    "settled_l": 9511697,
     "current": {
       "start": "2026-11-16",
       "common_s0": 77300,
       "preferred_s0": 57700,
       "cd": 3.38
-    }
+    },
+    "settled_log": [
+      {
+        "s": -2550000,
+        "l": 3202500,
+        "memo": "DIV 2026-04-08 GS"
+      }
+    ]
   },
   {
     "trade_id": "DSS",
